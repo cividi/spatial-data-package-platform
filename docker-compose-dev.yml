@@ -1,0 +1,43 @@
+version: "3"
+
+volumes:
+  vscode-remote-fastapi:
+  vscode-remote-vue:
+
+services:
+  # pdb:
+  #   image: postgres:11.2-alpine
+  #   hostname: pdb
+  #   environment:
+  #     - PGDATA=/var/services/postgres/data
+  #     - POSTGRES_USER=django
+  #     - POSTGRES_PASSWORD=django
+  #     - POSTGRES_DB=django
+  #   volumes:
+  #     - .:/opt/app/
+  #     - ./var/postgres:/var/services/postgres
+  #   ports:
+  #      - "5434:5432"
+
+  vue:
+    volumes:
+      - vscode-remote-vue:/root/.vscode-server
+    working_dir: /opt/vue
+    ports:
+      - "10001:10001" # vscode
+    command: tail -f /dev/null
+
+  fastapi:
+    environment:
+      - FASTAPI_DEBUG=True
+      - FASTAPI_HTTPS=False
+      - FASTAPI_EMAIL_HOST=maildev
+    volumes:
+      - vscode-remote-fastapi:/root/.vscode-server
+    # links:
+    #  - pdb
+    working_dir: /opt/fastapi/
+    ports:
+      - "8081:8081"
+      - "10002:10002" # vscode
+    command: tail -f /dev/null

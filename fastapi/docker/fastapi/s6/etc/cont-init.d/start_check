@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv sh
+
+START_FASTAPI=${START_FASTAPI:-NO}
+
+if [ "$START_FASTAPI" = "YES" ]; then
+    rm /etc/services.d/fastapi/down
+fi

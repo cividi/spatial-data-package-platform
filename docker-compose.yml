@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  vue:
+    image: smartuse/gemeindescan-webui-vue:0.0.1
+    hostname: vue
+    environment:
+      - TERM=xterm-256color
+    volumes:
+      - ./vue:/opt/vue
+    working_dir: /opt/vue
+    ports:
+      - "8080:8080"
+
+  fastapi:
+    image: smartuse/gemeindescan-webui-fastapi:0.0.1
+    hostname: fastapi
+    environment:
+      - TERM=xterm-256color
+      - FASTAPI_DB_NAME=fastapi
+      - FASTAPI_DB_USER=fastapi
+      - FASTAPI_DB_HOST=pdb
+      - FASTAPI_DB_PASSWORD=fastapi
+      - FASTAPI_HTTPS=True
+      - START_fastapi=NO
+    volumes:
+      - ./fastapi:/opt/fastapi
+      - ./var/fastapi:/var/services/fastapi
+    working_dir: /opt/fastapi/
+    ports:
+    - "8081:8081"
