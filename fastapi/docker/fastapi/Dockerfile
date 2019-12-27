@@ -19,37 +19,37 @@ RUN curl -Ls -o /tmp/s6-overlay.tar.gz https://github.com/just-containers/s6-ove
     && pip3 install --upgrade pip
 
 # python requirements layer
-# ADD ./requirements.txt /tmp/
-# RUN apk add \
-#         git \
-#         autoconf \
-#         automake \
-#         build-base \
-#         ncurses-dev \
-#         python3-dev \
-#         zlib-dev \
-#         sqlite-dev \
-#         yaml-dev \
-#         g++ \
-#         gcc \
-#         postgresql-dev \
-#         libressl-dev \
-#     && pip3 install -r /tmp/requirements.txt \
-#     && apk del \
-#         git \
-#         autoconf \
-#         automake \
-#         build-base \
-#         ncurses-dev \
-#         python3-dev \
-#         zlib-dev \
-#         sqlite-dev \
-#         yaml-dev \
-#         g++ \
-#         gcc \
-#         postgresql-dev \
-#         libressl-dev \
-#     && rm -rf /var/cache/apk/* /tmp/*
+ADD ./requirements.txt /tmp/
+RUN apk add \
+        git \
+        autoconf \
+        automake \
+        build-base \
+        ncurses-dev \
+        python3-dev \
+        zlib-dev \
+        sqlite-dev \
+        yaml-dev \
+        g++ \
+        gcc \
+        postgresql-dev \
+        libressl-dev \
+    && pip3 install -r /tmp/requirements.txt \
+    && apk del \
+        autoconf \
+        automake \
+        build-base \
+        ncurses-dev \
+        python3-dev \
+        zlib-dev \
+        sqlite-dev \
+        yaml-dev \
+        g++ \
+        gcc \
+        postgresql-dev \
+        libressl-dev \
+    && apk add libstdc++ \
+    && rm -rf /var/cache/apk/* /tmp/*
 
 # ADD s6/etc/services.d /etc/services.d
 # ADD s6/etc/cont-init.d /etc/cont-init.d
