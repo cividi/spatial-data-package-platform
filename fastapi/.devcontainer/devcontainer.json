@@ -1,0 +1,18 @@
+// See https://aka.ms/vscode-remote/devcontainer.json for format details.
+{
+    "dockerComposeFile": "../../docker-compose.yml",
+    "context": "..",
+    "service": "fastapi",
+    "workspaceFolder": "/opt/fastapi",
+    "appPort": 8081,
+    "shutdownAction": "none",
+    "devPort": 10002,
+    "extensions": [
+        "ms-python.python"
+    ],
+	"settings": {
+        "python.pythonPath": "/usr/bin/python3",
+        "python.linting.pylintEnabled": true,
+        "python.linting.enabled": true
+	}
+}

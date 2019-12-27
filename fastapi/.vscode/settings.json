@@ -1,0 +1,7 @@
+{
+    "python.pythonPath": "/usr/bin/python3",
+    "env": {
+        "PYTHONPATH": "/usr/local/lib/python3.6/dist-packages"
+    },
+    "python.formatting.provider": "yapf"
+}
