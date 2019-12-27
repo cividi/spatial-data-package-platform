@@ -17,5 +17,5 @@ make up
 # push to docker hub
 
 - update the version number in the Makefiles in the docker folders and `docker-compose.yml`
-- `make build` for all images in the root, or in the fastapi or vue subfolders, this builds the docker images
-- `make push` for all images in the root, or in the fastapi or vue subfolders, this uploads the docker images to docker hub
+- `make build` for all images in the root, or in the django or vue subfolders, this builds the docker images
+- `make push` for all images in the root, or in the django or vue subfolders, this uploads the docker images to docker hub

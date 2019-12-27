@@ -1,7 +1,7 @@
 version: "3"
 
 volumes:
-  vscode-remote-fastapi:
+  vscode-remote-django:
   vscode-remote-vue:
 
 services:
@@ -25,17 +25,17 @@ services:
       - "10001:10001" # vscode
     command: tail -f /dev/null
 
-  fastapi:
+  django:
     environment:
-      - FASTAPI_DB_NAME=webui
-      - FASTAPI_DB_USER=webui
-      - FASTAPI_DB_PASSWORD=pgpass
-      - FASTAPI_DB_HOST=pdb
-      - FASTAPI_DEBUG=True
-      - FASTAPI_HTTPS=False
-      - FASTAPI_EMAIL_HOST=maildev
+      - DJANGO_DB_NAME=webui
+      - DJANGO_DB_USER=webui
+      - DJANGO_DB_PASSWORD=pgpass
+      - DJANGO_DB_HOST=pdb
+      - DJANGO_DEBUG=True
+      - DJANGO_HTTPS=False
+      - DJANGO_EMAIL_HOST=maildev
     volumes:
-      - vscode-remote-fastapi:/root/.vscode-server
+      - vscode-remote-django:/root/.vscode-server
     links:
      - pdb
     ports:

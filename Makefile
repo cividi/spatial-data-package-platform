@@ -4,15 +4,15 @@ up:
 	docker-compose up -d
 
 build:
-	cd fastapi && make build
+	cd django && make build
 	cd vue && make build
 
 push:
-	cd fastapi && make push
+	cd django && make push
 	cd vue && make push
 
-enter_fastapi:
-	cd fastapi && make enter
+enter_django:
+	cd django && make enter
 
 enter_vue:
 	cd vue && make enter

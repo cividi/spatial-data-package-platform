@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv sh
+
+START_DJANGO=${START_DJANGO:-NO}
+
+if [ "$START_DJANGO" = "YES" ]; then
+    rm /etc/services.d/django/down
+fi

@@ -12,20 +12,20 @@ services:
     ports:
       - "8080:8080"
 
-  fastapi:
-    image: smartuse/gemeindescan-webui-fastapi:0.0.2
-    hostname: fastapi
+  django:
+    image: smartuse/gemeindescan-webui-django:0.0.2
+    hostname: django
     environment:
       - TERM=xterm-256color
-      - FASTAPI_DB_NAME=webui
-      - FASTAPI_DB_USER=webui
-      - FASTAPI_DB_PASSWORD=pgpass
-      - FASTAPI_DB_HOST=pdb
-      - FASTAPI_HTTPS=True
-      - START_fastapi=NO
+      - DJANGO_DB_NAME=webui
+      - DJANGO_DB_USER=webui
+      - DJANGO_DB_PASSWORD=pgpass
+      - DJANGO_DB_HOST=pdb
+      - DJANGO_HTTPS=True
+      - START_DJANGO=NO
     volumes:
-      - ./fastapi:/opt/fastapi
-      # - ./var/fastapi:/var/services/fastapi
-    working_dir: /opt/fastapi/
+      - ./django:/opt/django
+      # - ./var/django:/var/services/django
+    working_dir: /opt/django/
     ports:
     - "8081:8081"

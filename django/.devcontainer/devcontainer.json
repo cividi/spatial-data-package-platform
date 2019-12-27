@@ -2,8 +2,8 @@
 {
     "dockerComposeFile": "../../docker-compose.yml",
     "context": "..",
-    "service": "fastapi",
-    "workspaceFolder": "/opt/fastapi",
+    "service": "django",
+    "workspaceFolder": "/opt/django",
     "appPort": 8081,
     "shutdownAction": "none",
     "devPort": 10002,
