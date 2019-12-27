@@ -5,6 +5,7 @@ from main.database import Base
 
 
 class UserModel(Base):
+    __tablename__ = 'user_users'
     id = Column(Integer, primary_key=True, index=True)
     full_name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
