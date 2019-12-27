@@ -1,6 +1,6 @@
+from typing import Optional
 from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.orm import relationship
-
 from main.database import Base
 
 

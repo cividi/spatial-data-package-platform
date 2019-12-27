@@ -6,5 +6,5 @@ from user import schemas
 class User(PydanticObjectType):
     class Meta:
         model = schemas.User
-        only_fields = ('email', 'fullname')
+        only_fields = ('id', 'email', 'full_name')
         # exclude_fields = ("id', )
