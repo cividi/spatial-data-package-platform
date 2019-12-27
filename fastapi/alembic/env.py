@@ -1,10 +1,10 @@
 import os
+import sys
 from logging.config import fileConfig
-
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
+from sqlalchemy import engine_from_config, pool, create_engine
 from alembic import context
+
+sys.path.append(os.getcwd())
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -24,11 +24,6 @@ target_metadata = None
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-
-      - FASTAPI_DB_NAME=webui
-      - FASTAPI_DB_USER=webui
-      - FASTAPI_DB_PASSWORD=pgpass
-      - FASTAPI_DB_HOST=pdb
 
 
 def get_url():
@@ -71,11 +66,7 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    connectable = create_engine(get_url())
 
     with connectable.connect() as connection:
         context.configure(

@@ -15,4 +15,4 @@ class Mutation(graphene.ObjectType):
     #     return get_user()
 
 
-schema = graphene.Schema(query=Query, mutation=)
+schema = graphene.Schema(query=Query)  # mutation=
