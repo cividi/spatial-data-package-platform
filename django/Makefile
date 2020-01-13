@@ -14,4 +14,18 @@ push:
 	docker push smartuse/gemeindescan-webui-django:$(GEMEINDESCAN_WEBUI_DJANGO)
 
 run:
-	$(DOCKER_EXEC) uvicorn main:app --port 8081 --host 0.0.0.0 --reload
+	$(DOCKER_EXEC) uvicorn main.asgi:application --port 8081 --host 0.0.0.0 --reload
+
+adminuser:
+	$(DOCKER_EXEC) ./manage.py createsuperuser
+
+collectstatic:
+	$(DOCKER_EXEC) ./manage.py collectstatic --noinput
+
+migrate:
+	$(DOCKER_EXEC) ./manage.py migrate
+	make collectstatic
+
+init:
+	make migrate
+	make create_admin
