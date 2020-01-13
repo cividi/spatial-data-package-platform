@@ -13,7 +13,7 @@ services:
       - "8080:8080"
 
   django:
-    image: smartuse/gemeindescan-webui-django:0.0.2
+    image: smartuse/gemeindescan-webui-django:0.0.1
     hostname: django
     environment:
       - TERM=xterm-256color
