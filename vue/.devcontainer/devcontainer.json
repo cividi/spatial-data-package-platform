@@ -1,0 +1,14 @@
+// See https://aka.ms/vscode-remote/devcontainer.json for format details.
+{
+  "dockerComposeFile": "../../docker-compose-dev.yml",
+  "context": "..",
+  "service": "vue",
+  "workspaceFolder": "/opt/vue",
+  "appPort": 8080,
+  "shutdownAction": "none",
+  "devPort": 10001,
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "octref.vetur"
+  ]
+}

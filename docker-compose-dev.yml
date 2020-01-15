@@ -19,9 +19,16 @@ services:
        - "5434:5432"
 
   vue:
+    image: smartuse/gemeindescan-webui-vue:0.0.1
+    hostname: vue
+    environment:
+      - TERM=xterm-256color
+    working_dir: /opt/vue
     volumes:
+      - ./vue:/opt/vue
       - vscode-remote-vue:/root/.vscode-server
     ports:
+      - "8080:8080"
       - "10001:10001" # vscode
     command: tail -f /dev/null
 

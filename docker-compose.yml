@@ -1,17 +1,6 @@
 version: "3"
 
 services:
-  vue:
-    image: smartuse/gemeindescan-webui-vue:0.0.1
-    hostname: vue
-    environment:
-      - TERM=xterm-256color
-    volumes:
-      - ./vue:/opt/vue
-    working_dir: /opt/vue
-    ports:
-      - "8080:8080"
-
   django:
     image: smartuse/gemeindescan-webui-django:0.0.1
     hostname: django

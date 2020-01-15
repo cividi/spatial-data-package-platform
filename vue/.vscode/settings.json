@@ -1,0 +1,42 @@
+{
+  "git.ignoreLimitWarning": true,
+  "terminal.integrated.shell.linux": "/bin/bash",
+  "editor.renderWhitespace": "all",
+  "files.insertFinalNewline": true,
+  "editor.formatOnSave": true,
+  "vetur.validation.script": false,
+  "vetur.format.defaultFormatter.js": "none",
+  "vetur.format.defaultFormatter.html": "none",
+  "vetur.format.defaultFormatter.less": "none",
+  "vetur.format.defaultFormatter.postcss": "none",
+  "vetur.format.defaultFormatter.scss": "none",
+  "javascript.format.enable": true,
+  "eslint.enable": true,
+  "eslint.run": "onSave",
+  "eslint.autoFixOnSave": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "vue"
+  ],
+  "eslint.options": {
+    "rules": {
+      "quotes": [
+        "error",
+        "single"
+      ],
+      "comma-dangle": [
+        "error",
+        "never"
+      ],
+    }
+  },
+  "eslint.alwaysShowStatus": true,
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  //"tslint.jsEnable": false,
+  //"javascript.validate.enable": false
+}
