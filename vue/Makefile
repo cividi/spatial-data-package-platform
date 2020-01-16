@@ -8,7 +8,7 @@ DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker exec -it $(DOC
 enter:
 	$(DOCKER_EXEC) ash
 
-build:
+build_docker:
 	cp yarn.lock package.json docker/vue/
 	cd docker && docker build -t smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE) vue
 	rm docker/vue/yarn.lock docker/vue/package.json
