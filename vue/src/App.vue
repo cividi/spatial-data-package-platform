@@ -1,8 +1,12 @@
 <template>
   <div id="app">
+    <router-link to="/">
+      <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
+    </router-link>
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/about">Hintergrund</router-link>
+      <router-link to="/imprint">Impressum</router-link>
+      <router-link to="/contact">Kontakt</router-link>
     </div>
     <router-view/>
   </div>
@@ -10,7 +14,7 @@
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -24,6 +28,7 @@
 #nav a {
   font-weight: bold;
   color: #2c3e50;
+  margin-right: 10px;
 }
 
 #nav a.router-link-exact-active {
