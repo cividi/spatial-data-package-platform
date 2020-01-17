@@ -1,13 +1,23 @@
 *{
   margin: 0;
   padding: 0;
+  border: 0 none;
+  outline: 0 none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 body {
   font-family: "Circular Pro", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 62.25%;
+  font-size: 62.5%;
+}
+
+textarea,
+input {
+  font-family: inherit;
+  border-radius: 0;
+  -webkit-appearance: none;
 }
 
 h1,h2 {
