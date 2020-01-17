@@ -28,4 +28,4 @@ migrate:
 
 init:
 	make migrate
-	make create_admin
+	make adminuser

@@ -16,3 +16,8 @@ enter_django:
 
 enter_vue:
 	cd vue && make enter
+
+deploy_dev:
+	cd vue && make build
+	rsync -av --delete vue/dist $$DJANGO_DEV_HOST:$$DJANGO_DEV_PATH/var/vue/
+	# ssh $$DJANGO_DEV_HOST ls $$DJANGO_DEV_PATH

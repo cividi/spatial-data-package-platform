@@ -17,13 +17,13 @@ push:
 	docker push smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE)
 
 dev:
-	yarn serve
+	$(DOCKER_EXEC) yarn serve
 
 build:
-	yarn build
+	$(DOCKER_EXEC) yarn build
 
 build-dev-watch:
-	yarn build --mode development --watch
+	$(DOCKER_EXEC) yarn build --mode development --watch
 
 build-prod-watch:
-	yarn build --mode production --watch
+	$(DOCKER_EXEC) yarn build --mode production --watch
