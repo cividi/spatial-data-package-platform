@@ -61,6 +61,8 @@ The project is setup to work with visual studio code as editor. Any other editor
 With vscode the plugins are automatically installed and linting and autocomplete works out of the box, 
 with the data from inside the container. 
 
+You need to have installed the vscode extension `Remote - Containers` in your local vscode installation. 
+
 You need to start two editors with `code vue` and `code django` (install code command in path from vscode).
 After they started you need to click on `reopen in container` (first time start takes a bit longer to install plugins). 
 

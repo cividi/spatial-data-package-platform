@@ -2,6 +2,7 @@
 
 init:
 	cd django && make init
+	cd vue && make init
 
 up:
 	docker-compose up -d
