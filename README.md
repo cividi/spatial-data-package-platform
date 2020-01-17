@@ -10,7 +10,7 @@ in the moby virtual maschine and make the host var folder a symlink to it (for b
 
 ```bash
 # enter moby
-docker run --net=host --ipc=host --name=moby --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine ash"
+docker run --net=host --ipc=host --name=moby --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine ash
 # create var folder /host/var/lib/projects
 mkdir -p /host/var/lib/projects/gemeindescan-webui
 # exit moby, back to mac
