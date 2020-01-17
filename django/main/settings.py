@@ -17,6 +17,7 @@ MANAGERS = ADMINS
 if os.environ.get('DJANGO_ALLOWED_HOSTS'):
     ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
 SITE_ID = 1
+AUTH_USER_MODEL = 'gsuser.User'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -26,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'gsuser'
 ]
 
 MIDDLEWARE = [
