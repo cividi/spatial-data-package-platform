@@ -16,6 +16,10 @@ push:
 run:
 	$(DOCKER_EXEC) uvicorn main.asgi:application --port 8081 --host 0.0.0.0 --reload
 
+runprod:
+	$(DOCKER_EXEC) uvicorn main.asgi:application --port 8081 --host 0.0.0.0
+
+
 adminuser:
 	$(DOCKER_EXEC) ./manage.py createsuperuser
 

@@ -13,6 +13,7 @@ services:
       - DJANGO_DB_HOST=pdb
       - DJANGO_DEBUG=False
       - DJANGO_HTTPS=True
+      - DJANGO_ALLOWED_HOSTS=host1,host2
       - DJANGO_EMAIL_HOST=XXX
       - DJANGO_SECRET_KEY=XXX
     volumes:

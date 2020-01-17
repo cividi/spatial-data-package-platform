@@ -1,3 +1,5 @@
 var
 tmp
 env.hosts.prod
+server.yml
+__pycache__/

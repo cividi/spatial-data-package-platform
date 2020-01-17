@@ -1,1 +1,7 @@
 #!/usr/bin/with-contenv sh
+
+mkdir -p /var/services/run
+mkdir -p /var/services/django/log
+
+cd /opt/django
+uvicorn main.asgi:application --port 8081 --host 0.0.0.0
