@@ -18,7 +18,7 @@ services:
       - DJANGO_SECRET_KEY=XXX
     volumes:
       - ./django:/opt/django
-      # - ./var/django:/var/services/django
+      - ./var/django:/var/services/django
     working_dir: /opt/django/
     ports:
     - "8081:8081"

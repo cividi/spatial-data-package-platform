@@ -4,6 +4,7 @@ DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker exec -it $(DOC
 
 
 .PHONY: all
+default: dev
 
 enter:
 	$(DOCKER_EXEC) ash

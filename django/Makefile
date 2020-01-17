@@ -3,6 +3,7 @@ DOCKER_DJANGO_NAME=$(shell basename $(shell dirname `pwd`))_django_1
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker exec -it $(DOCKER_DJANGO_NAME)")
 
 .PHONY: all
+default: dev
 
 enter:
 	$(DOCKER_EXEC) ash
@@ -13,7 +14,7 @@ build:
 push:
 	docker push smartuse/gemeindescan-webui-django:$(GEMEINDESCAN_WEBUI_DJANGO)
 
-run:
+dev:
 	$(DOCKER_EXEC) uvicorn main.asgi:application --port 8081 --host 0.0.0.0 --reload
 
 runprod:
@@ -31,5 +32,6 @@ migrate:
 	make collectstatic
 
 init:
+	# docker run -it --rm -v `pwd`/var:/var/services busybox sh -c "mkdir -p /var/services/django"
 	make migrate
 	make adminuser

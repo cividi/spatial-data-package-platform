@@ -1,5 +1,8 @@
 .PHONY: all
 
+init:
+	cd django && make init
+
 up:
 	docker-compose up -d
 
