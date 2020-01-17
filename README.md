@@ -25,6 +25,7 @@ mkdir var
 regardless how you created the var folder you can now create the basic folder structure
 
 ```bash
+touch env.hosts.prod # required file, can be empty and edited later
 docker run -it --rm -v `pwd`/var:/var/services busybox sh -c "mkdir -p /var/services/django; mkdir -p /var/services/postgres"
 ```
 
