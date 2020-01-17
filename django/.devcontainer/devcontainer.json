@@ -10,6 +10,9 @@
     "extensions": [
         "ms-python.python"
     ],
+    "env": {
+        "PYTHONPATH": "/usr/lib/python3.7/site-packages"
+    },
 	"settings": {
         "python.pythonPath": "/usr/bin/python3",
         "python.linting.pylintEnabled": true,

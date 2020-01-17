@@ -14,7 +14,8 @@ EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST', 'maildev')
 ADMINS = os.environ.get('DJANGO_ADMINS', 'admin@local.lan').split(',')
 MANAGERS = ADMINS
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') 
+if os.environ.get('DJANGO_ALLOWED_HOSTS'):
+    ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
 SITE_ID = 1
 
 INSTALLED_APPS = [

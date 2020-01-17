@@ -32,7 +32,7 @@ download containers and start them
 
 ```bash
 . ./env.dev # load docker-compose.yml and docker-compose-dev.yml
-docker-compose pull -v
+docker-compose pull
 make up
 make init
 ```
