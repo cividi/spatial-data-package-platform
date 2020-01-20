@@ -17,6 +17,7 @@ RUN apk add --update \
         build-base \
     && npm install -g @vue/cli && npm install -g http-server \
     && cd /opt/vue && yarn install \
+    && yarn cache clean \
     && apk del \
         build-base
 RUN cd /opt/vue && yarn install
