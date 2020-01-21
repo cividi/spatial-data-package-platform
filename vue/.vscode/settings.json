@@ -37,6 +37,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
+  "files.eol": "\n",
   //"tslint.jsEnable": false,
   //"javascript.validate.enable": false
 }
