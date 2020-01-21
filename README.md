@@ -2,24 +2,40 @@
 
 # setup project
 
-Create `var` folder in project root dir, in this folder the container data will be stored.
+Create `var` folder in project root dir, in this folder the container data (database, generated files) will be stored.
 On linux you just can create the a normal folder. For Mac/Windows it's recommended to create a var folder
-in the moby virtual maschine and make the host var folder a symlink to it (for better performence).
+in the moby virtual maschine and make the host var folder a symlink to it (for better performence, less permission problems).
 
-**for mac** (windows should be similar)
-
-```bash
-# enter moby
-docker run --net=host --ipc=host --name=moby --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine ash
-# create var folder /host/var/lib/projects
-mkdir -p /host/var/lib/projects/gemeindescan-webui
-# exit moby, back to mac
-ln -s /var/lib/projects/gemeindescan-webui var
-``` 
 
 **for linux**
 ```bash
 mkdir var
+```
+
+**for mac**
+
+```bash
+# enter moby vm
+docker run --net=host --ipc=host --name=moby --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine ash
+# create var folder /host/var/lib/projects
+mkdir -p /host/var/lib/projects/var-gemeindescan-webui
+# exit moby, back to mac
+exit
+ln -s /var/lib/projects/var-gemeindescan-webui var
+```
+
+**windows**
+
+```bash
+# enter moby vm
+docker run --net=host --ipc=host --name=moby --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine ash
+# create var folder /host/var/lib/projects
+mkdir -p /host/var/lib/projects/var-gemeindescan-webui
+# go to your source code in moby mount '/host/host_mnt/c' is your c drive
+cd /host/host_mnt/c/temp/gemeindescan-webui
+ln -s /var/lib/projects/var-gemeindescan-webui var
+# exit moby
+exit
 ```
 
 regardless how you created the var folder you can now create the basic folder structure
@@ -32,24 +48,27 @@ docker run -it --rm -v `pwd`/var:/var/services busybox sh -c "mkdir -p /var/serv
 download containers and start them
 
 ```bash
-. ./env.dev # load docker-compose.yml and docker-compose-dev.yml
 docker-compose pull
 make up
 make init
 ```
 
-# start docker containers
-
-for dev, active 'COMPOSE_FILE' env var, only needs to be done once per working shell
+if `make init` doesn't work you can execute the commands one by one. 
 
 ```bash
-. ./env.dev
+# go into django container
+make enter_django
+cd django
+python3 manage.py migrate
+python3 manage.py createsuperuser
+# exit django container
+exit
+# enter vue container
+maker enter_vue
+ln -s /node_modules ./
 ```
 
-`. .env.dev` set the env var `DOCKER_ENV` which you can add this to your `$PS1` command prompt to show if the enviroment is activated (optional). 
-export DOCKER_ENV="(DEV)"
-
-start containers
+# start docker containers
 
 ```bash
 make up

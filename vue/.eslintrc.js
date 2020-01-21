@@ -23,7 +23,8 @@ module.exports = {
     'no-new': 'off',
     'no-shadow': 'off',
     'prefer-destructuring': 'off',
-    'no-prototype-builtins': 'off'
+    'no-prototype-builtins': 'off',
+    'end_of_line': 'lf'
   },
   parserOptions: {
     parser: 'babel-eslint'
