@@ -54,6 +54,21 @@ make up
 make init
 ```
 
+if `make init` doesn't work you can execute the commands one by one. 
+
+```bash
+# go into django container
+make enter_django
+cd django
+python3 manage.py migrate
+python3 manage.py createsuperuser
+# exit django container
+exit
+# enter vue container
+maker enter_vue
+ln -s /node_modules ./
+```
+
 # start docker containers
 
 for dev, active 'COMPOSE_FILE' env var, only needs to be done once per working shell
