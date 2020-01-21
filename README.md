@@ -2,24 +2,40 @@
 
 # setup project
 
-Create `var` folder in project root dir, in this folder the container data will be stored.
+Create `var` folder in project root dir, in this folder the container data (database, generated files) will be stored.
 On linux you just can create the a normal folder. For Mac/Windows it's recommended to create a var folder
-in the moby virtual maschine and make the host var folder a symlink to it (for better performence).
+in the moby virtual maschine and make the host var folder a symlink to it (for better performence, less permission problems).
 
-**for mac** (windows should be similar)
-
-```bash
-# enter moby
-docker run --net=host --ipc=host --name=moby --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine ash
-# create var folder /host/var/lib/projects
-mkdir -p /host/var/lib/projects/gemeindescan-webui
-# exit moby, back to mac
-ln -s /var/lib/projects/gemeindescan-webui var
-``` 
 
 **for linux**
 ```bash
 mkdir var
+```
+
+**for mac**
+
+```bash
+# enter moby vm
+docker run --net=host --ipc=host --name=moby --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine ash
+# create var folder /host/var/lib/projects
+mkdir -p /host/var/lib/projects/var-gemeindescan-webui
+# exit moby, back to mac
+exit
+ln -s /var/lib/projects/var-gemeindescan-webui var
+```
+
+**windows**
+
+```bash
+# enter moby vm
+docker run --net=host --ipc=host --name=moby --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine ash
+# create var folder /host/var/lib/projects
+mkdir -p /host/var/lib/projects/var-gemeindescan-webui
+# go to your source code in moby mount '/host/host_mnt/c' is your c drive
+cd /host/host_mnt/c/temp/gemeindescan-webui
+ln -s /var/lib/projects/var-gemeindescan-webui var
+# exit moby
+exit
 ```
 
 regardless how you created the var folder you can now create the basic folder structure
