@@ -50,6 +50,8 @@ services:
       - DJANGO_EMAIL_HOST=maildev
       - DJANGO_SECRET_KEY=adddxxccxx4rt0ioywg3yf5kjq64-t5
     volumes:
+      - ./django:/opt/django
+      - ./var/django:/var/services/django
       - vscode-remote-django:/root/.vscode-server
     links:
      - pdb
