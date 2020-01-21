@@ -48,7 +48,6 @@ docker run -it --rm -v `pwd`/var:/var/services busybox sh -c "mkdir -p /var/serv
 download containers and start them
 
 ```bash
-. ./env.dev # load docker-compose.yml and docker-compose-dev.yml
 docker-compose pull
 make up
 make init
@@ -70,17 +69,6 @@ ln -s /node_modules ./
 ```
 
 # start docker containers
-
-for dev, active 'COMPOSE_FILE' env var, only needs to be done once per working shell
-
-```bash
-. ./env.dev
-```
-
-`. .env.dev` set the env var `DOCKER_ENV` which you can add this to your `$PS1` command prompt to show if the enviroment is activated (optional). 
-export DOCKER_ENV="(DEV)"
-
-start containers
 
 ```bash
 make up
