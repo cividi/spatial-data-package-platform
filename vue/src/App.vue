@@ -1,6 +1,8 @@
 <template>
-  <div id="app">
-    <header id="topbar">
+  <v-app>
+    <!--<v-navigation-drawer app>
+    </v-navigation-drawer>-->
+    <v-app-bar app>
       <router-link id="logo" to="/">
         <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
       </router-link>
@@ -13,11 +15,15 @@
         Login
         Kostenlos Account erstellen
       </div>
-    </header>
-    <main>
-      <router-view/>
-    </main>
-  </div>
+    </v-app-bar>
+    <v-content>
+      <v-container fluid>
+        <router-view/>
+      </v-container>
+    </v-content>
+    <!--<v-footer app>
+    </v-footer>-->
+  </v-app>
 </template>
 
 <style>
