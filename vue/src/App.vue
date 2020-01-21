@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app light>
     <!--<v-navigation-drawer app>
     </v-navigation-drawer>-->
     <v-app-bar app>
@@ -42,11 +42,11 @@
 
 #mainnav a {
   font-weight: bold;
-  color: #2c3e50;
+  /* color: #2c3e50; */
   margin: 0 0.5em;
 }
 
 #mainnav a.router-link-exact-active {
-  color: #42b983;
+  /* color: #42b983; */
 }
 </style>
