@@ -1,6 +1,6 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-  "dockerComposeFile": "../../docker-compose-dev.yml",
+  "dockerComposeFile": "../../docker-compose.yml",
   "context": "..",
   "service": "vue",
   "workspaceFolder": "/opt/vue",
