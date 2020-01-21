@@ -1,24 +1,59 @@
-version: "3"
+version: "2"
+
+volumes:
+  vscode-remote-django:
+  vscode-remote-vue:
 
 services:
-  django:
-    image: smartuse/gemeindescan-webui-django:0.0.1
-    hostname: django
+  pdb:
+    extends:
+      file: docker-images.yml
+      service: pdb
+    environment:
+      - PGDATA=/var/services/postgres/data
+      - POSTGRES_USER=webui
+      - POSTGRES_PASSWORD=pgpass
+      - POSTGRES_DB=webui
+    volumes:
+      - ./var/postgres:/var/services/postgres
+    ports:
+       - "5434:5432"
+
+  vue:
+    extends:
+      file: docker-images.yml
+      service: vue
     environment:
       - TERM=xterm-256color
-      - START_DJANGO=YES
+    working_dir: /opt/vue
+    volumes:
+      - ./vue:/opt/vue
+      - vscode-remote-vue:/root/.vscode-server
+    ports:
+      - "8080:8080"
+      - "10001:10001" # vscode
+    command: tail -f /dev/null
+
+  django:
+    extends:
+      file: docker-images.yml
+      service: django
+    environment:
+      - TERM=xterm-256color
+      - START_DJANGO=NO
       - DJANGO_DB_NAME=webui
       - DJANGO_DB_USER=webui
       - DJANGO_DB_PASSWORD=pgpass
       - DJANGO_DB_HOST=pdb
-      - DJANGO_DEBUG=False
-      - DJANGO_HTTPS=True
-      - DJANGO_ALLOWED_HOSTS=
-      - DJANGO_EMAIL_HOST=XXX
-      - DJANGO_SECRET_KEY=XXX
+      - DJANGO_DEBUG=True
+      - DJANGO_HTTPS=False
+      - DJANGO_EMAIL_HOST=maildev
+      - DJANGO_SECRET_KEY=adddxxccxx4rt0ioywg3yf5kjq64-t5
     volumes:
-      - ./django:/opt/django
-      - ./var/django:/var/services/django
-    working_dir: /opt/django/
+      - vscode-remote-django:/root/.vscode-server
+    links:
+     - pdb
     ports:
-    - "8081:8081"
+      - "8081:8081"
+      - "10002:10002" # vscode
+    command: tail -f /dev/null

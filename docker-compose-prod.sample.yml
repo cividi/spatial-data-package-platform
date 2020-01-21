@@ -1,0 +1,27 @@
+version: "2"
+
+services:
+  django:
+    extends:
+      file: docker-images.yml
+      service: django
+    image: smartuse/gemeindescan-webui-django:0.0.1
+    hostname: django
+    environment:
+      - TERM=xterm-256color
+      - START_DJANGO=YES
+      - DJANGO_DB_NAME=webui
+      - DJANGO_DB_USER=webui
+      - DJANGO_DB_PASSWORD=XXX
+      - DJANGO_DB_HOST=pdb
+      - DJANGO_DEBUG=False
+      - DJANGO_HTTPS=True
+      - DJANGO_ALLOWED_HOSTS=
+      - DJANGO_EMAIL_HOST=XXX
+      - DJANGO_SECRET_KEY=XXX
+    volumes:
+      - ./django:/opt/django
+      - ./var/django:/var/services/django
+    working_dir: /opt/django/
+    ports:
+    - "8081:8081"
