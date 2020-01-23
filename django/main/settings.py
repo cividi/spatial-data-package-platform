@@ -20,6 +20,7 @@ SITE_ID = 1
 AUTH_USER_MODEL = 'gsuser.User'
 
 INSTALLED_APPS = [
+    # django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -27,6 +28,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+
+    # third party
+    'graphene_django',
+
+    # own
     'gsuser',
     'gsmap'
 ]
@@ -100,3 +106,5 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_DIR', '/var/services/django/media')
 MEDIA_URL = '/media/'
+
+GRAPHENE = {'SCHEMA': 'main.schema.schema'}

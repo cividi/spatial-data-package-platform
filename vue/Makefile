@@ -7,7 +7,7 @@ DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker exec -it $(DOC
 default: dev
 
 init:
-	$(DOCKER_EXEC) ln -s /node_modules ./
+	$(DOCKER_EXEC) ln -sf /node_modules ./
 
 enter:
 	$(DOCKER_EXEC) ash

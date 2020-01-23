@@ -12,7 +12,8 @@ RUN apk add --update \
         libpq \
         python3 \
         libressl \
-        make
+        make \
+        jq
 RUN curl -Ls -o /tmp/s6-overlay.tar.gz https://github.com/just-containers/s6-overlay/releases/download/$S6_OVERLAY_VERSION/s6-overlay-amd64.tar.gz \
     && tar xvfz /tmp/s6-overlay.tar.gz -C / \
     && rm -f /tmp/s6-overlay.tar.gz \
