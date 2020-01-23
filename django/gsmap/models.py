@@ -33,7 +33,6 @@ class Municipality(models.Model):
         ('BL', 'Basel-Landschaft'),
     ]
 
-    bfs_number = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
     canton = models.CharField(
         max_length=2,

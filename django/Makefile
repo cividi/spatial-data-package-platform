@@ -31,6 +31,9 @@ migrate:
 	$(DOCKER_EXEC) ./manage.py migrate
 	make collectstatic
 
+import-gemeinden-json:
+	jq '[.[]|{ "model": "gsmap.municipality", pk: .gemeinde.BFS_NUMMER, "fields": { name: .gemeinde.NAME, canton: .kanton.KUERZEL }}]' tmp/gemeinden.json | ./manage.py loaddata --format=json -
+
 init:
 	# docker run -it --rm -v `pwd`/var:/var/services busybox sh -c "mkdir -p /var/services/django"
 	make migrate
