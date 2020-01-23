@@ -49,8 +49,9 @@ services:
       - DJANGO_HTTPS=False
       - DJANGO_EMAIL_HOST=maildev
       - DJANGO_SECRET_KEY=adddxxccxx4rt0ioywg3yf5kjq64-t5
+    working_dir: /opt/app
     volumes:
-      - ./django:/opt/django
+      - ./django:/opt/app
       - ./var/django:/var/services/django
       - vscode-remote-django:/root/.vscode-server
     links:

@@ -3,5 +3,5 @@
 mkdir -p /var/services/run
 mkdir -p /var/services/django/log
 
-cd /opt/django
+cd /opt/app
 uvicorn main.asgi:application --port 8081 --host 0.0.0.0

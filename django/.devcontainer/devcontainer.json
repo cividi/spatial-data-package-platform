@@ -3,7 +3,7 @@
     "dockerComposeFile": "../../docker-compose.yml",
     "context": "..",
     "service": "django",
-    "workspaceFolder": "/opt/django",
+    "workspaceFolder": "/opt/app",
     "appPort": 8081,
     "shutdownAction": "none",
     "devPort": 10002,
