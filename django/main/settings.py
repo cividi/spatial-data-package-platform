@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'gsuser'
+    'gsuser',
+    'gsmap'
 ]
 
 MIDDLEWARE = [
@@ -94,8 +95,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-STATIC_ROOT = os.environ.get('DJANGO_STATIC_DIR',
-    '/var/services/django/static')
+STATIC_ROOT = os.environ.get('DJANGO_STATIC_DIR', '/var/services/django/static')
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_DIR', '/var/services/django/media')
