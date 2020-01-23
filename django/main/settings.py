@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     # third party
+    'corsheaders',
     'graphene_django',
 
     # own
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -108,3 +110,9 @@ MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_DIR', '/var/services/django/media')
 MEDIA_URL = '/media/'
 
 GRAPHENE = {'SCHEMA': 'main.schema.schema'}
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:8080", "http://localhost:8081",
+]
+CORS_ALLOW_CREDENTIALS = True

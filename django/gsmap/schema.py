@@ -18,4 +18,4 @@ class MunicipalityNode(DjangoObjectType):
 
 class Query(object):
     municipality = graphene.relay.Node.Field(MunicipalityNode)
-    all_municipalities = DjangoFilterConnectionField(MunicipalityNode)
+    municipalities = DjangoFilterConnectionField(MunicipalityNode)
