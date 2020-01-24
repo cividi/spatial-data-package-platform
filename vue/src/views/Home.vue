@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable max-len -->
   <v-container>
       <v-layout
         text-center
@@ -20,9 +21,22 @@
           return-object
           ></v-autocomplete>
           <h1>Entdecke das Lebensraum-Potential deiner Gemeinde.</h1>
-          <p>At delicatissimi pro affert iuvaret ex qui vulputate id cu altera
-            eu philosophia lorem rebum nibh adhuc. Et persequeris tantas
-            theophrastus saperet ne ex instructior doctus altera.</p>
+          <p>Der Gemeindescan ermöglicht Gemeindeverwaltungen auf einfache und
+          kosteneffiziente Weise ein Bild von Nutzungen und Nutzern in Ihrer Gemeinde
+          zu erhalten. Flächennutzung, Verkehr oder Struktur werden an einer Stelle
+          evidenzbasiert zusammengeführt.</p>
+          <p>Die Darstellungen dienen der Vorbereitung von Planungsaufgaben,
+          der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren.</p>
+        </v-flex>
+        <v-flex>
+        <div class="typeform-widget" data-url="https://cividi.typeform.com/to/vjVoPr"
+          data-transparency="50" style="width: 100%; height: 100%;"></div>
+          <div style="font-family: Sans-Serif;font-size: 12px;color: #999;opacity: 0.5; padding-top: 5px;">
+          powered by
+          <!-- eslint-disable-next-line max-len -->
+          <a href="https://admin.typeform.com/signup?utm_campaign=vjVoPr&amp;.utm_source=typeform.com-01DH3Y9W4K4NQZANA3FZ4EVVMZ-essentials&amp;.utm_medium=typeform&amp;.utm_content=typeform-embedded-poweredbytypeform&amp;.utm_term=EN"
+            style="color: #999" target="_blank">Typeform</a>
+          </div>
         </v-flex>
     </v-layout>
   </v-container>
@@ -38,6 +52,11 @@ export default {
       municipalities: [],
       isLoading: false
     };
+  },
+
+  mounted() {
+    // eslint-disable-next-line
+    (function() { var qs,js,q,s,d=document, gi=d.getElementById, ce=d.createElement, gt=d.getElementsByTagName, id="typef_orm", b="https://embed.typeform.com/"; if(!gi.call(d,id)) { js=ce.call(d,"script"); js.id=id; js.src=b+"embed.js"; q=gt.call(d,"script")[0]; q.parentNode.insertBefore(js,q) } })()
   },
 
   methods: {
