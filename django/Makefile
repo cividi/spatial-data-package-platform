@@ -21,17 +21,17 @@ runprod:
 	$(DOCKER_EXEC) uvicorn main.asgi:application --port 8081 --host 0.0.0.0
 
 adminuser:
-	$(DOCKER_EXEC) ./manage.py createsuperuser
+	$(DOCKER_EXEC) python3 manage.py createsuperuser
 
 collectstatic:
-	$(DOCKER_EXEC) ./manage.py collectstatic --noinput
+	$(DOCKER_EXEC) python3 manage.py collectstatic --noinput
 
 migrate:
-	$(DOCKER_EXEC) ./manage.py migrate
+	$(DOCKER_EXEC) python3 manage.py migrate
 	make collectstatic
 
 import-gemeinden-json:
-	curl -Ls https://datahub.io/n0rdlicht/ch-municipalities/r/gemeinden-json.json?v=1 | jq '[.[]|{ "model": "gsmap.municipality", pk: .gemeinde.BFS_NUMMER, "fields": { name: .gemeinde.NAME, canton: .kanton.KUERZEL }}]' | ./manage.py loaddata --format=json -
+	curl -Ls https://datahub.io/n0rdlicht/ch-municipalities/r/gemeinden-json.json?v=1 | jq '[.[]|{ "model": "gsmap.municipality", pk: .gemeinde.BFS_NUMMER, "fields": { name: .gemeinde.NAME, canton: .kanton.KUERZEL }}]' | python3 manage.py loaddata --format=json -
 
 init:
 	# docker run -it --rm -v `pwd`/var:/var/services busybox sh -c "mkdir -p /var/services/django"
