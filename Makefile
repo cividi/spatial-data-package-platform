@@ -7,9 +7,9 @@ init:
 up:
 	docker-compose up -d
 
-build:
-	cd django && make build
-	cd vue && make build
+build_docker:
+	cd django && make build_docker
+	cd vue && make build_docker
 
 push:
 	cd django && make push
