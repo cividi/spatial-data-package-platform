@@ -2,4 +2,5 @@ var
 tmp
 env.hosts.prod
 server.yml
+docker-prod.yml
 __pycache__/
