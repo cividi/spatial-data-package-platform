@@ -44,19 +44,24 @@
     </v-row>
   </v-container>
 </template>
-<style scoped>
+<style>
 .gmdscn {
   position: relative;
   max-width: 720px;
   margin: 0 auto;
 }
-.gemeindesuche {
+.gemeindesuche.v-select {
   position: absolute;
   top: calc(50% - 30px);
   left: 50%;
   width: 100%;
   max-width: 420px;
   transform: translateX(-50%);
+}
+.gemeindesuche.v-select.v-select--is-menu-active
+  .v-input__icon--append
+  .v-icon {
+  transform: rotate(0);
 }
 .introtxt {
   max-width: 660px;
