@@ -24,4 +24,4 @@ enter_vue:
 deploy_dev:
 	cd vue && make build
 	source env.hosts.prod && rsync -av --delete vue/dist $$DJANGO_DEV_HOST:$$DJANGO_DEV_PATH/var/vue/
-	# ssh $$DJANGO_DEV_HOST ls $$DJANGO_DEV_PATH
+	# ssh $$DJANGO_DEV_HOST make migrate
