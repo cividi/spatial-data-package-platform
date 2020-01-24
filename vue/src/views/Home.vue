@@ -8,7 +8,6 @@
         <v-flex>
           <img alt="gemeindescan logo" height="400" src="@/assets/images/gmdscn-ch-map.svg">
           <v-autocomplete
-          class="d-inline-flex pa-2"
           v-model="select"
           :items="municipalities"
           :search-input.sync="search"
