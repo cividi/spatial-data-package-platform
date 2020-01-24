@@ -12,6 +12,7 @@ if USE_HTTPS:
 
 EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST', 'maildev')
 ADMINS = os.environ.get('DJANGO_ADMINS', 'admin@local.lan').split(',')
+ADMINS = list(zip(ADMINS, ADMINS))
 MANAGERS = ADMINS
 
 if os.environ.get('DJANGO_ALLOWED_HOSTS'):

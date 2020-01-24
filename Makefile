@@ -21,7 +21,11 @@ enter_django:
 enter_vue:
 	cd vue && make enter
 
+deploy_prod:
+	cd vue && make build
+	source env.hosts.prod && rsync -av --delete vue/dist $$DJANGO_PROD_HOST:$$VUE_PROD_PATH
+
 deploy_dev:
 	cd vue && make build
-	source env.hosts.prod && rsync -av --delete vue/dist $$DJANGO_DEV_HOST:$$DJANGO_DEV_PATH/var/vue/
+	source env.hosts.prod && rsync -av --delete vue/dist $$DJANGO_DEV_HOST:$$VUE_DEV_PATH
 	# ssh $$DJANGO_DEV_HOST make migrate
