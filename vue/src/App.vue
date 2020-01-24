@@ -7,9 +7,10 @@
       </router-link>
       <v-spacer></v-spacer>
       <nav id="mainnav" class="d-none d-md-block">
-        <router-link to="/about">Hintergrund</router-link>
-        <router-link to="/imprint">Impressum</router-link>
-        <router-link to="/contact">Kontakt</router-link>
+        <router-link
+          v-for="item in mainnav"
+          :key="item.text"
+          :to="item.route">{{item.text}}</router-link>
       </nav>
       <v-spacer></v-spacer>
       <div class="useractions d-none d-sm-block">
@@ -33,16 +34,15 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <v-flex class="useractions d-sm-none center" style="border-top: 1px solid #fff3;">
-        <v-btn small text color="white">Login</v-btn>
-        <v-btn small outlined color="white">Kostenlos Account erstellen</v-btn>
+      <v-flex class="useractions d-sm-none center">
+        <v-divider></v-divider>
+        <v-btn small text color="white" class="mt-4">Login</v-btn>
+        <v-btn small outlined color="white" class="mt-4">Kostenlos Account erstellen</v-btn>
       </v-flex>
     </v-navigation-drawer>
 
     <v-content>
-      <v-container fluid>
-        <router-view/>
-      </v-container>
+      <router-view/>
     </v-content>
     <!--<v-footer app>
     </v-footer>-->
@@ -59,10 +59,7 @@
 .useractions .v-btn {
   text-transform: initial;
 }
-.v-navigation-drawer .useractions .v-btn {
-  margin-top: 1em;
-  width: calc(100% - 32px);
-}
+
 .mainnav {
 }
 

@@ -1,24 +1,26 @@
 <template>
   <!-- eslint-disable max-len -->
-  <v-container>
-      <v-layout
-        text-center
-        wrap
-      >
-        <v-flex>
-          <img alt="gemeindescan logo" height="400" src="@/assets/images/gmdscn-ch-map.svg">
+  <v-container my-12>
+      <div class="gmdscn">
+          <v-img alt="Gemeindescan Schweiz" class="" width="100%" contain src="@/assets/images/gmdscn-ch-map.svg"></v-img>
           <v-autocomplete
-          v-model="select"
-          :items="municipalities"
-          :search-input.sync="search"
-          :menu-props="menuProps"
-          item-text="node.name"
-          item-value="node.name"
-          placeholder="Suche"
-          append-icon="mdi-magnify"
-          hide-no-data
-          return-object
+            class="gemeindesuche"
+            outlined
+            placeholder="Suche"
+            append-icon="mdi-magnify"
+            background-color="white"
+            v-model="select"
+            :items="municipalities"
+            :search-input.sync="search"
+            :menu-props="menuProps"
+            item-text="node.name"
+            item-value="node.name"
+            hide-no-data
+            return-object
           ></v-autocomplete>
+      </div>
+      <v-row justify="center">
+        <v-col class="introtxt text-center py-12">
           <h1>Entdecke das Lebensraum-Potential deiner Gemeinde.</h1>
           <p>Der Gemeindescan ermöglicht Gemeindeverwaltungen auf einfache und
           kosteneffiziente Weise ein Bild von Nutzungen und Nutzern in Ihrer Gemeinde
@@ -26,8 +28,10 @@
           evidenzbasiert zusammengeführt.</p>
           <p>Die Darstellungen dienen der Vorbereitung von Planungsaufgaben,
           der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren.</p>
-        </v-flex>
-        <v-flex>
+        </v-col>
+      </v-row>
+      <v-row justify="center">
+        <v-col sm="12" md="8" lg="6">
         <div class="typeform-widget" data-url="https://cividi.typeform.com/to/vjVoPr"
           data-transparency="50" style="width: 100%; height: 100%;"></div>
           <div style="font-family: Sans-Serif;font-size: 12px;color: #999;opacity: 0.5; padding-top: 5px;">
@@ -36,10 +40,28 @@
           <a href="https://admin.typeform.com/signup?utm_campaign=vjVoPr&amp;.utm_source=typeform.com-01DH3Y9W4K4NQZANA3FZ4EVVMZ-essentials&amp;.utm_medium=typeform&amp;.utm_content=typeform-embedded-poweredbytypeform&amp;.utm_term=EN"
             style="color: #999" target="_blank">Typeform</a>
           </div>
-        </v-flex>
-    </v-layout>
+        </v-col>
+    </v-row>
   </v-container>
 </template>
+<style scoped>
+.gmdscn {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.gemeindesuche {
+  position: absolute;
+  top: calc(50% - 30px);
+  left: 50%;
+  width: 100%;
+  max-width: 420px;
+  transform: translateX(-50%);
+}
+.introtxt {
+  max-width: 660px;
+}
+</style>
 <script>
 import gql from 'graphql-tag';
 
