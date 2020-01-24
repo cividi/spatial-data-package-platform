@@ -52,8 +52,8 @@ RUN apk add \
     && apk add libstdc++ \
     && rm -rf /var/cache/apk/* /tmp/*
 
-# ADD s6/etc/services.d /etc/services.d
-# ADD s6/etc/cont-init.d /etc/cont-init.d
-# ENTRYPOINT ["/init"]
+ADD s6/etc/services.d /etc/services.d
+ADD s6/etc/cont-init.d /etc/cont-init.d
+ENTRYPOINT ["/init"]
 
 EXPOSE 8081

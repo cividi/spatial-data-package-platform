@@ -59,4 +59,5 @@ services:
     ports:
       - "8081:8081"
       - "10002:10002" # vscode
-    command: tail -f /dev/null
+    entrypoint: tail
+    command: -f /dev/null
