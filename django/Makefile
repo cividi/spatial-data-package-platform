@@ -8,7 +8,7 @@ default: dev
 enter:
 	$(DOCKER_EXEC) ash
 
-build:
+build_docker:
 	cd docker && docker build -t smartuse/gemeindescan-webui-django:$(GEMEINDESCAN_WEBUI_DJANGO) django
 
 push:
