@@ -3,6 +3,7 @@ from django.db import models
 class Municipality(models.Model):
     class Meta:
         verbose_name_plural = 'municipalities'
+        ordering = ['name']
 
     CANTONS_CHOICES = [
         ('GR', 'Graubünden'),
