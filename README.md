@@ -1,6 +1,6 @@
 # gemeindescan-webui
 
-# setup project
+## setup project
 
 Create `var` folder in project root dir, in this folder the container data (database, generated files) will be stored.
 On linux you just can create the a normal folder. For Mac/Windows it's recommended to create a var folder
@@ -68,13 +68,13 @@ maker enter_vue
 ln -s /node_modules ./
 ```
 
-# start docker containers
+### start docker containers
 
 ```bash
 make up
 ```
 
-## editor 
+### editor 
 
 The project is setup to work with visual studio code as editor. Any other editor is also fine.
 With vscode the plugins are automatically installed and linting and autocomplete works out of the box, 
@@ -85,16 +85,21 @@ You need to have installed the vscode extension `Remote - Containers` in your lo
 You need to start two editors with `code vue` and `code django` (install code command in path from vscode).
 After they started you need to click on `reopen in container` (first time start takes a bit longer to install plugins). 
 
-### vue vscode
+#### vue vscode
 
 Type `make` in the vscode terminal, that creates the node dev server on you maschine on the url [http://localhost:8080](http://localhost:8080)
 
-### django vscode
+#### django vscode
 
 Type `make` in the vscode terminal, that creates the django dev server on you maschine on the url [http://localhost:8081](http://localhost:8081)
 
-# push to docker hub
+## push to docker hub
 
 - update the version number in the Makefiles in the docker folders and `docker-compose.yml`
 - `make build` for all images in the root, or in the django or vue subfolders, this builds the docker images
 - `make push` for all images in the root, or in the django or vue subfolders, this uploads the docker images to docker hub
+
+## additional docs
+
+- [grahpql](/docs/graphql.md)
+- [architecture](/docs/architecture.md)
