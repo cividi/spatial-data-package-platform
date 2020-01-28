@@ -12,12 +12,12 @@ import vuetify from './plugins/vuetify';
 require('@/assets/styles/main.css');
 
 Vue.config.productionTip = false;
-const httpLink = new HttpLink({
-  uri: 'http://localhost:8081/graphql/'
+const apiLink = new HttpLink({
+  uri: process.env.VUE_APP_GRAPHQL_URI
 });
 
 const apolloClient = new ApolloClient({
-  link: httpLink,
+  link: apiLink,
   cache: new InMemoryCache()
   // connectToDevTools: true
 });

@@ -21,10 +21,11 @@ push:
 	docker push smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE)
 
 dev:
-	$(DOCKER_EXEC) yarn serve
+	$(DOCKER_EXEC) NODE_ENV=development yarn serve
 
 build:
-	$(DOCKER_EXEC) yarn build
+	$(DOCKER_EXEC) NODE_ENV=production yarn build --mode production
+	$(DOCKER_EXEC) cp -Ra dist /var/services/django/static/
 
 build-dev-watch:
 	$(DOCKER_EXEC) yarn build --mode development --watch
