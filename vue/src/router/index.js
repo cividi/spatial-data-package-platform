@@ -24,6 +24,12 @@ const routes = [
     path: '/contact',
     name: 'contact',
     component: () => import('@/views/Contact.vue')
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: () => import('@/views/Signup.vue'),
+    props: { gemeinde: '' }
   }
 ];
 

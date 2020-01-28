@@ -14,8 +14,12 @@
       </nav>
       <v-spacer></v-spacer>
       <div class="useractions d-none d-sm-block">
-        <v-btn small text color="primary">Login</v-btn>
-        <v-btn small outlined color="primary">Kostenlos Account erstellen</v-btn>
+        <v-btn small text color="primary">
+          <router-link to="/singup">Login</router-link>
+        </v-btn>
+        <v-btn small outlined color="primary">
+          <router-link key="signup" to="/signup">Kostenlos Account erstellen</router-link>
+        </v-btn>
       </div>
       <v-app-bar-nav-icon @click="mobnav=!mobnav" class="d-md-none"></v-app-bar-nav-icon>
     </v-app-bar>
@@ -60,16 +64,9 @@
   text-transform: initial;
 }
 
-.mainnav {
-}
-
 #mainnav a {
   color: #000;
   margin: 0 0.5em;
-}
-
-#mainnav a.router-link-exact-active {
-  /* color: #42b983; */
 }
 </style>
 <script>
