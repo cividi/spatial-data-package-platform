@@ -28,6 +28,7 @@ services:
     working_dir: /opt/vue
     volumes:
       - ./vue:/opt/vue
+      - ./var/django:/var/services/django
       - vscode-remote-vue:/root/.vscode-server
     ports:
       - "8080:8080"
@@ -49,6 +50,7 @@ services:
       - DJANGO_HTTPS=False
       - DJANGO_EMAIL_HOST=maildev
       - DJANGO_SECRET_KEY=adddxxccxx4rt0ioywg3yf5kjq64-t5
+      # - DJANGO_ALLOWED_HOSTS=gemeindescan.lan,localhost
     working_dir: /opt/app
     volumes:
       - ./django:/opt/app
@@ -61,3 +63,14 @@ services:
       - "10002:10002" # vscode
     entrypoint: tail
     command: -f /dev/null
+
+  # static:
+  #   image: busybox
+  #   hostname: static
+  #   volumes:
+  #     - ./var/django:/var/services/django
+  #   ports:
+  #     - 8082:80
+  #   # command: sleep infinity
+  #   command: busybox httpd -f -v -h /var/services/django
+
