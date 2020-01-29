@@ -4,11 +4,11 @@
         wrap
       >
         <v-flex>
-          <h1>Account erstellen</h1>
           <v-row justify="center">
               <v-col sm="12" md="8" lg="6">
-              <div class="typeform-widget" :data-url="dataurl"
-                data-transparency="50" style="width: 100%; height:500px"></div>
+                <h1>Account erstellen</h1>
+                <div class="typeform-widget" :data-url="dataurl"
+                  data-transparency="50" style="width: 100%; height:500px"></div>
                 <div style="font-family: Sans-Serif;font-size: 12px;
                   color: #999;opacity: 0.5; padding-top: 5px;">
                 <!-- eslint-disable-next-line max-len -->
