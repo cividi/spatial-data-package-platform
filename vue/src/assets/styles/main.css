@@ -1,4 +1,4 @@
-*{
+* {
   margin: 0;
   padding: 0;
   border: 0 none;
@@ -43,4 +43,8 @@ a {
 
 .center {
   text-align: center;
+}
+
+.v-application {
+    font-family: "Open Sans", sans-serif;
 }
