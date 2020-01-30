@@ -11,6 +11,17 @@ const routes = [
     component: Home
   },
   {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/Login.vue')
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: () => import('@/views/Signup.vue'),
+    props: { bfsnumber: '' }
+  },
+  {
     path: '/about',
     name: 'about',
     component: () => import('@/views/About.vue')
@@ -24,12 +35,6 @@ const routes = [
     path: '/contact',
     name: 'contact',
     component: () => import('@/views/Contact.vue')
-  },
-  {
-    path: '/signup',
-    name: 'signup',
-    component: () => import('@/views/Signup.vue'),
-    props: { bfsnumber: '' }
   }
 ];
 
