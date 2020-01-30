@@ -29,7 +29,7 @@ const routes = [
     path: '/signup',
     name: 'signup',
     component: () => import('@/views/Signup.vue'),
-    props: { gemeinde: '' }
+    props: { bfsnumber: '' }
   }
 ];
 

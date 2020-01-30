@@ -27,8 +27,8 @@ export default {
 
   computed: {
     dataurl() {
-      if (this.$route.params.gemeinde) {
-        return `//cividi.typeform.com/to/vjVoPr?bfs_gmdno=${this.$route.params.gemeinde}`;
+      if (this.$route.params.bfsnumber) {
+        return `//cividi.typeform.com/to/vjVoPr?bfs_gmdno=${this.$route.params.bfsnumber}`;
       }
       return '//cividi.typeform.com/to/vjVoPr';
     }

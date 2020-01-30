@@ -13,8 +13,8 @@
             :items="municipalities"
             :search-input.sync="search"
             :menu-props="menuProps"
-            item-text="node.name"
-            item-value="node.name"
+            item-text="node.fullname"
+            item-value="node.bfsNumber"
             hide-no-data
             return-object
             v-on:keyup.enter="submitMunicipality()"
@@ -76,7 +76,7 @@ export default {
           municipalities(name_Icontains: $q) {
             edges {
               node {
-                name
+                bfsNumber, fullname
               }
             }
           }
@@ -89,7 +89,7 @@ export default {
     },
 
     submitMunicipality() {
-      this.$router.push({ name: 'signup', params: { gemeinde: this.search } });
+      this.$router.push({ name: 'signup', params: { bfsnumber: this.select.node.bfsNumber } });
     }
   },
 

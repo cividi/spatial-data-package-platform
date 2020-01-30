@@ -40,5 +40,9 @@ class Municipality(models.Model):
         choices=CANTONS_CHOICES
     )
 
+    @property
+    def fullname(self):
+        return f'{self.name} ({self.canton})'
+
     def __str__(self):
         return self.name

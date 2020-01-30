@@ -14,6 +14,7 @@ class MunicipalityNode(DjangoObjectType):
         interfaces = (graphene.relay.Node, )
 
     bfs_number = graphene.Int(source='pk')
+    fullname = graphene.String(source='fullname')
 
 
 class Query(object):
