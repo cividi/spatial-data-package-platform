@@ -15,7 +15,7 @@
       <v-spacer></v-spacer>
       <div class="useractions d-none d-sm-block">
         <v-btn small text color="primary">
-          <router-link to="/signup">Login</router-link>
+          <router-link to="/login">Login</router-link>
         </v-btn>
         <v-btn small outlined color="primary">
           <router-link key="signup" to="/signup">Kostenlos Account erstellen</router-link>
@@ -40,8 +40,12 @@
       </v-list>
       <v-flex class="useractions d-sm-none center">
         <v-divider></v-divider>
-        <v-btn small text color="white" class="mt-4">Login</v-btn>
-        <v-btn small outlined color="white" class="mt-4">Kostenlos Account erstellen</v-btn>
+        <v-btn small text color="white" class="mt-4">
+          <router-link to="/login">Login</router-link>
+        </v-btn>
+        <v-btn small outlined color="white" class="mt-4">
+          <router-link key="signup" to="/signup">Kostenlos Account erstellen</router-link>
+        </v-btn>
       </v-flex>
     </v-navigation-drawer>
 
