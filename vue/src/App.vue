@@ -15,7 +15,7 @@
       <v-spacer></v-spacer>
       <div class="useractions d-none d-sm-block">
         <v-btn small text color="primary">
-          <router-link to="/singup">Login</router-link>
+          <router-link to="/signup">Login</router-link>
         </v-btn>
         <v-btn small outlined color="primary">
           <router-link key="signup" to="/signup">Kostenlos Account erstellen</router-link>
