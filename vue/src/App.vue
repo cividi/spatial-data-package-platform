@@ -24,7 +24,8 @@
       <v-app-bar-nav-icon @click="mobnav=!mobnav" class="d-md-none"></v-app-bar-nav-icon>
     </v-app-bar>
 
-    <v-navigation-drawer right app dark color="primary" v-model="mobnav" disable-resize-watcher>
+    <v-navigation-drawer
+      right app dark color="primary" class="mobnav" v-model="mobnav" disable-resize-watcher>
       <v-toolbar flat color="primary">
         <v-spacer></v-spacer>
         <v-btn icon large @click="mobnav=!mobnav">
@@ -72,7 +73,12 @@
   color: #000;
   margin: 0 0.5em;
 }
+
+.v-application .mobnav a {
+  color: #fff;
+}
 </style>
+
 <script>
 export default {
   data() {
