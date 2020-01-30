@@ -30,8 +30,11 @@ migrate:
 	$(DOCKER_EXEC) python3 manage.py migrate
 	make collectstatic
 
+delete-gemeinden-django:
+	$(DOCKER_EXEC) python3 manage.py shell --command="from gsmap.models import Municipality;Municipality.objects.all().delete()"
+
 import-gemeinden-json:
-	curl -Ls https://datahub.io/n0rdlicht/ch-municipalities/r/gemeinden-json.json?v=1 | jq '[.[]|{ "model": "gsmap.municipality", pk: .gemeinde.BFS_NUMMER, "fields": { name: .gemeinde.NAME, canton: .kanton.KUERZEL }}]' | python3 manage.py loaddata --format=json -
+	curl -Ls https://datahub.io/n0rdlicht/ch-municipalities/r/0.json | jq '[.[]|{ "model": "gsmap.municipality", pk: .gemeinde.BFS_NUMMER, "fields": { name: .gemeinde.NAME, canton: .kanton.KUERZEL }}]' | python3 manage.py loaddata --format=json -
 
 init:
 	# docker run -it --rm -v `pwd`/var:/var/services busybox sh -c "mkdir -p /var/services/django"
