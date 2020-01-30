@@ -17,7 +17,7 @@
             item-value="node.bfsNumber"
             hide-no-data
             return-object
-            v-on:keyup.enter="submitMunicipality()"
+            v-on:change="submitMunicipality()"
           ></v-autocomplete>
       </div>
       <v-row justify="center">
@@ -89,7 +89,9 @@ export default {
     },
 
     submitMunicipality() {
-      this.$router.push({ name: 'signup', params: { bfsnumber: this.select.node.bfsNumber } });
+      if (this.select.node.bfsNumber) {
+        this.$router.push({ name: 'signup', params: { bfsnumber: this.select.node.bfsNumber } });
+      }
     }
   },
 
