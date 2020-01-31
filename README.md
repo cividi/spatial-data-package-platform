@@ -99,6 +99,10 @@ Type `make` in the vscode terminal, that creates the django dev server on you ma
 - `make build` for all images in the root, or in the django or vue subfolders, this builds the docker images
 - `make push` for all images in the root, or in the django or vue subfolders, this uploads the docker images to docker hub
 
+## deploy
+
+Type `make deploy_prod` in the project root. The file `env.hosts.prod` needs to have the right settings.
+
 ## additional docs
 
 - [grahpql](/docs/graphql.md)
