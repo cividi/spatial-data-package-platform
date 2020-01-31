@@ -4,6 +4,7 @@
       <div class="gmdscn">
           <v-img alt="Gemeindescan Schweiz" class="" width="100%" contain src="@/assets/images/gmdscn-ch-map.svg"></v-img>
           <v-autocomplete
+            ref="search"
             class="gemeindesuche"
             outlined
             placeholder="Suche"
@@ -106,6 +107,10 @@ export default {
       const result = await this.queryMunicipalities(val);
       this.municipalities = result.data.municipalities.edges;
     }
+  },
+
+  mounted() {
+    this.$refs.search.focus();
   }
 };
 </script>
