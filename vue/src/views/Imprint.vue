@@ -1,5 +1,5 @@
 <template>
-  <v-container my-6>
+  <v-container my-6 class="content">
       <v-layout
         wrap
       >
@@ -42,9 +42,9 @@
             grundsätzlich der Fall, wenn die jeweilige Sitzung beendet ist.
           </p>
 
-          <h2>
+          <h3>
             Formulare und Newsletterdaten
-          </h2>
+          </h3>
           <p>
             Wenn Sie unser Formular ausfüllen, werden Ihre Daten sprich
             E-Mail Adresse, Organisation, Ort, Name, Zweck eurem Besuch sowie Zeitpunkt
@@ -58,9 +58,9 @@
             Erst danach werden Sie in die Newsletter-Datenbank übernommen.
           </p>
 
-          <h2>
+          <h3>
             MailChimp
-          </h2>
+          </h3>
           <p>
             Unsere Newsletter werden mit „MailChimp” versendet
             (Newsletterversandplattform von der Rocket Science Group,
@@ -75,9 +75,9 @@
             <a href="https://mailchimp.com/legal/" target="_blank">hier</a> nachlesen.
           </p>
 
-          <h2>
+          <h3>
             Typeform
-          </h2>
+          </h3>
           <p>
             Unsere Formulare werden mit Typeform (C/ Bac de Roda 163, Local 1, Barcelona,
             Catalunya 08018, ES) entwickelt.
@@ -93,9 +93,9 @@
             <a href="https://admin.typeform.com/to/L9Crcj" target="_blank">hier</a> nachlesen.
           </p>
 
-          <h2>
+          <h3>
             Google Analytics
-          </h2>
+          </h3>
           <p>
             Diese Website benutzt Google Analytics, einen Webanalysedienst der Google LLC,
             1600 Amphitheatre Parkway, Mountain View, CA 94043 USA (nachfolgend: „Google”).
@@ -117,18 +117,18 @@
             zusammengeführt.
           </p>
 
-          <h2>
+          <h3>
             SSL-Verschlüsselung
-          </h2>
+          </h3>
           <p>
             Um die Sicherheit eurer Daten bei der Übertragung zu schützen,
             verwenden wir dem aktuellen Stand der Technik entsprechende Verschlüsselungsverfahren
             (z. B. SSL) über HTTPS.
           </p>
 
-          <h2>
+          <h3>
             Sonstiges
-          </h2>
+          </h3>
           <p>
             Wir können diese Datenschutzerklärung jederzeit ohne Vorankündigung anpassen.
             Es gilt die jeweils aktuelle, auf dieser Website publizierte Fassung.

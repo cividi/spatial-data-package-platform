@@ -1,5 +1,5 @@
 <template>
-  <v-container my-6>
+  <v-container my-6 class="content">
       <v-layout
         wrap
       >
@@ -15,8 +15,9 @@
             8048 Zürich
           </p>
           <p>
-            Die Gemeindescan-Plattform ist Open Source und Open Development.
-            Zum Gemeindescan beitragen: https://bitbucket.org/cividi/gemeindescan-webui/
+            Die Gemeindescan-Plattform ist Open Source und Open Development.<br>
+            Zum Gemeindescan beitragen: <a href="https://bitbucket.org/cividi/gemeindescan-webui/" target="_blank">
+              https://bitbucket.org/cividi/gemeindescan-webui/</a>
           </p>
           <p>
             Gemeindescan ist Teil der Smartuse-Produktfamilie von cividi.

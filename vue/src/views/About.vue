@@ -1,5 +1,5 @@
 <template>
-  <v-container my-6>
+  <v-container my-6 class="content">
       <v-layout
         wrap
       >
