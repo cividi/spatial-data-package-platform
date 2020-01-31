@@ -48,3 +48,7 @@ a {
 .v-application {
     font-family: "Open Sans", sans-serif;
 }
+
+.content {
+  max-width: 660px;
+}

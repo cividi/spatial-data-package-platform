@@ -6,9 +6,11 @@ The latest supported release is [TBD]
 
 You can download the latest updates from https://bitbucket.org/cividi/gemeindescan-webui/src
 
-## Release information
+## Sprint 0: Project setup
 
-- [Sprint 0: Project setup](https://bitbucket.org/cividi/gemeindescan-webui/issues?status=new&status=open&milestone=Sprint%200%3A%20Project%20setup) - until 10.1.2020
+[Bitbucket issues](https://bitbucket.org/cividi/gemeindescan-webui/issues?status=new&status=open&milestone=Sprint%200%3A%20Project%20setup) - until 10.1.2020
+
+TODO: what is in this release, bullet points.
 
 ## See also
 
