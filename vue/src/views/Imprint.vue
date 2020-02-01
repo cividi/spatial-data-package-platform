@@ -19,7 +19,7 @@
             Datenschutzerklärung
           </h2>
           <p>
-            Diese Webseite und ihr Inhalt wird durch <em>cividi GmbH</em> gestellt.
+            Diese Webseite und ihr Inhalt wird durch Smartuse GmbH gestellt.
             Der Schutz Ihrer persönlichen Daten ist uns wichtig und wir behandeln
             personenbezogenen Daten vertraulich und entsprechend der gesetzlichen
             Datenschutzvorschriften sowie dieser Datenschutzerklärung.
@@ -118,12 +118,12 @@
           </p>
 
           <h3>
-            SSL-Verschlüsselung
+            TLS-Verschlüsselung
           </h3>
           <p>
             Um die Sicherheit eurer Daten bei der Übertragung zu schützen,
             verwenden wir dem aktuellen Stand der Technik entsprechende Verschlüsselungsverfahren
-            (z. B. SSL) über HTTPS.
+            (z.B. TLS) über HTTPS.
           </p>
 
           <h3>
@@ -139,6 +139,9 @@
             Flüelastrasse 10<br>
             8048 Zürich<br>
             <a href="mailto:legal@cividi.ch">legal@cividi.ch</a>
+          </p>
+          <p>
+            Zürich, 01.02.2020
           </p>
         </v-flex>
     </v-layout>
