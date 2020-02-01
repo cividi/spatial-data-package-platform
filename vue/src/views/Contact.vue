@@ -17,20 +17,25 @@
           <p>
             Die Gemeindescan-Plattform ist Open Source und Open Development.<br>
             Zum Gemeindescan beitragen: <a href="https://bitbucket.org/cividi/gemeindescan-webui/" target="_blank">
-              https://bitbucket.org/cividi/gemeindescan-webui/</a>
+              Bitbucket Projekt</a>
           </p>
           <p>
-            Gemeindescan ist Teil der Smartuse-Produktfamilie von cividi.
+            Gemeindescan ist Teil der <a href="https://www.smartuse.ch" target="_blank"><img src="@/assets/images/logo-smartuse.svg" height="28px" style="margin-bottom:-8px;"></a>-Produktfamilie von cividi.
           </p>
           <p>
             cividi - digitale Werkzeuge für die analoge Stadt.
           </p>
+
           <a href="https://www.cividi.ch" target="_blank" style="padding-right:40px">
             <img src="@/assets/images/logo-cividi.svg" width="250px">
           </a>
-          <a href="https://www.smartuse.ch" target="_blank">
-            <img src="@/assets/images/logo-smartuse.svg" width="250px">
-          </a>
+
+          <p><small>Das Pionierprojekt wird ermöglicht<br>durch <a href="https://www.engagement-migros.ch/" target="_blank">Engagement Migros</a>,
+          dem<br>Förderfonds der Migros-Gruppe.</small>
+          </p>
+
+          <a href="https://www.engagement-migros.ch/" target="_blank"><img src="@/assets/images/EngagementM_d_rgb.png" width="220px"></a>
+
         </v-flex>
     </v-layout>
   </v-container>
