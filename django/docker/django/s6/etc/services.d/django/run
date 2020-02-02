@@ -4,4 +4,9 @@ mkdir -p /var/services/run
 mkdir -p /var/services/django/log
 
 cd /opt/app
-uvicorn main.asgi:application --port 8081 --host 0.0.0.0
+# uvicorn main.asgi:application --port 8081 --host 0.0.0.0
+gunicorn \
+-w 4 -b 0.0.0.0:8081 \
+--error-logfile /var/services/django/log/gunicorn.error.log \
+-k uvicorn.workers.UvicornWorker \
+main.asgi:application
