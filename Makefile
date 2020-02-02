@@ -37,3 +37,8 @@ deploy_dev:
 	source env.hosts.prod && ssh $$DJANGO_DEV_HOST -t "cd $$DJANGO_DEV_PATH && COMPOSE_FILE=$$COMPOSE_DEV docker-compose exec django ls"
 	source env.hosts.prod && ssh $$DJANGO_DEV_HOST -t "cd $$DJANGO_DEV_PATH && COMPOSE_FILE=$$COMPOSE_DEV docker-compose exec django killall -TERM uvicorn"
 
+ab-graphql:
+	ab -p tests/graphql-autocomplete-post.json -T application/json -c 10 -n 2000 http://gemeindescan.ch/graphql/
+
+ab-html:
+	ab -c 10 -n 2000 http://gemeindescan.ch/

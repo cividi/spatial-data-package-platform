@@ -1,0 +1,1 @@
+json='{"operationName":"getmunicipalities","variables":{"q":"z"},"query":"query getmunicipalities($q: String!) {\n  municipalities(name_Icontains: $q) {\n    edges {\n      node {\n        bfsNumber\n        fullname\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n"}'
