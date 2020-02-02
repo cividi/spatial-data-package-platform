@@ -34,7 +34,7 @@
           dem<br>Förderfonds der Migros-Gruppe.</small>
           </p>
 
-          <a href="https://www.engagement-migros.ch/" target="_blank"><img src="@/assets/images/EngagementM_d_rgb.png" width="220px"></a>
+          <a href="https://www.engagement-migros.ch/" target="_blank"><img src="@/assets/images/EngagementM_d_rgb.jpg" width="220px"></a>
 
         </v-flex>
     </v-layout>
