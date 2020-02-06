@@ -141,7 +141,7 @@
             <a href="mailto:legal@cividi.ch">legal@cividi.ch</a>
           </p>
           <p>
-            Zürich, 01.02.2020
+            Zürich, 02.02.2020
           </p>
         </v-flex>
     </v-layout>

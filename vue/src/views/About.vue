@@ -11,7 +11,7 @@
           Indikatoren werden an einer Stelle evidenzbasiert zusammengeführt.
           Die Darstellungen dienen der Vorbereitung von Planungsaufgaben,
           der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren.</p>
-          <p>Der Gemeindescan ist ein <a href="https://smartuse.ch/" target="_blank">Smartuse</a> Produkt.</p>
+          <p>Der Gemeindescan ist eine <a href="https://cividi.ch/" target="_blank">cividi</a> Anwendung.</p>
         </v-flex>
     </v-layout>
   </v-container>

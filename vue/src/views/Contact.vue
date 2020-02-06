@@ -20,9 +20,6 @@
               Bitbucket Projekt</a>
           </p>
           <p>
-            Gemeindescan ist Teil der <a href="https://www.smartuse.ch" target="_blank"><img src="@/assets/images/logo-smartuse.svg" height="28px" style="margin-bottom:-8px;"></a>-Produktfamilie von cividi.
-          </p>
-          <p>
             cividi - digitale Werkzeuge für die analoge Stadt.
           </p>
 
