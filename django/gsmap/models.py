@@ -54,20 +54,26 @@ class Municipality(models.Model):
         return self.name
 
 
+def create_slug_hash():
+    alphabet = string.ascii_uppercase + string.digits
+    hash_length = 6
+    return ''.join(secrets.choice(alphabet) for i in range(hash_length))
+
+
 class Snapshot(models.Model):
     # created?
-    slug_hash = models.CharField(max_length=8, unique=True)
-    data = pg_fields.JSONField()
-    screenshot = ImageField(upload_to='snapshot-screenshots')
+    slug_hash = models.CharField(max_length=8,
+                                 unique=True,
+                                 default=create_slug_hash)
     archived = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
+    data = pg_fields.JSONField(default={})
+    screenshot = ImageField(upload_to='snapshot-screenshots')
     predecessor = models.ForeignKey(
         'self', default=None, blank=True,
         null=True, on_delete=models.SET_NULL
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    def _create_slug_hash(self):
-        alphabet = string.ascii_uppercase + string.digits
-        hash_length = 6
-        return ''.join(secrets.choice(alphabet) for i in range(hash_length))
+    def __str__(self):
+        return self.slug_hash
