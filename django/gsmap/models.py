@@ -1,4 +1,10 @@
+import secrets
+import string
 from django.db import models
+from django.contrib.postgres import fields as pg_fields
+from sorl.thumbnail import ImageField
+from gsuser.models import User
+
 
 class Municipality(models.Model):
     class Meta:
@@ -46,3 +52,22 @@ class Municipality(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Snapshot(models.Model):
+    # created?
+    slug_hash = models.CharField(max_length=8, unique=True)
+    data = pg_fields.JSONField()
+    screenshot = ImageField(upload_to='snapshot-screenshots')
+    archived = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
+    predecessor = models.ForeignKey(
+        'self', default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def _create_slug_hash(self):
+        alphabet = string.ascii_uppercase + string.digits
+        hash_length = 6
+        return ''.join(secrets.choice(alphabet) for i in range(hash_length))
