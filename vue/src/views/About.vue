@@ -11,7 +11,7 @@
           Indikatoren werden an einer Stelle evidenzbasiert zusammengeführt.
           Die Darstellungen dienen der Vorbereitung von Planungsaufgaben,
           der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren.</p>
-          <p>Der Gemeindescan ist eine <a href="https://cividi.ch/" target="_blank">cividi</a> Anwendung.</p>
+          <p>Der Gemeindescan ist eine <a href="https://cividi.ch/" target="_blank">cividi</a> Anwendung, die in Zusammenarbeit mit <a href="https://taywa.ch" target="_blank">Taywa</a> entwickelt wird.</p>
         </v-flex>
     </v-layout>
   </v-container>

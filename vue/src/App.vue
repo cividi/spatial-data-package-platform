@@ -18,7 +18,7 @@
           <router-link to="/login">Login</router-link>
         </v-btn>
         <v-btn small outlined color="primary">
-          <router-link key="signup" to="/signup">Kostenlosen Account erstellen</router-link>
+          <router-link key="signup" to="/signup">Unverbindliche Anfrage</router-link>
         </v-btn>
       </div>
       <v-app-bar-nav-icon @click="mobnav=!mobnav" class="d-md-none"></v-app-bar-nav-icon>
@@ -43,9 +43,9 @@
         <v-divider></v-divider>
         <v-btn small text color="white" class="mt-4">
           <router-link to="/login">Login</router-link>
-        </v-btn>
+        </v-btn><br>
         <v-btn small outlined color="white" class="mt-4">
-          <router-link key="signup" to="/signup">Kostenlosen Account erstellen</router-link>
+          <router-link key="signup" to="/signup">Unverbindliche Anfrage</router-link>
         </v-btn>
       </v-flex>
     </v-navigation-drawer>
