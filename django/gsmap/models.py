@@ -67,7 +67,7 @@ class Snapshot(models.Model):
                                  default=create_slug_hash)
     archived = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
-    data = pg_fields.JSONField(default={})
+    data = pg_fields.JSONField(default=dict)
     screenshot = ImageField(upload_to='snapshot-screenshots')
     predecessor = models.ForeignKey(
         'self', default=None, blank=True,

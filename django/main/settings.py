@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     # third party
     'corsheaders',
     'graphene_django',
+    'sorl.thumbnail',
 
     # own
     'gsuser',
