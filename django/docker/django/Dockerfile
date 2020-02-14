@@ -1,4 +1,4 @@
-FROM alpine:3.10
+FROM alpine:3.11
 MAINTAINER Yves Serrano <ys@taywa.ch>
 ARG S6_OVERLAY_VERSION=v1.22.1.0
 # https://github.com/just-containers/s6-overlay
@@ -11,6 +11,9 @@ RUN apk add --update \
         curl \
         libpq \
         python3 \
+        py3-pillow \
+        py3-gunicorn \
+        py3-psycopg2 \
         libressl \
         make \
         jq
@@ -33,7 +36,6 @@ RUN apk add \
         yaml-dev \
         g++ \
         gcc \
-        postgresql-dev \
         libressl-dev \
     && pip3 install -r /tmp/requirements.txt \
     && apk del \
@@ -47,7 +49,6 @@ RUN apk add \
         yaml-dev \
         g++ \
         gcc \
-        postgresql-dev \
         libressl-dev \
     && apk add libstdc++ \
     && rm -rf /var/cache/apk/* /tmp/*
