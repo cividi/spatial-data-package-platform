@@ -1,4 +1,20 @@
-# gemeindescan-webui
+# Gemeindescan Web UI
+
+Web application under heavy development. For more information, please visit https://cividi.ch
+
+The current tech stack of this project is:
+
+- Vuetify
+- Vue.js
+- GraphQL
+- Graphene
+- Django
+- Wagtail
+- Docker
+
+# Developer guide
+
+:construction:
 
 ## setup project
 
@@ -53,7 +69,7 @@ make up
 make init
 ```
 
-if `make init` doesn't work you can execute the commands one by one. 
+if `make init` doesn't work you can execute the commands one by one.
 
 ```bash
 # go into django container
@@ -74,16 +90,16 @@ ln -s /node_modules ./
 make up
 ```
 
-### editor 
+### editor
 
 The project is setup to work with visual studio code as editor. Any other editor is also fine.
-With vscode the plugins are automatically installed and linting and autocomplete works out of the box, 
-with the data from inside the container. 
+With vscode the plugins are automatically installed and linting and autocomplete works out of the box,
+with the data from inside the container.
 
-You need to have installed the vscode extension `Remote - Containers` in your local vscode installation. 
+You need to have installed the vscode extension `Remote - Containers` in your local vscode installation.
 
 You need to start two editors with `code vue` and `code django` (install code command in path from vscode).
-After they started you need to click on `reopen in container` (first time start takes a bit longer to install plugins). 
+After they started you need to click on `reopen in container` (first time start takes a bit longer to install plugins).
 
 #### vue vscode
 
