@@ -61,7 +61,7 @@ def create_slug_hash():
 
 
 class Snapshot(models.Model):
-    # created?
+    created = models.DateTimeField(auto_now_add=True)
     slug_hash = models.CharField(max_length=8,
                                  unique=True,
                                  default=create_slug_hash)
@@ -71,6 +71,10 @@ class Snapshot(models.Model):
     screenshot = ImageField(upload_to='snapshot-screenshots')
     predecessor = models.ForeignKey(
         'self', default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+    municipality = models.ForeignKey(
+        Municipality, default=None, blank=True,
         null=True, on_delete=models.SET_NULL
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
