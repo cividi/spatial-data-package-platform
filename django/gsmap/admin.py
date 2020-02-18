@@ -16,9 +16,11 @@ class SnapshotAdmin(admin.ModelAdmin):
             'fields': ('created', 'slug_hash', 'archived', 'deleted')
         }),
         (_('Main'), {
-            'fields': ('data', 'screenshot', 'predecessor', 'user'),
+            'fields':
+            ('data', 'screenshot', 'municipality', 'predecessor', 'user'),
         }),
     )
+    list_display = ('created', 'slug_hash')
 
 
 admin.site.register(Municipality, MunicipalityAdmin)
