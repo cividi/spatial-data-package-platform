@@ -105,6 +105,8 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+FORMAT_MODULE_PATH = 'main.formats'
+
 STATIC_ROOT = os.environ.get('DJANGO_STATIC_DIR', '/var/services/django/static')
 STATIC_URL = '/static/'
 
