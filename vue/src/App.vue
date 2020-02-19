@@ -32,10 +32,8 @@
           :key="item.textKey"
           :to="'/' + $i18n.locale + item.route">{{ $t(item.textKey) }}</router-link>
       </nav>
-      <nav id="langnav">
-        <language-switch/>
-      </nav>
       <v-spacer></v-spacer>
+      <div class="d-none d-md-block"><language-switch/></div>
       <div class="useractions d-none d-sm-block">
         <v-btn small text color="primary">
           <router-link :to="'/' + $i18n.locale + '/login'">{{ $t('loginText') }}</router-link>
@@ -51,12 +49,13 @@
 
     <v-navigation-drawer
       right app dark color="primary" class="mobnav" v-model="mobnav" disable-resize-watcher>
-      <v-toolbar flat color="primary">
+      <v-toolbar flat color="primary" class="mx-2">
         <v-spacer></v-spacer>
         <v-btn icon large @click="mobnav=!mobnav">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
+      <div class="text-right mx-2"><language-switch expanded="1" /></div>
       <v-list color="primary">
         <v-list-item
           v-for="item in mainnav" :key="item.textKey"
