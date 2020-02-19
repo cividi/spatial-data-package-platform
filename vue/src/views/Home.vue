@@ -29,7 +29,8 @@
   <!-- eslint-disable max-len -->
   <v-container my-12>
       <div class="gmdscn">
-          <v-img :alt="$t('img.1.alt')" class="" width="100%" contain src="@/assets/images/gmdscn-ch-map.svg"></v-img>
+          <img :alt="$t('img.1.alt')" class="" width="100%"
+            src="@/assets/images/gmdscn-ch-map.svg"/>
           <v-autocomplete
             ref="search"
             class="gemeindesuche"
