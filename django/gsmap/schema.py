@@ -46,12 +46,13 @@ class ImageNode(graphene.ObjectType):
             size=size
         )
 
-
 class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
         fields = ['slug_hash', 'data', 'screenshot']
-        filter_fields = ['slug_hash']
+        filter_fields = {
+            'slug_hash': ['exact']
+        }
         interfaces = [graphene.relay.Node]
 
     data = generic.GenericScalar(source='data')

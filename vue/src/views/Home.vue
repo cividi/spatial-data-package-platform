@@ -20,6 +20,7 @@
 }
 </i18n>
 <!-- eslint-enable -->
+
 <template>
   <!-- eslint-disable max-len -->
   <v-container my-12>
@@ -52,6 +53,7 @@
       </v-row>
   </v-container>
 </template>
+
 <style>
 .gmdscn {
   position: relative;
@@ -75,6 +77,7 @@
   max-width: 660px;
 }
 </style>
+
 <script>
 import gql from 'graphql-tag';
 
