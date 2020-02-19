@@ -24,3 +24,26 @@ The `MunicipalityNode` has the fields
 - name: String!
 - canton: MunicipalityCanton!, enum
 - bfsNumber: Int
+
+### snapshots
+
+#### all
+
+```graphql
+{
+  snapshots {
+    edges {
+      node {
+        id
+        data
+        slugHash
+        screenshot {
+          url
+        }
+      }
+    }
+  }
+}
+```
+
+
