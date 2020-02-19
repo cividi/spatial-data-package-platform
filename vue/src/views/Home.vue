@@ -1,3 +1,25 @@
+<!-- eslint-disable -->
+<i18n>
+{
+  "de": {
+    "placeholder.autocomplete": "Suche",
+    "h1.1": "Entdecke das Lebensraum-Potential deiner Gemeinde.",
+    "p.1":
+      "Der Gemeindescan ermöglicht Gemeindeverwaltungen auf einfache und kosteneffiziente Weise ein Bild von Nutzungen und Nutzern in Ihrer Gemeinde zu erhalten. Flächennutzung, Verkehr oder Struktur werden an einer Stelle evidenzbasiert zusammengeführt.",
+    "p.2":
+      "Die Darstellungen dienen der Vorbereitung von Planungsaufgaben, der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren."
+  },
+  "fr": {
+    "placeholder.autocomplete": "(FR) Suche",
+    "h1.1": "(FR) Entdecke das Lebensraum-Potential deiner Gemeinde.",
+    "p.1":
+      "(FR) Der Gemeindescan ermöglicht Gemeindeverwaltungen auf einfache und kosteneffiziente Weise ein Bild von Nutzungen und Nutzern in Ihrer Gemeinde zu erhalten. Flächennutzung, Verkehr oder Struktur werden an einer Stelle evidenzbasiert zusammengeführt.",
+    "p.2":
+      "(FR) Die Darstellungen dienen der Vorbereitung von Planungsaufgaben, der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren."
+  }
+}
+</i18n>
+<!-- eslint-enable -->
 <template>
   <!-- eslint-disable max-len -->
   <v-container my-12>
@@ -7,7 +29,7 @@
             ref="search"
             class="gemeindesuche"
             outlined
-            placeholder="Suche"
+            :placeholder="$t('placeholder.autocomplete')"
             append-icon="mdi-magnify"
             background-color="white"
             v-model="select"
@@ -23,13 +45,9 @@
       </div>
       <v-row justify="center">
         <v-col class="introtxt text-center py-12">
-          <h1>Entdecke das Lebensraum-Potential deiner Gemeinde.</h1>
-          <p>Der Gemeindescan ermöglicht Gemeindeverwaltungen auf einfache und
-          kosteneffiziente Weise ein Bild von Nutzungen und Nutzern in Ihrer Gemeinde
-          zu erhalten. Flächennutzung, Verkehr oder Struktur werden an einer Stelle
-          evidenzbasiert zusammengeführt.</p>
-          <p>Die Darstellungen dienen der Vorbereitung von Planungsaufgaben,
-          der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren.</p>
+          <h1>{{ $t('h1.1') }}</h1>
+          <p>{{ $t('p.1') }}</p>
+          <p>{{ $t('p.2') }}</p>
         </v-col>
       </v-row>
   </v-container>
