@@ -13,14 +13,14 @@ class SnapshotAdmin(admin.ModelAdmin):
     )
     fieldsets = (
         (_('Meta'), {
-            'fields': ('created', 'slug_hash', 'archived', 'deleted')
+            'fields': ('created', 'id', 'archived', 'deleted')
         }),
         (_('Main'), {
             'fields':
             ('data', 'screenshot', 'municipality', 'predecessor', 'user'),
         }),
     )
-    list_display = ('created', 'slug_hash')
+    list_display = ('id', 'created')
 
 
 admin.site.register(Municipality, MunicipalityAdmin)

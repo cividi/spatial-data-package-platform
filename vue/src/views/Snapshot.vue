@@ -32,24 +32,27 @@ export default {
   },
 
   methods: {
-    async getSnapshot(val) {
+    async getSnapshot(hash) {
       const result = await this.$apollo.query({
-        query: gql`query snapshot(slugHash$: String!){
-          snapshot(ID: $slugHash) {
-            node {
-              id
-            }
+        query: gql`query getsnapshot($hash: ID!){
+          snapshot(id: $hash) {
+            id
+            pk
+            data
           }
         }`,
         variables: {
-          slugHash: val
+          hash: btoa(`SnapshotNode:${hash}`)
         }
       });
       return result;
     }
   },
 
-  mounted() {
+  async created() {
+    const hash = this.$route.params.hash;
+    const result = await this.getSnapshot(hash);
+    console.log(result);
   }
 };
 </script>

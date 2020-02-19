@@ -46,17 +46,18 @@ class ImageNode(graphene.ObjectType):
             size=size
         )
 
+
 class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
-        fields = ['slug_hash', 'data', 'screenshot']
-        filter_fields = {
-            'slug_hash': ['exact']
-        }
+        fields = ['data', 'screenshot']
+        filter_fields = ['created']
         interfaces = [graphene.relay.Node]
 
     data = generic.GenericScalar(source='data')
     screenshot = graphene.Field(ImageNode)
+    pk = graphene.String(source='id')
+
 
 class Query(object):
     municipality = graphene.relay.Node.Field(MunicipalityNode)

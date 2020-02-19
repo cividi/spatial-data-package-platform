@@ -62,9 +62,10 @@ def create_slug_hash():
 
 class Snapshot(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    slug_hash = models.CharField(max_length=8,
-                                 unique=True,
-                                 default=create_slug_hash)
+    id = models.CharField(
+        max_length=8, unique=True, primary_key=True,
+        default=create_slug_hash
+    )
     archived = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
     data = pg_fields.JSONField(default=dict)
@@ -80,4 +81,4 @@ class Snapshot(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.slug_hash
+        return self.id
