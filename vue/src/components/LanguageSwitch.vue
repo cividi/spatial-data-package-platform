@@ -12,17 +12,18 @@
 </div>
 <div v-else>
   <v-speed-dial
-    :id="langnav"
+    id="langnav"
     open-on-hover="true"
     direction="left"
     transition="slide-x-reverse-transition">
     <template v-slot:activator>
-              <v-btn
-                :id="langnav"
-                small
-                elevation="0"
-                fab>{{$i18n.locale}}</v-btn>
-            </template>
+      <v-btn
+        id="langnav"
+        small
+        elevation="0"
+        fab>{{ $i18n.locale }}
+      </v-btn>
+    </template>
     <v-btn
       v-for="lang in languages"
       :key="lang"
