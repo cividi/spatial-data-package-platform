@@ -10,12 +10,28 @@
 <!-- eslint-enable -->
 
 <template>
-  <v-container my-12>
-  <v-layout >
-    <v-flex>
-      <h1>Snapshot</h1>
-    </v-flex>
-  </v-layout>
+  <v-container>
+    <v-navigation-drawer
+      :width="320"
+      left app >
+      <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
+        <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
+      </router-link>
+
+      <v-toolbar
+      :width="320"
+      absolute
+      bottom
+        class="useractions center">
+        <user-actions />
+      </v-toolbar>
+    </v-navigation-drawer>
+
+    <v-layout >
+      <v-flex>
+        <h1>Map</h1>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 

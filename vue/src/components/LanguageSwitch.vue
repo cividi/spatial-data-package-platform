@@ -13,7 +13,7 @@
 <div v-else>
   <v-speed-dial
     id="langnav"
-    open-on-hover="true"
+    open-on-hover
     direction="left"
     transition="slide-x-reverse-transition">
     <template v-slot:activator>

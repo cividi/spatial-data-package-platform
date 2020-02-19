@@ -8,6 +8,7 @@ import router from './router';
 import store from './store';
 import i18n from './trans';
 import LanguageSwitch from './components/LanguageSwitch.vue';
+import UserActions from './components/UserActions.vue';
 import App from './App.vue';
 
 require('@/assets/styles/main.css');
@@ -31,6 +32,7 @@ const apolloProvider = new VueApollo({
 });
 
 Vue.component('language-switch', LanguageSwitch);
+Vue.component('user-actions', UserActions);
 
 new Vue({
   router,

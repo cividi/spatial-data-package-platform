@@ -2,15 +2,11 @@
 <i18n>
 {
   "de": {
-    "loginText": "Login",
-    "signupText": "Unverbindliche Anfrage",
     "mainnav.about": "Hintergrund",
     "mainnav.imprint": "Impressum",
     "mainnav.contact": "Kontakt"
 },
   "fr": {
-    "loginText": "Login",
-    "signupText": "Demande sans engagement",
     "mainnav.about": "Contexte",
     "mainnav.imprint": "Impressum",
     "mainnav.contact": "Contact"
@@ -35,14 +31,7 @@
       <v-spacer></v-spacer>
       <div class="d-none d-md-block"><language-switch/></div>
       <div class="useractions d-none d-sm-block">
-        <v-btn small text color="primary">
-          <router-link :to="'/' + $i18n.locale + '/login'">{{ $t('loginText') }}</router-link>
-        </v-btn>
-        <v-btn small outlined color="primary">
-          <router-link key="signup" :to="'/' + $i18n.locale + '/signup'">
-            {{ $t('signupText') }}
-          </router-link>
-        </v-btn>
+        <user-actions />
       </div>
       <v-app-bar-nav-icon @click="mobnav=!mobnav" class="d-md-none"></v-app-bar-nav-icon>
     </v-app-bar>
@@ -67,14 +56,7 @@
       </v-list>
       <v-flex class="useractions d-sm-none center">
         <v-divider></v-divider>
-        <v-btn small text color="white" class="mt-4">
-          <router-link :to="'/' + $i18n.locale + '/login'">{{ $t('loginText') }}</router-link>
-        </v-btn><br>
-        <v-btn small outlined color="white" class="mt-4">
-          <router-link key="signup" :to="'/' + $i18n.locale + '/signup'">
-            {{ $t('signupText') }}
-          </router-link>
-        </v-btn>
+        <user-actions vertical="1" />
       </v-flex>
     </v-navigation-drawer>
 
