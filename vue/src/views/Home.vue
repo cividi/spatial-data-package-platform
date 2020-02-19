@@ -7,15 +7,19 @@
     "p.1":
       "Der Gemeindescan ermöglicht Gemeindeverwaltungen auf einfache und kosteneffiziente Weise ein Bild von Nutzungen und Nutzern in Ihrer Gemeinde zu erhalten. Flächennutzung, Verkehr oder Struktur werden an einer Stelle evidenzbasiert zusammengeführt.",
     "p.2":
-      "Die Darstellungen dienen der Vorbereitung von Planungsaufgaben, der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren."
+      "Die Darstellungen dienen der Vorbereitung von Planungsaufgaben, der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren.",
+    "img.1.alt":
+      "Gemeindescan Schweiz"
   },
   "fr": {
-    "placeholder.autocomplete": "(FR) Suche",
-    "h1.1": "(FR) Entdecke das Lebensraum-Potential deiner Gemeinde.",
+    "placeholder.autocomplete": "Recherche",
+    "h1.1": "Découvrez le potentiel en terme d'habitat de votre communauté.",
     "p.1":
-      "(FR) Der Gemeindescan ermöglicht Gemeindeverwaltungen auf einfache und kosteneffiziente Weise ein Bild von Nutzungen und Nutzern in Ihrer Gemeinde zu erhalten. Flächennutzung, Verkehr oder Struktur werden an einer Stelle evidenzbasiert zusammengeführt.",
+      "Le Gemeindescan permet aux autorités locales de se faire une idée des utilisations et des utilisateurs de votre communauté de manière simple et économique. L'utilisation des sols, du trafic ou des structures est rassemblée sur un seul support basé sur des faits.",
     "p.2":
-      "(FR) Die Darstellungen dienen der Vorbereitung von Planungsaufgaben, der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren."
+      "Les représentations servent à la préparation des tâches de planification, à la communication avec les politiciens, les citoyens ou les promoteurs et les investisseurs.",
+    "img.1.alt":
+      "Le Gemeindescan Suisse"
   }
 }
 </i18n>
@@ -25,7 +29,7 @@
   <!-- eslint-disable max-len -->
   <v-container my-12>
       <div class="gmdscn">
-          <v-img alt="Gemeindescan Schweiz" class="" width="100%" contain src="@/assets/images/gmdscn-ch-map.svg"></v-img>
+          <v-img :alt="$t('img.1.alt')" class="" width="100%" contain src="@/assets/images/gmdscn-ch-map.svg"></v-img>
           <v-autocomplete
             ref="search"
             class="gemeindesuche"

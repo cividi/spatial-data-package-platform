@@ -9,11 +9,11 @@
     "mainnav.contact": "Kontakt"
 },
   "fr": {
-    "loginText": "(FR) Login",
-    "signupText": "(FR) Unverbindliche Anfrage",
-    "mainnav.about": "(FR) Hintergrund",
-    "mainnav.imprint": "(FR) Impressum",
-    "mainnav.contact": "(FR) Kontakt"
+    "loginText": "Login",
+    "signupText": "Demande sans engagement",
+    "mainnav.about": "Contexte",
+    "mainnav.imprint": "Impressum",
+    "mainnav.contact": "Contact"
   }
 }
 </i18n>
