@@ -63,5 +63,5 @@ class Query(object):
     municipality = graphene.relay.Node.Field(MunicipalityNode)
     municipalities = DjangoFilterConnectionField(MunicipalityNode)
 
-    snapshot = graphene.relay.Node.Field(SnapshotNode)
-    snapshots = DjangoFilterConnectionField(SnapshotNode)
+    # snapshot = graphene.relay.Node.Field(SnapshotNode)
+    # snapshots = DjangoFilterConnectionField(SnapshotNode)
