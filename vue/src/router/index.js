@@ -50,13 +50,12 @@ const routes = [
         path: 'contact',
         name: 'contact',
         component: () => import('@/views/Contact.vue')
+      },
+      {
+        path: ':hash',
+        name: 'snapshot',
+        component: () => import('@/views/Snapshot.vue')
       }
-      // ,
-      // {
-      //   path: ':hash',
-      //   name: 'snapshot',
-      //   component: () => import('@/views/Snapshot.vue')
-      // }
     ]
   },
   {
