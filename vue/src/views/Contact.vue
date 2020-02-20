@@ -4,32 +4,36 @@
   "de": {
     "h1.1": "Kontakt",
     "p.1":
-      "Direkt mit dem Gemeindescan-Team in Kontakt treten:",
-    "a.mail":
-      "kontakt@gemeindescan.ch",
+      "Direkt mit dem Gemeindescan-Team in Kontakt treten:<br><a href=\"mailto:kontakt@gemeindescan.ch\">kontakt@gemeindescan.ch</a><br><a href=\"tel:+41 43 543 44 45\">+41 43 543 44 45</a><br>Flüelastrasse 10<br>8048 Zürich",
     "p.2":
-      "Die Gemeindescan-Plattform ist Open Source und Open Development. Zum Gemeindescan beitragen: [Projekt auf Bitbucket](https://bitbucket.org/cividi/gemeindescan-webui)",
+      "Die Gemeindescan-Plattform ist Open Source und Open Development. Zum Gemeindescan beitragen: <a href=\"https://bitbucket.org/cividi/gemeindescan-webui\" target=\"_blank\">Projekt auf Bitbucket</a>",
     "p.3":
       "cividi - digitale Werkzeuge für die analoge Stadt.",
-    "p.4.small":
-      "Das Pionierprojekt wird ermöglicht durch [Engagement Migros](https://www.engagement-migros.ch/de), dem Förderfonds der Migros-Gruppe.",
+    "p.4":
+      "<small>Das Pionierprojekt wird ermöglicht durch <a href=\"https://www.engagement-migros.ch/de\" target=\"_blank\">Engagement Migros</a>,<br>dem Förderfonds der Migros-Gruppe.</small>",
+    "cividi.link":
+      "https://cividi.ch",
+    "em.link":
+      "https://www.engagement-migros.ch/de",
     "img.em":
-      "@/assets/images/EngagementM_d_rgb.jpg"
+      "EngagementM_d_rgb.jpg"
   },
   "fr": {
     "h1.1": "Contact",
     "p.1":
-      "Prenez contact directement avec l'équipe du Gemeindescan.",
-    "a.mail":
-      "contact@gemeindescan.ch",
+      "Prenez contact directement avec l'équipe du Gemeindescan.<br><a href=\"mailto:contact@gemeindescan.ch\">contact@gemeindescan.ch</a><br><a href=\"tel:+41 43 543 44 45\">+41 43 543 44 45</a><br>Flüelastrasse 10<br>8048 Zürich",
     "p.2":
-      "La plate-forme du Gemeindescan est un logiciel Open Source & Development. Contribuer au Gemeindescan:  [Project sur Bitbucket](https://bitbucket.org/cividi/gemeindescan-webui)",
+      "La plate-forme du Gemeindescan est un logiciel Open Source & Development. Contribuer au Gemeindescan:  <a href=\"https://bitbucket.org/cividi/gemeindescan-webui\" target=\"_blank\">Projet sur Bitbucket</a>",
     "p.3":
       "cividi - Des outils numériques pour la ville analogique",
-    "p.4.small":
-      "Ce projet innovateur est rendu possible grâce à [l'engagement de Migros](https://www.engagement-migros.ch/fr), le fonds de développement du groupe Migros.",
+    "p.4":
+      "<small>Ce projet innovateur est rendu possible grâce à <a href=\"https://www.engagement-migros.ch/fr\" target=\"_blank\">l'engagement de Migros</a>,<br>le fonds de développement du groupe Migros.</small>",
+    "cividi.link":
+      "https://cividi.ch/societe",
+    "em.link":
+      "https://www.engagement-migros.ch/fr",
     "img.em":
-      "@/assets/images/EngagementM_f_rgb.jpg"
+      "EngagementM_f_rgb.jpg"
   }
 }
 </i18n>
@@ -44,29 +48,24 @@
           <h1>
             {{ $t('h1.1')}}
           </h1>
-          <p>
-            {{ $t('p.1') }}
-            <br>
-            <a href="mailto:kontakt@gemeindescan.ch">{{ $t('a.mail') }}</a><br>
-            <a href="tel:+41 43 543 44 45">+41 43 543 44 45</a><br>
-            Flüelastrasse 10<br>
-            8048 Zürich
+          <p v-html="$t('p.1')">
           </p>
-          <p>
-            {{ $t('p.2') }}
+          <p v-html="$t('p.2')">
           </p>
           <p>
             {{ $t('p.3') }}
           </p>
 
-          <a href="https://www.cividi.ch" target="_blank" style="padding-right:40px">
+          <a :href="$t('cividi.link')" target="_blank" style="padding-right:40px">
             <img src="@/assets/images/logo-cividi.svg" width="250px">
           </a>
 
-          <p><small>{{ $t('p.4.small') }}</small>
+          <p v-html="$t('p.4')">
           </p>
 
-          <a href="https://www.engagement-migros.ch/" target="_blank"><img :src="$t('img.em')" width="220px"></a>
+          <a :href="$t('em.link')" target="_blank">
+            <img v-bind:src="$t('img.em')" width="220px">
+          </a>
 
         </v-flex>
     </v-layout>
