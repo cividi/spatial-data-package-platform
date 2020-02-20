@@ -1,3 +1,28 @@
+<!-- eslint-disable -->
+<i18n>
+{
+  "de": {
+    "form.email": "E-Mail Adresse",
+    "form.password": "Passwort",
+    "form.submit": "Anmelden",
+    "error.nonexistent": "Der User existiert nicht.<br>Bitte einen gültigen User eingeben.",
+    "error.noemail": "Bitte eine E-Mail eingeben.",
+    "error.invalidemail": "Bitte eine gültige E-Mail eingeben.",
+    "error.nopassword": "Bitte ein Passwort eingeben."
+},
+  "fr": {
+    "form.email": "E-Mail",
+    "form.password": "Mot de passe",
+    "form.submit": "S'inscrire",
+    "error.nonexistent": "L'utilisateur n'existe pas.<br>Veuillez entrer un utilisateur valide.",
+    "error.noemail": "Veuillez saisir un e-mail.",
+    "error.invalidemail": "Veuillez entrer une adresse électronique valide.",
+    "error.nopassword": "Veuillez entrer un mot de passe."
+  }
+}
+</i18n>
+<!-- eslint-enable -->
+
 <template>
   <v-container my-6 class="content">
       <v-layout
@@ -8,8 +33,7 @@
             <v-card>
               <v-card-title class="headline red--text">Error</v-card-title>
               <v-card-text>
-                Der User existiert nicht.<br>
-                Bitte einen gültigen User eingeben.
+                <span v-html="$t('error.nonexistent')"></span>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -28,7 +52,7 @@
               <v-form v-model="valid" ref="form">
                 <v-text-field
                   outlined
-                  label="E-Mail Adresse"
+                  :label="$t('form.email')"
                   v-model="email"
                   required
                   :rules="emailRules"
@@ -36,7 +60,7 @@
                 <v-text-field
                   outlined
                   v-model="password"
-                  label="Passwort"
+                  :label="$t('form.password')"
                   :type="showPassword ? 'text' : 'password'"
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   @click:append="showPassword = !showPassword"
@@ -51,7 +75,7 @@
               <v-btn
                 depressed large color="primary"
                 @click="submitLogin">
-                Anmelden
+                {{ $t('form.submit') }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -69,12 +93,12 @@ export default {
       showPassword: false,
       password: '',
       passwordRules: [
-        v => !!v || 'Bitte ein Passwort eingeben'
+        v => !!v || this.$i18n.t('error.nopassword')
       ],
       email: '',
       emailRules: [
-        v => !!v || 'Bitte eine E-Mail eingeben',
-        v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'Bitte eine gültige E-Mail eingeben'
+        v => !!v || this.$i18n.t('error.noemail'),
+        v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || this.$i18n.t('error.invalidemail')
       ]
     };
   },

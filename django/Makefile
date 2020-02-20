@@ -1,4 +1,4 @@
-GEMEINDESCAN_WEBUI_DJANGO=0.1.0
+GEMEINDESCAN_WEBUI_DJANGO=0.2.0
 DOCKER_DJANGO_NAME=$(shell basename $(shell dirname `pwd`))_django_1
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker exec -it $(DOCKER_DJANGO_NAME)")
 

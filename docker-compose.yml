@@ -3,6 +3,7 @@ version: "2"
 volumes:
   vscode-remote-django:
   vscode-remote-vue:
+  var-gemeindescan-webui:
 
 services:
   pdb:
@@ -15,7 +16,7 @@ services:
       - POSTGRES_PASSWORD=pgpass
       - POSTGRES_DB=webui
     volumes:
-      - ./var/postgres:/var/services/postgres
+      - var-gemeindescan-webui:/var/services
     ports:
        - "5434:5432"
 
@@ -28,7 +29,7 @@ services:
     working_dir: /opt/vue
     volumes:
       - ./vue:/opt/vue
-      - ./var/django:/var/services/django
+      - var-gemeindescan-webui:/var/services/
       - vscode-remote-vue:/root/.vscode-server
     ports:
       - "8080:8080"
@@ -54,7 +55,7 @@ services:
     working_dir: /opt/app
     volumes:
       - ./django:/opt/app
-      - ./var/django:/var/services/django
+      - var-gemeindescan-webui:/var/services
       - vscode-remote-django:/root/.vscode-server
     links:
      - pdb

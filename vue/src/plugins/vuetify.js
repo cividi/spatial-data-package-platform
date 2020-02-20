@@ -1,14 +1,34 @@
 import Vue from 'vue';
+// import VueI18n from 'vue-i18n';
 import Vuetify from 'vuetify/lib';
-import de from 'vuetify/es5/locale/de';
 
 Vue.use(Vuetify);
 
+// const messages = {
+//   en: {
+//     $vuetify: {
+//     }
+//   },
+//   de: {
+//     $vuetify: {
+//     }
+//   },
+//   fr: {
+//     $vuetify: {
+//     }
+//   }
+// };
+
+// Create VueI18n instance with options
+// const i18n = new VueI18n({
+//   locale: 'de',
+//   messages
+// });
+
 export default new Vuetify({
-  lang: {
-    locales: { de },
-    current: 'de'
-  },
+  // lang: {
+  //   t: (key, ...params) => i18n.t(key, params)
+  // },
   theme: {
     themes: {
       light: {
