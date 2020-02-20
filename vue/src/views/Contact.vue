@@ -14,9 +14,7 @@
     "cividi.link":
       "https://cividi.ch",
     "em.link":
-      "https://www.engagement-migros.ch/de",
-    "img.em":
-      "EngagementM_d_rgb.jpg"
+      "https://www.engagement-migros.ch/de"
   },
   "fr": {
     "h1.1": "Contact",
@@ -31,9 +29,7 @@
     "cividi.link":
       "https://cividi.ch/societe",
     "em.link":
-      "https://www.engagement-migros.ch/fr",
-    "img.em":
-      "EngagementM_f_rgb.jpg"
+      "https://www.engagement-migros.ch/fr"
   }
 }
 </i18n>
@@ -64,7 +60,10 @@
           </p>
 
           <a :href="$t('em.link')" target="_blank">
-            <img v-bind:src="$t('img.em')" width="220px">
+            <img v-if="$i18n.locale === 'fr'"
+              src="@/assets/images/EngagementM_f_rgb.jpg" width="220px">
+            <img v-else
+              src="@/assets/images/EngagementM_d_rgb.jpg" width="220px">
           </a>
 
         </v-flex>
