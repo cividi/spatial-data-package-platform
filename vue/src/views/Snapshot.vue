@@ -68,7 +68,7 @@ export default {
   async created() {
     const hash = this.$route.params.hash;
     const result = await this.getSnapshot(hash);
-    console.log(result);
+    return result;
   }
 };
 </script>
