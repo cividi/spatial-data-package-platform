@@ -117,7 +117,13 @@ export default {
 
     submitMunicipality() {
       if (this.select.node.bfsNumber) {
-        this.$router.push({ name: 'signup', params: { bfsnumber: this.select.node.bfsNumber } });
+        this.$router.push({
+          name: 'signup',
+          params: {
+            bfsnumber: this.select.node.bfsNumber,
+            bfsname: this.select.node.fullname
+          }
+        });
       }
     }
   },
