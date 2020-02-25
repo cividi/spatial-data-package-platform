@@ -41,7 +41,6 @@ services:
       file: docker-images.yml
       service: django
     environment:
-      - TERM=xterm-256color
       - START_DJANGO=NO
       - DJANGO_DB_NAME=webui
       - DJANGO_DB_USER=webui
