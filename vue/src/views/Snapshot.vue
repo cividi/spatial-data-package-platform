@@ -29,21 +29,31 @@
 
     <v-layout >
       <v-flex>
-        <h1>Map</h1>
+        <div id='map'></div>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <style>
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
 </style>
 
 <script>
 import gql from 'graphql-tag';
+import L from 'mapbox.js';
+import geoViewport from '@mapbox/geo-viewport';
 
 export default {
   data() {
     return {
+      map: null,
+      geojson: null
     };
   },
 
@@ -61,14 +71,41 @@ export default {
           hash: btoa(`SnapshotNode:${hash}`)
         }
       });
-      return result;
+      this.geojson = result.data.snapshot.data;
+    },
+
+    displayMapbox() {
+      L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
+      const geobounds = [
+        [47.44248559830201, 9.364042282104492], [47.47730398836726, 9.41554069519043]
+      ];
+      const boxSize = 800;
+      const bounds = geoViewport.viewport(geobounds.flat(), [boxSize, boxSize]);
+      this.map = L.mapbox.map('map')
+        .setView(bounds.center, bounds.zoom)
+        // .addLayer(L.mapbox.featureLayer(this.geojson, {
+        //   attribution: 'Data Analysis by cividi, Swisstopo'
+        // }))
+        .addLayer(L.rectangle(geobounds, { color: 'red', weight: 1 }))
+        .addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6qnoijj28od1is9u1wbb3vr'));
     }
   },
 
   async created() {
     const hash = this.$route.params.hash;
     const result = await this.getSnapshot(hash);
+    this.displayMapbox();
     return result;
+  },
+
+  mounted() {
+    // this.displayMapbox();
+  },
+
+  destroy() {
+    this.map.destroy();
+    this.map = null;
+    this.geojson = null;
   }
 };
 </script>

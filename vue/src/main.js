@@ -11,6 +11,7 @@ import i18n from './trans';
 import LanguageSwitch from './components/LanguageSwitch.vue';
 import UserActions from './components/UserActions.vue';
 import App from './App.vue';
+import 'mapbox.js/dist/mapbox.css';
 
 require('@/assets/styles/main.css');
 
