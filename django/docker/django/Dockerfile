@@ -38,6 +38,9 @@ RUN apk add --no-cache build-base python3-dev \
     && pip3 install -r /tmp/requirements.txt \
     && apk del build-base python3-dev
 
+# geodjango layer
+RUN apk --no-cache add gdal geos proj proj-datumgrid
+
 COPY s6/etc/services.d /etc/services.d
 COPY s6/etc/cont-init.d /etc/cont-init.d
 ENTRYPOINT ["/init"]

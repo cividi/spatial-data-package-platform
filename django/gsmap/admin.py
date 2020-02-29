@@ -1,13 +1,13 @@
-from django.contrib import admin
+from django.contrib.gis import admin 
 from django.utils.translation import gettext as _
 from gsmap.models import Municipality, Snapshot
 
 
-class MunicipalityAdmin(admin.ModelAdmin):
+class MunicipalityAdmin(admin.OSMGeoAdmin):
     pass
 
 
-class SnapshotAdmin(admin.ModelAdmin):
+class SnapshotAdmin(admin.OSMGeoAdmin):
     readonly_fields = (
         'created',
     )
@@ -19,6 +19,10 @@ class SnapshotAdmin(admin.ModelAdmin):
             'fields':
             ('data', 'screenshot', 'municipality', 'predecessor', 'user'),
         }),
+        # (_('geo'), {
+        #     'fields':
+        #     ('perimeter',),
+        # }),
     )
     list_display = ('id', 'created')
 

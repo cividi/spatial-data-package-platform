@@ -1,6 +1,7 @@
 import secrets
 import string
-from django.db import models
+# from django.db import models
+from django.contrib.gis.db import models
 from django.contrib.postgres import fields as pg_fields
 from sorl.thumbnail import ImageField
 from gsuser.models import User
@@ -45,6 +46,7 @@ class Municipality(models.Model):
         max_length=2,
         choices=CANTONS_CHOICES
     )
+    perimeter = models.PolygonField(null=True)
 
     @property
     def fullname(self):
