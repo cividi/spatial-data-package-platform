@@ -83,9 +83,9 @@ export default {
       const bounds = geoViewport.viewport(geobounds.flat(), [boxSize, boxSize]);
       this.map = L.mapbox.map('map')
         .setView(bounds.center, bounds.zoom)
-        // .addLayer(L.mapbox.featureLayer(this.geojson, {
-        //   attribution: 'Data Analysis by cividi, Swisstopo'
-        // }))
+        .addLayer(L.mapbox.featureLayer(this.geojson.resources[0].data, {
+          attribution: 'Data Analysis by cividi, Swisstopo'
+        }))
         .addLayer(L.rectangle(geobounds, { color: 'red', weight: 1 }))
         .addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6qnoijj28od1is9u1wbb3vr'));
     }
