@@ -1,10 +1,15 @@
 <template>
     <main>
-      <slot/>
+      <main-navigation />
+
+      <v-content>
+        <slot/>
+      </v-content>
     </main>
 </template>
 
 <script>
+
 export default {
   name: 'LayoutDefault'
 };
