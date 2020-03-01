@@ -87,6 +87,7 @@
 import gql from 'graphql-tag';
 
 export default {
+  name: 'Home',
   data() {
     return {
       select: null,
@@ -94,6 +95,10 @@ export default {
       municipalities: [],
       isLoading: false
     };
+  },
+
+  mounted() {
+    this.$refs.search.focus();
   },
 
   methods: {
@@ -139,10 +144,6 @@ export default {
       const result = await this.queryMunicipalities(val);
       this.municipalities = result.data.municipalities.edges;
     }
-  },
-
-  mounted() {
-    this.$refs.search.focus();
   }
 };
 </script>

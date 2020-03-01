@@ -61,7 +61,9 @@
     </v-navigation-drawer>
 
     <v-content>
-      <router-view/>
+      <component :is="$route.meta.layout">
+        <router-view/>
+      </component>
     </v-content>
     <!--<v-footer app>
     </v-footer>-->
@@ -90,9 +92,11 @@
 </style>
 
 <script>
+
 export default {
   data() {
     return {
+      layout: 'div',
       mobnav: false,
       mainnav: [
         { route: '/about', textKey: 'mainnav.about' },

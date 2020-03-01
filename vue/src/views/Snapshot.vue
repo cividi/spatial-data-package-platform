@@ -102,7 +102,6 @@ export default {
     displayMapbox() {
       L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
       const boxSize = 800;
-      console.log(this.geobounds.flat());
       const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
       this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
       this.layers.forEach((layer) => {
