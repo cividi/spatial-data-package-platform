@@ -1,4 +1,4 @@
-from django.contrib.gis import admin 
+from django.contrib.gis import admin
 from django.utils.translation import gettext as _
 from gsmap.models import Municipality, Snapshot
 
@@ -9,7 +9,7 @@ class MunicipalityAdmin(admin.OSMGeoAdmin):
 
 class SnapshotAdmin(admin.OSMGeoAdmin):
     readonly_fields = (
-        'created',
+        'id', 'created',
     )
     fieldsets = (
         (_('Meta'), {
@@ -17,7 +17,11 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         }),
         (_('Main'), {
             'fields':
-            ('data', 'screenshot', 'municipality', 'predecessor', 'user'),
+            ('title', 'topic', 'data', 'screenshot'),
+        }),
+        (_('Relations'), {
+            'fields':
+            ('municipality', 'predecessor', 'user'),
         }),
         # (_('geo'), {
         #     'fields':

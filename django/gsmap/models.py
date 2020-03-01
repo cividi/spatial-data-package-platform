@@ -70,6 +70,8 @@ class Snapshot(models.Model):
     )
     archived = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
+    title = models.CharField(max_length=150, default='')
+    topic = models.CharField(max_length=100, default='')
     data = pg_fields.JSONField(default=dict)
     screenshot = ImageField(upload_to='snapshot-screenshots')
     predecessor = models.ForeignKey(
@@ -81,6 +83,21 @@ class Snapshot(models.Model):
         null=True, on_delete=models.SET_NULL
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-created']
+
+    def save(self, *args, **kwargs):
+        def test_exists(pk):
+            if self.__class__.objects.filter(pk=pk):
+                new_id = create_slug_hash()
+                test_exists(new_id)
+            else:
+                return pk
+
+        if self._state.adding:
+            self.id = test_exists(self.id)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.id
