@@ -1,4 +1,4 @@
-GEMEINDESCAN_WEBUI_VUE=0.2.1
+GEMEINDESCAN_WEBUI_VUE=0.3.0
 DOCKER_VUE_NAME=$(shell basename $(shell dirname `pwd`))_vue_1
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker exec -it $(DOCKER_VUE_NAME)")
 
@@ -13,9 +13,7 @@ enter:
 	$(DOCKER_EXEC) ash
 
 build_docker:
-	cp yarn.lock package.json docker/vue/
-	cd docker && docker build -t smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE) vue
-	rm docker/vue/yarn.lock docker/vue/package.json
+	cd docker && DOCKER_BUILDKIT=1 docker build -t smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE) vue
 
 push:
 	docker push smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE)
