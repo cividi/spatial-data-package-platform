@@ -49,11 +49,18 @@ import gql from 'graphql-tag';
 import L from 'mapbox.js';
 import geoViewport from '@mapbox/geo-viewport';
 
+function geostring2array(s) {
+  const array = s.split(':')[1].split(',');
+  return array.map(x => parseFloat(x)).reverse();
+}
+
 export default {
   data() {
     return {
       map: null,
-      geojson: null
+      geojson: {},
+      geobounds: [],
+      layers: []
     };
   },
 
@@ -74,38 +81,57 @@ export default {
       this.geojson = result.data.snapshot.data;
     },
 
+    setupMapbox() {
+      this.geobounds = [
+        geostring2array(this.geojson.views[0].bounds[0]),
+        geostring2array(this.geojson.views[0].bounds[1])
+      ];
+
+      const lookupResources = {}; // name -> index
+      this.geojson.resources.forEach((resource, index) => {
+        lookupResources[resource.name] = index;
+      });
+
+      this.geojson.views[0].resources.forEach((resourceName) => {
+        this.layers.push(
+          this.geojson.resources[lookupResources[resourceName]]
+        );
+      });
+    },
+
     displayMapbox() {
       L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
-      const geobounds = [
-        [47.44248559830201, 9.364042282104492], [47.47730398836726, 9.41554069519043]
-      ];
       const boxSize = 800;
-      const bounds = geoViewport.viewport(geobounds.flat(), [boxSize, boxSize]);
-      this.map = L.mapbox.map('map')
-        .setView(bounds.center, bounds.zoom)
-        .addLayer(L.mapbox.featureLayer(this.geojson.resources[0].data, {
-          attribution: 'Data Analysis by cividi, Swisstopo'
-        }))
-        .addLayer(L.rectangle(geobounds, { color: 'red', weight: 1 }))
-        .addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6qnoijj28od1is9u1wbb3vr'));
+      console.log(this.geobounds.flat());
+      const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
+      this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
+      this.layers.forEach((layer) => {
+        if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
+          this.map.addLayer(L.mapbox.styleLayer(layer.path));
+        } else if (layer.mediatype === 'application/vnd.geo+json') {
+          this.map.addLayer(L.mapbox.featureLayer(layer.data, {
+            attribution: 'Data Analysis by cividi, Swisstopo'
+          }));
+        }
+      });
+      this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     }
   },
 
   async created() {
     const hash = this.$route.params.hash;
     const result = await this.getSnapshot(hash);
+    this.setupMapbox();
     this.displayMapbox();
     return result;
-  },
-
-  mounted() {
-    // this.displayMapbox();
   },
 
   destroy() {
     this.map.destroy();
     this.map = null;
     this.geojson = null;
+    this.geobounds = [];
+    this.layers = null;
   }
 };
 </script>
