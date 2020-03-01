@@ -18,47 +18,8 @@ The current tech stack of this project is:
 
 ## setup project
 
-Create `var` folder in project root dir, in this folder the container data (database, generated files) will be stored.
-On linux you just can create the a normal folder. For Mac/Windows it's recommended to create a var folder
-in the moby virtual maschine and make the host var folder a symlink to it (for better performence, less permission problems).
-
-
-**for linux**
-```bash
-mkdir var
-```
-
-**for mac**
-
-```bash
-# enter moby vm
-docker run --net=host --ipc=host --name=moby --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine ash
-# create var folder /host/var/lib/projects
-mkdir -p /host/var/lib/projects/var-gemeindescan-webui
-# exit moby, back to mac
-exit
-ln -s /var/lib/projects/var-gemeindescan-webui var
-```
-
-**windows**
-
-```bash
-# enter moby vm
-docker run --net=host --ipc=host --name=moby --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine ash
-# create var folder /host/var/lib/projects
-mkdir -p /host/var/lib/projects/var-gemeindescan-webui
-# go to your source code in moby mount '/host/host_mnt/c' is your c drive
-cd /host/host_mnt/c/temp/gemeindescan-webui
-ln -s /var/lib/projects/var-gemeindescan-webui var
-# exit moby
-exit
-```
-
-regardless how you created the var folder you can now create the basic folder structure
-
 ```bash
 touch env.hosts.prod # required file, can be empty and edited later
-docker run -it --rm -v `pwd`/var:/var/services busybox sh -c "mkdir -p /var/services/django; mkdir -p /var/services/postgres"
 ```
 
 download containers and start them
@@ -77,12 +38,19 @@ make enter_django
 cd django
 python3 manage.py migrate
 python3 manage.py createsuperuser
+make import-gemeinden-json
 # exit django container
 exit
 # enter vue container
 maker enter_vue
 ln -s /node_modules ./
 ```
+
+For development we use a named docker volume for the `var` folder inside the container, this named
+volume will be created automatically. This makes setup under windows easier.
+For production under linux a bind mount is used, for easier backups and no accidental data deletion.
+
+Database files and static generated files are stored in `var` folder.
 
 ### start docker containers
 
