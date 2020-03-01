@@ -11,6 +11,7 @@ import i18n from './trans';
 import LanguageSwitch from './components/LanguageSwitch.vue';
 import UserActions from './components/UserActions.vue';
 import MainNavigation from './components/MainNavigation.vue';
+import Search from './components/Search.vue';
 import App from './App.vue';
 import 'mapbox.js/dist/mapbox.css';
 
@@ -37,6 +38,7 @@ const apolloProvider = new VueApollo({
 Vue.component('language-switch', LanguageSwitch);
 Vue.component('user-actions', UserActions);
 Vue.component('main-navigation', MainNavigation);
+Vue.component('search', Search);
 
 new Vue({
   router,

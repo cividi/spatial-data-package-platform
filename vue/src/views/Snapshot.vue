@@ -18,6 +18,8 @@
         <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
       </router-link>
 
+      <search />
+
       <v-toolbar
       :width="320"
       absolute
