@@ -23,38 +23,59 @@ const routes = [
       {
         path: '',
         name: 'home',
-        component: Home
+        component: Home,
+        meta: {
+          layout: () => import('@/layouts/LayoutDefault.vue')
+        }
       },
       {
         path: 'login',
         name: 'login',
-        component: () => import('@/views/Login.vue')
+        component: () => import('@/views/Login.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutDefault.vue')
+        }
       },
       {
         path: 'signup',
         name: 'signup',
         component: () => import('@/views/Signup.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutDefault.vue')
+        },
         props: { bfsnumber: '' }
       },
       {
         path: 'about',
         name: 'about',
-        component: () => import('@/views/About.vue')
+        component: () => import('@/views/About.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutDefault.vue')
+        }
       },
       {
         path: 'imprint',
         name: 'imprint',
-        component: () => import('@/views/Imprint.vue')
+        component: () => import('@/views/Imprint.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutDefault.vue')
+        }
       },
       {
         path: 'contact',
         name: 'contact',
-        component: () => import('@/views/Contact.vue')
+        component: () => import('@/views/Contact.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutDefault.vue')
+        }
       },
       {
         path: ':hash',
         name: 'snapshot',
-        component: () => import('@/views/Snapshot.vue')
+        component: () => import('@/views/Snapshot.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutSnapshot.vue')
+        }
       }
     ]
   },
