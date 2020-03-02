@@ -1,10 +1,8 @@
 <template>
   <v-app>
     <component :is="$route.meta.layout">
-      <router-view/>
+      <router-view :key="$route.fullPath"/>
     </component>
-    <!--<v-footer app>
-    </v-footer>-->
   </v-app>
 </template>
 
@@ -23,9 +21,7 @@
 <script>
 export default {
   data() {
-    return {
-      layout: 'div'
-    };
+    return {};
   }
 };
 </script>
