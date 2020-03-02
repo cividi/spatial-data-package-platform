@@ -19,6 +19,8 @@
       </router-link>
 
       <search />
+      <snapshot-meta :title="title" :description="description" />
+      <snapshot-list :snapshots="snapshotsRelated" :exclude="hash"/>
 
       <v-toolbar
       :width="320"
@@ -47,9 +49,15 @@
 </style>
 
 <script>
+import Vue from 'vue';
 import gql from 'graphql-tag';
 import L from 'mapbox.js';
 import geoViewport from '@mapbox/geo-viewport';
+import SnapshotMeta from '../components/SnapshotMeta.vue';
+import SnapshotList from '../components/SnapshotList.vue';
+
+Vue.component('snapshot-meta', SnapshotMeta);
+Vue.component('snapshot-list', SnapshotList);
 
 function geostring2array(s) {
   const array = s.split(':')[1].split(',');
@@ -59,10 +67,15 @@ function geostring2array(s) {
 export default {
   data() {
     return {
+      hash: this.$route.params.hash,
       map: null,
       geojson: {},
       geobounds: [],
-      layers: []
+      layers: [],
+      title: '',
+      description: '',
+      municipality: {},
+      snapshotsRelated: []
     };
   },
 
@@ -74,6 +87,16 @@ export default {
             id
             pk
             data
+            municipality {
+              bfsNumber
+              fullname
+              snapshots {
+                id
+                pk
+                title
+                topic
+              }
+            }
           }
         }`,
         variables: {
@@ -81,6 +104,13 @@ export default {
         }
       });
       this.geojson = result.data.snapshot.data;
+      this.municipality = result.data.snapshot.municipality.fullname;
+      this.snapshotsRelated = result.data.snapshot.municipality.snapshots;
+    },
+
+    setupMeta() {
+      this.title = this.geojson.title;
+      this.description = this.geojson.title;
     },
 
     setupMapbox() {
@@ -120,19 +150,15 @@ export default {
   },
 
   async created() {
-    const hash = this.$route.params.hash;
-    const result = await this.getSnapshot(hash);
+    await this.getSnapshot(this.hash);
+    this.setupMeta();
     this.setupMapbox();
     this.displayMapbox();
-    return result;
   },
 
   destroy() {
     this.map.destroy();
     this.map = null;
-    this.geojson = null;
-    this.geobounds = [];
-    this.layers = null;
   }
 };
 </script>
