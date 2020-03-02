@@ -1,8 +1,9 @@
+# pylint: disable=no-member,unused-argument
 import graphene
 from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
-from sorl.thumbnail import get_thumbnail
+# from sorl.thumbnail import get_thumbnail
 from gsmap.models import Municipality, Snapshot
 
 
