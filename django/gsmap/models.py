@@ -53,7 +53,7 @@ class Municipality(models.Model):
         return f'{self.name} ({self.canton})'
 
     def __str__(self):
-        return self.name
+        return self.fullname
 
 
 def create_slug_hash():
