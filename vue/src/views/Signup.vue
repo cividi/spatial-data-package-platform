@@ -26,8 +26,8 @@ export default {
 
   computed: {
     dataurl() {
-      if (this.$route.params.bfsnumber) {
-        return `//cividi.typeform.com/to/vjVoPr?bfs_gmdno=${this.$route.params.bfsnumber}`;
+      if (this.$route.params.bfsnumber && this.$route.params.bfsname && this.$route.params.lang) {
+        return `//cividi.typeform.com/to/vjVoPr?bfs_gmdno=${this.$route.params.bfsnumber}&bfs_gmdname=${this.$route.params.bfsname}&gmdscn_lang=${this.$route.params.lang}`;
       }
       return '//cividi.typeform.com/to/vjVoPr';
     }

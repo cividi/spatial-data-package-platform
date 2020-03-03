@@ -18,6 +18,10 @@
         <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
       </router-link>
 
+      <search />
+      <snapshot-meta :title="title" :description="description" />
+      <snapshot-list :snapshots="snapshotsRelated" :exclude="hash"/>
+
       <v-toolbar
       :width="320"
       absolute
@@ -29,21 +33,49 @@
 
     <v-layout >
       <v-flex>
-        <h1>Map</h1>
+        <div id='map'></div>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <style>
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
 </style>
 
 <script>
+import Vue from 'vue';
 import gql from 'graphql-tag';
+import L from 'mapbox.js';
+import geoViewport from '@mapbox/geo-viewport';
+import SnapshotMeta from '../components/SnapshotMeta.vue';
+import SnapshotList from '../components/SnapshotList.vue';
+
+Vue.component('snapshot-meta', SnapshotMeta);
+Vue.component('snapshot-list', SnapshotList);
+
+function geostring2array(s) {
+  const array = s.split(':')[1].split(',');
+  return array.map(x => parseFloat(x)).reverse();
+}
 
 export default {
   data() {
     return {
+      hash: this.$route.params.hash,
+      map: null,
+      geojson: {},
+      geobounds: [],
+      layers: [],
+      title: '',
+      description: '',
+      municipality: {},
+      snapshotsRelated: []
     };
   },
 
@@ -55,20 +87,78 @@ export default {
             id
             pk
             data
+            municipality {
+              bfsNumber
+              fullname
+              snapshots {
+                id
+                pk
+                title
+                topic
+              }
+            }
           }
         }`,
         variables: {
           hash: btoa(`SnapshotNode:${hash}`)
         }
       });
-      return result;
+      this.geojson = result.data.snapshot.data;
+      this.municipality = result.data.snapshot.municipality.fullname;
+      this.snapshotsRelated = result.data.snapshot.municipality.snapshots;
+    },
+
+    setupMeta() {
+      this.title = this.geojson.title;
+      this.description = this.geojson.title;
+    },
+
+    setupMapbox() {
+      this.geobounds = [
+        geostring2array(this.geojson.views[0].bounds[0]),
+        geostring2array(this.geojson.views[0].bounds[1])
+      ];
+
+      const lookupResources = {}; // name -> index
+      this.geojson.resources.forEach((resource, index) => {
+        lookupResources[resource.name] = index;
+      });
+
+      this.geojson.views[0].resources.forEach((resourceName) => {
+        this.layers.push(
+          this.geojson.resources[lookupResources[resourceName]]
+        );
+      });
+    },
+
+    displayMapbox() {
+      L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
+      const boxSize = 800;
+      const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
+      this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
+      this.layers.forEach((layer) => {
+        if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
+          this.map.addLayer(L.mapbox.styleLayer(layer.path));
+        } else if (layer.mediatype === 'application/vnd.geo+json') {
+          this.map.addLayer(L.mapbox.featureLayer(layer.data, {
+            attribution: 'Data Analysis by cividi, Swisstopo'
+          }));
+        }
+      });
+      this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     }
   },
 
   async created() {
-    const hash = this.$route.params.hash;
-    const result = await this.getSnapshot(hash);
-    return result;
+    await this.getSnapshot(this.hash);
+    this.setupMeta();
+    this.setupMapbox();
+    this.displayMapbox();
+  },
+
+  destroy() {
+    this.map.destroy();
+    this.map = null;
   }
 };
 </script>

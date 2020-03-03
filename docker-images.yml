@@ -2,13 +2,13 @@ version: "2"
 
 services:
   pdb:
-    image: postgres:12-alpine
+    image: postgis/postgis:11-2.5-alpine
     hostname: pdb
 
   vue:
-    image: smartuse/gemeindescan-webui-vue:0.2.1
+    image: smartuse/gemeindescan-webui-vue:0.3.0
     hostname: vue
 
   django:
-    image: smartuse/gemeindescan-webui-django:0.2.0
+    image: smartuse/gemeindescan-webui-django:0.3.0
     hostname: django
