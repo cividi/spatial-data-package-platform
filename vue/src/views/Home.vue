@@ -48,6 +48,13 @@
   margin: 0 auto;
 }
 
+.gmdscn .gemeindesuche.v-select {
+  position: absolute;
+  top: calc(50% - 30px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .introtxt {
   max-width: 660px;
 }

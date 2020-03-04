@@ -33,12 +33,8 @@
 
 <style>
 .gemeindesuche.v-select {
-  position: absolute;
-  top: calc(50% - 30px);
-  left: 50%;
   width: 100%;
   max-width: 420px;
-  transform: translateX(-50%);
 }
 .gemeindesuche.v-select.v-select--is-menu-active
   .v-input__icon--append

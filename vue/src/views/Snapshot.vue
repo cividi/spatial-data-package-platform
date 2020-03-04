@@ -10,10 +10,12 @@
 <!-- eslint-enable -->
 
 <template>
-  <v-container>
+  <div>
     <v-navigation-drawer
       :width="320"
-      left app >
+      :clipped="clipped"
+      app
+      >
       <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
         <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
       </router-link>
@@ -31,19 +33,18 @@
       </v-toolbar>
     </v-navigation-drawer>
 
-    <v-layout >
-      <v-flex>
+    <v-content>
+      <v-container fluid class="pa-0">
         <div id='map'></div>
-      </v-flex>
-    </v-layout>
-  </v-container>
+      </v-container>
+    </v-content>
+  </div>
 </template>
 
 <style>
 #map {
-  position: absolute;
-  top: 0;
-  bottom: 0;
+  position: relative;
+  height: 100vh;
   width: 100%;
 }
 </style>

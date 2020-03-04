@@ -1,14 +1,21 @@
 <template>
-  <div>
-    <ul>
-      <li v-for="snapshot in snapshotsFiltered" :key="snapshot.id">
-        <router-link
-          :to="'/' + $i18n.locale + '/' + snapshot.pk">{{ snapshot.pk }}
-        </router-link>,
-        {{ snapshot.title }}, {{ snapshot.topic }}
-      </li>
-    </ul>
-  </div>
+<div>
+snapshotlist
+  <v-list>
+      <v-list-item v-for="snapshot in snapshotsFiltered" :key="snapshot.id"
+        :to="'/' + $i18n.locale + '/' + snapshot.pk">
+        <!--
+        <v-list-item-avatar>
+          <v-img :src="snapshot.thumbnail"></v-img>
+        </v-list-item-avatar>
+        -->
+          <v-list-item-content>
+            <v-list-item-title>{{snapshot.title}}</v-list-item-title>
+            <v-list-item-subtitle>{{snapshot.topic}}</v-list-item-subtitle>
+          </v-list-item-content>
+      </v-list-item>
+  </v-list>
+</div>
 </template>
 
 <script>
