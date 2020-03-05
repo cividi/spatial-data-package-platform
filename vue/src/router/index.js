@@ -7,10 +7,6 @@ Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/:lang',
-    component: {
-      template: '<router-view></router-view>'
-    },
     beforeEnter(to, from, next) {
       const lang = to.params.lang;
       if (!['de', 'fr'].includes(lang)) return next('de');
@@ -18,6 +14,10 @@ const routes = [
         i18n.locale = lang;
       }
       return next();
+    },
+    path: '/:lang',
+    component: {
+      template: '<router-view></router-view>'
     },
     children: [
       {
@@ -70,12 +70,19 @@ const routes = [
         }
       },
       {
-        path: ':hash',
+        path: ':hash([0-9A-Z]{6})',
+        pathToRegexpOptions: { sensitive: true },
         name: 'snapshot',
         component: () => import('@/views/Snapshot.vue'),
         meta: {
           layout: () => import('@/layouts/LayoutSnapshot.vue')
         }
+      },
+      {
+        path: ':hash([0-9a-z]{6})',
+        pathToRegexpOptions: { sensitive: true },
+        name: 'snapshotRedirect',
+        redirect: to => `/${to.params.lang}/${to.params.hash.toUpperCase()}`
       }
     ]
   },
