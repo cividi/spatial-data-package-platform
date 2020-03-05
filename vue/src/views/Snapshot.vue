@@ -69,7 +69,7 @@ Vue.component('snapshot-list', SnapshotList);
 
 function geostring2array(s) {
   const array = s.split(':')[1].split(',');
-  return array.map(x => parseFloat(x)).reverse();
+  return array.map(x => parseFloat(x));
 }
 
 export default {
@@ -126,8 +126,8 @@ export default {
 
     setupMapbox() {
       this.geobounds = [
-        geostring2array(this.geojson.views[0].bounds[0]),
-        geostring2array(this.geojson.views[0].bounds[1])
+        geostring2array(this.geojson.views[0].spec.bounds[0]),
+        geostring2array(this.geojson.views[0].spec.bounds[1])
       ];
 
       const lookupResources = {}; // name -> index
