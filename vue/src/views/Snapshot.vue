@@ -142,6 +142,19 @@ export default {
       });
     },
 
+    createFeatureLayer(geojson) {
+      const geoJsonExtended = L.geoJson(geojson, {
+        pointToLayer: (feature, latlng) => {
+          if (feature.properties.radius) {
+            // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
+            return new L.Circle(latlng, feature.properties);
+          }
+          return new L.Marker(latlng);
+        }
+      });
+      return geoJsonExtended;
+    },
+
     displayMapbox() {
       L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
       const boxSize = 800;
@@ -154,6 +167,8 @@ export default {
           this.map.addLayer(L.mapbox.featureLayer(layer.data, {
             attribution: 'Data Analysis by cividi, Swisstopo'
           }));
+        } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
+          this.map.addLayer(this.createFeatureLayer(layer.data.features));
         }
       });
       this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
