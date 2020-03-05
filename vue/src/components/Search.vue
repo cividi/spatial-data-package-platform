@@ -25,7 +25,7 @@
   :items="municipalities"
   :search-input.sync="search"
   :menu-props="menuProps"
-  item-text="node.fullname"
+  item-text="node.fullnameWithSnapshots"
   item-value="node.bfsNumber"
   hide-no-data
   return-object
@@ -77,7 +77,11 @@ export default {
           municipalities(name_Icontains: $q) {
             edges {
               node {
-                bfsNumber, fullname
+                bfsNumber
+                fullname
+                snapshots {
+                  id
+                }
               }
             }
           }
@@ -112,6 +116,16 @@ export default {
     async search(val) {
       const result = await this.queryMunicipalities(val);
       this.municipalities = result.data.municipalities.edges;
+      this.municipalities.forEach((item) => {
+        const nrScans = item.node.snapshots.length;
+        if (nrScans === 1) {
+          item.node.fullnameWithSnapshots = `${item.node.fullname}, ${nrScans} Scan`;
+        } else if (nrScans > 1) {
+          item.node.fullnameWithSnapshots = `${item.node.fullname}, ${nrScans} Scans`;
+        } else {
+          item.node.fullnameWithSnapshots = `${item.node.fullname}`;
+        }
+      });
     }
   }
 };
