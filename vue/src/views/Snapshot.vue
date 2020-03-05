@@ -23,7 +23,7 @@
       <v-divider />
 
       <div class="ma-4">
-        <search :term="municipalityname"/>
+        <search :term="municipalityName"/>
       </div>
 
       <div class="ma-4">
@@ -82,7 +82,7 @@ export default {
       layers: [],
       title: '',
       description: '',
-      municipalityname: '',
+      municipalityName: '',
       snapshotsRelated: []
     };
   },
@@ -115,7 +115,7 @@ export default {
         }
       });
       this.geojson = result.data.snapshot.data;
-      this.municipalityname = result.data.snapshot.municipality.fullname;
+      this.municipalityName = result.data.snapshot.municipality.fullname;
       this.snapshotsRelated = result.data.snapshot.municipality.snapshots;
     },
 
