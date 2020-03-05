@@ -2,10 +2,12 @@
 <i18n>
 {
   "de": {
-    "placeholder.autocomplete": "Suche"
+    "placeholder": "Suche",
+    "label": "Gemeinde"
   },
   "fr": {
-    "placeholder.autocomplete": "Recherche"
+    "placeholder": "Recherche",
+    "label": "Communauté"
   }
 }
 </i18n>
@@ -16,7 +18,7 @@
   ref="search"
   class="gemeindesuche"
   outlined
-  :placeholder="$t('placeholder.autocomplete')"
+  :placeholder="$t('placeholder')"
   append-icon="mdi-magnify"
   background-color="white"
   v-model="select"
@@ -28,7 +30,7 @@
   hide-no-data
   return-object
   v-on:change="submitMunicipality()"
-></v-autocomplete>
+  ></v-autocomplete>
 </template>
 
 <style>
@@ -57,8 +59,15 @@ export default {
     };
   },
 
+  props: {
+    term: String,
+    autofocus: Boolean
+  },
+
   mounted() {
-    this.$refs.search.focus();
+    if (this.autofocus) {
+      this.$refs.search.focus();
+    }
   },
 
   methods: {

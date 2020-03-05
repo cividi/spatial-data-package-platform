@@ -13,16 +13,23 @@
   <div>
     <v-navigation-drawer
       :width="320"
-      :clipped="clipped"
+      clipped="clipped"
       app
       >
       <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
         <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
       </router-link>
 
-      <search />
-      <snapshot-meta :title="title" :description="description" />
-      <snapshot-list :snapshots="snapshotsRelated" :exclude="hash"/>
+      <v-divider />
+
+      <div class="ma-4">
+        <search :term="municipalityname"/>
+      </div>
+
+      <div class="ma-4">
+        <snapshot-meta :title="title" :description="description" />
+        <snapshot-list :snapshots="snapshotsRelated" :exclude="hash"/>
+      </div>
 
       <v-toolbar
       :width="320"
@@ -75,7 +82,7 @@ export default {
       layers: [],
       title: '',
       description: '',
-      municipality: {},
+      municipalityname: '',
       snapshotsRelated: []
     };
   },
@@ -96,6 +103,9 @@ export default {
                 pk
                 title
                 topic
+                screenshot{
+                  url
+                }
               }
             }
           }
@@ -105,7 +115,7 @@ export default {
         }
       });
       this.geojson = result.data.snapshot.data;
-      this.municipality = result.data.snapshot.municipality.fullname;
+      this.municipalityname = result.data.snapshot.municipality.fullname;
       this.snapshotsRelated = result.data.snapshot.municipality.snapshots;
     },
 
