@@ -103,7 +103,7 @@ export default {
                 pk
                 title
                 topic
-                screenshot{
+                screenshot {
                   url
                 }
               }
@@ -120,8 +120,8 @@ export default {
     },
 
     setupMeta() {
-      this.title = this.geojson.title;
-      this.description = this.geojson.title;
+      this.title = this.geojson.views[0].spec.title;
+      this.description = this.geojson.views[0].spec.description;
     },
 
     setupMapbox() {
