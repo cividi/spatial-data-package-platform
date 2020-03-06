@@ -190,15 +190,15 @@ export default {
       this.layers.forEach((layer) => {
         if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
           this.map.addLayer(L.mapbox.styleLayer(layer.path));
-        } else if (layer.mediatype === 'application/vnd.geo+json') {
+        } else if (layer.mediatype === 'application/geo+json') {
           this.map.addLayer(L.mapbox.featureLayer(layer.data, {
-            attribution: 'Data Analysis by cividi, Swisstopo'
+            attribution: this.geojson.views[0].spec.attribution
           }));
         } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
           this.map.addLayer(this.createFeatureLayer(layer.data.features));
         }
       });
-      this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
+      // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     },
 
     displayEmptyMapbox() {
