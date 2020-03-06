@@ -47,6 +47,7 @@ class Municipality(models.Model):
         choices=CANTONS_CHOICES
     )
     perimeter = models.PolygonField(null=True)
+    centerpoint = models.PointField(null=True)
 
     @property
     def fullname(self):

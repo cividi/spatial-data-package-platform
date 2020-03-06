@@ -1,20 +1,33 @@
 # pylint: disable=no-member,unused-argument
 import graphene
+import json
+from django.contrib.gis.db import models
 from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
+from graphene_django.converter import convert_django_field
 # from sorl.thumbnail import get_thumbnail
 from gsmap.models import Municipality, Snapshot
+
+
+class GeoJSON(graphene.Scalar):
+    @classmethod
+    def serialize(cls, value):
+        return json.loads(value.geojson)
+
+
+@convert_django_field.register(models.GeometryField)
+def convert_field_to_geojson(field, registry=None):
+    return graphene.Field(
+        GeoJSON,
+        description=field.help_text,
+        required=not field.null
+    )
 
 
 class ThumbnailNode(graphene.ObjectType):
     url = graphene.String()
     size = graphene.String()
-
-    #def resolve_url(self, info, size=size, **kwargs):
-    #    instance = get_thumbnail(self, size)
-    #    print(kwargs)
-    #    return "xxx"
 
 
 class ImageNode(graphene.ObjectType):
@@ -43,7 +56,7 @@ class SnapshotNode(DjangoObjectType):
 class MunicipalityNode(DjangoObjectType):
     class Meta:
         model = Municipality
-        fields = ['name', 'canton']
+        fields = ['name', 'canton', 'centerpoint']
         filter_fields = {
             'name': ['exact', 'icontains', 'istartswith'],
             'canton': ['exact']
