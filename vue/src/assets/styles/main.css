@@ -30,9 +30,9 @@ h1,h2 {
   padding-bottom: 15px;
 }
 h3,h4 {
-  font-size: 2.4em;
+  font-size: 2.2em;
 }
-p,li {
+h5, p,li {
   font-size: 1.8em;
 }
 li p {
@@ -41,6 +41,12 @@ li p {
 
 .small {
   font-size: 1.3em;
+}
+.smaller {
+  font-size: 0.75em;
+}
+.hint {
+  opacity: 0.75;
 }
 
 a {

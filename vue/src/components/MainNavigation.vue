@@ -66,6 +66,7 @@
 #mainnav a {
   color: #000;
   margin: 0 0.5em;
+  font-size: 1.6em;
 }
 
 .v-application .mobnav a {

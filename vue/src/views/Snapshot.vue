@@ -2,15 +2,17 @@
 <i18n>
 {
   "de": {
+    "calltoactionText": "Angebot einholen für Ihre Gemeinde"
   },
   "fr": {
+    "calltoactionText": "FR: Angebot einhohlen für Ihre Gemeinde"
   }
 }
 </i18n>
 <!-- eslint-enable -->
 
 <template>
-  <div>
+  <div id="snapshotview">
     <v-navigation-drawer
       :width="320"
       clipped="clipped"
@@ -23,27 +25,51 @@
       <v-divider />
 
       <div class="ma-4">
-        <search :term="municipalityName"/>
-      </div>
+        <search :dense="true" :term="municipalityName"/>
 
-      <div class="ma-4">
-        <snapshot-meta :title="title" :description="description" />
+        <div class="nodata pb-8">
+          <div class="smaller hint">
+            <h4>nodata title hint</h4>
+            <p>no data explenation </p>
+          </div>
+          <div class="useractions">
+            <v-btn small block outlined color="primary">
+              <router-link key="signup" :to="'/' + $i18n.locale + '/signup'">
+                {{ $t('calltoactionText') }}
+              </router-link>
+            </v-btn>
+          </div>
+        </div>
+
         <snapshot-list :snapshots="snapshotsExamples" :exclude="hash" />
       </div>
 
       <v-toolbar
       :width="320"
       absolute
-      bottom
-        class="useractions center">
-        <user-actions />
+      bottom>
+        <div class="useractions">
+          <user-actions noRequest="1" />
+        </div>
+        <v-spacer/>
+        <language-switch/>
       </v-toolbar>
     </v-navigation-drawer>
 
     <v-content>
+
       <v-container fluid class="pa-0">
         <div id='map'></div>
       </v-container>
+
+      <v-card
+      id="mapinfo"
+      class="px-4 py-2"
+      min-width="320"
+      >
+        <snapshot-meta :title="title" :description="description" />
+      </v-card>
+
     </v-content>
   </div>
 </template>
@@ -53,6 +79,20 @@
   position: relative;
   height: 100vh;
   width: 100%;
+}
+#mapinfo {
+  position: absolute;
+  bottom: 2em;
+  right: 2em;
+}
+
+#snapshotview .v-text-field--outlined fieldset {
+  border-color: rgba(0, 0, 0, 0.12);
+}
+#snapshotview .gemeindesuche input::placeholder {
+  color: #000;
+  opacity: 1;
+  font-weight: 900;
 }
 </style>
 

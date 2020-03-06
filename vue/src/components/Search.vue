@@ -18,7 +18,7 @@
   ref="search"
   class="gemeindesuche"
   outlined
-  :placeholder="$t('placeholder')"
+  :placeholder="placeholdertext"
   append-icon="mdi-magnify"
   background-color="white"
   v-model="select"
@@ -30,6 +30,7 @@
   hide-no-data
   return-object
   v-on:change="submitMunicipality()"
+  :dense="dense"
   ></v-autocomplete>
 </template>
 
@@ -61,7 +62,8 @@ export default {
 
   props: {
     term: String,
-    autofocus: Boolean
+    autofocus: Boolean,
+    dense: Boolean
   },
 
   mounted() {
@@ -126,6 +128,9 @@ export default {
   computed: {
     menuProps() {
       return !this.search ? { value: false } : {};
+    },
+    placeholdertext() {
+      return this.term ? this.term : this.$t('placeholder');
     }
   },
 
