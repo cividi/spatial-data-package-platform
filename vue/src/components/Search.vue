@@ -140,12 +140,10 @@ export default {
       this.municipalities = result.data.municipalities.edges;
       this.municipalities.forEach((item) => {
         const nrScans = item.node.snapshots.length;
-        if (nrScans === 1) {
-          item.node.fullnameWithSnapshots = `${item.node.fullname}, ${nrScans} Scan`;
-        } else if (nrScans > 1) {
-          item.node.fullnameWithSnapshots = `${item.node.fullname}, ${nrScans} Scans`;
-        } else {
+        if (nrScans === 0) {
           item.node.fullnameWithSnapshots = `${item.node.fullname}`;
+        } else {
+          item.node.fullnameWithSnapshots = `${item.node.fullname} •`;
         }
       });
     }

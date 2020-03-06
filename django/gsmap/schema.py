@@ -59,7 +59,7 @@ class MunicipalityNode(DjangoObjectType):
         fields = ['name', 'canton', 'centerpoint']
         filter_fields = {
             'name': ['exact', 'icontains', 'istartswith'],
-            'canton': ['exact', 'icontains', 'istartswith'],
+            'canton': ['exact', 'icontains'],
         }
         interfaces = [graphene.relay.Node]
 
