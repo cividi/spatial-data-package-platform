@@ -1,6 +1,6 @@
 # pylint: disable=no-member,unused-argument
-import graphene
 import json
+import graphene
 from django.contrib.gis.db import models
 from graphene.types import generic
 from graphene_django.types import DjangoObjectType
@@ -44,8 +44,8 @@ class ImageNode(graphene.ObjectType):
 class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
-        fields = ['title', 'topic', 'data', 'screenshot', 'municipality']
-        filter_fields = ['municipality__id', 'municipality__canton']
+        fields = ['is_showcase', 'title', 'topic', 'data', 'screenshot', 'municipality']
+        filter_fields = ['municipality__id', 'municipality__canton', 'is_showcase']
         interfaces = [graphene.relay.Node]
 
     data = generic.GenericScalar(source='data')

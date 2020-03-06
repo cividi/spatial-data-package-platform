@@ -71,6 +71,7 @@ class Snapshot(models.Model):
     )
     archived = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
+    is_showcase = models.BooleanField(default=False)
     title = models.CharField(max_length=150, default='')
     topic = models.CharField(max_length=100, default='')
     data = pg_fields.JSONField(default=dict)

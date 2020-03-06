@@ -100,7 +100,7 @@ export default {
               fullname
             }
           }
-          snapshots {
+          snapshots(isShowcase: true) {
             edges {
               node {
                 id
