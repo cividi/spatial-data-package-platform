@@ -79,8 +79,9 @@ export default {
               node {
                 bfsNumber
                 fullname
+                centerpoint
                 snapshots {
-                  id
+                  pk
                 }
               }
             }
@@ -95,13 +96,29 @@ export default {
 
     submitMunicipality() {
       if (this.select.node.bfsNumber) {
-        this.$router.push({
-          name: 'signup',
-          params: {
-            bfsnumber: this.select.node.bfsNumber,
-            bfsname: this.select.node.fullname
-          }
-        });
+        if (this.select.node.snapshots.length === 0) {
+          this.$router.push({
+            name: 'snapshotNew',
+            params: {
+              hash: null,
+              municipality: this.select.node
+            }
+          });
+        } else {
+          this.$router.push({
+            name: 'snapshot',
+            params: {
+              hash: this.select.node.snapshots[0].pk
+            }
+          });
+        }
+        // this.$router.push({
+        //   name: 'signup',
+        //   params: {
+        //     bfsnumber: this.select.node.bfsNumber,
+        //     bfsname: this.select.node.fullname
+        //   }
+        // });
       }
     }
   },

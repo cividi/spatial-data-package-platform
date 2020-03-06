@@ -28,7 +28,7 @@
 
       <div class="ma-4">
         <snapshot-meta :title="title" :description="description" />
-        <snapshot-list :snapshots="snapshotsRelated" :exclude="hash"/>
+        <snapshot-list :snapshots="snapshotsExamples" :exclude="hash" />
       </div>
 
       <v-toolbar
@@ -77,13 +77,13 @@ export default {
     return {
       hash: this.$route.params.hash,
       map: null,
-      geojson: {},
+      geojson: null,
       geobounds: [],
       layers: [],
       title: '',
       description: '',
       municipalityName: '',
-      snapshotsRelated: []
+      snapshotsExamples: []
     };
   },
 
@@ -98,7 +98,11 @@ export default {
             municipality {
               bfsNumber
               fullname
-              snapshots {
+            }
+          }
+          snapshots {
+            edges {
+              node {
                 id
                 pk
                 title
@@ -114,9 +118,45 @@ export default {
           hash: btoa(`SnapshotNode:${hash}`)
         }
       });
-      this.geojson = result.data.snapshot.data;
-      this.municipalityName = result.data.snapshot.municipality.fullname;
-      this.snapshotsRelated = result.data.snapshot.municipality.snapshots;
+      if (result.data.hasOwnProperty('snapshot')) {
+        this.geojson = result.data.snapshot.data;
+        this.municipalityName = result.data.snapshot.municipality.fullname;
+      }
+      this.snapshotsExamples = result.data.snapshots.edges;
+    },
+
+    async getSnapshotsExamples() {
+      const result = await this.$apollo.query({
+        query: gql`query getsnapshotsExamples {
+          snapshots {
+            edges {
+              node {
+                id
+                pk
+                title
+                topic
+                screenshot {
+                  url
+                }
+              }
+            }
+          }
+        }`
+      });
+      this.snapshotsExamples = result.data.snapshots.edges;
+    },
+
+    createFeatureLayer(geojson) {
+      const geoJsonExtended = L.geoJson(geojson, {
+        pointToLayer: (feature, latlng) => {
+          if (feature.properties.radius) {
+            // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
+            return new L.Circle(latlng, feature.properties);
+          }
+          return new L.Marker(latlng);
+        }
+      });
+      return geoJsonExtended;
     },
 
     setupMeta() {
@@ -142,19 +182,6 @@ export default {
       });
     },
 
-    createFeatureLayer(geojson) {
-      const geoJsonExtended = L.geoJson(geojson, {
-        pointToLayer: (feature, latlng) => {
-          if (feature.properties.radius) {
-            // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
-            return new L.Circle(latlng, feature.properties);
-          }
-          return new L.Marker(latlng);
-        }
-      });
-      return geoJsonExtended;
-    },
-
     displayMapbox() {
       L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
       const boxSize = 800;
@@ -172,14 +199,29 @@ export default {
         }
       });
       this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
+    },
+
+    displayEmptyMapbox() {
+      L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
+      const centerpoint = this.$route.params.municipality.centerpoint.coordinates;
+      this.map = L.mapbox.map('map').setView(centerpoint, 13);
+      this.map.addLayer(new L.Marker(centerpoint));
+      this.map.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6qnoijj28od1is9u1wbb3vr'));
     }
   },
 
-  async created() {
-    await this.getSnapshot(this.hash);
-    this.setupMeta();
-    this.setupMapbox();
-    this.displayMapbox();
+  async mounted() {
+    if (this.hash) {
+      await this.getSnapshot(this.hash);
+    } else {
+      await this.getSnapshotsExamples();
+      this.displayEmptyMapbox();
+    }
+    if (this.geojson) {
+      this.setupMeta();
+      this.setupMapbox();
+      this.displayMapbox();
+    }
   },
 
   destroy() {

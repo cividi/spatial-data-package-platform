@@ -70,6 +70,18 @@ const routes = [
         }
       },
       {
+        path: 'new-municipality',
+        name: 'snapshotNew',
+        component: () => import('@/views/Snapshot.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutSnapshot.vue')
+        },
+        props: {
+          hash: null,
+          municipality: ''
+        }
+      },
+      {
         path: ':hash([0-9A-Z]{6})',
         pathToRegexpOptions: { sensitive: true },
         name: 'snapshot',
