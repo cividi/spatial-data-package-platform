@@ -198,6 +198,11 @@ export default {
           this.map.addLayer(this.createFeatureLayer(layer.data.features));
         }
       });
+      L.control.scale({
+        metric: true,
+        imperial: false
+      }).addTo(this.map);
+      // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     },
 
