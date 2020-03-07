@@ -14,9 +14,11 @@
 <template>
   <div id="snapshotview">
     <v-navigation-drawer
-      :width="320"
+      id="snapshotnav"
+      width="320"
       clipped="clipped"
       app
+      v-model="snapshotnav"
       >
       <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
         <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
@@ -45,7 +47,7 @@
       </div>
 
       <v-toolbar
-      :width="320"
+      width="320"
       absolute
       bottom>
         <div class="useractions">
@@ -58,23 +60,48 @@
 
     <v-content>
 
+      <v-slide-x-reverse-transition>
+        <v-btn fab absolute small
+          style="top:1.2em; right:2em;"
+          color="primary"
+          v-if="!snapshotnav"
+          @click="snapshotnav=!snapshotnav">
+          <v-icon>mdi-menu</v-icon>
+        </v-btn>
+      </v-slide-x-reverse-transition>
+
       <v-container fluid class="pa-0">
         <div id='map'></div>
       </v-container>
 
+      <v-btn fab absolute small
+        style="bottom:2em; right:2em;"
+        color="white"
+        @click="mapinfoopen=!mapinfoopen">
+        <v-icon  >mdi-information-variant</v-icon>
+      </v-btn>
+
       <v-card
       id="mapinfo"
       class="px-4 py-2"
-      min-width="320"
+      v-bind:class="{open: mapinfoopen}"
       >
+        <v-icon
+          style="position: absolute; top:0; right:0;"
+          class="pa-2"
+          @click="mapinfoopen=!mapinfoopen" >mdi-close-circle-outline</v-icon>
         <snapshot-meta :title="title" :description="description" />
       </v-card>
+
 
     </v-content>
   </div>
 </template>
 
 <style>
+#snapshotnav {
+  z-index: 9999; /* must be above mapbox interface */
+}
 #map {
   position: relative;
   height: 100vh;
@@ -84,6 +111,14 @@
   position: absolute;
   bottom: 2em;
   right: 2em;
+  min-width: 320px;
+  clip-path: circle(0% at 95% 90%);
+  transition: clip-path 0.3s ease-out;
+  z-index: 10;
+}
+
+#mapinfo.open {
+  clip-path: circle(100% at center);
 }
 
 #snapshotview .v-text-field--outlined fieldset {
@@ -123,7 +158,9 @@ export default {
       title: '',
       description: '',
       municipalityName: '',
-      snapshotsExamples: []
+      snapshotsExamples: [],
+      snapshotnav: true,
+      mapinfoopen: true
     };
   },
 

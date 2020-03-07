@@ -3,7 +3,9 @@
       <main-navigation />
 
       <v-content>
-        <slot/>
+        <v-slide-y-transition mode="out-in">
+          <slot/>
+        </v-slide-y-transition>
       </v-content>
     </main>
 </template>
