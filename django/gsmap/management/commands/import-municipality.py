@@ -1,5 +1,5 @@
 import json
-from jsonslicer import JsonSlicer
+import jsonslicer
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.contrib.gis.geos import GEOSGeometry
@@ -14,15 +14,13 @@ class MunicipalityImporter(object):
         with transaction.atomic():
             for feature in features:
                 polygons3d = feature['geometry']['coordinates']
-                polygons2d = []
-                for polygon in polygons3d:
-                    new_polygon = []
-                    for points in polygon:
-                        new_points = []
-                        for long, lat, _ in points:
-                            new_points.append([lat, long])
-                        new_polygon.append(new_points)
-                    polygons2d.append(new_polygon)
+                polygons2d = [
+                    [
+                        [[lat, long] for long, lat, _ in points]
+                        for points in polygon
+                    ]
+                    for polygon in polygons3d
+                ]
                 geojson = {
                     "type": "MultiPolygon",
                     "coordinates": polygons2d
@@ -40,7 +38,9 @@ class MunicipalityImporter(object):
 
     def import_file(self):
         with open(self.filename) as json_file:
-            features_iterator = JsonSlicer(json_file, ('features', None))
+            features_iterator = jsonslicer.JsonSlicer(
+                json_file, ('features', None)
+            )
             while True:
                 features_100 = []
                 try:
