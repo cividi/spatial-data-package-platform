@@ -42,7 +42,7 @@ class MunicipalityImporter(object):
         with open(self.filename) as json_file:
             features_iterator = JsonSlicer(json_file, ('features', None))
             while True:
-                features_100 = []x
+                features_100 = []
                 try:
                     features_100 = []
                     for _ in range(100):
@@ -50,11 +50,11 @@ class MunicipalityImporter(object):
                         features_100.append(feature)
                 except StopIteration:
                     self.import_features(features_100)
-                    print('.',  flush=True)
+                    print('.', flush=True)
                     break
                 else:
                     self.import_features(features_100)
-                    print('.',  flush=True, end='')
+                    print('.', flush=True, end='')
         json_file.close()
 
 
