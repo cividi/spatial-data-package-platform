@@ -81,7 +81,6 @@ export default {
               node {
                 bfsNumber
                 fullname
-                centerpoint
                 snapshots {
                   pk
                 }

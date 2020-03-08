@@ -15,9 +15,9 @@
   <div id="snapshotview">
     <v-navigation-drawer
       id="snapshotnav"
-      width="320"
       clipped="clipped"
       app
+      width="320"
       v-model="snapshotnav"
       >
       <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
@@ -30,7 +30,11 @@
         <search :dense="true" :term="municipalityName"/>
 
         <div class="nodata pb-8">
-          <div class="smaller hint">
+          <div v-if="hash" class="smaller hint">
+            <h4>data title hint</h4>
+            <p>data explenation </p>
+          </div>
+          <div v-else class="smaller hint">
             <h4>nodata title hint</h4>
             <p>no data explenation </p>
           </div>
@@ -47,9 +51,9 @@
       </div>
 
       <v-toolbar
-      width="320"
-      absolute
-      bottom>
+       width="320"
+       absolute
+       bottom>
         <div class="useractions">
           <user-actions noRequest="1" />
         </div>
@@ -59,7 +63,6 @@
     </v-navigation-drawer>
 
     <v-content>
-
       <v-slide-x-reverse-transition>
         <v-btn fab absolute small
           style="top:1.2em; right:2em;"
@@ -78,7 +81,7 @@
         style="bottom:2em; right:2em;"
         color="white"
         @click="mapinfoopen=!mapinfoopen">
-        <v-icon  >mdi-information-variant</v-icon>
+        <v-icon>mdi-information-variant</v-icon>
       </v-btn>
 
       <v-card
@@ -90,7 +93,7 @@
           style="position: absolute; top:0; right:0;"
           class="pa-2"
           @click="mapinfoopen=!mapinfoopen" >mdi-close-circle-outline</v-icon>
-        <snapshot-meta :title="title" :description="description" />
+        <snapshot-meta :title="title" :description="description" :hash="hash" :legend="legend" />
       </v-card>
 
 
@@ -151,12 +154,16 @@ export default {
   data() {
     return {
       hash: this.$route.params.hash,
+      bfsNumber: null,
       map: null,
       geojson: null,
+      municipalityGeojson: null,
+      municipalityCenterpoint: null,
       geobounds: [],
       layers: [],
       title: '',
       description: '',
+      legend: [],
       municipalityName: '',
       snapshotsExamples: [],
       snapshotnav: true,
@@ -164,10 +171,19 @@ export default {
     };
   },
 
+  computed: {
+    municipality() {
+      if (this.$route.params.hasOwnProperty('municipality') && this.$route.params.municipality) {
+        return this.$route.params.municipality;
+      }
+      return null;
+    }
+  },
+
   methods: {
     async getSnapshot(hash) {
       const result = await this.$apollo.query({
-        query: gql`query getsnapshot($hash: ID!){
+        query: gql`query getsnapshot($hash: ID!) {
           snapshot(id: $hash) {
             id
             pk
@@ -202,9 +218,16 @@ export default {
       this.snapshotsExamples = result.data.snapshots.edges;
     },
 
-    async getSnapshotsExamples() {
+    async getEmpty(bfsNumber) {
       const result = await this.$apollo.query({
-        query: gql`query getsnapshotsExamples {
+        query: gql`query getmunicipality($bfsNumber: ID!) {
+          municipality(id: $bfsNumber) {
+            id
+            bfsNumber
+            fullname
+            perimeter
+            perimeterCentroid
+          }
           snapshots {
             edges {
               node {
@@ -218,8 +241,14 @@ export default {
               }
             }
           }
-        }`
+        }`,
+        variables: {
+          bfsNumber: btoa(`MunicipalityNode:${bfsNumber}`)
+        }
       });
+      this.municipalityName = result.data.municipality.fullname;
+      this.municipalityGeojson = result.data.municipality.perimeter;
+      this.municipalityCenterpoint = result.data.municipality.perimeterCentroid;
       this.snapshotsExamples = result.data.snapshots.edges;
     },
 
@@ -239,6 +268,7 @@ export default {
     setupMeta() {
       this.title = this.geojson.views[0].spec.title;
       this.description = this.geojson.views[0].spec.description;
+      this.legend = this.geojson.views[0].spec.legend;
     },
 
     setupMapbox() {
@@ -285,9 +315,12 @@ export default {
 
     displayEmptyMapbox() {
       L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
-      const centerpoint = this.$route.params.municipality.centerpoint.coordinates;
+      const centerpoint = this.municipalityCenterpoint.coordinates;
       this.map = L.mapbox.map('map').setView(centerpoint, 13);
-      this.map.addLayer(new L.Marker(centerpoint));
+      this.municipalityGeojson.coordinates.forEach((polygon) => {
+        this.map.addLayer(L.polygon(polygon));
+      });
+      // this.map.addLayer(new L.Marker(centerpoint));
       this.map.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6qnoijj28od1is9u1wbb3vr'));
     }
   },
@@ -295,14 +328,14 @@ export default {
   async mounted() {
     if (this.hash) {
       await this.getSnapshot(this.hash);
+      if (this.geojson) {
+        this.setupMeta();
+        this.setupMapbox();
+        this.displayMapbox();
+      }
     } else {
-      await this.getSnapshotsExamples();
+      await this.getEmpty(this.municipality.bfsNumber);
       this.displayEmptyMapbox();
-    }
-    if (this.geojson) {
-      this.setupMeta();
-      this.setupMapbox();
-      this.displayMapbox();
     }
   },
 
