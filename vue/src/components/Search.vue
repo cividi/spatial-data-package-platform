@@ -2,10 +2,12 @@
 <i18n>
 {
   "de": {
-    "placeholder.autocomplete": "Suche"
+    "placeholder": "Suche",
+    "label": "Gemeinde"
   },
   "fr": {
-    "placeholder.autocomplete": "Recherche"
+    "placeholder": "Recherche",
+    "label": "Communauté"
   }
 }
 </i18n>
@@ -16,29 +18,25 @@
   ref="search"
   class="gemeindesuche"
   outlined
-  :placeholder="$t('placeholder.autocomplete')"
+  :placeholder="$t('placeholder')"
   append-icon="mdi-magnify"
   background-color="white"
   v-model="select"
   :items="municipalities"
   :search-input.sync="search"
   :menu-props="menuProps"
-  item-text="node.fullname"
+  item-text="node.fullnameWithSnapshots"
   item-value="node.bfsNumber"
   hide-no-data
   return-object
   v-on:change="submitMunicipality()"
-></v-autocomplete>
+  ></v-autocomplete>
 </template>
 
 <style>
 .gemeindesuche.v-select {
-  position: absolute;
-  top: calc(50% - 30px);
-  left: 50%;
   width: 100%;
   max-width: 420px;
-  transform: translateX(-50%);
 }
 .gemeindesuche.v-select.v-select--is-menu-active
   .v-input__icon--append
@@ -61,8 +59,15 @@ export default {
     };
   },
 
+  props: {
+    term: String,
+    autofocus: Boolean
+  },
+
   mounted() {
-    this.$refs.search.focus();
+    if (this.autofocus) {
+      this.$refs.search.focus();
+    }
   },
 
   methods: {
@@ -72,7 +77,11 @@ export default {
           municipalities(name_Icontains: $q) {
             edges {
               node {
-                bfsNumber, fullname
+                bfsNumber
+                fullname
+                snapshots {
+                  id
+                }
               }
             }
           }
@@ -107,6 +116,16 @@ export default {
     async search(val) {
       const result = await this.queryMunicipalities(val);
       this.municipalities = result.data.municipalities.edges;
+      this.municipalities.forEach((item) => {
+        const nrScans = item.node.snapshots.length;
+        if (nrScans === 1) {
+          item.node.fullnameWithSnapshots = `${item.node.fullname}, ${nrScans} Scan`;
+        } else if (nrScans > 1) {
+          item.node.fullnameWithSnapshots = `${item.node.fullname}, ${nrScans} Scans`;
+        } else {
+          item.node.fullnameWithSnapshots = `${item.node.fullname}`;
+        }
+      });
     }
   }
 };

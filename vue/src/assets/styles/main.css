@@ -7,11 +7,16 @@
 }
 
 body {
-  font-family: "Circular Pro", sans-serif;
+  /* font-family: "Circular Pro", sans-serif; */
+  font-family: "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 62.5%;
 }
+.v-application {
+  font-family: "Open Sans", sans-serif;
+}
+
 
 textarea,
 input {
@@ -30,9 +35,10 @@ h3,h4 {
 p,li {
   font-size: 1.8em;
 }
-nav {
-  font-size: 1.6em;
+li p {
+  font-size: 1em;
 }
+
 .small {
   font-size: 1.3em;
 }
@@ -44,10 +50,6 @@ a {
 
 .center {
   text-align: center;
-}
-
-.v-application {
-    font-family: "Open Sans", sans-serif;
 }
 
 .content {

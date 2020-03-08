@@ -10,17 +10,26 @@
 <!-- eslint-enable -->
 
 <template>
-  <v-container>
+  <div>
     <v-navigation-drawer
       :width="320"
-      left app >
+      clipped="clipped"
+      app
+      >
       <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
         <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
       </router-link>
 
-      <search />
-      <snapshot-meta :title="title" :description="description" />
-      <snapshot-list :snapshots="snapshotsRelated" :exclude="hash"/>
+      <v-divider />
+
+      <div class="ma-4">
+        <search :term="municipalityName"/>
+      </div>
+
+      <div class="ma-4">
+        <snapshot-meta :title="title" :description="description" />
+        <snapshot-list :snapshots="snapshotsRelated" :exclude="hash"/>
+      </div>
 
       <v-toolbar
       :width="320"
@@ -31,19 +40,18 @@
       </v-toolbar>
     </v-navigation-drawer>
 
-    <v-layout >
-      <v-flex>
+    <v-content>
+      <v-container fluid class="pa-0">
         <div id='map'></div>
-      </v-flex>
-    </v-layout>
-  </v-container>
+      </v-container>
+    </v-content>
+  </div>
 </template>
 
 <style>
 #map {
-  position: absolute;
-  top: 0;
-  bottom: 0;
+  position: relative;
+  height: 100vh;
   width: 100%;
 }
 </style>
@@ -61,7 +69,7 @@ Vue.component('snapshot-list', SnapshotList);
 
 function geostring2array(s) {
   const array = s.split(':')[1].split(',');
-  return array.map(x => parseFloat(x)).reverse();
+  return array.map(x => parseFloat(x));
 }
 
 export default {
@@ -74,7 +82,7 @@ export default {
       layers: [],
       title: '',
       description: '',
-      municipality: {},
+      municipalityName: '',
       snapshotsRelated: []
     };
   },
@@ -95,6 +103,9 @@ export default {
                 pk
                 title
                 topic
+                screenshot {
+                  url
+                }
               }
             }
           }
@@ -104,19 +115,19 @@ export default {
         }
       });
       this.geojson = result.data.snapshot.data;
-      this.municipality = result.data.snapshot.municipality.fullname;
+      this.municipalityName = result.data.snapshot.municipality.fullname;
       this.snapshotsRelated = result.data.snapshot.municipality.snapshots;
     },
 
     setupMeta() {
-      this.title = this.geojson.title;
-      this.description = this.geojson.title;
+      this.title = this.geojson.views[0].spec.title;
+      this.description = this.geojson.views[0].spec.description;
     },
 
     setupMapbox() {
       this.geobounds = [
-        geostring2array(this.geojson.views[0].bounds[0]),
-        geostring2array(this.geojson.views[0].bounds[1])
+        geostring2array(this.geojson.views[0].spec.bounds[0]),
+        geostring2array(this.geojson.views[0].spec.bounds[1])
       ];
 
       const lookupResources = {}; // name -> index
@@ -131,6 +142,19 @@ export default {
       });
     },
 
+    createFeatureLayer(geojson) {
+      const geoJsonExtended = L.geoJson(geojson, {
+        pointToLayer: (feature, latlng) => {
+          if (feature.properties.radius) {
+            // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
+            return new L.Circle(latlng, feature.properties);
+          }
+          return new L.Marker(latlng);
+        }
+      });
+      return geoJsonExtended;
+    },
+
     displayMapbox() {
       L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
       const boxSize = 800;
@@ -143,6 +167,8 @@ export default {
           this.map.addLayer(L.mapbox.featureLayer(layer.data, {
             attribution: 'Data Analysis by cividi, Swisstopo'
           }));
+        } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
+          this.map.addLayer(this.createFeatureLayer(layer.data.features));
         }
       });
       this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));

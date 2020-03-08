@@ -36,6 +36,12 @@
 </div>
 </template>
 
+<style>
+.useractions .v-btn {
+  text-transform: initial;
+}
+</style>
+
 <script>
 export default {
   name: 'UserActions',
