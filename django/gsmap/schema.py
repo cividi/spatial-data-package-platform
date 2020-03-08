@@ -67,12 +67,16 @@ class MunicipalityNode(DjangoObjectType):
     fullname = graphene.String(source='fullname')
     snapshots = graphene.List(SnapshotNode)
     perimeter_centroid = GeoJSON()
+    perimeter_bounds = graphene.List(graphene.Float)
 
     def resolve_snapshots(self, info):
         return Snapshot.objects.filter(municipality__id=self.pk)
 
     def resolve_perimeter_centroid(self, info):
         return self.perimeter.centroid
+
+    def resolve_perimeter_bounds(self, info):
+        return self.perimeter.extent
 
 
 class Query(object):

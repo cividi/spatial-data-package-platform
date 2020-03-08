@@ -159,6 +159,7 @@ export default {
       geojson: null,
       municipalityGeojson: null,
       municipalityCenterpoint: null,
+      municipalityBounds: null,
       geobounds: [],
       layers: [],
       title: '',
@@ -226,7 +227,7 @@ export default {
             bfsNumber
             fullname
             perimeter
-            perimeterCentroid
+            perimeterBounds
           }
           snapshots {
             edges {
@@ -249,6 +250,7 @@ export default {
       this.municipalityName = result.data.municipality.fullname;
       this.municipalityGeojson = result.data.municipality.perimeter;
       this.municipalityCenterpoint = result.data.municipality.perimeterCentroid;
+      this.municipalityBounds = result.data.municipality.perimeterBounds;
       this.snapshotsExamples = result.data.snapshots.edges;
     },
 
@@ -315,8 +317,13 @@ export default {
 
     displayEmptyMapbox() {
       L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
-      const centerpoint = this.municipalityCenterpoint.coordinates;
-      this.map = L.mapbox.map('map').setView(centerpoint, 13);
+      const boxSize = 800;
+      const bounds = geoViewport.viewport(
+        this.municipalityBounds, [boxSize, boxSize]
+      );
+      // const centerpoint = this.municipalityCenterpoint.coordinates;
+      this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
+      // this.map = L.mapbox.map('map').setView(centerpoint, 13);
       this.municipalityGeojson.coordinates.forEach((polygon) => {
         this.map.addLayer(L.polygon(polygon));
       });
