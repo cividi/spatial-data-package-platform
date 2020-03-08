@@ -1,4 +1,4 @@
-GEMEINDESCAN_WEBUI_DJANGO=0.3.0
+GEMEINDESCAN_WEBUI_DJANGO=0.3.1
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec django")
 
 .PHONY: all
@@ -33,7 +33,9 @@ delete-gemeinden-django:
 	$(DOCKER_EXEC) python3 manage.py shell --command="from gsmap.models import Municipality;Municipality.objects.all().delete()"
 
 import-gemeinden-json:
-	$(DOCKER_EXEC) sh -c "curl -Ls https://datahub.io/n0rdlicht/ch-municipalities/r/0.json | jq '[.[]|{ \"model\": \"gsmap.municipality\", pk: .gemeinde.BFS_NUMMER, \"fields\": { name: .gemeinde.NAME, canton: .kanton.KUERZEL }}]' | python3 manage.py loaddata --format=json -"
+	$(DOCKER_EXEC) curl -o ./tmp/gemeinden.geojson -Ls https://datahub.io/n0rdlicht/ch-municipalities/r/2.geojson
+	$(DOCKER_EXEC) python3 manage.py import-municipality ./tmp/gemeinden.geojson
+	$(DOCKER_EXEC) rm ./tmp/gemeinden.geojson
 
 init:
 	make migrate

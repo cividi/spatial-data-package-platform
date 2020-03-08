@@ -13,21 +13,22 @@
 
 <template>
   <v-list class="snapshotlist"
-    subheader
-    three-line
-    dense>
+    three-line>
 
-      <v-subheader class="px-0">{{ $t('listtitle') }}</v-subheader>
+      <v-subheader
+        style="color:black;font-weight:700;"
+        class="px-0">{{ $t('listtitle') }}
+      </v-subheader>
 
-      <v-list-item v-for="snapshot in snapshotsFiltered" :key="snapshot.id"
-        :to="'/' + $i18n.locale + '/' + snapshot.pk"
-        class="px-2">
+      <v-list-item v-for="snapshot in snapshotsFiltered" :key="snapshot.node.id"
+        :to="'/' + $i18n.locale + '/' + snapshot.node.pk"
+        class="px-2 mb-4" dense>
         <v-list-item-avatar tile size="64" class="my-2">
-          <v-img :src="djangobaseurl + snapshot.screenshot.url"></v-img>
+          <v-img :src="djangobaseurl + snapshot.node.screenshot.url"></v-img>
         </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title>{{snapshot.title}}</v-list-item-title>
-            <v-list-item-subtitle>{{snapshot.topic}}</v-list-item-subtitle>
+            <v-list-item-title style="font-weight:700">{{ snapshot.node.title }}</v-list-item-title>
+            <v-list-item-subtitle>{{ snapshot.node.topic }}</v-list-item-subtitle>
           </v-list-item-content>
       </v-list-item>
   </v-list>
@@ -35,11 +36,17 @@
 
 <style>
 .snapshotlist .v-list-item {
-  background-color: #eee;
+  background-color: #f8f8f8;
   border-radius: 4px;
 }
+.snapshotlist .v-list-item,
 .snapshotlist .v-list-item__content {
   min-height: 80px;
+}
+.snapshotlist .v-list-item--active::before {
+  background-color: transparent;
+  border: 1px solid #000;
+  border-radius: 4px;
 }
 </style>
 

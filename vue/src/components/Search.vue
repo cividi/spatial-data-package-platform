@@ -18,7 +18,7 @@
   ref="search"
   class="gemeindesuche"
   outlined
-  :placeholder="$t('placeholder')"
+  :placeholder="placeholdertext"
   append-icon="mdi-magnify"
   background-color="white"
   v-model="select"
@@ -30,6 +30,7 @@
   hide-no-data
   return-object
   v-on:change="submitMunicipality()"
+  :dense="dense"
   ></v-autocomplete>
 </template>
 
@@ -61,7 +62,8 @@ export default {
 
   props: {
     term: String,
-    autofocus: Boolean
+    autofocus: Boolean,
+    dense: Boolean
   },
 
   mounted() {
@@ -80,7 +82,7 @@ export default {
                 bfsNumber
                 fullname
                 snapshots {
-                  id
+                  pk
                 }
               }
             }
@@ -95,13 +97,22 @@ export default {
 
     submitMunicipality() {
       if (this.select.node.bfsNumber) {
-        this.$router.push({
-          name: 'signup',
-          params: {
-            bfsnumber: this.select.node.bfsNumber,
-            bfsname: this.select.node.fullname
-          }
-        });
+        if (this.select.node.snapshots.length === 0) {
+          this.$router.push({
+            name: 'snapshotNew',
+            params: {
+              hash: null,
+              bfsNumber: this.select.node.bfsNumber
+            }
+          });
+        } else {
+          this.$router.push({
+            name: 'snapshot',
+            params: {
+              hash: this.select.node.snapshots[0].pk
+            }
+          });
+        }
       }
     }
   },
@@ -109,6 +120,9 @@ export default {
   computed: {
     menuProps() {
       return !this.search ? { value: false } : {};
+    },
+    placeholdertext() {
+      return this.term ? this.term : this.$t('placeholder');
     }
   },
 
@@ -118,12 +132,10 @@ export default {
       this.municipalities = result.data.municipalities.edges;
       this.municipalities.forEach((item) => {
         const nrScans = item.node.snapshots.length;
-        if (nrScans === 1) {
-          item.node.fullnameWithSnapshots = `${item.node.fullname}, ${nrScans} Scan`;
-        } else if (nrScans > 1) {
-          item.node.fullnameWithSnapshots = `${item.node.fullname}, ${nrScans} Scans`;
-        } else {
+        if (nrScans === 0) {
           item.node.fullnameWithSnapshots = `${item.node.fullname}`;
+        } else {
+          item.node.fullnameWithSnapshots = `${item.node.fullname} •`;
         }
       });
     }

@@ -13,7 +13,7 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
     )
     fieldsets = (
         (_('Meta'), {
-            'fields': ('created', 'id', 'archived', 'deleted')
+            'fields': ('created', 'id', 'is_showcase', 'archived', 'deleted')
         }),
         (_('Main'), {
             'fields':

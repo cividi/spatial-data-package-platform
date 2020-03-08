@@ -18,7 +18,7 @@
    <v-btn small text color="white" class="mt-4">
     <router-link :to="'/' + $i18n.locale + '/login'">{{ $t('loginText') }}</router-link>
   </v-btn><br>
-  <v-btn small outlined color="white" class="mt-4">
+  <v-btn small outlined color="white" class="mt-4" v-if="!noRequest">
     <router-link key="signup" :to="'/' + $i18n.locale + '/signup'">
       {{ $t('signupText') }}
     </router-link>
@@ -28,7 +28,7 @@
   <v-btn small text color="primary">
     <router-link :to="'/' + $i18n.locale + '/login'">{{ $t('loginText') }}</router-link>
   </v-btn>
-  <v-btn small outlined color="primary">
+  <v-btn small outlined color="primary" v-if="!noRequest">
     <router-link key="signup" :to="'/' + $i18n.locale + '/signup'">
       {{ $t('signupText') }}
     </router-link>
@@ -49,6 +49,9 @@ export default {
     return {
     };
   },
-  props: ['vertical']
+  props: [
+    'vertical',
+    'noRequest'
+  ]
 };
 </script>

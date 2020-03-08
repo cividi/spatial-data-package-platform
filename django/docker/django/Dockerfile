@@ -41,6 +41,13 @@ RUN apk add --no-cache build-base python3-dev \
 # geodjango layer
 RUN apk --no-cache add gdal geos proj proj-datumgrid
 
+# python requirements 01 layer
+COPY ./requirements/01.txt /tmp/requirements.txt
+RUN apk --no-cache add yajl build-base yajl-dev python3-dev \
+    && curl -s https://bootstrap.pypa.io/get-pip.py | python3 \
+    && pip3 install -r /tmp/requirements.txt \
+    && apk del build-base yajl-dev python3-dev
+
 COPY s6/etc/services.d /etc/services.d
 COPY s6/etc/cont-init.d /etc/cont-init.d
 ENTRYPOINT ["/init"]
