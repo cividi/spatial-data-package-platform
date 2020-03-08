@@ -56,7 +56,7 @@ class SnapshotNode(DjangoObjectType):
 class MunicipalityNode(DjangoObjectType):
     class Meta:
         model = Municipality
-        fields = ['name', 'canton', 'centerpoint']
+        fields = ['name', 'canton', 'centerpoint', 'perimeter']
         filter_fields = {
             'name': ['exact', 'icontains', 'istartswith'],
             'canton': ['exact', 'icontains'],
@@ -66,9 +66,13 @@ class MunicipalityNode(DjangoObjectType):
     bfs_number = graphene.Int(source='pk')
     fullname = graphene.String(source='fullname')
     snapshots = graphene.List(SnapshotNode)
+    perimeter_centroid = GeoJSON()
 
     def resolve_snapshots(self, info):
         return Snapshot.objects.filter(municipality__id=self.pk)
+
+    def resolve_perimeter_centroid(self, info):
+        return self.perimeter.centroid
 
 
 class Query(object):
