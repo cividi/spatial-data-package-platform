@@ -70,15 +70,14 @@ const routes = [
         }
       },
       {
-        path: 'new-municipality',
+        path: 'new-municipality/:bfsNumber',
         name: 'snapshotNew',
         component: () => import('@/views/Snapshot.vue'),
         meta: {
           layout: () => import('@/layouts/LayoutSnapshot.vue')
         },
         props: {
-          hash: null,
-          municipality: ''
+          hash: null
         }
       },
       {
@@ -88,6 +87,9 @@ const routes = [
         component: () => import('@/views/Snapshot.vue'),
         meta: {
           layout: () => import('@/layouts/LayoutSnapshot.vue')
+        },
+        props: {
+          bfsNumber: null
         }
       },
       {

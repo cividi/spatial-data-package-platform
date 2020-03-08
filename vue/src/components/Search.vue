@@ -102,7 +102,7 @@ export default {
             name: 'snapshotNew',
             params: {
               hash: null,
-              municipality: this.select.node
+              bfsNumber: this.select.node.bfsNumber
             }
           });
         } else {
@@ -113,13 +113,6 @@ export default {
             }
           });
         }
-        // this.$router.push({
-        //   name: 'signup',
-        //   params: {
-        //     bfsnumber: this.select.node.bfsNumber,
-        //     bfsname: this.select.node.fullname
-        //   }
-        // });
       }
     }
   },

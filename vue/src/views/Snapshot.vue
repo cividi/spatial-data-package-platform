@@ -2,10 +2,18 @@
 <i18n>
 {
   "de": {
-    "calltoactionText": "Angebot einholen für Ihre Gemeinde"
+    "calltoactionText": "Angebot einholen für Ihre Gemeinde",
+    "hasSnapshot.title": "data title hint",
+    "hasSnapshot.p": "data explenation",
+    "noSnapshot.title": "nodata title hint",
+    "noSnapshot.p": "nodata explenation"
   },
   "fr": {
-    "calltoactionText": "FR: Angebot einhohlen für Ihre Gemeinde"
+    "calltoactionText": "FR: Angebot einhohlen für Ihre Gemeinde",
+    "hasSnapshot.title": "FR: data title hint",
+    "hasSnapshot.p": "FR: data explenation",
+    "noSnapshot.title": "FR: nodata title hint",
+    "noSnapshot.p": "FR: nodata explenation"
   }
 }
 </i18n>
@@ -31,12 +39,12 @@
 
         <div class="nodata pb-8">
           <div v-if="hash" class="smaller hint">
-            <h4>data title hint</h4>
-            <p>data explenation </p>
+            <h4>{{ $t('hasSnapshot.title') }}</h4>
+            <p>{{ $t('hasSnapshot.p') }}</p>
           </div>
           <div v-else class="smaller hint">
-            <h4>nodata title hint</h4>
-            <p>no data explenation </p>
+            <h4>{{ $t('noSnapshot.title') }}</h4>
+            <p>{{ $t('noSnapshot.p') }}</p>
           </div>
           <div class="useractions">
             <v-btn small block outlined color="primary">
@@ -77,7 +85,9 @@
         <div id='map'></div>
       </v-container>
 
-      <v-btn fab absolute small
+      <v-btn
+        v-if="hash"
+        fab absolute small
         style="bottom:2em; right:2em;"
         color="white"
         @click="mapinfoopen=!mapinfoopen">
@@ -85,9 +95,10 @@
       </v-btn>
 
       <v-card
-      id="mapinfo"
-      class="px-4 py-2"
-      v-bind:class="{open: mapinfoopen}"
+        v-if="hash"
+        id="mapinfo"
+        class="px-4 py-2"
+        v-bind:class="{open: mapinfoopen}"
       >
         <v-icon
           style="position: absolute; top:0; right:0;"
@@ -154,12 +165,9 @@ export default {
   data() {
     return {
       hash: this.$route.params.hash,
-      bfsNumber: null,
+      bfsNumber: this.$route.params.bfsNumber,
       map: null,
       geojson: null,
-      municipalityGeojson: null,
-      municipalityCenterpoint: null,
-      municipalityBounds: null,
       geobounds: [],
       layers: [],
       title: '',
@@ -212,9 +220,11 @@ export default {
           hash: btoa(`SnapshotNode:${hash}`)
         }
       });
-      if (result.data.hasOwnProperty('snapshot')) {
+      if (result.data.hasOwnProperty('snapshot') && result.data.snapshot) {
         this.geojson = result.data.snapshot.data;
         this.municipalityName = result.data.snapshot.municipality.fullname;
+      } else {
+        this.$router.push({ name: 'home' });
       }
       this.snapshotsExamples = result.data.snapshots.edges;
     },
@@ -248,9 +258,8 @@ export default {
         }
       });
       this.municipalityName = result.data.municipality.fullname;
-      this.municipalityGeojson = result.data.municipality.perimeter;
-      this.municipalityCenterpoint = result.data.municipality.perimeterCentroid;
-      this.municipalityBounds = result.data.municipality.perimeterBounds;
+      this.geojson = result.data.municipality.perimeter;
+      this.geobounds = result.data.municipality.perimeterBounds;
       this.snapshotsExamples = result.data.snapshots.edges;
     },
 
@@ -296,39 +305,30 @@ export default {
       const boxSize = 800;
       const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
       this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
-      this.layers.forEach((layer) => {
-        if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
-          this.map.addLayer(L.mapbox.styleLayer(layer.path));
-        } else if (layer.mediatype === 'application/geo+json') {
-          this.map.addLayer(L.mapbox.featureLayer(layer.data, {
-            attribution: this.geojson.views[0].spec.attribution
-          }));
-        } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
-          this.map.addLayer(this.createFeatureLayer(layer.data.features));
-        }
-      });
+      if (this.hash) { // full snapshot with hash
+        this.layers.forEach((layer) => {
+          if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
+            this.map.addLayer(L.mapbox.styleLayer(layer.path));
+          } else if (layer.mediatype === 'application/geo+json') {
+            this.map.addLayer(L.mapbox.featureLayer(layer.data, {
+              attribution: this.geojson.views[0].spec.attribution
+            }));
+          } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
+            this.map.addLayer(this.createFeatureLayer(layer.data.features));
+          }
+        });
+      } else if (this.bfsNumber) { // empty municipality
+        this.geojson.coordinates.forEach((polygon) => {
+          this.map.addLayer(L.polygon(polygon));
+        });
+        this.map.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6qnoijj28od1is9u1wbb3vr'));
+      }
       L.control.scale({
         metric: true,
         imperial: false
       }).addTo(this.map);
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
-    },
-
-    displayEmptyMapbox() {
-      L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
-      const boxSize = 800;
-      const bounds = geoViewport.viewport(
-        this.municipalityBounds, [boxSize, boxSize]
-      );
-      // const centerpoint = this.municipalityCenterpoint.coordinates;
-      this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
-      // this.map = L.mapbox.map('map').setView(centerpoint, 13);
-      this.municipalityGeojson.coordinates.forEach((polygon) => {
-        this.map.addLayer(L.polygon(polygon));
-      });
-      // this.map.addLayer(new L.Marker(centerpoint));
-      this.map.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6qnoijj28od1is9u1wbb3vr'));
     }
   },
 
@@ -341,8 +341,8 @@ export default {
         this.displayMapbox();
       }
     } else {
-      await this.getEmpty(this.municipality.bfsNumber);
-      this.displayEmptyMapbox();
+      await this.getEmpty(this.bfsNumber);
+      this.displayMapbox();
     }
   },
 

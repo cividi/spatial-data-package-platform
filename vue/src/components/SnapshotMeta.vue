@@ -10,8 +10,8 @@
       <p>{{ description }}</p>
     </div>
     <v-list
-    dense
-    class="legend">
+      dense
+      class="legend">
       <v-list-item
         v-for="(item, i) in legend"
         :key="i"
@@ -33,7 +33,7 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
-
+    <img alt="gemeindescan logo" height="35" src="@/assets/images/gemeindescan-logo.svg">
   </div>
 </template>
 
@@ -49,8 +49,10 @@
   margin: auto 0;
   width: 2em;
 }
-.legend--hash,
-.legend--hash:visited {
+a.legend--hash,
+.legend--hash:visited,
+.legend--hash:hover,
+.legend--hash:active {
   color: gray;
   font-weight: bold;
 }
