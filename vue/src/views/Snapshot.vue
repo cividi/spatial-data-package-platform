@@ -6,14 +6,16 @@
     "hasSnapshot.title": "data title hint",
     "hasSnapshot.p": "data explenation",
     "noSnapshot.title": "nodata title hint",
-    "noSnapshot.p": "nodata explenation"
+    "noSnapshot.municipalityText": "diese Gemeinde",
+    "noSnapshot.p": "Für {municipalityText} sind noch keine Daten vorhanden."
   },
   "fr": {
     "calltoactionText": "FR: Angebot einhohlen für Ihre Gemeinde",
     "hasSnapshot.title": "FR: data title hint",
     "hasSnapshot.p": "FR: data explenation",
     "noSnapshot.title": "FR: nodata title hint",
-    "noSnapshot.p": "FR: nodata explenation"
+    "noSnapshot.municipalityText": "cette communauté",
+    "noSnapshot.p": "FR: Pour {municipalityText} nodata explenation"
   }
 }
 </i18n>
@@ -44,7 +46,7 @@
           </div>
           <div v-else class="smaller hint">
             <h4>{{ $t('noSnapshot.title') }}</h4>
-            <p>{{ $t('noSnapshot.p') }}</p>
+            <p>{{ $t('noSnapshot.p', { municipalityText: municipalityText }) }}</p>
           </div>
           <div class="useractions">
             <v-btn small block outlined color="primary">
@@ -186,6 +188,9 @@ export default {
         return this.$route.params.municipality;
       }
       return null;
+    },
+    municipalityText() {
+      return this.municipalityName ? this.municipalityName : this.$t('noSnapshot.municipalityText');
     }
   },
 
