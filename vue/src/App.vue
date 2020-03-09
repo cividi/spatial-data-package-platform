@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <component :is="$route.meta.layout">
+    <component :is="selectedLayout">
       <router-view :key="$route.fullPath"/>
     </component>
   </v-app>
@@ -13,15 +13,23 @@
 #topbar {
   border-bottom: 1px solid #e4e4e4;
 }
-.useractions .v-btn {
-  text-transform: initial;
-}
 </style>
 
 <script>
+import LayoutDefault from '@/layouts/LayoutDefault.vue';
+
 export default {
   data() {
     return {};
+  },
+
+  computed: {
+    selectedLayout() {
+      if (this.$route && this.$route.hasOwnProperty('meta') && this.$route.meta.hasOwnProperty('layout')) {
+        return this.$route.meta.layout;
+      }
+      return LayoutDefault;
+    }
   }
 };
 </script>

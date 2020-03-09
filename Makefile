@@ -44,4 +44,7 @@ ab-html:
 	ab -c 10 -n 2000 http://gemeindescan.ch/
 
 dump-db:
-	@docker-compose exec pdb sh -c 'pg_dump --no-owner --no-acl --schema=public -U $$POSTGRES_USER $$POSTGRES_DB'
+	@docker-compose exec pdb sh -c 'pg_dump --no-owner --no-acl --schema=public -U $$POSTGRES_USER $$POSTGRES_DB' > tmp/dump.sql
+
+import-db:
+	@docker-compose exec pdb sh -c 'psql -U $$POSTGRES_USER $$POSTGRES_DB < /var/services/postgres/var/dump.sql'

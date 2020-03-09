@@ -29,7 +29,7 @@
       <div class="gmdscn">
           <img :alt="$t('img.1.alt')" class="" width="100%"
             src="@/assets/images/gmdscn-ch-map.svg"/>
-          <search/>
+          <search :autofocus=true />
       </div>
       <v-row justify="center">
         <v-col class="introtxt text-center py-12">
@@ -46,6 +46,13 @@
   position: relative;
   max-width: 720px;
   margin: 0 auto;
+}
+
+.gmdscn .gemeindesuche.v-select {
+  position: absolute;
+  top: calc(50% - 30px);
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .introtxt {

@@ -7,10 +7,6 @@ Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/:lang',
-    component: {
-      template: '<router-view></router-view>'
-    },
     beforeEnter(to, from, next) {
       const lang = to.params.lang;
       if (!['de', 'fr'].includes(lang)) return next('de');
@@ -18,6 +14,10 @@ const routes = [
         i18n.locale = lang;
       }
       return next();
+    },
+    path: '/:lang',
+    component: {
+      template: '<router-view></router-view>'
     },
     children: [
       {
@@ -29,7 +29,7 @@ const routes = [
         }
       },
       {
-        path: 'login',
+        path: 'login/',
         name: 'login',
         component: () => import('@/views/Login.vue'),
         meta: {
@@ -37,7 +37,7 @@ const routes = [
         }
       },
       {
-        path: 'signup',
+        path: 'signup/',
         name: 'signup',
         component: () => import('@/views/Signup.vue'),
         meta: {
@@ -46,7 +46,7 @@ const routes = [
         props: { bfsnumber: '' }
       },
       {
-        path: 'about',
+        path: 'about/',
         name: 'about',
         component: () => import('@/views/About.vue'),
         meta: {
@@ -54,7 +54,7 @@ const routes = [
         }
       },
       {
-        path: 'imprint',
+        path: 'imprint/',
         name: 'imprint',
         component: () => import('@/views/Imprint.vue'),
         meta: {
@@ -62,7 +62,7 @@ const routes = [
         }
       },
       {
-        path: 'contact',
+        path: 'contact/',
         name: 'contact',
         component: () => import('@/views/Contact.vue'),
         meta: {
@@ -70,12 +70,33 @@ const routes = [
         }
       },
       {
-        path: ':hash',
+        path: 'new-municipality/:bfsNumber',
+        name: 'snapshotNew',
+        component: () => import('@/views/Snapshot.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutSnapshot.vue')
+        },
+        props: {
+          hash: null
+        }
+      },
+      {
+        path: ':hash([0-9A-Z]{6})',
+        pathToRegexpOptions: { sensitive: true },
         name: 'snapshot',
         component: () => import('@/views/Snapshot.vue'),
         meta: {
           layout: () => import('@/layouts/LayoutSnapshot.vue')
+        },
+        props: {
+          bfsNumber: null
         }
+      },
+      {
+        path: ':hash([0-9a-z]{6})',
+        pathToRegexpOptions: { sensitive: true },
+        name: 'snapshotRedirect',
+        redirect: to => `/${to.params.lang}/${to.params.hash.toUpperCase()}`
       }
     ]
   },

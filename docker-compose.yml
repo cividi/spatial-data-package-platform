@@ -51,7 +51,7 @@ services:
       - DJANGO_HTTPS=False
       - DJANGO_EMAIL_HOST=maildev
       - DJANGO_SECRET_KEY=adddxxccxx4rt0ioywg3yf5kjq64-t5
-      # - DJANGO_ALLOWED_HOSTS=gemeindescan.lan,localhost
+      - DJANGO_ALLOWED_HOSTS=local.gemeindescan.ch,localhost
     working_dir: /opt/app
     volumes:
       - ./django:/opt/app
@@ -66,12 +66,12 @@ services:
     command: -f /dev/null
 
   # static:
-  #   image: busybox
+  #   image: nginx:1.16-alpine
   #   hostname: static
   #   volumes:
-  #     - ./var/django:/var/services/django
+  #     - ./etc/nginx:/etc/nginx/conf.d
+  #     - var-gemeindescan-webui:/var/services
+  #   links:
+  #     - django
   #   ports:
-  #     - 8082:80
-  #   # command: sleep infinity
-  #   command: busybox httpd -f -v -h /var/services/django
-
+  #     - 80:80

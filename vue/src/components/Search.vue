@@ -2,10 +2,12 @@
 <i18n>
 {
   "de": {
-    "placeholder.autocomplete": "Suche"
+    "placeholder": "Suche",
+    "label": "Gemeinde"
   },
   "fr": {
-    "placeholder.autocomplete": "Recherche"
+    "placeholder": "Recherche",
+    "label": "Communauté"
   }
 }
 </i18n>
@@ -16,29 +18,26 @@
   ref="search"
   class="gemeindesuche"
   outlined
-  :placeholder="$t('placeholder.autocomplete')"
+  :placeholder="placeholdertext"
   append-icon="mdi-magnify"
   background-color="white"
   v-model="select"
   :items="municipalities"
   :search-input.sync="search"
   :menu-props="menuProps"
-  item-text="node.fullname"
+  item-text="node.fullnameWithSnapshots"
   item-value="node.bfsNumber"
   hide-no-data
   return-object
   v-on:change="submitMunicipality()"
-></v-autocomplete>
+  :dense="dense"
+  ></v-autocomplete>
 </template>
 
 <style>
 .gemeindesuche.v-select {
-  position: absolute;
-  top: calc(50% - 30px);
-  left: 50%;
   width: 100%;
   max-width: 420px;
-  transform: translateX(-50%);
 }
 .gemeindesuche.v-select.v-select--is-menu-active
   .v-input__icon--append
@@ -61,8 +60,16 @@ export default {
     };
   },
 
+  props: {
+    term: String,
+    autofocus: Boolean,
+    dense: Boolean
+  },
+
   mounted() {
-    this.$refs.search.focus();
+    if (this.autofocus) {
+      this.$refs.search.focus();
+    }
   },
 
   methods: {
@@ -72,7 +79,11 @@ export default {
           municipalities(name_Icontains: $q) {
             edges {
               node {
-                bfsNumber, fullname
+                bfsNumber
+                fullname
+                snapshots {
+                  pk
+                }
               }
             }
           }
@@ -86,13 +97,22 @@ export default {
 
     submitMunicipality() {
       if (this.select.node.bfsNumber) {
-        this.$router.push({
-          name: 'signup',
-          params: {
-            bfsnumber: this.select.node.bfsNumber,
-            bfsname: this.select.node.fullname
-          }
-        });
+        if (this.select.node.snapshots.length === 0) {
+          this.$router.push({
+            name: 'snapshotNew',
+            params: {
+              hash: null,
+              bfsNumber: this.select.node.bfsNumber
+            }
+          });
+        } else {
+          this.$router.push({
+            name: 'snapshot',
+            params: {
+              hash: this.select.node.snapshots[0].pk
+            }
+          });
+        }
       }
     }
   },
@@ -100,6 +120,9 @@ export default {
   computed: {
     menuProps() {
       return !this.search ? { value: false } : {};
+    },
+    placeholdertext() {
+      return this.term ? this.term : this.$t('placeholder');
     }
   },
 
@@ -107,6 +130,14 @@ export default {
     async search(val) {
       const result = await this.queryMunicipalities(val);
       this.municipalities = result.data.municipalities.edges;
+      this.municipalities.forEach((item) => {
+        const nrScans = item.node.snapshots.length;
+        if (nrScans === 0) {
+          item.node.fullnameWithSnapshots = `${item.node.fullname}`;
+        } else {
+          item.node.fullnameWithSnapshots = `${item.node.fullname} •`;
+        }
+      });
     }
   }
 };

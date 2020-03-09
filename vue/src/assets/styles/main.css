@@ -7,11 +7,16 @@
 }
 
 body {
-  font-family: "Circular Pro", sans-serif;
+  /* font-family: "Circular Pro", sans-serif; */
+  font-family: "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 62.5%;
 }
+.v-application {
+  font-family: "Open Sans", sans-serif;
+}
+
 
 textarea,
 input {
@@ -25,16 +30,23 @@ h1,h2 {
   padding-bottom: 15px;
 }
 h3,h4 {
-  font-size: 2.4em;
+  font-size: 2.2em;
 }
-p,li {
+h5, p,li {
   font-size: 1.8em;
 }
-nav {
-  font-size: 1.6em;
+li p {
+  font-size: 1em;
 }
+
 .small {
   font-size: 1.3em;
+}
+.smaller {
+  font-size: 0.722222em;
+}
+.hint {
+  opacity: 0.7;
 }
 
 a {
@@ -44,10 +56,6 @@ a {
 
 .center {
   text-align: center;
-}
-
-.v-application {
-    font-family: "Open Sans", sans-serif;
 }
 
 .content {

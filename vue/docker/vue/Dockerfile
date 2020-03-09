@@ -22,9 +22,17 @@ RUN --mount=type=cache,target=/tmp/yarn_cache \
     && yarn global add --ignore-optional http-server \
     && yarn install --ignore-optional
 
-# vue/node layer 01
-# COPY ./package/01/package.json ./package/01/yarn.lock /opt/vue/
-# RUN --mount=type=cache,target=/tmp/yarn_cache \
-#     yarn install --ignore-optional
+# vue/node layer 01 / spa prerender
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+RUN apk add --no-cache \
+      rsync \
+      chromium \
+      nss \
+      freetype \
+      harfbuzz \
+      ttf-freefont
+COPY ./package/01/package.json ./package/01/yarn.lock /opt/vue/
+RUN --mount=type=cache,target=/tmp/yarn_cache \
+    yarn install --ignore-optional
 
 EXPOSE 8080

@@ -1,20 +1,33 @@
 # pylint: disable=no-member,unused-argument
+import json
 import graphene
+from django.contrib.gis.db import models
 from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
+from graphene_django.converter import convert_django_field
 # from sorl.thumbnail import get_thumbnail
 from gsmap.models import Municipality, Snapshot
+
+
+class GeoJSON(graphene.Scalar):
+    @classmethod
+    def serialize(cls, value):
+        return json.loads(value.geojson)
+
+
+@convert_django_field.register(models.GeometryField)
+def convert_field_to_geojson(field, registry=None):
+    return graphene.Field(
+        GeoJSON,
+        description=field.help_text,
+        required=not field.null
+    )
 
 
 class ThumbnailNode(graphene.ObjectType):
     url = graphene.String()
     size = graphene.String()
-
-    #def resolve_url(self, info, size=size, **kwargs):
-    #    instance = get_thumbnail(self, size)
-    #    print(kwargs)
-    #    return "xxx"
 
 
 class ImageNode(graphene.ObjectType):
@@ -31,8 +44,8 @@ class ImageNode(graphene.ObjectType):
 class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
-        fields = ['title', 'topic', 'data', 'screenshot', 'municipality']
-        filter_fields = ['municipality__id', 'municipality__canton']
+        fields = ['is_showcase', 'title', 'topic', 'data', 'screenshot', 'municipality']
+        filter_fields = ['municipality__id', 'municipality__canton', 'is_showcase']
         interfaces = [graphene.relay.Node]
 
     data = generic.GenericScalar(source='data')
@@ -43,19 +56,27 @@ class SnapshotNode(DjangoObjectType):
 class MunicipalityNode(DjangoObjectType):
     class Meta:
         model = Municipality
-        fields = ['name', 'canton']
+        fields = ['name', 'canton', 'centerpoint', 'perimeter']
         filter_fields = {
             'name': ['exact', 'icontains', 'istartswith'],
-            'canton': ['exact']
+            'canton': ['exact', 'icontains'],
         }
         interfaces = [graphene.relay.Node]
 
     bfs_number = graphene.Int(source='pk')
     fullname = graphene.String(source='fullname')
     snapshots = graphene.List(SnapshotNode)
+    perimeter_centroid = GeoJSON()
+    perimeter_bounds = graphene.List(graphene.Float)
 
     def resolve_snapshots(self, info):
         return Snapshot.objects.filter(municipality__id=self.pk)
+
+    def resolve_perimeter_centroid(self, info):
+        return self.perimeter.centroid
+
+    def resolve_perimeter_bounds(self, info):
+        return self.perimeter.extent
 
 
 class Query(object):
