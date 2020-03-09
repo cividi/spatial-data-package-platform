@@ -29,7 +29,7 @@ const routes = [
         }
       },
       {
-        path: 'login',
+        path: 'login/',
         name: 'login',
         component: () => import('@/views/Login.vue'),
         meta: {
@@ -37,7 +37,7 @@ const routes = [
         }
       },
       {
-        path: 'signup',
+        path: 'signup/',
         name: 'signup',
         component: () => import('@/views/Signup.vue'),
         meta: {
@@ -46,7 +46,7 @@ const routes = [
         props: { bfsnumber: '' }
       },
       {
-        path: 'about',
+        path: 'about/',
         name: 'about',
         component: () => import('@/views/About.vue'),
         meta: {
@@ -54,7 +54,7 @@ const routes = [
         }
       },
       {
-        path: 'imprint',
+        path: 'imprint/',
         name: 'imprint',
         component: () => import('@/views/Imprint.vue'),
         meta: {
@@ -62,7 +62,7 @@ const routes = [
         }
       },
       {
-        path: 'contact',
+        path: 'contact/',
         name: 'contact',
         component: () => import('@/views/Contact.vue'),
         meta: {

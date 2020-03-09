@@ -26,7 +26,7 @@
         <router-link
           v-for="item in mainnav"
           :key="item.textKey"
-          :to="'/' + $i18n.locale + item.route">{{ $t(item.textKey) }}</router-link>
+          :to="'/' + $i18n.locale + item.route + '/'">{{ $t(item.textKey) }}</router-link>
       </nav>
       <v-spacer></v-spacer>
       <div class="d-none d-md-block"><language-switch/></div>
