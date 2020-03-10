@@ -5,9 +5,17 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    notIframe: window.self === window.top
+    notIframe: window.self === window.top,
+    bfsnumber: '',
+    bfsname: ''
   },
   mutations: {
+    setBfsnumber(state, nr) {
+      state.bfsnumber = nr;
+    },
+    setBfsname(state, name) {
+      state.bfsname = name;
+    }
   },
   actions: {
   },

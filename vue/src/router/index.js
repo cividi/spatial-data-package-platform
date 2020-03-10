@@ -69,7 +69,8 @@ const routes = [
         }
       },
       {
-        path: 'new-municipality/:bfsNumber',
+        path: 'new-municipality/:bfsNumber/',
+        pathToRegexpOptions: { strict: true },
         name: 'snapshotNew',
         component: () => import('@/views/Snapshot.vue'),
         meta: {
@@ -80,8 +81,8 @@ const routes = [
         }
       },
       {
-        path: ':hash([0-9A-Z]{6})',
-        pathToRegexpOptions: { sensitive: true },
+        path: ':hash([0-9A-Z]{6})/',
+        pathToRegexpOptions: { sensitive: true, strict: true },
         name: 'snapshot',
         component: () => import('@/views/Snapshot.vue'),
         meta: {
@@ -92,10 +93,10 @@ const routes = [
         }
       },
       {
-        path: ':hash([0-9a-z]{6})',
-        pathToRegexpOptions: { sensitive: true },
+        path: ':hash([0-9a-z]{6})/',
+        pathToRegexpOptions: { sensitive: true, strict: true },
         name: 'snapshotRedirect',
-        redirect: to => `/${to.params.lang}/${to.params.hash.toUpperCase()}`
+        redirect: to => `/${to.params.lang}/${to.params.hash.toUpperCase()}/`
       }
     ]
   },

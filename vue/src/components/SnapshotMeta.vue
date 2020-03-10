@@ -3,8 +3,8 @@
     <div class="smaller">
       <h3>{{ title }}</h3>
       <p >
-        <a class="legend--hash" :href="'https://gemeindescan.ch/' + hash" target="_blank">
-        gemeindescan.ch/{{ hash }}
+        <a class="legend--hash" :href="'https://gemeindescan.ch/' + hash + '/'" target="_blank">
+        gemeindescan.ch/{{ hash }}/
         </a>
       </p>
       <p>{{ description }}</p>
