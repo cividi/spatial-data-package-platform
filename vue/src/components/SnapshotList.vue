@@ -21,7 +21,7 @@
       </v-subheader>
 
       <v-list-item v-for="snapshot in snapshotsFiltered" :key="snapshot.node.id"
-        :to="'/' + $i18n.locale + '/' + snapshot.node.pk"
+        :to="'/' + $i18n.locale + '/' + snapshot.node.pk + '/'"
         class="px-2 mb-4" dense>
         <v-list-item-avatar tile size="64" class="my-2">
           <v-img :src="djangobaseurl + snapshot.node.screenshot.url"></v-img>
