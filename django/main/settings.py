@@ -113,6 +113,7 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_DIR', '/var/services/django/media')
 MEDIA_URL = '/media/'
+DATA_UPLOAD_MAX_MEMORY_SIZE = 15728640
 
 GRAPHENE = {'SCHEMA': 'main.schema.schema'}
 

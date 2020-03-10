@@ -3,8 +3,8 @@
     <div class="smaller">
       <h3>{{ title }}</h3>
       <p >
-        <a class="legend--hash" :href="'https://gemeindescan.ch/' + hash" target="_blank">
-        gemeindescan.ch/{{ hash }}
+        <a class="legend--hash" :href="'https://gemeindescan.ch/' + hash + '/'" target="_blank">
+        gemeindescan.ch/{{ hash }}/
         </a>
       </p>
       <p>{{ description }}</p>
@@ -19,11 +19,16 @@
         >
         <v-list-item-icon class="my-0 mr-2">
           <v-icon v-if="item.shape === 'circle'"
-            :color="item.color" :style="{ fontSize: item.size + 'em'}">mdi-circle</v-icon>
+            :color="item.color"
+            :style="{ fontSize: 1.6 * item.size + 'em', opacity: item.opacity}">mdi-circle</v-icon>
           <v-icon v-else-if="item.shape === 'square'"
-            :color="item.color" :style="{ fontSize: item.size + 'em'}">mdi-square</v-icon>
+            :color="item.color"
+            :style="{ fontSize: 1.6 * item.size + 'em', opacity: item.opacity}">mdi-square</v-icon>
           <span v-else-if="item.shape === 'line'" class="legend--line"
-            :style="{ backgroundColor: item.color, height: 0.5 * item.size + 'em'}">&nbsp;
+            :style="{
+              backgroundColor: item.color,
+              height: 0.5 * item.size + 'em',
+              opacity: item.opacity}">&nbsp;
           </span>
         </v-list-item-icon>
         <v-list-item-content class="py-0">

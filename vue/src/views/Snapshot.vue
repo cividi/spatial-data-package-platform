@@ -2,18 +2,24 @@
 <i18n>
 {
   "de": {
-    "calltoactionText": "Angebot einholen für Ihre Gemeinde",
-    "hasSnapshot.title": "data title hint",
-    "hasSnapshot.p": "data explenation",
-    "noSnapshot.title": "nodata title hint",
-    "noSnapshot.p": "nodata explenation"
+    "calltoactionText": "Angebot für {municipalityText} einholen",
+    "hasSnapshot.title": "Datenverfügbarkeit",
+    "hasSnapshot.p1": "Für {municipalityText} stehen erste Daten zur Verfügung.",
+    "hasSnapshot.p2": "Erkunden Sie unsere weiteren Fallbeispiele um ein besseres Bild der Anwendungs-möglichkeiten für Ihre Gemeinde zu erhalten.",
+    "noSnapshot.title": "Datenverfügbarkeit",
+    "noSnapshot.municipalityText": "diese Gemeinde",
+    "noSnapshot.p1": "Für {municipalityText} stehen zur Zeit noch keine Daten zur Verfügung.",
+    "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten."
   },
   "fr": {
-    "calltoactionText": "FR: Angebot einhohlen für Ihre Gemeinde",
-    "hasSnapshot.title": "FR: data title hint",
-    "hasSnapshot.p": "FR: data explenation",
-    "noSnapshot.title": "FR: nodata title hint",
-    "noSnapshot.p": "FR: nodata explenation"
+    "calltoactionText": "Veuillez recueillir l’offre pour votre commune",
+    "hasSnapshot.title": "Disponibilité des données",
+    "hasSnapshot.p1": "Les premières données concernants {municipalityText} sont disponibles.",
+    "hasSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
+    "noSnapshot.title": "Disponibilité des données",
+    "noSnapshot.municipalityText": "cette communauté",
+    "noSnapshot.p1": "En ce moment il n’éxiste pas encore de données pour {municipalityText}.",
+    "noSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune."
   }
 }
 </i18n>
@@ -22,6 +28,7 @@
 <template>
   <div id="snapshotview">
     <v-navigation-drawer
+      v-if="$store.state.notIframe"
       id="snapshotnav"
       clipped="clipped"
       app
@@ -34,22 +41,24 @@
 
       <v-divider />
 
-      <div class="ma-4">
+      <div id="snapshotnavContent" class="ma-4">
         <search :dense="true" :term="municipalityName"/>
 
         <div class="nodata pb-8">
           <div v-if="hash" class="smaller hint">
             <h4>{{ $t('hasSnapshot.title') }}</h4>
-            <p>{{ $t('hasSnapshot.p') }}</p>
+            <p>{{ $t('hasSnapshot.p1', { municipalityText: municipalityText }) }}</p>
+            <p>{{ $t('hasSnapshot.p2') }}</p>
           </div>
           <div v-else class="smaller hint">
             <h4>{{ $t('noSnapshot.title') }}</h4>
-            <p>{{ $t('noSnapshot.p') }}</p>
+            <p>{{ $t('noSnapshot.p1', { municipalityText: municipalityText }) }}</p>
+            <p>{{ $t('noSnapshot.p2') }}</p>
           </div>
           <div class="useractions">
             <v-btn small block outlined color="primary">
               <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
-                {{ $t('calltoactionText') }}
+                {{ $t('calltoactionText', { municipalityText: municipalityText }) }}
               </router-link>
             </v-btn>
           </div>
@@ -98,6 +107,7 @@
         v-if="hash"
         id="mapinfo"
         class="px-4 py-2"
+        :style="'width:' + legendWidth"
         v-bind:class="{open: mapinfoopen}"
       >
         <v-icon
@@ -106,29 +116,38 @@
           @click="mapinfoopen=!mapinfoopen" >mdi-close-circle-outline</v-icon>
         <snapshot-meta :title="title" :description="description" :hash="hash" :legend="legend" />
       </v-card>
-
-
     </v-content>
   </div>
 </template>
 
 <style>
+html,
+body,
+#app .v-application--wrap,
+#map {
+  min-height: calc(100vh - var(--vh-offset, 0px));
+  height: calc(100vh - var(--vh-offset, 0px));
+}
+
 #snapshotnav {
+  height: calc(100vh - var(--vh-offset, 0px)) !important;
   z-index: 9999; /* must be above mapbox interface */
+}
+#snapshotnavContent {
+  padding-bottom: 6em;
 }
 #map {
   position: relative;
-  height: 100vh;
   width: 100%;
 }
 #mapinfo {
   position: absolute;
   bottom: 2em;
   right: 2em;
-  min-width: 320px;
+  min-width: 240px;
   clip-path: circle(0% at 95% 90%);
   transition: clip-path 0.3s ease-out;
-  z-index: 10;
+  z-index: 1000; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
@@ -186,6 +205,17 @@ export default {
         return this.$route.params.municipality;
       }
       return null;
+    },
+
+    municipalityText() {
+      return this.municipalityName ? this.municipalityName : this.$t('noSnapshot.municipalityText');
+    },
+
+    legendWidth() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '280px';
+        default: return '320px';
+      }
     }
   },
 
@@ -227,6 +257,8 @@ export default {
         this.$router.push({ name: 'home' });
       }
       this.snapshotsExamples = result.data.snapshots.edges;
+      this.$store.commit('setBfsnumber', result.data.snapshot.municipality.bfsNumber);
+      this.$store.commit('setBfsname', result.data.snapshot.municipality.fullname);
     },
 
     async getEmpty(bfsNumber) {
@@ -261,6 +293,8 @@ export default {
       this.geojson = result.data.municipality.perimeter;
       this.geobounds = result.data.municipality.perimeterBounds;
       this.snapshotsExamples = result.data.snapshots.edges;
+      this.$store.commit('setBfsnumber', result.data.snapshot.bfsNumber);
+      this.$store.commit('setBfsname', result.data.snapshot.fullname);
     },
 
     createFeatureLayer(geojson) {

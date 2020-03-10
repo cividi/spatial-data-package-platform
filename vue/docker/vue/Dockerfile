@@ -35,4 +35,9 @@ COPY ./package/01/package.json ./package/01/yarn.lock /opt/vue/
 RUN --mount=type=cache,target=/tmp/yarn_cache \
     yarn install --ignore-optional
 
+# vue/node layer 02 / vh-check
+COPY ./package/02/package.json ./package/02/yarn.lock /opt/vue/
+RUN --mount=type=cache,target=/tmp/yarn_cache \
+    yarn install --ignore-optional
+
 EXPOSE 8080
