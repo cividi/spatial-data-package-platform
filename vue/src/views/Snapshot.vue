@@ -24,6 +24,7 @@
 <template>
   <div id="snapshotview">
     <v-navigation-drawer
+      v-if="$store.state.notIframe"
       id="snapshotnav"
       clipped="clipped"
       app
@@ -100,6 +101,7 @@
         v-if="hash"
         id="mapinfo"
         class="px-4 py-2"
+        :style="'width:' + legendWidth"
         v-bind:class="{open: mapinfoopen}"
       >
         <v-icon
@@ -108,8 +110,6 @@
           @click="mapinfoopen=!mapinfoopen" >mdi-close-circle-outline</v-icon>
         <snapshot-meta :title="title" :description="description" :hash="hash" :legend="legend" />
       </v-card>
-
-
     </v-content>
   </div>
 </template>
@@ -127,7 +127,7 @@
   position: absolute;
   bottom: 2em;
   right: 2em;
-  min-width: 320px;
+  min-width: 240px;
   clip-path: circle(0% at 95% 90%);
   transition: clip-path 0.3s ease-out;
   z-index: 10;
@@ -189,8 +189,16 @@ export default {
       }
       return null;
     },
+
     municipalityText() {
       return this.municipalityName ? this.municipalityName : this.$t('noSnapshot.municipalityText');
+    },
+
+    legendWidth() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '280px';
+        default: return '320px';
+      }
     }
   },
 
