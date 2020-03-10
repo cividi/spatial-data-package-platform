@@ -2,20 +2,24 @@
 <i18n>
 {
   "de": {
-    "calltoactionText": "Angebot einholen für Ihre Gemeinde",
-    "hasSnapshot.title": "data title hint",
-    "hasSnapshot.p": "data explenation",
-    "noSnapshot.title": "nodata title hint",
+    "calltoactionText": "Angebot für {municipalityText} einholen",
+    "hasSnapshot.title": "Datenverfügbarkeit",
+    "hasSnapshot.p1": "Für {municipalityText} stehen erste Daten zur Verfügung.",
+    "hasSnapshot.p2": "Erkunden Sie unsere weiteren Fallbeispiele um ein besseres Bild der Anwendungs-möglichkeiten für Ihre Gemeinde zu erhalten.",
+    "noSnapshot.title": "Datenverfügbarkeit",
     "noSnapshot.municipalityText": "diese Gemeinde",
-    "noSnapshot.p": "Für {municipalityText} sind noch keine Daten vorhanden."
+    "noSnapshot.p1": "Für {municipalityText} stehen zur Zeit noch keine Daten zur Verfügung.",
+    "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten."
   },
   "fr": {
-    "calltoactionText": "FR: Angebot einhohlen für Ihre Gemeinde",
-    "hasSnapshot.title": "FR: data title hint",
-    "hasSnapshot.p": "FR: data explenation",
-    "noSnapshot.title": "FR: nodata title hint",
+    "calltoactionText": "Veuillez recueillir l’offre pour votre commune",
+    "hasSnapshot.title": "Disponibilité des données",
+    "hasSnapshot.p1": "Les premières données concernants {municipalityText} sont disponibles.",
+    "hasSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
+    "noSnapshot.title": "Disponibilité des données",
     "noSnapshot.municipalityText": "cette communauté",
-    "noSnapshot.p": "FR: Pour {municipalityText} nodata explenation"
+    "noSnapshot.p1": "En ce moment il n’éxiste pas encore de données pour {municipalityText}.",
+    "noSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune."
   }
 }
 </i18n>
@@ -43,16 +47,18 @@
         <div class="nodata pb-8">
           <div v-if="hash" class="smaller hint">
             <h4>{{ $t('hasSnapshot.title') }}</h4>
-            <p>{{ $t('hasSnapshot.p') }}</p>
+            <p>{{ $t('hasSnapshot.p1', { municipalityText: municipalityText }) }}</p>
+            <p>{{ $t('hasSnapshot.p2') }}</p>
           </div>
           <div v-else class="smaller hint">
             <h4>{{ $t('noSnapshot.title') }}</h4>
-            <p>{{ $t('noSnapshot.p', { municipalityText: municipalityText }) }}</p>
+            <p>{{ $t('noSnapshot.p1', { municipalityText: municipalityText }) }}</p>
+            <p>{{ $t('noSnapshot.p2') }}</p>
           </div>
           <div class="useractions">
             <v-btn small block outlined color="primary">
               <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
-                {{ $t('calltoactionText') }}
+                {{ $t('calltoactionText', { municipalityText: municipalityText }) }}
               </router-link>
             </v-btn>
           </div>
