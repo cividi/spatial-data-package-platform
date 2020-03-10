@@ -18,6 +18,7 @@
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "mapbox.js": "^3.2.1",
+    "vh-check": "^2.0.5",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.2",
     "vue-i18n": "^8.15.3",

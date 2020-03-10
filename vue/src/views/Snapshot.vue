@@ -41,7 +41,7 @@
 
       <v-divider />
 
-      <div class="ma-4">
+      <div id="snapshotnavContent" class="ma-4">
         <search :dense="true" :term="municipalityName"/>
 
         <div class="nodata pb-8">
@@ -121,12 +121,23 @@
 </template>
 
 <style>
+html,
+body,
+#app .v-application--wrap,
+#map {
+  min-height: calc(100vh - var(--vh-offset, 0px));
+  height: calc(100vh - var(--vh-offset, 0px));
+}
+
 #snapshotnav {
+  height: calc(100vh - var(--vh-offset, 0px)) !important;
   z-index: 9999; /* must be above mapbox interface */
+}
+#snapshotnavContent {
+  padding-bottom: 6em;
 }
 #map {
   position: relative;
-  height: 100vh;
   width: 100%;
 }
 #mapinfo {
@@ -136,7 +147,7 @@
   min-width: 240px;
   clip-path: circle(0% at 95% 90%);
   transition: clip-path 0.3s ease-out;
-  z-index: 10;
+  z-index: 1000; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
