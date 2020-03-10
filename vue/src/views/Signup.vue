@@ -26,15 +26,11 @@ export default {
 
   computed: {
     dataurl() {
-      if (this.$route.params.bfsnumber && this.$route.params.bfsname && this.$route.params.lang) {
-        return `//cividi.typeform.com/to/vjVoPr?bfs_gmdno=${this.$route.params.bfsnumber}&bfs_gmdname=${this.$route.params.bfsname}&gmdscn_lang=${this.$route.params.lang}`;
+      if (this.$store.state.bfsnumber && this.$store.state.bfsname && this.$route.params.lang) {
+        return `//cividi.typeform.com/to/vjVoPr?bfs_gmdno=${this.$store.state.bfsnumber}&bfs_gmdname=${this.$store.state.bfsname}&gmdscn_lang=${this.$route.params.lang}`;
       }
-      return '//cividi.typeform.com/to/vjVoPr';
+      return `//cividi.typeform.com/to/vjVoPr?gmdscn_lang=${this.$route.params.lang}`;
     }
-  },
-
-  props: {
-    gemeinde: String
   }
 };
 </script>

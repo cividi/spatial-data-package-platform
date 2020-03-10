@@ -42,8 +42,7 @@ const routes = [
         component: () => import('@/views/Signup.vue'),
         meta: {
           layout: () => import('@/layouts/LayoutDefault.vue')
-        },
-        props: { bfsnumber: '' }
+        }
       },
       {
         path: 'about/',

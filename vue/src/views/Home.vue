@@ -65,6 +65,11 @@ export default {
   name: 'Home',
   data() {
     return {};
+  },
+
+  created() {
+    this.$store.commit('setBfsnumber', '');
+    this.$store.commit('setBfsname', '');
   }
 };
 </script>

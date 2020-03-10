@@ -246,6 +246,8 @@ export default {
         this.$router.push({ name: 'home' });
       }
       this.snapshotsExamples = result.data.snapshots.edges;
+      this.$store.commit('setBfsnumber', result.data.snapshot.municipality.bfsNumber);
+      this.$store.commit('setBfsname', result.data.snapshot.municipality.fullname);
     },
 
     async getEmpty(bfsNumber) {
@@ -280,6 +282,8 @@ export default {
       this.geojson = result.data.municipality.perimeter;
       this.geobounds = result.data.municipality.perimeterBounds;
       this.snapshotsExamples = result.data.snapshots.edges;
+      this.$store.commit('setBfsnumber', result.data.snapshot.bfsNumber);
+      this.$store.commit('setBfsname', result.data.snapshot.fullname);
     },
 
     createFeatureLayer(geojson) {
