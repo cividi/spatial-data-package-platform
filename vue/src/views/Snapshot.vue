@@ -2,19 +2,19 @@
 <i18n>
 {
   "de": {
-    "calltoactionText": "Angebot für {municipalityText} einholen",
+    "calltoactionText": "Angebot für Ihre Gemeinde einholen",
     "hasSnapshot.title": "Datenverfügbarkeit",
     "hasSnapshot.p1": "Für {municipalityText} stehen erste Daten zur Verfügung.",
-    "hasSnapshot.p2": "Erkunden Sie unsere weiteren Fallbeispiele um ein besseres Bild der Anwendungs-möglichkeiten für Ihre Gemeinde zu erhalten.",
+    "hasSnapshot.p2": "Erkunden Sie unsere weiteren Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
     "noSnapshot.title": "Datenverfügbarkeit",
     "noSnapshot.municipalityText": "diese Gemeinde",
     "noSnapshot.p1": "Für {municipalityText} stehen zur Zeit noch keine Daten zur Verfügung.",
     "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten."
   },
   "fr": {
-    "calltoactionText": "Veuillez recueillir l’offre pour votre commune",
+    "calltoactionText": "Offre pour votre commune",
     "hasSnapshot.title": "Disponibilité des données",
-    "hasSnapshot.p1": "Les premières données concernants {municipalityText} sont disponibles.",
+    "hasSnapshot.p1": "Les premières données concernant {municipalityText} sont disponibles.",
     "hasSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
     "noSnapshot.title": "Disponibilité des données",
     "noSnapshot.municipalityText": "cette communauté",
@@ -161,6 +161,10 @@ body,
   color: #000;
   opacity: 1;
   font-weight: 900;
+}
+
+h4 {
+  margin-bottom: 0.8em;
 }
 </style>
 
