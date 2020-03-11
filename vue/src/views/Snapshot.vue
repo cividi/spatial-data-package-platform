@@ -2,19 +2,19 @@
 <i18n>
 {
   "de": {
-    "calltoactionText": "Angebot für {municipalityText} einholen",
+    "calltoactionText": "Angebot für Ihre Gemeinde einholen",
     "hasSnapshot.title": "Datenverfügbarkeit",
     "hasSnapshot.p1": "Für {municipalityText} stehen erste Daten zur Verfügung.",
-    "hasSnapshot.p2": "Erkunden Sie unsere weiteren Fallbeispiele um ein besseres Bild der Anwendungs-möglichkeiten für Ihre Gemeinde zu erhalten.",
+    "hasSnapshot.p2": "Erkunden Sie unsere weiteren Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
     "noSnapshot.title": "Datenverfügbarkeit",
     "noSnapshot.municipalityText": "diese Gemeinde",
     "noSnapshot.p1": "Für {municipalityText} stehen zur Zeit noch keine Daten zur Verfügung.",
     "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten."
   },
   "fr": {
-    "calltoactionText": "Veuillez recueillir l’offre pour votre commune",
+    "calltoactionText": "Offre pour votre commune",
     "hasSnapshot.title": "Disponibilité des données",
-    "hasSnapshot.p1": "Les premières données concernants {municipalityText} sont disponibles.",
+    "hasSnapshot.p1": "Les premières données concernant {municipalityText} sont disponibles.",
     "hasSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
     "noSnapshot.title": "Disponibilité des données",
     "noSnapshot.municipalityText": "cette communauté",
@@ -41,7 +41,7 @@
 
       <v-divider />
 
-      <div class="ma-4">
+      <div id="snapshotnavContent" class="ma-4">
         <search :dense="true" :term="municipalityName"/>
 
         <div class="nodata pb-8">
@@ -64,7 +64,7 @@
           </div>
         </div>
 
-        <snapshot-list :snapshots="snapshotsExamples" :exclude="hash" />
+        <snapshot-list :snapshots="snapshotsExamples" />
       </div>
 
       <v-toolbar
@@ -82,7 +82,7 @@
     <v-content>
       <v-slide-x-reverse-transition>
         <v-btn fab absolute small
-          style="top:1.2em; right:2em;"
+          style="top:1.2em; right:1.3em;"
           color="primary"
           v-if="!snapshotnav"
           @click="snapshotnav=!snapshotnav">
@@ -121,12 +121,23 @@
 </template>
 
 <style>
+html,
+body,
+#app .v-application--wrap,
+#map {
+  min-height: calc(100vh - var(--vh-offset, 0px));
+  height: calc(100vh - var(--vh-offset, 0px));
+}
+
 #snapshotnav {
+  height: calc(100vh - var(--vh-offset, 0px)) !important;
   z-index: 9999; /* must be above mapbox interface */
+}
+#snapshotnavContent {
+  padding-bottom: 6em;
 }
 #map {
   position: relative;
-  height: 100vh;
   width: 100%;
 }
 #mapinfo {
@@ -136,7 +147,7 @@
   min-width: 240px;
   clip-path: circle(0% at 95% 90%);
   transition: clip-path 0.3s ease-out;
-  z-index: 10;
+  z-index: 1000; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
@@ -150,6 +161,10 @@
   color: #000;
   opacity: 1;
   font-weight: 900;
+}
+
+h4 {
+  margin-bottom: 0.8em;
 }
 </style>
 
@@ -183,7 +198,7 @@ export default {
       legend: [],
       municipalityName: '',
       snapshotsExamples: [],
-      snapshotnav: true,
+      snapshotnav: this.getInitialSnapshotnav(),
       mapinfoopen: true
     };
   },
@@ -209,6 +224,16 @@ export default {
   },
 
   methods: {
+    getInitialSnapshotnav() {
+      if (this.$route.params.hash) {
+        console.log(this.$vuetify.breakpoint.name);
+        if (this.$vuetify.breakpoint.name === 'lg') {
+          return true;
+        }
+        return false;
+      }
+      return true;
+    },
     async getSnapshot(hash) {
       const result = await this.$apollo.query({
         query: gql`query getsnapshot($hash: ID!) {
@@ -282,8 +307,8 @@ export default {
       this.geojson = result.data.municipality.perimeter;
       this.geobounds = result.data.municipality.perimeterBounds;
       this.snapshotsExamples = result.data.snapshots.edges;
-      this.$store.commit('setBfsnumber', result.data.snapshot.bfsNumber);
-      this.$store.commit('setBfsname', result.data.snapshot.fullname);
+      this.$store.commit('setBfsnumber', result.data.municipality.bfsNumber);
+      this.$store.commit('setBfsname', result.data.municipality.fullname);
     },
 
     createFeatureLayer(geojson) {
@@ -342,9 +367,9 @@ export default {
         });
       } else if (this.bfsNumber) { // empty municipality
         this.geojson.coordinates.forEach((polygon) => {
-          this.map.addLayer(L.polygon(polygon));
+          this.map.addLayer(L.polygon(polygon, { color: '#543076' }));
         });
-        this.map.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6qnoijj28od1is9u1wbb3vr'));
+        this.map.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz'));
       }
       L.control.scale({
         metric: true,
