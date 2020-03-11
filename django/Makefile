@@ -33,6 +33,7 @@ delete-gemeinden-django:
 	$(DOCKER_EXEC) python3 manage.py shell --command="from gsmap.models import Municipality;Municipality.objects.all().delete()"
 
 import-gemeinden-json:
+	$(DOCKER_EXEC) mkdir -p $(dir ./tmp/)
 	$(DOCKER_EXEC) curl -o ./tmp/gemeinden.geojson -Ls https://datahub.io/n0rdlicht/ch-municipalities/r/2.geojson
 	$(DOCKER_EXEC) python3 manage.py import-municipality ./tmp/gemeinden.geojson
 	$(DOCKER_EXEC) rm ./tmp/gemeinden.geojson
