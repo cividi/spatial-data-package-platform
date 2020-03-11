@@ -6,6 +6,11 @@
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
+html {
+    -webkit-text-size-adjust: none;
+    touch-action: manipulation;
+}
+
 body {
   /* font-family: "Circular Pro", sans-serif; */
   font-family: "Open Sans", sans-serif;
