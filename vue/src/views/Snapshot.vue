@@ -64,7 +64,7 @@
           </div>
         </div>
 
-        <snapshot-list :snapshots="snapshotsExamples" :exclude="hash" />
+        <snapshot-list :snapshots="snapshotsExamples" />
       </div>
 
       <v-toolbar
