@@ -297,8 +297,8 @@ export default {
       this.geojson = result.data.municipality.perimeter;
       this.geobounds = result.data.municipality.perimeterBounds;
       this.snapshotsExamples = result.data.snapshots.edges;
-      this.$store.commit('setBfsnumber', result.data.snapshot.bfsNumber);
-      this.$store.commit('setBfsname', result.data.snapshot.fullname);
+      this.$store.commit('setBfsnumber', result.data.municipality.bfsNumber);
+      this.$store.commit('setBfsname', result.data.municipality.fullname);
     },
 
     createFeatureLayer(geojson) {
