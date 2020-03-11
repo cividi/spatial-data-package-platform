@@ -226,7 +226,6 @@ export default {
   methods: {
     getInitialSnapshotnav() {
       if (this.$route.params.hash) {
-        console.log(this.$vuetify.breakpoint.name);
         if (this.$vuetify.breakpoint.name === 'lg') {
           return true;
         }
