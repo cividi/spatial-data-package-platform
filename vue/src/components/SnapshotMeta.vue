@@ -20,7 +20,8 @@
         <v-list-item-icon class="my-0 mr-2">
           <v-icon v-if="item.shape === 'circle'"
             :color="item.color"
-            :style="{ fontSize: 1.6 * item.size + 'em', opacity: item.opacity}">mdi-circle</v-icon>
+            :style="{ fontSize: 1.6 * item.size + 'em', opacity: item.opacity}">
+              mdi-circle-outline</v-icon>
           <v-icon v-else-if="item.shape === 'square'"
             :color="item.color"
             :style="{ fontSize: 1.6 * item.size + 'em', opacity: item.opacity}">mdi-square</v-icon>
