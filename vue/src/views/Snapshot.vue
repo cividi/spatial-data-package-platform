@@ -367,9 +367,9 @@ export default {
         });
       } else if (this.bfsNumber) { // empty municipality
         this.geojson.coordinates.forEach((polygon) => {
-          this.map.addLayer(L.polygon(polygon));
+          this.map.addLayer(L.polygon(polygon, { color: '#543076' }));
         });
-        this.map.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6qnoijj28od1is9u1wbb3vr'));
+        this.map.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz'));
       }
       L.control.scale({
         metric: true,
