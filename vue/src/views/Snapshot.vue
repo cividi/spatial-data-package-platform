@@ -82,7 +82,7 @@
     <v-content>
       <v-slide-x-reverse-transition>
         <v-btn fab absolute small
-          style="top:1.2em; right:2em;"
+          style="top:1.2em; right:1.3em;"
           color="primary"
           v-if="!snapshotnav"
           @click="snapshotnav=!snapshotnav">
@@ -198,7 +198,7 @@ export default {
       legend: [],
       municipalityName: '',
       snapshotsExamples: [],
-      snapshotnav: true,
+      snapshotnav: this.getInitialSnapshotnav(),
       mapinfoopen: true
     };
   },
@@ -224,6 +224,16 @@ export default {
   },
 
   methods: {
+    getInitialSnapshotnav() {
+      if (this.$route.params.hash) {
+        console.log(this.$vuetify.breakpoint.name);
+        if (this.$vuetify.breakpoint.name === 'lg') {
+          return true;
+        }
+        return false;
+      }
+      return true;
+    },
     async getSnapshot(hash) {
       const result = await this.$apollo.query({
         query: gql`query getsnapshot($hash: ID!) {
