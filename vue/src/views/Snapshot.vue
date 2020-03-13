@@ -310,8 +310,9 @@ export default {
       this.$store.commit('setBfsname', result.data.municipality.fullname);
     },
 
-    createFeatureLayer(geojson) {
+    createFeatureLayer(geojson, attribution) {
       const geoJsonExtended = L.geoJson(geojson, {
+        attribution,
         pointToLayer: (feature, latlng) => {
           if (feature.properties.radius) {
             // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
@@ -361,7 +362,9 @@ export default {
               attribution: this.geojson.views[0].spec.attribution
             }));
           } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
-            this.map.addLayer(this.createFeatureLayer(layer.data.features));
+            this.map.addLayer(this.createFeatureLayer(
+              layer.data.features, this.geojson.views[0].spec.attribution
+            ));
           }
         });
       } else if (this.bfsNumber) { // empty municipality
