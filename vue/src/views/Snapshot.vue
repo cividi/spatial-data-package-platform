@@ -132,13 +132,16 @@ body,
   height: calc(100vh - var(--vh-offset, 0px)) !important;
   z-index: 9999; /* must be above mapbox interface */
 }
+
 #snapshotnavContent {
   padding-bottom: 6em;
 }
+
 #map {
   position: relative;
   width: 100%;
 }
+
 #mapinfo {
   position: absolute;
   bottom: 2em;
@@ -156,6 +159,7 @@ body,
 #snapshotview .v-text-field--outlined fieldset {
   border-color: rgba(0, 0, 0, 0.12);
 }
+
 #snapshotview .gemeindesuche input::placeholder {
   color: #000;
   opacity: 1;
@@ -225,7 +229,7 @@ export default {
   methods: {
     getInitialSnapshotnav() {
       if (this.$route.params.hash) {
-        if (this.$vuetify.breakpoint.name === 'lg') {
+        if (['lg', 'xl'].includes(this.$vuetify.breakpoint.name)) {
           return true;
         }
         return false;
