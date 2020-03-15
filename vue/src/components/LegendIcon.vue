@@ -6,7 +6,7 @@
     xmlns="http://www.w3.org/2000/svg">
     <circle v-if="shape === 'circle'"
       cx="10" cy="10"
-      :r="9 * attr.size"
+      :r="attr.size * 10 - attr.strokeWidth / 2"
       :stroke="attr.strokeColor"
       :stroke-width="attr.strokeWidth"
       :stroke-opacity="attr.strokeOpacity"
@@ -14,20 +14,25 @@
       :fill-opacity="attr.fillOpacity"
     />
     <rect v-else-if="shape === 'square'"
-      :x="'calc(50% - ' + attr.size * 10 + ')'"
-      :y="'calc(50% - ' + attr.size * 10 + ')'"
-      :width="attr.size * 20"
-      :height="attr.size * 20"
+      :x="'0'"
+      :y="'0'"
+      :width="attr.size * 20 - attr.strokeWidth"
+      :height="attr.size * 20 - attr.strokeWidth"
       :stroke-width="attr.strokeWidth"
       :stroke="attr.strokeColor"
       :stroke-opacity="attr.strokeOpacity"
       :fill="attr.fillColor"
       :fill-opacity="attr.fillOpacity"
+      :transform="'translate('+
+        ( (20-(attr.size * 20 - attr.strokeWidth)) / 2) +
+        ' '+
+        ( (20-(attr.size * 20 - attr.strokeWidth)) / 2) +
+        ')'"
     />
     <line v-else-if="shape === 'line'"
-      x1="0" x2="100%"
-      y1="50%"
-      y2="50%"
+      x1="0" x2="20"
+      y1="10"
+      y2="10"
       :stroke="attr.strokeColor"
       :stroke-width="attr.strokeWidth"
       :opacity="attr.strokeOpacity"
