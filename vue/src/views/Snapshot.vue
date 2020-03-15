@@ -33,8 +33,7 @@
       clipped="clipped"
       app
       width="320"
-      v-model="snapshotnav"
-      >
+      v-model="snapshotnav">
       <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
         <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
       </router-link>
@@ -68,9 +67,9 @@
       </div>
 
       <v-toolbar
-       width="320"
-       absolute
-       bottom>
+        width="320"
+        absolute
+        bottom>
         <div class="useractions">
           <user-actions noRequest="1" />
         </div>
@@ -109,7 +108,7 @@
         class="px-4 py-2"
         :style="'width:' + legendWidth"
         v-bind:class="{open: mapinfoopen}"
-      >
+        >
         <v-icon
           style="position: absolute; top:0; right:0;"
           class="pa-2"
@@ -133,13 +132,16 @@ body,
   height: calc(100vh - var(--vh-offset, 0px)) !important;
   z-index: 9999; /* must be above mapbox interface */
 }
+
 #snapshotnavContent {
   padding-bottom: 6em;
 }
+
 #map {
   position: relative;
   width: 100%;
 }
+
 #mapinfo {
   position: absolute;
   bottom: 2em;
@@ -157,6 +159,7 @@ body,
 #snapshotview .v-text-field--outlined fieldset {
   border-color: rgba(0, 0, 0, 0.12);
 }
+
 #snapshotview .gemeindesuche input::placeholder {
   color: #000;
   opacity: 1;
@@ -226,7 +229,7 @@ export default {
   methods: {
     getInitialSnapshotnav() {
       if (this.$route.params.hash) {
-        if (this.$vuetify.breakpoint.name === 'lg') {
+        if (['lg', 'xl'].includes(this.$vuetify.breakpoint.name)) {
           return true;
         }
         return false;
@@ -310,8 +313,9 @@ export default {
       this.$store.commit('setBfsname', result.data.municipality.fullname);
     },
 
-    createFeatureLayer(geojson) {
+    createFeatureLayer(geojson, attribution) {
       const geoJsonExtended = L.geoJson(geojson, {
+        attribution,
         pointToLayer: (feature, latlng) => {
           if (feature.properties.radius) {
             // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
@@ -361,7 +365,9 @@ export default {
               attribution: this.geojson.views[0].spec.attribution
             }));
           } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
-            this.map.addLayer(this.createFeatureLayer(layer.data.features));
+            this.map.addLayer(this.createFeatureLayer(
+              layer.data.features, this.geojson.views[0].spec.attribution
+            ));
           }
         });
       } else if (this.bfsNumber) { // empty municipality
