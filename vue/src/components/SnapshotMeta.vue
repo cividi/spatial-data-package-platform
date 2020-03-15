@@ -18,19 +18,7 @@
         class="pa-0 mb-1"
         >
         <v-list-item-icon class="my-0 mr-2">
-          <v-icon v-if="item.shape === 'circle'"
-            :color="item.color"
-            :style="{ fontSize: 1.6 * item.size + 'em', opacity: item.opacity}">
-              mdi-circle-outline</v-icon>
-          <v-icon v-else-if="item.shape === 'square'"
-            :color="item.color"
-            :style="{ fontSize: 1.6 * item.size + 'em', opacity: item.opacity}">mdi-square</v-icon>
-          <span v-else-if="item.shape === 'line'" class="legend--line"
-            :style="{
-              backgroundColor: item.color,
-              height: 0.5 * item.size + 'em',
-              opacity: item.opacity}">&nbsp;
-          </span>
+          <legend-icon :shape="item.shape" :isPrimary="item.primary" :attr="item" />
         </v-list-item-icon>
         <v-list-item-content class="py-0">
           <v-list-item-title>
@@ -45,16 +33,24 @@
 
 <style>
 .legend .v-list-item--dense,
-.legend.v-list--dense .v-list-item {
+.legend.v-list--dense .v-list-item,
+.legend .v-list-item__content {
   min-height: 24px;
 }
+
 .v-list-item__icon {
   min-width: auto;
 }
+
+.legend .v-list-item__content {
+  padding-bottom: 4px !important;
+}
+
 .legend--line {
   margin: auto 0;
   width: 2em;
 }
+
 a.legend--hash,
 .legend--hash:visited,
 .legend--hash:hover,
@@ -65,6 +61,11 @@ a.legend--hash,
 </style>
 
 <script>
+import Vue from 'vue';
+import LegendIcon from './LegendIcon.vue';
+
+Vue.component('legend-icon', LegendIcon);
+
 export default {
   name: 'SnapshotMeta',
   data() {

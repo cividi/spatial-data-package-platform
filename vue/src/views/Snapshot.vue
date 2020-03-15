@@ -33,8 +33,7 @@
       clipped="clipped"
       app
       width="320"
-      v-model="snapshotnav"
-      >
+      v-model="snapshotnav">
       <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
         <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
       </router-link>
@@ -68,9 +67,9 @@
       </div>
 
       <v-toolbar
-       width="320"
-       absolute
-       bottom>
+        width="320"
+        absolute
+        bottom>
         <div class="useractions">
           <user-actions noRequest="1" />
         </div>
@@ -109,7 +108,7 @@
         class="px-4 py-2"
         :style="'width:' + legendWidth"
         v-bind:class="{open: mapinfoopen}"
-      >
+        >
         <v-icon
           style="position: absolute; top:0; right:0;"
           class="pa-2"
