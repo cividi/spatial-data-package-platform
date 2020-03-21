@@ -28,7 +28,7 @@
 <template>
   <div id="snapshotview">
     <v-navigation-drawer
-      v-if="$store.state.notIframe"
+      v-if="$store.state.notIframe && !screenshotMode"
       id="snapshotnav"
       clipped="clipped"
       app
@@ -94,7 +94,7 @@
       </v-container>
 
       <v-btn
-        v-if="hash"
+        v-if="hash && !screenshotMode"
         fab absolute small
         style="bottom:2em; right:2em;"
         color="white"
@@ -104,6 +104,7 @@
 
       <v-card
         v-if="hash"
+        v-show="!screenshotMode"
         id="mapinfo"
         class="px-4 py-2"
         :style="'width:' + legendWidth"
@@ -204,6 +205,13 @@ export default {
       snapshotnav: this.getInitialSnapshotnav(),
       mapinfoopen: true
     };
+  },
+
+  props: {
+    screenshotMode: {
+      type: Boolean,
+      default: false
+    }
   },
 
   computed: {
