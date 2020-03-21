@@ -18,6 +18,8 @@ The current tech stack of this project is:
 
 ## setup project
 
+Add `django` to the 127.0.0.1 entry in `/etc/hosts` (for screenshot service).
+
 ```bash
 touch env.hosts.prod # required file, can be empty and edited later
 ```
