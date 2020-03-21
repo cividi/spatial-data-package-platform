@@ -32,7 +32,9 @@ services:
       - var-gemeindescan-webui:/var/services/
       - vscode-remote-vue:/root/.vscode-server
     ports:
-      - "8080:8080"
+      # - "9222:9222" # debug chrome
+      - "8079:8079" # snapshost service
+      - "8080:8080" # vue
       - "10001:10001" # vscode
     command: tail -f /dev/null
 
@@ -51,7 +53,7 @@ services:
       - DJANGO_HTTPS=False
       - DJANGO_EMAIL_HOST=maildev
       - DJANGO_SECRET_KEY=adddxxccxx4rt0ioywg3yf5kjq64-t5
-      - DJANGO_ALLOWED_HOSTS=local.gemeindescan.ch,localhost
+      - DJANGO_ALLOWED_HOSTS=local.gemeindescan.ch,localhost,django
     working_dir: /opt/app
     volumes:
       - ./django:/opt/app
