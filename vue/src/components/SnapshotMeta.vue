@@ -1,3 +1,18 @@
+<!-- eslint-disable -->
+<i18n>
+{
+  "de": {
+    "expandlegend": "+ zeige alle Legenden",
+    "collapslegend": "– weniger Legenden"
+  },
+  "fr": {
+    "expandlegend": "+ plus",
+    "collapslegend": "– moin"
+  }
+}
+</i18n>
+<!-- eslint-enable -->
+
 <template>
   <div>
     <div class="smaller">
@@ -11,11 +26,13 @@
     </div>
     <v-list
       dense
-      class="legend">
+      class="legend"
+      :class="{showAll: showWholeLegend}">
       <v-list-item
         v-for="(item, i) in legend"
         :key="i"
         class="pa-0 mb-1"
+        :class="{isPrimary: item.primary}"
         >
         <v-list-item-icon class="my-0 mr-2">
           <legend-icon :shape="item.shape" :isPrimary="item.primary" :attr="item" />
@@ -27,15 +44,34 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
+    <v-btn
+      v-if="hasSecondaryLegend"
+      text x-small
+      @click="showWholeLegend=!showWholeLegend"
+      style="margin-top: -2em; margin-left: 9px;">
+        <template v-if="showWholeLegend">
+          {{ $t('collapslegend') }}
+        </template>
+        <template v-else>
+          {{ $t('expandlegend') }}
+        </template>
+    </v-btn>
     <img alt="gemeindescan logo" height="35" src="@/assets/images/gemeindescan-logo.svg">
   </div>
 </template>
 
 <style>
-.legend .v-list-item--dense,
-.legend.v-list--dense .v-list-item,
+.legend.v-list--dense .v-list-item {
+  min-height: 0;
+  height: 0;
+  overflow: hidden;
+  transition: min-height 0.3s, height 0.3s;
+}
+.legend.v-list--dense .v-list-item.isPrimary,
+.legend.v-list--dense.showAll .v-list-item,
 .legend .v-list-item__content {
   min-height: 24px;
+  height: 24px;
 }
 
 .v-list-item__icon {
@@ -69,13 +105,20 @@ Vue.component('legend-icon', LegendIcon);
 export default {
   name: 'SnapshotMeta',
   data() {
-    return {};
+    return {
+      showWholeLegend: false
+    };
   },
   props: {
     hash: String,
     title: String,
     description: String,
     legend: Array
+  },
+  computed: {
+    hasSecondaryLegend() {
+      return this.legend.some(item => item.primary === false);
+    }
   }
 };
 </script>
