@@ -2,10 +2,12 @@
 <i18n>
 {
   "de": {
+    "sources": "Quellenangaben",
     "expandlegend": "+ zeige alle Legenden",
     "collapslegend": "– weniger Legenden"
   },
   "fr": {
+    "sources": "Source",
     "expandlegend": "+ plus",
     "collapslegend": "– moin"
   }
@@ -23,6 +25,35 @@
         </a>
       </p>
       <p>{{ description }}</p>
+      <v-btn
+      text small
+      class="sourcesToggle"
+      :class="{sourcesvisible: showSources}"
+      @click="showSources=!showSources"
+      style="
+        margin-top: -1.5em;
+        text-transform:none;
+        margin-left:-16px;
+        width:calc(100% + 32px);
+        border-radius:0;">
+        <v-icon small color="primary">mdi-chevron-right</v-icon>
+        {{ $t('sources') }}
+      </v-btn>
+      <v-expand-transition>
+        <ul
+        class="sources pl-0"
+        v-show="showSources">
+          <li
+          v-for="(item, i) in sources"
+          :key="i"
+          class="pb-1">
+            <a :href="item.url" target="blank">
+            <v-icon x-small color="primary">mdi-open-in-new</v-icon> {{ item.title }}
+            </a>
+          </li>
+        </ul>
+      </v-expand-transition>
+
     </div>
     <v-list
       dense
@@ -94,6 +125,28 @@ a.legend--hash,
   color: gray;
   font-weight: bold;
 }
+
+.sourcesToggle .v-icon {
+  transform: rotateZ(90deg);
+  transition: transform 0.3s;
+}
+.sourcesToggle .v-btn__content {
+  justify-content: left;
+}
+.sourcesToggle.sourcesvisible .v-icon {
+  transform: rotateZ(-90deg);
+}
+.sources {
+  list-style: none;
+}
+.sources li {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.sources .v-icon {
+  vertical-align: initial;
+}
 </style>
 
 <script>
@@ -106,14 +159,16 @@ export default {
   name: 'SnapshotMeta',
   data() {
     return {
-      showWholeLegend: false
+      showWholeLegend: false,
+      showSources: false
     };
   },
   props: {
     hash: String,
     title: String,
     description: String,
-    legend: Array
+    legend: Array,
+    sources: Array
   },
   computed: {
     hasSecondaryLegend() {
