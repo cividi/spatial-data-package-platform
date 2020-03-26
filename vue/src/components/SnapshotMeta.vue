@@ -3,13 +3,13 @@
 {
   "de": {
     "sources": "Quellenangaben",
-    "expandlegend": "+ zeige alle Legenden",
-    "collapslegend": "– weniger Legenden"
+    "expandlegend": "mehr",
+    "collapslegend": "weniger"
   },
   "fr": {
     "sources": "Source",
-    "expandlegend": "+ plus",
-    "collapslegend": "– moin"
+    "expandlegend": "plus",
+    "collapslegend": "moin"
   }
 }
 </i18n>
@@ -25,44 +25,15 @@
         </a>
       </p>
       <p>{{ description }}</p>
-      <v-btn
-      text small
-      class="sourcesToggle"
-      :class="{sourcesvisible: showSources}"
-      @click="showSources=!showSources"
-      style="
-        margin-top: -1.5em;
-        text-transform:none;
-        margin-left:-16px;
-        width:calc(100% + 32px);
-        border-radius:0;">
-        <v-icon small color="primary">mdi-chevron-right</v-icon>
-        {{ $t('sources') }}
-      </v-btn>
-      <v-expand-transition>
-        <ul
-        class="sources pl-0"
-        v-show="showSources">
-          <li
-          v-for="(item, i) in sources"
-          :key="i"
-          class="pb-1">
-            <a :href="item.url" target="blank">
-            <v-icon x-small color="primary">mdi-open-in-new</v-icon> {{ item.title }}
-            </a>
-          </li>
-        </ul>
-      </v-expand-transition>
-
     </div>
     <v-list
       dense
-      class="legend"
+      class="legend pt-0"
       :class="{showAll: showWholeLegend}">
       <v-list-item
         v-for="(item, i) in legend"
         :key="i"
-        class="pa-0 mb-1"
+        class="pa-0"
         :class="{isPrimary: item.primary}"
         >
         <v-list-item-icon class="my-0 mr-2">
@@ -79,7 +50,10 @@
       v-if="hasSecondaryLegend"
       text x-small
       @click="showWholeLegend=!showWholeLegend"
-      style="margin-top: -2em; margin-left: 9px;">
+      class="moreLegendToggle"
+      :class="{legendsvisible: showWholeLegend}"
+      style="margin:-1.5em 0 0 -7px; text-transform:none;">
+        <v-icon small color="primary">mdi-chevron-right</v-icon>
         <template v-if="showWholeLegend">
           {{ $t('collapslegend') }}
         </template>
@@ -87,7 +61,35 @@
           {{ $t('expandlegend') }}
         </template>
     </v-btn>
-    <img alt="gemeindescan logo" height="35" src="@/assets/images/gemeindescan-logo.svg">
+    <div class="smaller"
+      style="margin: 5px 0 -10px 2px;">
+      <v-expand-transition>
+        <ul
+          class="sources pl-0"
+          v-show="showSources">
+          <li
+            v-for="(item, i) in sources"
+            :key="i"
+            class="pb-1">
+              <a :href="item.url" target="blank">
+                <v-icon x-small color="primary">mdi-open-in-new</v-icon> {{ item.title }}
+              </a>
+           </li>
+        </ul>
+      </v-expand-transition>
+    </div>
+    <v-btn
+      text x-small
+      class="sourcesToggle"
+      :class="{sourcesvisible: showSources}"
+      @click="showSources=!showSources"
+      style="text-transform:none; float:left; margin: 8px 0px 0px -8px;">
+        <v-icon small color="primary">mdi-chevron-right</v-icon>
+        {{ $t('sources') }}
+    </v-btn>
+    <img alt="gemeindescan logo" height="35"
+      style="float:right; opacity:0.55;"
+      src="@/assets/images/gemeindescan-logo.svg">
   </div>
 </template>
 
@@ -95,14 +97,16 @@
 .legend.v-list--dense .v-list-item {
   min-height: 0;
   height: 0;
+  margin-top: 0;
   overflow: hidden;
-  transition: min-height 0.3s, height 0.3s;
+  transition: min-height 0.3s, height 0.3s, margin-top 0.3s;
 }
 .legend.v-list--dense .v-list-item.isPrimary,
 .legend.v-list--dense.showAll .v-list-item,
 .legend .v-list-item__content {
   min-height: 24px;
   height: 24px;
+  margin-top: 4px;
 }
 
 .v-list-item__icon {
@@ -125,16 +129,19 @@ a.legend--hash,
   color: gray;
   font-weight: bold;
 }
-
-.sourcesToggle .v-icon {
+.moreLegendToggle .v-icon {
   transform: rotateZ(90deg);
   transition: transform 0.3s;
 }
-.sourcesToggle .v-btn__content {
-  justify-content: left;
+.moreLegendToggle.legendsvisible .v-icon {
+  transform: rotateZ(-90deg);
+}
+.sourcesToggle .v-icon {
+  transform: rotateZ(-90deg);
+  transition: transform 0.3s;
 }
 .sourcesToggle.sourcesvisible .v-icon {
-  transform: rotateZ(-90deg);
+  transform: rotateZ(90deg);
 }
 .sources {
   list-style: none;
