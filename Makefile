@@ -42,7 +42,7 @@ deploy_dev:
 deploy_local:
 	docker-compose up -d
 	make -f vue/Makefile build
-	rsync -av --delete vue/dist $$VUE_LOCAL_PATH
+	source env.hosts.prod && rsync -av --delete vue/dist $$VUE_LOCAL_PATH
 	docker-compose exec django make migrate
 	docker-compose exec django killall -TERM gunicorn
 
