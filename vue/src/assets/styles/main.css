@@ -50,6 +50,9 @@ li p {
 .smaller {
   font-size: 0.722222em;
 }
+.smaller p{
+  margin-bottom: 8px;
+}
 .hint {
   opacity: 0.7;
 }

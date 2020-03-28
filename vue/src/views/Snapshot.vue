@@ -113,7 +113,13 @@
           style="position: absolute; top:0; right:0;"
           class="pa-2"
           @click="mapinfoopen=!mapinfoopen" >mdi-close-circle-outline</v-icon>
-        <snapshot-meta :title="title" :description="description" :hash="hash" :legend="legend" />
+        <snapshot-meta
+          :title="title"
+          :description="description"
+          :hash="hash"
+          :legend="legend"
+          :sources="sources"
+        />
       </v-card>
     </v-content>
   </div>
@@ -199,6 +205,7 @@ export default {
       title: '',
       description: '',
       legend: [],
+      sources: [],
       municipalityName: '',
       snapshotsExamples: [],
       snapshotnav: this.getInitialSnapshotnav(),
@@ -331,6 +338,7 @@ export default {
       this.title = this.geojson.views[0].spec.title;
       this.description = this.geojson.views[0].spec.description;
       this.legend = this.geojson.views[0].spec.legend;
+      this.sources = this.geojson.sources;
     },
 
     setupMapbox() {
