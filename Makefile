@@ -1,3 +1,5 @@
+SHELL = /bin/bash
+
 .PHONY: all
 
 init:
@@ -36,6 +38,19 @@ deploy_dev:
 	source env.hosts.prod && rsync -av --delete vue/dist $$DJANGO_DEV_HOST:$$VUE_DEV_PATH
 	source env.hosts.prod && ssh $$DJANGO_DEV_HOST -t "cd $$DJANGO_DEV_PATH && COMPOSE_FILE=$$COMPOSE_DEV docker-compose exec django make migrate"
 	source env.hosts.prod && ssh $$DJANGO_DEV_HOST -t "cd $$DJANGO_DEV_PATH && COMPOSE_FILE=$$COMPOSE_DEV docker-compose exec django killall -TERM gunicorn"
+
+deploy_local:
+	docker-compose up -d
+	make -f vue/Makefile build
+	rsync -av --delete vue/dist $$VUE_LOCAL_PATH
+	docker-compose exec django make migrate
+	docker-compose exec django killall -TERM gunicorn
+
+slack-push:
+	source env.hosts.prod && test -v SLACK_APP_HOOK && curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"$$SLACK_APP_TEXT\"}" "https://hooks.slack.com/services/$$SLACK_APP_HOOK"
+
+update:
+	@git pull -v 2>&1 | egrep "django\/|vue\/" && make deploy_local && make slack-push; exit 0
 
 ab-graphql:
 	ab -p tests/graphql-autocomplete-post.json -T application/json -c 10 -n 2000 http://gemeindescan.ch/graphql/
