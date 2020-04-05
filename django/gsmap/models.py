@@ -1,6 +1,6 @@
 import secrets
 import string
-# from django.db import models
+from enum import IntFlag
 from django.contrib.gis.db import models
 from django.contrib.postgres import fields as pg_fields
 from sorl.thumbnail import ImageField
@@ -64,14 +64,26 @@ def create_slug_hash():
 
 
 class Snapshot(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
+    class Permission(IntFlag):
+        PUBLIC = 0
+        NOT_LISTED = 10
+
     id = models.CharField(
         max_length=8, unique=True, primary_key=True,
         default=create_slug_hash
     )
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     archived = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
     is_showcase = models.BooleanField(default=False)
+    permission = models.IntegerField(
+        choices=[
+            (tag, tag.value) for tag in Permission
+        ],
+        default=Permission.PUBLIC
+    )
+
     title = models.CharField(max_length=150, default='')
     topic = models.CharField(max_length=100, default='')
     data = pg_fields.JSONField(default=dict)
