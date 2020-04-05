@@ -32,8 +32,7 @@
       id="snapshotnav"
       clipped="clipped"
       app
-      width="320"
-      v-model="snapshotnav">
+      width="320">
       <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
         <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
       </router-link>
@@ -78,50 +77,11 @@
       </v-toolbar>
     </v-navigation-drawer>
 
-    <v-content>
-      <v-slide-x-reverse-transition>
-        <v-btn fab absolute small
-          style="top:1.2em; right:1.3em;"
-          color="primary"
-          v-if="!snapshotnav"
-          @click="snapshotnav=!snapshotnav">
-          <v-icon>mdi-menu</v-icon>
-        </v-btn>
-      </v-slide-x-reverse-transition>
+    <snapshot-map ref="map"
+      :geojson="geojson"
+      :geoboundsIn="geobounds"
+    />
 
-      <v-container fluid class="pa-0">
-        <div id='map'></div>
-      </v-container>
-
-      <v-btn
-        v-if="hash"
-        fab absolute small
-        style="bottom:2em; right:2em;"
-        color="white"
-        @click="mapinfoopen=!mapinfoopen">
-        <v-icon>mdi-information-variant</v-icon>
-      </v-btn>
-
-      <v-card
-        v-if="hash"
-        id="mapinfo"
-        class="px-4 py-2"
-        :style="'width:' + legendWidth"
-        v-bind:class="{open: mapinfoopen}"
-        >
-        <v-icon
-          style="position: absolute; top:0; right:0;"
-          class="pa-2"
-          @click="mapinfoopen=!mapinfoopen" >mdi-close-circle-outline</v-icon>
-        <snapshot-meta
-          :title="title"
-          :description="description"
-          :hash="hash"
-          :legend="legend"
-          :sources="sources"
-        />
-      </v-card>
-    </v-content>
   </div>
 </template>
 
@@ -180,37 +140,37 @@ h4 {
 <script>
 import Vue from 'vue';
 import gql from 'graphql-tag';
-import L from 'mapbox.js';
-import geoViewport from '@mapbox/geo-viewport';
-import SnapshotMeta from '../components/SnapshotMeta.vue';
 import SnapshotList from '../components/SnapshotList.vue';
+import SnapshotMap from '../components/SnapshotMap.vue';
 
-Vue.component('snapshot-meta', SnapshotMeta);
 Vue.component('snapshot-list', SnapshotList);
-
-function geostring2array(s) {
-  const array = s.split(':')[1].split(',');
-  return array.map(x => parseFloat(x));
-}
+Vue.component('snapshot-map', SnapshotMap);
 
 export default {
   data() {
     return {
       hash: this.$route.params.hash,
       bfsNumber: this.$route.params.bfsNumber,
-      map: null,
       geojson: null,
       geobounds: [],
-      layers: [],
-      title: '',
-      description: '',
-      legend: [],
-      sources: [],
       municipalityName: '',
-      snapshotsExamples: [],
-      snapshotnav: this.getInitialSnapshotnav(),
-      mapinfoopen: true
+      snapshotsExamples: []
     };
+  },
+
+  async mounted() {
+    if (this.hash) {
+      await this.getSnapshot(this.hash);
+      if (this.geojson) {
+        this.$refs.map.setupMeta();
+        this.$refs.map.setupMapbox();
+        this.$refs.map.displayMapbox();
+      }
+    } else {
+      await this.getEmpty(this.bfsNumber);
+      this.$refs.map.setupEmpty();
+      this.$refs.map.displayMapbox();
+    }
   },
 
   computed: {
@@ -234,15 +194,6 @@ export default {
   },
 
   methods: {
-    getInitialSnapshotnav() {
-      if (this.$route.params.hash) {
-        if (['lg', 'xl'].includes(this.$vuetify.breakpoint.name)) {
-          return true;
-        }
-        return false;
-      }
-      return true;
-    },
     async getSnapshot(hash) {
       const result = await this.$apollo.query({
         query: gql`query getsnapshot($hash: ID!) {
@@ -318,98 +269,7 @@ export default {
       this.snapshotsExamples = result.data.snapshots.edges;
       this.$store.commit('setBfsnumber', result.data.municipality.bfsNumber);
       this.$store.commit('setBfsname', result.data.municipality.fullname);
-    },
-
-    createFeatureLayer(geojson, attribution) {
-      const geoJsonExtended = L.geoJson(geojson, {
-        attribution,
-        pointToLayer: (feature, latlng) => {
-          if (feature.properties.radius) {
-            // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
-            return new L.Circle(latlng, feature.properties);
-          }
-          return new L.Marker(latlng);
-        }
-      });
-      return geoJsonExtended;
-    },
-
-    setupMeta() {
-      this.title = this.geojson.views[0].spec.title;
-      this.description = this.geojson.views[0].spec.description;
-      this.legend = this.geojson.views[0].spec.legend;
-      this.sources = this.geojson.sources;
-    },
-
-    setupMapbox() {
-      this.geobounds = [
-        geostring2array(this.geojson.views[0].spec.bounds[0]),
-        geostring2array(this.geojson.views[0].spec.bounds[1])
-      ];
-
-      const lookupResources = {}; // name -> index
-      this.geojson.resources.forEach((resource, index) => {
-        lookupResources[resource.name] = index;
-      });
-
-      this.geojson.views[0].resources.forEach((resourceName) => {
-        this.layers.push(
-          this.geojson.resources[lookupResources[resourceName]]
-        );
-      });
-    },
-
-    displayMapbox() {
-      L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
-      const boxSize = 800;
-      const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
-      this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
-      if (this.hash) { // full snapshot with hash
-        this.layers.forEach((layer) => {
-          if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
-            this.map.addLayer(L.mapbox.styleLayer(layer.path));
-          } else if (layer.mediatype === 'application/geo+json') {
-            this.map.addLayer(L.mapbox.featureLayer(layer.data, {
-              attribution: this.geojson.views[0].spec.attribution
-            }));
-          } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
-            this.map.addLayer(this.createFeatureLayer(
-              layer.data.features, this.geojson.views[0].spec.attribution
-            ));
-          }
-        });
-      } else if (this.bfsNumber) { // empty municipality
-        this.geojson.coordinates.forEach((polygon) => {
-          this.map.addLayer(L.polygon(polygon, { color: '#543076' }));
-        });
-        this.map.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz'));
-      }
-      L.control.scale({
-        metric: true,
-        imperial: false
-      }).addTo(this.map);
-      // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
-      // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     }
-  },
-
-  async mounted() {
-    if (this.hash) {
-      await this.getSnapshot(this.hash);
-      if (this.geojson) {
-        this.setupMeta();
-        this.setupMapbox();
-        this.displayMapbox();
-      }
-    } else {
-      await this.getEmpty(this.bfsNumber);
-      this.displayMapbox();
-    }
-  },
-
-  destroy() {
-    this.map.destroy();
-    this.map = null;
   }
 };
 </script>
