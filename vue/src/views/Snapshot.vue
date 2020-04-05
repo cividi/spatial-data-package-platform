@@ -86,42 +86,6 @@
 </template>
 
 <style>
-html,
-body,
-#app .v-application--wrap,
-#map {
-  min-height: calc(100vh - var(--vh-offset, 0px));
-  height: calc(100vh - var(--vh-offset, 0px));
-}
-
-#snapshotnav {
-  height: calc(100vh - var(--vh-offset, 0px)) !important;
-  z-index: 9999; /* must be above mapbox interface */
-}
-
-#snapshotnavContent {
-  padding-bottom: 6em;
-}
-
-#map {
-  position: relative;
-  width: 100%;
-}
-
-#mapinfo {
-  position: absolute;
-  bottom: 2em;
-  right: 2em;
-  min-width: 240px;
-  clip-path: circle(0% at 95% 90%);
-  transition: clip-path 0.3s ease-out;
-  z-index: 1000; /* must be above mapbox icons */
-}
-
-#mapinfo.open {
-  clip-path: circle(100% at center);
-}
-
 #snapshotview .v-text-field--outlined fieldset {
   border-color: rgba(0, 0, 0, 0.12);
 }
