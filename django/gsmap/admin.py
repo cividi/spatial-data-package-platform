@@ -1,6 +1,7 @@
 from django.contrib.gis import admin
 from django.utils.translation import gettext as _
-from gsmap.models import Municipality, Snapshot
+from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
+from gsmap.models import Municipality, Snapshot, Workspace
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
@@ -36,5 +37,13 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         return self.model.objects_raw.all()
 
 
+class WorkspaceAdmin(admin.OSMGeoAdmin):
+    def formfield_for_manytomany(self, db_field, request=None, **kwargs):
+        if db_field.name == 'snapshots':
+            kwargs['widget'] = SortedFilteredSelectMultiple()
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
+
+
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(Snapshot, SnapshotAdmin)
+admin.site.register(Workspace, WorkspaceAdmin)
