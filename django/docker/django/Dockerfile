@@ -48,6 +48,10 @@ RUN apk --no-cache add yajl build-base yajl-dev python3-dev \
     && pip3 install -r /tmp/requirements.txt \
     && apk del build-base yajl-dev python3-dev
 
+# python requirements 02 layer
+COPY ./requirements/02.txt /tmp/requirements.txt
+RUN cd /opt && pip3 install -r /tmp/requirements.txt
+
 COPY s6/etc/services.d /etc/services.d
 COPY s6/etc/cont-init.d /etc/cont-init.d
 ENTRYPOINT ["/init"]
