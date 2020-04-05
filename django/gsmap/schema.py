@@ -8,7 +8,7 @@ from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
 # from sorl.thumbnail import get_thumbnail
-from gsmap.models import Municipality, Snapshot
+from gsmap.models import Municipality, Snapshot, Workspace
 
 
 class GeoJSON(graphene.Scalar):
@@ -94,12 +94,28 @@ class MunicipalityNode(DjangoObjectType):
         return self.perimeter.extent
 
 
+class WorkspaceNode(DjangoObjectType):
+    class Meta:
+        model = Workspace
+        fields = [
+            'title', 'description'
+        ]
+        interfaces = [graphene.relay.Node]
+
+    pk = graphene.String(source='id')
+    snapshots = graphene.List(SnapshotNode)
+
+    def resolve_snapshots(self, info):
+        return self.snapshots.all()
+
+
 class Query(object):
     municipality = graphene.relay.Node.Field(MunicipalityNode)
     municipalities = DjangoFilterConnectionField(MunicipalityNode)
 
-    snapshot = graphene.relay.Node.Field(
-        SnapshotNode
-    )
+    snapshot = graphene.relay.Node.Field(SnapshotNode)
     snapshots = DjangoFilterConnectionField(
-        SnapshotNode, filterset_class=SnapshotOnlyPublicFilter)
+        SnapshotNode, filterset_class=SnapshotOnlyPublicFilter
+    )
+
+    workspace = graphene.relay.Node.Field(WorkspaceNode)
