@@ -125,7 +125,7 @@ class Snapshot(models.Model):
 
     def save(self, *args, **kwargs):
         def test_exists(pk):
-            if self.__class__.objects.filter(pk=pk):
+            if self.__class__.objects_raw.filter(pk=pk):
                 new_id = create_slug_hash()
                 test_exists(new_id)
             else:
