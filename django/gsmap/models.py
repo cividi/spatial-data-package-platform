@@ -63,11 +63,30 @@ def create_slug_hash():
     return ''.join(secrets.choice(alphabet) for i in range(hash_length))
 
 
-class Snapshot(models.Model):
-    class Permission(IntFlag):
-        PUBLIC = 0
-        NOT_LISTED = 10
+class SnapshotPermission(IntFlag):
+    PUBLIC = 0
+    NOT_LISTED = 10
 
+
+class RawSnapshotManager(models.Manager):
+    pass
+
+
+class OnlyPublicSnapshotManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            permission__exact=SnapshotPermission.PUBLIC
+        )
+
+
+class WithNotListedSnapshotManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            permission__lte=SnapshotPermission.NOT_LISTED
+        )
+
+
+class Snapshot(models.Model):
     id = models.CharField(
         max_length=8, unique=True, primary_key=True,
         default=create_slug_hash
@@ -79,9 +98,9 @@ class Snapshot(models.Model):
     is_showcase = models.BooleanField(default=False)
     permission = models.IntegerField(
         choices=[
-            (tag, tag.value) for tag in Permission
+            (perm.value, perm.name) for perm in SnapshotPermission
         ],
-        default=Permission.PUBLIC
+        default=SnapshotPermission.PUBLIC
     )
 
     title = models.CharField(max_length=150, default='')
@@ -97,6 +116,9 @@ class Snapshot(models.Model):
         null=True, on_delete=models.SET_NULL
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    objects = OnlyPublicSnapshotManager()
+    objects_with_not_listed = WithNotListedSnapshotManager()
+    objects_raw = RawSnapshotManager()
 
     class Meta:
         ordering = ['-created']

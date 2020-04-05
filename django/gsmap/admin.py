@@ -9,11 +9,13 @@ class MunicipalityAdmin(admin.OSMGeoAdmin):
 
 class SnapshotAdmin(admin.OSMGeoAdmin):
     readonly_fields = (
-        'id', 'created',
+        'id', 'created', 'modified'
     )
     fieldsets = (
         (_('Meta'), {
-            'fields': ('created', 'id', 'is_showcase', 'archived', 'deleted')
+            'fields': (
+                'id', 'created', 'modified', 'is_showcase', 'archived', 'deleted', 'permission'
+            )
         }),
         (_('Main'), {
             'fields':
@@ -29,6 +31,9 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         # }),
     )
     list_display = ('id', 'created')
+
+    def get_queryset(self, request):
+        return self.model.objects_raw.all()
 
 
 admin.site.register(Municipality, MunicipalityAdmin)
