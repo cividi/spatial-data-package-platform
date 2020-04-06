@@ -9,9 +9,7 @@ class MunicipalityAdmin(admin.OSMGeoAdmin):
 
 
 class SnapshotAdmin(admin.OSMGeoAdmin):
-    readonly_fields = (
-        'id', 'created', 'modified'
-    )
+    readonly_fields = ('id', 'created', 'modified')
     fieldsets = (
         (_('Meta'), {
             'fields': (
@@ -34,12 +32,24 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
     list_display = ('id', 'title', 'municipality', 'permission', 'is_showcase',
                     'created', 'modified')
     list_filter = ('is_showcase', 'permission')
-    search_fields = ['title', 'municipality__name']
+    search_fields = ['title', 'municipality__name', 'municipality__canton']
 
 
 class WorkspaceAdmin(admin.OSMGeoAdmin):
-
+    readonly_fields = ('id', 'created', 'modified')
+    fieldsets = (
+        (_('Meta'), {
+            'fields': (
+                'id', 'created', 'modified'
+            )
+        }),
+        (_('Main'), {
+            'fields':
+            ('title', 'description', 'snapshots'),
+        }),
+    )
     list_display = ('id', 'title', 'created', 'modified')
+    search_fields = ['title']
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
         if db_field.name == 'snapshots':
