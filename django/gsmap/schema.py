@@ -104,9 +104,13 @@ class WorkspaceNode(DjangoObjectType):
 
     pk = graphene.String(source='id')
     snapshots = graphene.List(SnapshotNode)
+    snapshot_first = graphene.Field(SnapshotNode)
 
     def resolve_snapshots(self, info):
         return self.snapshots.all()
+
+    def resolve_snapshot_first(self, info):
+        return self.snapshots.first()
 
 
 class Query(object):

@@ -10,8 +10,8 @@
         </v-btn>
       </v-slide-x-reverse-transition>
 
-      <v-container fluid class="pa-0">
-        <div id='map'></div>
+      <v-container fluid class="pa-0" ref="mapbox">
+        <div id="map"></div>
       </v-container>
 
       <v-btn
@@ -102,6 +102,7 @@ export default {
       hash: this.$route.params.hash,
       bfsNumber: this.$route.params.bfsNumber,
       map: null,
+      layerContainer: null,
       mapinfoopen: true,
       title: '',
       description: '',
@@ -124,8 +125,7 @@ export default {
   },
 
   destroy() {
-    this.map.destroy();
-    this.map = null;
+    this.destroyMap();
   },
 
   computed: {
@@ -196,32 +196,57 @@ export default {
       const boxSize = 800;
       const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
       this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
+      this.layerContainer = new L.LayerGroup();
       if (this.hash) { // full snapshot with hash
         this.layers.forEach((layer) => {
           if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
-            this.map.addLayer(L.mapbox.styleLayer(layer.path));
+            this.layerContainer.addLayer(L.mapbox.styleLayer(layer.path));
           } else if (layer.mediatype === 'application/geo+json') {
-            this.map.addLayer(L.mapbox.featureLayer(layer.data, {
+            this.layerContainer.addLayer(L.mapbox.featureLayer(layer.data, {
               attribution: this.geojson.views[0].spec.attribution
             }));
           } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
-            this.map.addLayer(this.createFeatureLayer(
+            this.layerContainer.addLayer(this.createFeatureLayer(
               layer.data.features, this.geojson.views[0].spec.attribution
             ));
           }
         });
       } else if (this.bfsNumber) { // empty municipality
         this.geojson.coordinates.forEach((polygon) => {
-          this.map.addLayer(L.polygon(polygon, { color: '#543076' }));
+          this.layerContainer.addLayer(L.polygon(polygon, { color: '#543076' }));
         });
-        this.map.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz'));
+        this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz'));
       }
+      this.layerContainer.addTo(this.map);
       L.control.scale({
         metric: true,
         imperial: false
       }).addTo(this.map);
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
+    },
+
+    async destroyMap() {
+      this.layerContainer.clearLayers();
+      this.map.eachLayer((layer) => {
+        this.map.removeLayer(layer);
+      });
+      try {
+        await this.map.remove();
+      } catch (err) {
+        // catch remove erros
+      }
+      this.hash = this.$route.params.hash;
+      this.bfsNumber = this.$route.params.bfsNumber;
+      this.layerContainer = null;
+      this.mapinfoopen = true;
+      this.title = '';
+      this.description = '';
+      this.legend = [];
+      this.sources = [];
+      this.layers = [];
+      this.geobounds = [];
+      this.map = null;
     }
   }
 };

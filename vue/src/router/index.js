@@ -97,6 +97,24 @@ const routes = [
         pathToRegexpOptions: { sensitive: true, strict: true },
         name: 'snapshotRedirect',
         redirect: to => `/${to.params.lang}/${to.params.hash.toUpperCase()}/`
+      },
+      {
+        path: 'ws/:hash([0-9A-Z]{6})/',
+        pathToRegexpOptions: { sensitive: true, strict: true },
+        name: 'workspace',
+        component: () => import('@/views/Workspace.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutSnapshot.vue')
+        },
+        props: {
+          bfsNumber: null
+        }
+      },
+      {
+        path: 'ws/:hash([0-9a-z]{6})/',
+        pathToRegexpOptions: { sensitive: true, strict: true },
+        name: 'workspaceRedirect',
+        redirect: to => `/${to.params.lang}/ws/${to.params.hash.toUpperCase()}/`
       }
     ]
   },

@@ -9,7 +9,8 @@
     "noSnapshot.title": "Datenverfügbarkeit",
     "noSnapshot.municipalityText": "diese Gemeinde",
     "noSnapshot.p1": "Für {municipalityText} stehen zur Zeit noch keine Daten zur Verfügung.",
-    "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten."
+    "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
+    "listtitle": "Fallbeispiele"
   },
   "fr": {
     "calltoactionText": "Offre pour votre commune",
@@ -19,7 +20,8 @@
     "noSnapshot.title": "Disponibilité des données",
     "noSnapshot.municipalityText": "cette communauté",
     "noSnapshot.p1": "En ce moment il n’éxiste pas encore de données pour {municipalityText}.",
-    "noSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune."
+    "noSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
+    "listtitle": "Examples"
   }
 }
 </i18n>
@@ -62,7 +64,11 @@
           </div>
         </div>
 
-        <snapshot-list :snapshots="snapshotsExamples" />
+        <snapshot-list
+          :snapshots="snapshotsExamples"
+          :pushRoute="true"
+          :listtitle="this.$t('listtitle')"
+        />
       </div>
 
       <v-toolbar
@@ -147,13 +153,6 @@ export default {
 
     municipalityText() {
       return this.municipalityName ? this.municipalityName : this.$t('noSnapshot.municipalityText');
-    },
-
-    legendWidth() {
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs': return '280px';
-        default: return '320px';
-      }
     }
   },
 
@@ -170,6 +169,7 @@ export default {
               fullname
             }
           }
+
           snapshots(isShowcase: true) {
             edges {
               node {
@@ -191,12 +191,12 @@ export default {
       if (result.data.hasOwnProperty('snapshot') && result.data.snapshot) {
         this.geojson = result.data.snapshot.data;
         this.municipalityName = result.data.snapshot.municipality.fullname;
+        this.snapshotsExamples = result.data.snapshots.edges.map(snapshot => snapshot.node);
+        this.$store.commit('setBfsnumber', result.data.snapshot.municipality.bfsNumber);
+        this.$store.commit('setBfsname', result.data.snapshot.municipality.fullname);
       } else {
         this.$router.push({ name: 'home' });
       }
-      this.snapshotsExamples = result.data.snapshots.edges;
-      this.$store.commit('setBfsnumber', result.data.snapshot.municipality.bfsNumber);
-      this.$store.commit('setBfsname', result.data.snapshot.municipality.fullname);
     },
 
     async getEmpty(bfsNumber) {
