@@ -55,10 +55,15 @@ class Municipality(models.Model):
         return self.fullname
 
 
-def create_slug_hash():
+def create_slug_hash(hash_length):
     alphabet = string.ascii_uppercase + string.digits
-    hash_length = 6
     return ''.join(secrets.choice(alphabet) for i in range(hash_length))
+
+def create_slug_hash_5():
+    return create_slug_hash(5)
+
+def create_slug_hash_6():
+    return create_slug_hash(6)
 
 
 class SnapshotPermission(IntFlag):
@@ -72,7 +77,7 @@ class Snapshot(models.Model):
 
     id = models.CharField(
         max_length=8, unique=True,
-        primary_key=True, default=create_slug_hash
+        primary_key=True, default=create_slug_hash_6
     )
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -119,7 +124,7 @@ class Workspace(models.Model):
 
     id = models.CharField(
         max_length=8, unique=True,
-        primary_key=True, default=create_slug_hash
+        primary_key=True, default=create_slug_hash_5
     )
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
