@@ -66,24 +66,6 @@ class SnapshotPermission(IntFlag):
     NOT_LISTED = 10
 
 
-class RawSnapshotManager(models.Manager):
-    pass
-
-
-class OnlyPublicSnapshotManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(
-            permission__exact=SnapshotPermission.PUBLIC
-        )
-
-
-class WithNotListedSnapshotManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(
-            permission__lte=SnapshotPermission.NOT_LISTED
-        )
-
-
 class Snapshot(models.Model):
     class Meta:
         ordering = ['-created']
@@ -114,14 +96,10 @@ class Snapshot(models.Model):
         null=True, on_delete=models.SET_NULL
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    objects = OnlyPublicSnapshotManager()
-    objects_with_not_listed = WithNotListedSnapshotManager()
-    objects_raw = RawSnapshotManager()
-
 
     def save(self, *args, **kwargs):
         def test_exists(pk):
-            if self.__class__.objects_raw.filter(pk=pk):
+            if self.__class__.objects.filter(pk=pk):
                 new_id = create_slug_hash()
                 test_exists(new_id)
             else:
@@ -133,13 +111,6 @@ class Snapshot(models.Model):
 
     def __str__(self):
         return f'{self.id}, {self.title}, {self.get_permission_display()}'
-
-
-class SnapshotRaw(Snapshot):
-    class Meta:
-        proxy = True
-
-    objects = RawSnapshotManager()
 
 
 class Workspace(models.Model):
@@ -156,7 +127,7 @@ class Workspace(models.Model):
     title = models.CharField(max_length=150, default='')
     description = models.TextField(default='')
 
-    snapshots = SortedManyToManyField(SnapshotRaw)
+    snapshots = SortedManyToManyField(Snapshot)
 
 
     def save(self, *args, **kwargs):
