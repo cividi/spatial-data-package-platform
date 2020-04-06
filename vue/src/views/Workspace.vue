@@ -37,9 +37,8 @@
 
         <snapshot-list
           :snapshots="snapshotsWorkspace"
-          :pushRoute="false"
-          :listtitle="this.$t('listtitle')"
-          @loadSnapshot="loadSnapshot"
+          :listtitle="$t('listtitle')"
+          :workspaceHash="wshash"
         />
       </div>
 
@@ -92,7 +91,7 @@ export default {
   data() {
     return {
       hash: this.$route.params.hash,
-      bfsNumber: this.$route.params.bfsNumber,
+      wshash: this.$route.params.wshash,
       geojson: null,
       geobounds: [],
       municipalityName: '',
@@ -103,7 +102,7 @@ export default {
   },
 
   async mounted() {
-    await this.getWorkspace(this.hash);
+    await this.getWorkspace();
     if (this.geojson) {
       this.$refs.map.setupMeta();
       this.$refs.map.setupMapbox();
@@ -121,24 +120,14 @@ export default {
   },
 
   methods: {
-    async getWorkspace(hash) {
+    async getWorkspace() {
       const result = await this.$apollo.query({
-        query: gql`query getworkspace($hash: ID!) {
-          workspace(id: $hash) {
+        query: gql`query getworkspace($wshash: ID!, $hash: ID!) {
+          workspace(id: $wshash) {
             id
             pk
             title
             description
-            
-            snapshotFirst {
-              id
-              pk
-              data
-              municipality {
-                bfsNumber
-                fullname
-              }
-            }
 
             snapshots {
               id
@@ -150,28 +139,7 @@ export default {
               }
             }
           }
-        }`,
-        variables: {
-          hash: btoa(`WorkspaceNode:${hash}`)
-        }
-      });
-      if (result.data.hasOwnProperty('workspace') && result.data.workspace) {
-        const workspaceData = result.data.workspace;
-        this.geojson = workspaceData.snapshotFirst.data;
-        this.municipalityName = workspaceData.snapshotFirst.municipality.fullname;
-        this.snapshotsWorkspace = workspaceData.snapshots;
-        this.title = workspaceData.title;
-        this.description = workspaceData.description;
-        this.$store.commit('setBfsnumber', workspaceData.snapshotFirst.municipality.bfsNumber);
-        this.$store.commit('setBfsname', workspaceData.snapshotFirst.municipality.fullname);
-      } else {
-        this.$router.push({ name: 'home' });
-      }
-    },
 
-    async loadSnapshot(hash) {
-      const result = await this.$apollo.query({
-        query: gql`query getsnapshot($hash: ID!) {
           snapshot(id: $hash) {
             id
             pk
@@ -183,20 +151,20 @@ export default {
           }
         }`,
         variables: {
-          hash: btoa(`SnapshotNode:${hash}`)
+          wshash: btoa(`WorkspaceNode:${this.wshash}`),
+          hash: btoa(`SnapshotNode:${this.hash}`)
         }
       });
-      if (result.data.hasOwnProperty('snapshot') && result.data.snapshot) {
-        this.geojson = result.data.snapshot.data;
-        this.municipalityName = result.data.snapshot.municipality.fullname;
-        this.$store.commit('setBfsnumber', result.data.snapshot.municipality.bfsNumber);
-        this.$store.commit('setBfsname', result.data.snapshot.municipality.fullname);
-        if (this.geojson) {
-          await this.$refs.map.destroyMap();
-          this.$refs.map.setupMeta();
-          this.$refs.map.setupMapbox();
-          this.$refs.map.displayMapbox();
-        }
+      if (result.data.hasOwnProperty('workspace') && result.data.workspace) {
+        const workspaceData = result.data.workspace;
+        const snapshotData = result.data.snapshot;
+        this.geojson = snapshotData.data;
+        this.municipalityName = snapshotData.municipality.fullname;
+        this.snapshotsWorkspace = workspaceData.snapshots;
+        this.title = workspaceData.title;
+        this.description = workspaceData.description;
+        this.$store.commit('setBfsnumber', snapshotData.municipality.bfsNumber);
+        this.$store.commit('setBfsname', snapshotData.municipality.fullname);
       } else {
         this.$router.push({ name: 'home' });
       }

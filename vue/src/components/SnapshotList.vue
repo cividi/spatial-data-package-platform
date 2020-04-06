@@ -19,7 +19,7 @@
       </v-subheader>
 
       <v-list-item v-for="snapshot in snapshots" :key="snapshot.id"
-        @click="gotoSnapshot(snapshot)"
+        :to="createRouteLink(snapshot.pk)"
         class="px-2 mb-4" dense>
         <v-list-item-avatar tile size="64" class="my-2">
           <v-img :src="djangobaseurl + snapshot.screenshot.url"></v-img>
@@ -59,24 +59,20 @@ export default {
   },
 
   props: {
-    pushRoute: Boolean,
+    workspaceHash: {
+      type: String,
+      default: ''
+    },
     snapshots: Array,
     listtitle: String
   },
 
   methods: {
-    gotoSnapshot(snapshot) {
-      if (this.pushRoute) {
-        this.$router.push({
-          name: 'snapshot',
-          params: {
-            lang: this.$i18n.locale,
-            hash: snapshot.pk
-          }
-        });
-      } else {
-        this.$emit('loadSnapshot', snapshot.pk);
+    createRouteLink(hash) {
+      if (this.workspaceHash) {
+        return `/${this.$i18n.locale}/${this.workspaceHash}/${hash}/`;
       }
+      return `/${this.$i18n.locale}/${hash}/`;
     }
   }
 };
