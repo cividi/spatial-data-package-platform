@@ -18,7 +18,7 @@
 <template>
   <div>
     <div class="smaller">
-      <h3>{{ title }}</h3>
+      <h3 class="mr-4">{{ title }}</h3>
       <p >
         <a class="legend--hash" :href="'https://gemeindescan.ch/' + hash + '/'" target="_blank">
         gemeindescan.ch/{{ hash }}/
@@ -52,7 +52,7 @@
       @click="showWholeLegend=!showWholeLegend"
       class="moreLegendToggle"
       :class="{legendsvisible: showWholeLegend}"
-      style="margin:-1.5em 0 0 -7px; text-transform:none;">
+      style="margin:-1.5em 0 0 -8px; text-transform:none;">
         <v-icon small color="primary">mdi-chevron-right</v-icon>
         <template v-if="showWholeLegend">
           {{ $t('collapslegend') }}

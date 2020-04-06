@@ -2,6 +2,7 @@
 import json
 import graphene
 from django.contrib.gis.db import models
+from django_filters import FilterSet
 from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
@@ -41,6 +42,16 @@ class ImageNode(graphene.ObjectType):
         return ThumbnailNode(self, size=size)
 
 
+class SnapshotOnlyPublicFilter(FilterSet):
+    class Meta:
+        model = Snapshot
+        fields = ['municipality__id', 'municipality__canton', 'is_showcase']
+
+    @property
+    def qs(self):
+        return Snapshot.objects.all()
+
+
 class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
@@ -51,6 +62,10 @@ class SnapshotNode(DjangoObjectType):
     data = generic.GenericScalar(source='data')
     screenshot = graphene.Field(ImageNode)
     pk = graphene.String(source='id')
+
+    @classmethod
+    def get_queryset(cls, queryset, info):
+        return Snapshot.objects_with_not_listed.all()
 
 
 class MunicipalityNode(DjangoObjectType):
@@ -83,5 +98,8 @@ class Query(object):
     municipality = graphene.relay.Node.Field(MunicipalityNode)
     municipalities = DjangoFilterConnectionField(MunicipalityNode)
 
-    snapshot = graphene.relay.Node.Field(SnapshotNode)
-    snapshots = DjangoFilterConnectionField(SnapshotNode)
+    snapshot = graphene.relay.Node.Field(
+        SnapshotNode
+    )
+    snapshots = DjangoFilterConnectionField(
+        SnapshotNode, filterset_class=SnapshotOnlyPublicFilter)
