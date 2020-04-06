@@ -31,10 +31,10 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         #     ('perimeter',),
         # }),
     )
-    list_display = ('id', 'title', 'permission', 'created', 'modified')
-
-    def get_queryset(self, request):
-        return self.model.objects_raw.all()
+    list_display = ('id', 'title', 'municipality', 'permission', 'is_showcase',
+                    'created', 'modified')
+    list_filter = ('is_showcase', 'permission')
+    search_fields = ['title', 'municipality__name']
 
 
 class WorkspaceAdmin(admin.OSMGeoAdmin):
