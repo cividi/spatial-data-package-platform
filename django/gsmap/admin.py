@@ -31,13 +31,16 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         #     ('perimeter',),
         # }),
     )
-    list_display = ('id', 'created')
+    list_display = ('id', 'title', 'permission', 'created', 'modified')
 
     def get_queryset(self, request):
         return self.model.objects_raw.all()
 
 
 class WorkspaceAdmin(admin.OSMGeoAdmin):
+
+    list_display = ('id', 'title', 'created', 'modified')
+
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
         if db_field.name == 'snapshots':
             kwargs['widget'] = SortedFilteredSelectMultiple()
