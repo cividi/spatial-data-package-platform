@@ -10,7 +10,8 @@
     "noSnapshot.municipalityText": "diese Gemeinde",
     "noSnapshot.p1": "Für {municipalityText} stehen zur Zeit noch keine Daten zur Verfügung.",
     "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
-    "listtitle": "Fallbeispiele"
+    "listtitle": "Fallbeispiele",
+    "listtitleMore": "Weitere Fallbeispiele"
   },
   "fr": {
     "calltoactionText": "Offre pour votre commune",
@@ -21,7 +22,8 @@
     "noSnapshot.municipalityText": "cette communauté",
     "noSnapshot.p1": "En ce moment il n’éxiste pas encore de données pour {municipalityText}.",
     "noSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
-    "listtitle": "Examples"
+    "listtitle": "Examples",
+    "listtitleMore": "D'autres examples"
   }
 }
 </i18n>
@@ -62,12 +64,17 @@
               </router-link>
             </v-btn>
           </div>
+
+          <snapshot-list
+            v-if="snapshotsMunicipality"
+            :snapshots="snapshotsMunicipality"
+          />
         </div>
 
         <snapshot-list
+          v-if="snapshotsExamples"
           :snapshots="snapshotsExamples"
-          :pushRoute="true"
-          :listtitle="this.$t('listtitle')"
+          :title="listtitleText"
         />
       </div>
 
@@ -124,7 +131,9 @@ export default {
       geojson: null,
       geobounds: [],
       municipalityName: '',
-      snapshotsExamples: []
+      snapshotsExamples: [],
+      snapshotsIdExamplesExclude: [],
+      snapshotsMunicipality: []
     };
   },
 
@@ -153,6 +162,13 @@ export default {
 
     municipalityText() {
       return this.municipalityName ? this.municipalityName : this.$t('noSnapshot.municipalityText');
+    },
+
+    listtitleText() {
+      if (this.snapshotsMunicipality.length > 0) {
+        return this.$t('listtitleMore');
+      }
+      return this.$t('listtitle');
     }
   },
 
@@ -167,6 +183,15 @@ export default {
             municipality {
               bfsNumber
               fullname
+              snapshots {
+                id
+                pk
+                title
+                topic
+                screenshot {
+                  url
+                }
+              }
             }
           }
 
@@ -191,7 +216,12 @@ export default {
       if (result.data.hasOwnProperty('snapshot') && result.data.snapshot) {
         this.geojson = result.data.snapshot.data;
         this.municipalityName = result.data.snapshot.municipality.fullname;
-        this.snapshotsExamples = result.data.snapshots.edges.map(snapshot => snapshot.node);
+        this.snapshotsMunicipality = result.data.snapshot.municipality.snapshots;
+        const snapshotsIdExamplesExclude = this.snapshotsMunicipality.map(snapshot => snapshot.id);
+        this.snapshotsExamples = result.data.snapshots.edges.map(snapshot => snapshot.node).filter(
+          snapshot => !snapshotsIdExamplesExclude.includes(snapshot.id)
+        );
+
         this.$store.commit('setBfsnumber', result.data.snapshot.municipality.bfsNumber);
         this.$store.commit('setBfsname', result.data.snapshot.municipality.fullname);
       } else {
@@ -208,8 +238,18 @@ export default {
             fullname
             perimeter
             perimeterBounds
+            snapshots {
+              id
+              pk
+              title
+              topic
+              screenshot {
+                url
+              }
+            }
           }
-          snapshots {
+
+          snapshots(isShowcase: true) {
             edges {
               node {
                 id
@@ -230,7 +270,7 @@ export default {
       this.municipalityName = result.data.municipality.fullname;
       this.geojson = result.data.municipality.perimeter;
       this.geobounds = result.data.municipality.perimeterBounds;
-      this.snapshotsExamples = result.data.snapshots.edges;
+      this.snapshotsExamples = result.data.snapshots.edges.map(snapshot => snapshot.node);
       this.$store.commit('setBfsnumber', result.data.municipality.bfsNumber);
       this.$store.commit('setBfsname', result.data.municipality.fullname);
     }

@@ -107,7 +107,7 @@ const routes = [
       {
         path: ':wshash([0-9A-Z]{5})/:hash([0-9A-Z]{6})/',
         pathToRegexpOptions: { sensitive: true, strict: true },
-        name: 'workspace',
+        name: 'workspaceRedirect',
         component: () => import('@/views/Workspace.vue'),
         meta: {
           layout: () => import('@/layouts/LayoutSnapshot.vue')
