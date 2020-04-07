@@ -14,13 +14,14 @@
     three-line>
 
       <v-subheader
+        v-if="snapshots.length != 0 && title"
         style="color:black;font-weight:700;"
-        class="px-0">{{ listtitle }}
+        class="px-0">{{ title }}
       </v-subheader>
 
-      <v-list-item v-for="snapshot in snapshots" :key="snapshot.id"
-        :to="createRouteLink(snapshot.pk)"
-        class="px-2 mb-4" dense>
+      <v-list-item class="px-2 mb-4" dense
+        v-for="snapshot in snapshots" :key="snapshot.id"
+        :to="createRouteLink(snapshot.pk)">
         <v-list-item-avatar tile size="64" class="my-2">
           <v-img :src="djangobaseurl + snapshot.screenshot.url"></v-img>
         </v-list-item-avatar>
@@ -64,7 +65,10 @@ export default {
       default: ''
     },
     snapshots: Array,
-    listtitle: String
+    title: {
+      type: String,
+      default: ''
+    }
   },
 
   methods: {

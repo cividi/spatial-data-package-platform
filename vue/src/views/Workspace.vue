@@ -2,10 +2,8 @@
 <i18n>
 {
   "de": {
-    "listtitle": "Scans"
   },
   "fr": {
-    "listtitle": "Scans"
   }
 }
 </i18n>
@@ -37,7 +35,6 @@
 
         <snapshot-list
           :snapshots="snapshotsWorkspace"
-          :listtitle="$t('listtitle')"
           :workspaceHash="wshash"
         />
       </div>
@@ -128,7 +125,6 @@ export default {
             pk
             title
             description
-
             snapshots {
               id
               pk
@@ -147,6 +143,15 @@ export default {
             municipality {
               bfsNumber
               fullname
+              snapshots {
+                id
+                pk
+                title
+                topic
+                screenshot {
+                  url
+                }
+            }
             }
           }
         }`,

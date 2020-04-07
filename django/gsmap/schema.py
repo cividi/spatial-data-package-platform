@@ -2,6 +2,7 @@
 import json
 import graphene
 from django.contrib.gis.db import models
+from django.contrib.gis.db.models import Q
 from django_filters import FilterSet
 from graphene.types import generic
 from graphene_django.types import DjangoObjectType
@@ -42,8 +43,8 @@ class ImageNode(graphene.ObjectType):
         return ThumbnailNode(self, size=size)
 
 
-Q_SNAPSHOT_ONLY_PUBLIC = models.Q(permission__exact=SnapshotPermission.PUBLIC)
-Q_SNAPSHOT_WITH_NOT_LISTED = models.Q(permission__lte=SnapshotPermission.NOT_LISTED)
+Q_SNAPSHOT_ONLY_PUBLIC = Q(permission__exact=SnapshotPermission.PUBLIC)
+Q_SNAPSHOT_WITH_NOT_LISTED = Q(permission__lte=SnapshotPermission.NOT_LISTED)
 
 
 class SnapshotOnlyPublicFilter(FilterSet):
@@ -89,7 +90,7 @@ class MunicipalityNode(DjangoObjectType):
     perimeter_bounds = graphene.List(graphene.Float)
 
     def resolve_snapshots(self, info):
-        return Snapshot.objects.filter(municipality__id=self.pk)
+        return Snapshot.objects.filter(Q_SNAPSHOT_ONLY_PUBLIC & Q(municipality__id=self.pk))
 
     def resolve_perimeter_centroid(self, info):
         return self.perimeter.centroid
