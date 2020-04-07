@@ -8,7 +8,7 @@ from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
 # from sorl.thumbnail import get_thumbnail
-from gsmap.models import Municipality, Snapshot
+from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace
 
 
 class GeoJSON(graphene.Scalar):
@@ -42,6 +42,10 @@ class ImageNode(graphene.ObjectType):
         return ThumbnailNode(self, size=size)
 
 
+Q_SNAPSHOT_ONLY_PUBLIC = models.Q(permission__exact=SnapshotPermission.PUBLIC)
+Q_SNAPSHOT_WITH_NOT_LISTED = models.Q(permission__lte=SnapshotPermission.NOT_LISTED)
+
+
 class SnapshotOnlyPublicFilter(FilterSet):
     class Meta:
         model = Snapshot
@@ -49,7 +53,7 @@ class SnapshotOnlyPublicFilter(FilterSet):
 
     @property
     def qs(self):
-        return Snapshot.objects.all()
+        return super().qs.filter(Q_SNAPSHOT_ONLY_PUBLIC)
 
 
 class SnapshotNode(DjangoObjectType):
@@ -65,7 +69,7 @@ class SnapshotNode(DjangoObjectType):
 
     @classmethod
     def get_queryset(cls, queryset, info):
-        return Snapshot.objects_with_not_listed.all()
+        return queryset.filter(Q_SNAPSHOT_WITH_NOT_LISTED)
 
 
 class MunicipalityNode(DjangoObjectType):
@@ -94,12 +98,28 @@ class MunicipalityNode(DjangoObjectType):
         return self.perimeter.extent
 
 
+class WorkspaceNode(DjangoObjectType):
+    class Meta:
+        model = Workspace
+        fields = [
+            'title', 'description'
+        ]
+        interfaces = [graphene.relay.Node]
+
+    pk = graphene.String(source='id')
+    snapshots = graphene.List(SnapshotNode)
+
+    def resolve_snapshots(self, info):
+        return self.snapshots.all()
+
+
 class Query(object):
     municipality = graphene.relay.Node.Field(MunicipalityNode)
     municipalities = DjangoFilterConnectionField(MunicipalityNode)
 
-    snapshot = graphene.relay.Node.Field(
-        SnapshotNode
-    )
+    snapshot = graphene.relay.Node.Field(SnapshotNode)
     snapshots = DjangoFilterConnectionField(
-        SnapshotNode, filterset_class=SnapshotOnlyPublicFilter)
+        SnapshotNode, filterset_class=SnapshotOnlyPublicFilter
+    )
+
+    workspace = graphene.relay.Node.Field(WorkspaceNode)

@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'graphene_django',
     'sorl.thumbnail',
+    'sortedm2m',
+    'sortedm2m_filter_horizontal_widget',
 
     # own
     'gsuser',

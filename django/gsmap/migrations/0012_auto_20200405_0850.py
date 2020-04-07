@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='snapshot',
             name='permission',
-            field=models.IntegerField(choices=[(gsmap.models.Snapshot.Permission['PUBLIC'], 0), (gsmap.models.Snapshot.Permission['NOT_LISTED'], 10)], default=gsmap.models.Snapshot.Permission['PUBLIC']),
+            field=models.IntegerField(choices=[(gsmap.models.SnapshotPermission['PUBLIC'], 0), (gsmap.models.SnapshotPermission['NOT_LISTED'], 10)], default=gsmap.models.SnapshotPermission['PUBLIC']),
         ),
     ]
