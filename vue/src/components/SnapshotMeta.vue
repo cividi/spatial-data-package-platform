@@ -170,6 +170,7 @@ export default {
       showSources: false
     };
   },
+
   props: {
     hash: String,
     title: String,
@@ -177,6 +178,7 @@ export default {
     legend: Array,
     sources: Array
   },
+
   computed: {
     hasSecondaryLegend() {
       return this.legend.some(item => item.primary === false);

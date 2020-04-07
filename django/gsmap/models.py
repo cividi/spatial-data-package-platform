@@ -3,6 +3,7 @@ import string
 from enum import IntFlag
 from django.contrib.gis.db import models
 from django.contrib.postgres import fields as pg_fields
+from sortedm2m.fields import SortedManyToManyField
 from sorl.thumbnail import ImageField
 from gsuser.models import User
 
@@ -42,10 +43,7 @@ class Municipality(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    canton = models.CharField(
-        max_length=2,
-        choices=CANTONS_CHOICES
-    )
+    canton = models.CharField(max_length=2, choices=CANTONS_CHOICES)
     perimeter = models.MultiPolygonField(null=True)
     centerpoint = models.PointField(null=True)
 
@@ -57,10 +55,15 @@ class Municipality(models.Model):
         return self.fullname
 
 
-def create_slug_hash():
+def create_slug_hash(hash_length):
     alphabet = string.ascii_uppercase + string.digits
-    hash_length = 6
     return ''.join(secrets.choice(alphabet) for i in range(hash_length))
+
+def create_slug_hash_5():
+    return create_slug_hash(5)
+
+def create_slug_hash_6():
+    return create_slug_hash(6)
 
 
 class SnapshotPermission(IntFlag):
@@ -68,40 +71,22 @@ class SnapshotPermission(IntFlag):
     NOT_LISTED = 10
 
 
-class RawSnapshotManager(models.Manager):
-    pass
-
-
-class OnlyPublicSnapshotManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(
-            permission__exact=SnapshotPermission.PUBLIC
-        )
-
-
-class WithNotListedSnapshotManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(
-            permission__lte=SnapshotPermission.NOT_LISTED
-        )
-
-
 class Snapshot(models.Model):
+    class Meta:
+        ordering = ['-created']
+
     id = models.CharField(
-        max_length=8, unique=True, primary_key=True,
-        default=create_slug_hash
+        max_length=8, unique=True,
+        primary_key=True, default=create_slug_hash_6
     )
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     archived = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
     is_showcase = models.BooleanField(default=False)
-    permission = models.IntegerField(
-        choices=[
-            (perm.value, perm.name) for perm in SnapshotPermission
-        ],
-        default=SnapshotPermission.PUBLIC
-    )
+    permission = models.IntegerField(choices=[(perm.value, perm.name)
+                                              for perm in SnapshotPermission],
+                                     default=SnapshotPermission.PUBLIC)
 
     title = models.CharField(max_length=150, default='')
     topic = models.CharField(max_length=100, default='')
@@ -116,16 +101,10 @@ class Snapshot(models.Model):
         null=True, on_delete=models.SET_NULL
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    objects = OnlyPublicSnapshotManager()
-    objects_with_not_listed = WithNotListedSnapshotManager()
-    objects_raw = RawSnapshotManager()
-
-    class Meta:
-        ordering = ['-created']
 
     def save(self, *args, **kwargs):
         def test_exists(pk):
-            if self.__class__.objects_raw.filter(pk=pk):
+            if self.__class__.objects.filter(pk=pk):
                 new_id = create_slug_hash()
                 test_exists(new_id)
             else:
@@ -136,4 +115,37 @@ class Snapshot(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.id
+        return f'{self.id}, {self.title}, {self.get_permission_display()}'
+
+
+class Workspace(models.Model):
+    class Meta:
+        ordering = ['-created']
+
+    id = models.CharField(
+        max_length=8, unique=True,
+        primary_key=True, default=create_slug_hash_5
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    title = models.CharField(max_length=150, default='')
+    description = models.TextField(default='')
+
+    snapshots = SortedManyToManyField(Snapshot)
+
+
+    def save(self, *args, **kwargs):
+        def test_exists(pk):
+            if self.__class__.objects.filter(pk=pk):
+                new_id = create_slug_hash()
+                test_exists(new_id)
+            else:
+                return pk
+
+        if self._state.adding:
+            self.id = test_exists(self.id)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.id} {self.title}'
