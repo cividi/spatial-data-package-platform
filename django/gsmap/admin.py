@@ -45,16 +45,16 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
 
 
 class WorkspaceAdmin(admin.OSMGeoAdmin):
-    readonly_fields = ('id', 'created', 'modified')
+    readonly_fields = ('id', 'created', 'modified', 'get_absolute_link')
     fieldsets = (
         (_('Meta'), {
             'fields': (
-                'id', 'created', 'modified'
+                'id', 'get_absolute_link',
+                'created', 'modified'
             )
         }),
         (_('Main'), {
-            'fields':
-            ('title', 'description', 'snapshots'),
+            'fields': ('title', 'description', 'snapshots'),
         }),
     )
     list_display = ('id', 'title', 'created', 'modified')

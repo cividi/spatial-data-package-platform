@@ -3,6 +3,8 @@ import string
 from enum import IntFlag
 from django.contrib.gis.db import models
 from django.contrib.postgres import fields as pg_fields
+from django.contrib.sites.models import Site
+from django.utils.html import format_html
 from sortedm2m.fields import SortedManyToManyField
 from sorl.thumbnail import ImageField
 from gsuser.models import User
@@ -102,10 +104,18 @@ class Snapshot(models.Model):
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def get_absolute_link(self):
+        domain = Site.objects.get_current().domain
+        return format_html(f'<a href="//{domain}/{self.get_absolute_url()}">{domain}{self.get_absolute_url()}</a>')
+    get_absolute_link.short_description = "Snapshot Url"
+
+    def get_absolute_url(self):
+        return f'/{self.id}/'
+
     def save(self, *args, **kwargs):
         def test_exists(pk):
             if self.__class__.objects.filter(pk=pk):
-                new_id = create_slug_hash()
+                new_id = create_slug_hash_6()
                 test_exists(new_id)
             else:
                 return pk
@@ -115,7 +125,8 @@ class Snapshot(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.id}, {self.title}, {self.get_permission_display()}'
+        return f'{self.municipality.fullname}, {self.title}, ' \
+               f'{self.id} ({self.get_permission_display()})'
 
 
 class Workspace(models.Model):
@@ -134,11 +145,20 @@ class Workspace(models.Model):
 
     snapshots = SortedManyToManyField(Snapshot)
 
+    def get_absolute_link(self):
+        domain = Site.objects.get_current().domain
+        return format_html(f'<a href="//{domain}{self.get_absolute_url()}">{domain}{self.get_absolute_url()}</a>')
+    get_absolute_link.short_description = "Workspace Url"
+
+    def get_absolute_url(self):
+        first_id = self.snapshots.all().first().id
+        return f'/{self.id}/{first_id}/'
+
 
     def save(self, *args, **kwargs):
         def test_exists(pk):
             if self.__class__.objects.filter(pk=pk):
-                new_id = create_slug_hash()
+                new_id = create_slug_hash_5()
                 test_exists(new_id)
             else:
                 return pk
