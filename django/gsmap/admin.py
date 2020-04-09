@@ -1,5 +1,7 @@
 from django.contrib.gis import admin
+from django.contrib.postgres import fields
 from django.utils.translation import gettext as _
+from django_json_widget.widgets import JSONEditorWidget
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 from gsmap.models import Municipality, Snapshot, Workspace
 
@@ -9,11 +11,12 @@ class MunicipalityAdmin(admin.OSMGeoAdmin):
 
 
 class SnapshotAdmin(admin.OSMGeoAdmin):
-    readonly_fields = ('id', 'created', 'modified')
+    readonly_fields = ('id', 'created', 'modified', 'get_absolute_link')
     fieldsets = (
         (_('Meta'), {
             'fields': (
-                'id', 'created', 'modified', 'is_showcase', 'archived', 'deleted', 'permission'
+                'id', 'get_absolute_link', 'created', 'modified',
+                'is_showcase', 'archived', 'deleted', 'permission'
             )
         }),
         (_('Main'), {
@@ -29,6 +32,13 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         #     ('perimeter',),
         # }),
     )
+
+    formfield_overrides = {
+        fields.JSONField: {
+            'widget': JSONEditorWidget
+        },
+    }
+
     list_display = ('id', 'title', 'municipality', 'permission', 'is_showcase',
                     'created', 'modified')
     list_filter = ('is_showcase', 'permission')
@@ -36,16 +46,16 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
 
 
 class WorkspaceAdmin(admin.OSMGeoAdmin):
-    readonly_fields = ('id', 'created', 'modified')
+    readonly_fields = ('id', 'created', 'modified', 'get_absolute_link')
     fieldsets = (
         (_('Meta'), {
             'fields': (
-                'id', 'created', 'modified'
+                'id', 'get_absolute_link',
+                'created', 'modified'
             )
         }),
         (_('Main'), {
-            'fields':
-            ('title', 'description', 'snapshots'),
+            'fields': ('title', 'description', 'snapshots'),
         }),
     )
     list_display = ('id', 'title', 'created', 'modified')
