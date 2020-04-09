@@ -23,7 +23,7 @@ export default {
     return {};
   },
 
-  mounted() {
+  created() {
     this.setInitialSnapshotnav();
   },
 
@@ -40,12 +40,12 @@ export default {
     setInitialSnapshotnav() {
       if (this.$route.params.hash) {
         if (['lg', 'xl'].includes(this.$vuetify.breakpoint.name)) {
-          this.$store.commit('setSnapshotnav', false);
-        } else {
           this.$store.commit('setSnapshotnav', true);
+        } else {
+          this.$store.commit('setSnapshotnav', false);
         }
       } else {
-        this.$store.commit('setSnapshotnav', false);
+        this.$store.commit('setSnapshotnav', true);
       }
     }
   }
