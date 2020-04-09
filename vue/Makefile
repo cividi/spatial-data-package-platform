@@ -1,5 +1,5 @@
 GEMEINDESCAN_WEBUI_VUE=0.3.2
-DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec vue")
+DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec -T vue")
 
 
 .PHONY: all
