@@ -16,7 +16,8 @@
       id="snapshotnav"
       clipped="clipped"
       app
-      width="320">
+      width="320"
+      v-model="snapshotnav">
       <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
         <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
       </router-link>
@@ -24,12 +25,11 @@
       <v-divider />
 
       <div id="snapshotnavContent" class="ma-4">
-        <search :dense="true" :term="municipalityName"/>
 
         <div class="nodata pb-8">
           <div class="smaller hint">
             <h4>{{ title }}</h4>
-            <p>{{ description }}</p>
+            <p class="show-linebreaks">{{ description }}</p>
           </div>
         </div>
 
@@ -68,6 +68,10 @@
   color: #000;
   opacity: 1;
   font-weight: 900;
+}
+
+.show-linebreaks {
+  white-space: pre-wrap;
 }
 
 h4 {

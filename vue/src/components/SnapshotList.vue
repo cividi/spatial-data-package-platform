@@ -13,12 +13,6 @@
   <v-list class="snapshotlist"
     three-line>
 
-      <v-subheader
-        v-if="snapshots.length != 0 && title"
-        style="color:black;font-weight:700;"
-        class="px-0">{{ title }}
-      </v-subheader>
-
       <v-list-item class="px-2 mb-4" dense
         v-for="snapshot in snapshots" :key="snapshot.id"
         :to="createRouteLink(snapshot.pk)">
@@ -64,11 +58,7 @@ export default {
       type: String,
       default: ''
     },
-    snapshots: Array,
-    title: {
-      type: String,
-      default: ''
-    }
+    snapshots: Array
   },
 
   methods: {

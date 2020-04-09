@@ -48,22 +48,10 @@
         <search :dense="true" :term="municipalityName"/>
 
         <div class="nodata pb-8">
-          <div v-if="hash" class="smaller hint">
-            <h4>{{ $t('hasSnapshot.title') }}</h4>
-            <p>{{ $t('hasSnapshot.p1', { municipalityText: municipalityText }) }}</p>
-            <p>{{ $t('hasSnapshot.p2') }}</p>
-          </div>
-          <div v-else class="smaller hint">
+          <div v-if="!hash" class="smaller hint">
             <h4>{{ $t('noSnapshot.title') }}</h4>
             <p>{{ $t('noSnapshot.p1', { municipalityText: municipalityText }) }}</p>
             <p>{{ $t('noSnapshot.p2') }}</p>
-          </div>
-          <div class="useractions">
-            <v-btn small block outlined color="primary">
-              <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
-                {{ $t('calltoactionText', { municipalityText: municipalityText }) }}
-              </router-link>
-            </v-btn>
           </div>
 
           <snapshot-list
@@ -72,10 +60,21 @@
           />
         </div>
 
+        <v-subheader
+          class="px-0 snapshot-list-title">{{ listtitleText }}
+        </v-subheader>
+
+        <div class="useractions">
+          <v-btn small block outlined color="primary">
+            <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
+              {{ $t('calltoactionText', { municipalityText: municipalityText }) }}
+            </router-link>
+          </v-btn>
+        </div>
+
         <snapshot-list
           v-if="snapshotsExamples"
           :snapshots="snapshotsExamples"
-          :title="listtitleText"
         />
       </div>
 
