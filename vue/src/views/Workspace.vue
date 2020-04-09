@@ -174,15 +174,18 @@ export default {
         }
       });
       if (result.data.hasOwnProperty('workspace') && result.data.workspace) {
-        const workspaceData = result.data.workspace;
-        const snapshotData = result.data.snapshot;
-        this.geojson = snapshotData.data;
-        this.municipalityName = snapshotData.municipality.fullname;
-        this.snapshotsWorkspace = workspaceData.snapshots;
-        this.title = workspaceData.title;
-        this.description = workspaceData.description;
-        this.$store.commit('setBfsnumber', snapshotData.municipality.bfsNumber);
-        this.$store.commit('setBfsname', snapshotData.municipality.fullname);
+        const workspace = result.data.workspace;
+        const snapshot = result.data.snapshot;
+        if (!workspace.snapshots.map(s => s.pk).includes(snapshot.pk)) {
+          this.$router.push({ name: 'home' });
+        }
+        this.geojson = snapshot.data;
+        this.municipalityName = snapshot.municipality.fullname;
+        this.snapshotsWorkspace = workspace.snapshots;
+        this.title = workspace.title;
+        this.description = workspace.description;
+        this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);
+        this.$store.commit('setBfsname', snapshot.municipality.fullname);
       } else {
         this.$router.push({ name: 'home' });
       }
