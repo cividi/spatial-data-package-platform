@@ -50,7 +50,7 @@ slack-push:
 	source env.hosts.prod && test -v SLACK_APP_HOOK && curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"$$SLACK_APP_TEXT\"}" "https://hooks.slack.com/services/$$SLACK_APP_HOOK"
 
 update:
-	@git pull -v 2>&1 | egrep "django\/|vue\/" && make deploy_local && make slack-push; exit 0
+	make deploy_local && make slack-push; exit 0
 
 ab-graphql:
 	ab -p tests/graphql-autocomplete-post.json -T application/json -c 10 -n 2000 http://gemeindescan.ch/graphql/
