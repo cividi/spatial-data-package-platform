@@ -106,7 +106,10 @@ class Snapshot(models.Model):
 
     def get_absolute_link(self):
         domain = Site.objects.get_current().domain
-        return format_html(f'<a href="//{domain}/{self.get_absolute_url()}">{domain}{self.get_absolute_url()}</a>')
+        return format_html(
+            f'<a href="//{domain}/{self.get_absolute_url()}" target="_blank">'
+            f'{domain}{self.get_absolute_url()}</a>'
+        )
     get_absolute_link.short_description = "Snapshot Url"
 
     def get_absolute_url(self):
@@ -147,7 +150,10 @@ class Workspace(models.Model):
 
     def get_absolute_link(self):
         domain = Site.objects.get_current().domain
-        return format_html(f'<a href="//{domain}{self.get_absolute_url()}">{domain}{self.get_absolute_url()}</a>')
+        return format_html(
+            f'<a href="//{domain}{self.get_absolute_url()}" target="_blank">'
+            f'{domain}{self.get_absolute_url()}</a>'
+        )
     get_absolute_link.short_description = "Workspace Url"
 
     def get_absolute_url(self):

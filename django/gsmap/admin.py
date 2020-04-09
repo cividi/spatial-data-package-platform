@@ -1,8 +1,8 @@
 from django.contrib.gis import admin
 from django.contrib.postgres import fields
 from django.utils.translation import gettext as _
-from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 from django_json_widget.widgets import JSONEditorWidget
+from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 from gsmap.models import Municipality, Snapshot, Workspace
 
 
@@ -15,7 +15,8 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
     fieldsets = (
         (_('Meta'), {
             'fields': (
-                'id', 'get_absolute_link', 'created', 'modified', 'is_showcase', 'archived', 'deleted', 'permission'
+                'id', 'get_absolute_link', 'created', 'modified',
+                'is_showcase', 'archived', 'deleted', 'permission'
             )
         }),
         (_('Main'), {
