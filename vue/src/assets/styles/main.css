@@ -69,3 +69,22 @@ a {
 .content {
   max-width: 660px;
 }
+
+/* SNAPSHOTS */
+
+.snapshot-list-title {
+  color:black;
+  font-weight:700;
+}
+
+
+#snapshotnav {
+  height: calc(100vh - var(--vh-offset, 0px)) !important;
+  z-index: 9999; /* must be above mapbox interface */
+}
+
+#snapshotnavContent {
+  padding-bottom: 6em;
+}
+
+/* SNAPSHOTS END */

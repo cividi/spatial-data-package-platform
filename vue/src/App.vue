@@ -23,12 +23,30 @@ export default {
     return {};
   },
 
+  mounted() {
+    this.setInitialSnapshotnav();
+  },
+
   computed: {
     selectedLayout() {
       if (this.$route && this.$route.hasOwnProperty('meta') && this.$route.meta.hasOwnProperty('layout')) {
         return this.$route.meta.layout;
       }
       return LayoutDefault;
+    }
+  },
+
+  methods: {
+    setInitialSnapshotnav() {
+      if (this.$route.params.hash) {
+        if (['lg', 'xl'].includes(this.$vuetify.breakpoint.name)) {
+          this.$store.commit('setSnapshotnav', false);
+        } else {
+          this.$store.commit('setSnapshotnav', true);
+        }
+      } else {
+        this.$store.commit('setSnapshotnav', false);
+      }
     }
   }
 };
