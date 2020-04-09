@@ -54,15 +54,6 @@ body,
   height: calc(100vh - var(--vh-offset, 0px));
 }
 
-#snapshotnav {
-  height: calc(100vh - var(--vh-offset, 0px)) !important;
-  z-index: 9999; /* must be above mapbox interface */
-}
-
-#snapshotnavContent {
-  padding-bottom: 6em;
-}
-
 #map {
   position: relative;
   width: 100%;
@@ -109,8 +100,7 @@ export default {
       legend: [],
       sources: [],
       layers: [],
-      geobounds: [],
-      snapshotnav: this.$store.snapshotnav
+      geobounds: []
     };
   },
 
@@ -120,7 +110,6 @@ export default {
   },
 
   created() {
-    this.setInitialSnapshotnav();
     this.geobounds = this.geoboundsIn;
   },
 
@@ -134,20 +123,19 @@ export default {
         case 'xs': return '280px';
         default: return '320px';
       }
+    },
+
+    snapshotnav: {
+      get() {
+        return this.$store.state.snapshotnav;
+      },
+      set(val) {
+        this.$store.commit('setSnapshotnav', val);
+      }
     }
   },
 
   methods: {
-    setInitialSnapshotnav() {
-      if (this.$route.params.hash) {
-        if (['lg', 'xl'].includes(this.$vuetify.breakpoint.name)) {
-          this.$store.commit('setSnapshotnav', true);
-        }
-        this.$store.commit('setSnapshotnav', false);
-      }
-      this.$store.commit('setSnapshotnav', true);
-    },
-
     createFeatureLayer(geojson, attribution) {
       const geoJsonExtended = L.geoJson(geojson, {
         attribution,

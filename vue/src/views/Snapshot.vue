@@ -36,7 +36,8 @@
       id="snapshotnav"
       clipped="clipped"
       app
-      width="320">
+      width="320"
+      v-model="snapshotnav">
       <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
         <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
       </router-link>
@@ -169,6 +170,15 @@ export default {
         return this.$t('listtitleMore');
       }
       return this.$t('listtitle');
+    },
+
+    snapshotnav: {
+      get() {
+        return this.$store.state.snapshotnav;
+      },
+      set(val) {
+        this.$store.commit('setSnapshotnav', val);
+      }
     }
   },
 

@@ -113,6 +113,15 @@ export default {
         return this.$route.params.municipality;
       }
       return null;
+    },
+
+    snapshotnav: {
+      get() {
+        return this.$store.state.snapshotnav;
+      },
+      set(val) {
+        this.$store.commit('setSnapshotnav', val);
+      }
     }
   },
 
