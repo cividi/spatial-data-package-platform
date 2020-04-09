@@ -2,10 +2,8 @@
 <i18n>
 {
   "de": {
-    "listtitle": "Fallbeispiele"
   },
   "fr": {
-    "listtitle": "Examples"
   }
 }
 </i18n>
@@ -15,20 +13,15 @@
   <v-list class="snapshotlist"
     three-line>
 
-      <v-subheader
-        style="color:black;font-weight:700;"
-        class="px-0">{{ $t('listtitle') }}
-      </v-subheader>
-
-      <v-list-item v-for="snapshot in snapshots" :key="snapshot.node.id"
-        :to="'/' + $i18n.locale + '/' + snapshot.node.pk + '/'"
-        class="px-2 mb-4" dense>
+      <v-list-item class="px-2 mb-4" dense
+        v-for="snapshot in snapshots" :key="snapshot.id"
+        :to="createRouteLink(snapshot.pk)">
         <v-list-item-avatar tile size="64" class="my-2">
-          <v-img :src="djangobaseurl + snapshot.node.screenshot.url"></v-img>
+          <v-img :src="djangobaseurl + snapshot.screenshot.url"></v-img>
         </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title style="font-weight:700">{{ snapshot.node.title }}</v-list-item-title>
-            <v-list-item-subtitle>{{ snapshot.node.topic }}</v-list-item-subtitle>
+            <v-list-item-title style="font-weight:700">{{ snapshot.title }}</v-list-item-title>
+            <v-list-item-subtitle>{{ snapshot.topic }}</v-list-item-subtitle>
           </v-list-item-content>
       </v-list-item>
   </v-list>
@@ -61,7 +54,20 @@ export default {
   },
 
   props: {
+    workspaceHash: {
+      type: String,
+      default: ''
+    },
     snapshots: Array
+  },
+
+  methods: {
+    createRouteLink(hash) {
+      if (this.workspaceHash) {
+        return `/${this.$i18n.locale}/${this.workspaceHash}/${hash}/`;
+      }
+      return `/${this.$i18n.locale}/${hash}/`;
+    }
   }
 };
 </script>

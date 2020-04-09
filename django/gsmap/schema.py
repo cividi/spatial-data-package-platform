@@ -2,12 +2,14 @@
 import json
 import graphene
 from django.contrib.gis.db import models
+from django.contrib.gis.db.models import Q
+from django_filters import FilterSet
 from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
 # from sorl.thumbnail import get_thumbnail
-from gsmap.models import Municipality, Snapshot
+from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace
 
 
 class GeoJSON(graphene.Scalar):
@@ -41,6 +43,20 @@ class ImageNode(graphene.ObjectType):
         return ThumbnailNode(self, size=size)
 
 
+Q_SNAPSHOT_ONLY_PUBLIC = Q(permission__exact=SnapshotPermission.PUBLIC)
+Q_SNAPSHOT_WITH_NOT_LISTED = Q(permission__lte=SnapshotPermission.NOT_LISTED)
+
+
+class SnapshotOnlyPublicFilter(FilterSet):
+    class Meta:
+        model = Snapshot
+        fields = ['municipality__id', 'municipality__canton', 'is_showcase']
+
+    @property
+    def qs(self):
+        return super().qs.filter(Q_SNAPSHOT_ONLY_PUBLIC)
+
+
 class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
@@ -51,6 +67,10 @@ class SnapshotNode(DjangoObjectType):
     data = generic.GenericScalar(source='data')
     screenshot = graphene.Field(ImageNode)
     pk = graphene.String(source='id')
+
+    @classmethod
+    def get_queryset(cls, queryset, info):
+        return queryset.filter(Q_SNAPSHOT_WITH_NOT_LISTED)
 
 
 class MunicipalityNode(DjangoObjectType):
@@ -70,7 +90,7 @@ class MunicipalityNode(DjangoObjectType):
     perimeter_bounds = graphene.List(graphene.Float)
 
     def resolve_snapshots(self, info):
-        return Snapshot.objects.filter(municipality__id=self.pk)
+        return Snapshot.objects.filter(Q_SNAPSHOT_ONLY_PUBLIC & Q(municipality__id=self.pk))
 
     def resolve_perimeter_centroid(self, info):
         return self.perimeter.centroid
@@ -79,9 +99,28 @@ class MunicipalityNode(DjangoObjectType):
         return self.perimeter.extent
 
 
+class WorkspaceNode(DjangoObjectType):
+    class Meta:
+        model = Workspace
+        fields = [
+            'title', 'description'
+        ]
+        interfaces = [graphene.relay.Node]
+
+    pk = graphene.String(source='id')
+    snapshots = graphene.List(SnapshotNode)
+
+    def resolve_snapshots(self, info):
+        return self.snapshots.all()
+
+
 class Query(object):
     municipality = graphene.relay.Node.Field(MunicipalityNode)
     municipalities = DjangoFilterConnectionField(MunicipalityNode)
 
     snapshot = graphene.relay.Node.Field(SnapshotNode)
-    snapshots = DjangoFilterConnectionField(SnapshotNode)
+    snapshots = DjangoFilterConnectionField(
+        SnapshotNode, filterset_class=SnapshotOnlyPublicFilter
+    )
+
+    workspace = graphene.relay.Node.Field(WorkspaceNode)
