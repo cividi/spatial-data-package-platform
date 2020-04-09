@@ -43,8 +43,8 @@ deploy_local:
 	docker-compose up -d
 	make -f vue/Makefile build
 	source env.hosts.prod && rsync -av --delete vue/dist $$VUE_LOCAL_PATH
-	docker-compose exec django make migrate
-	docker-compose exec django killall -TERM gunicorn
+	docker-compose exec -T django make migrate
+	docker-compose exec -T django killall -TERM gunicorn
 
 slack-push:
 	source env.hosts.prod && test -v SLACK_APP_HOOK && curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"$$SLACK_APP_TEXT\"}" "https://hooks.slack.com/services/$$SLACK_APP_HOOK"
