@@ -64,6 +64,11 @@
           class="px-0 snapshot-list-title">{{ listtitleText }}
         </v-subheader>
 
+        <snapshot-list
+          v-if="snapshotsExamples"
+          :snapshots="snapshotsExamples"
+        />
+
         <div class="useractions">
           <v-btn small block outlined color="primary">
             <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
@@ -71,11 +76,6 @@
             </router-link>
           </v-btn>
         </div>
-
-        <snapshot-list
-          v-if="snapshotsExamples"
-          :snapshots="snapshotsExamples"
-        />
       </div>
 
       <v-toolbar
