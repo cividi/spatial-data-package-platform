@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Workspace',
             fields=[
-                ('id', models.CharField(default=gsmap.models.create_slug_hash, max_length=8, primary_key=True, serialize=False, unique=True)),
+                ('id', models.CharField(max_length=8, primary_key=True, serialize=False, unique=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('modified', models.DateTimeField(auto_now=True)),
                 ('title', models.CharField(default='', max_length=150)),
