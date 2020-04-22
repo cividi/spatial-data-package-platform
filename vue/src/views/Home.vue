@@ -39,73 +39,48 @@
           <search :autofocus=true />
       </div>
       <v-row justify="center" >
-        <v-col class="introtxt text-center py-12">
+        <v-col class="introtxt text-center pt-12">
           <h1>{{ $t('h1.1') }}</h1>
           <p>{{ $t('p.1') }}</p>
           <p>{{ $t('p.2') }}</p>
         </v-col>
       </v-row>
-
-
   </v-container>
 
-  <v-container class="center" fluid>
+  <v-container class="center" fluid mb-12>
       <v-row justify="center" >
-        <v-col class="introtxt text-center py-12">
+        <v-col class="introtxt text-center">
           <h2>{{ $t('h2.2') }}</h2>
         </v-col>
       </v-row>
+
       <v-row justify="center">
-        <v-col cols="sm" sm="12" md="4" lg="3" >
+        <v-col cols="sm" sm="12" md="4" lg="3"
+        v-for="snapshot in snapshotsExamples" :key="snapshot.id">
           <div>
-          <v-btn icon href="https://stage.gemeindescan.ch/de/667E75" height="300">
-         <v-hover v-slot:default="{ hover }">
-          <v-avatar tile size="300">
-            <img src="https://cdn.vuetifyjs.com/images/cards/kitchen.png" alt="John">
-            <v-fade-transition>
-              <v-overlay v-if="hover" absolute style="z-index: 0">
-               <span>Dietikon: Ausnützungsreserven and more things</span>
-              </v-overlay>
-            </v-fade-transition>
-          </v-avatar>
-          </v-hover>
+
+          <v-btn icon :to="'/' + $i18n.locale +'/'+ snapshot.pk + '/'" height="300">
+            <v-hover v-slot:default="{ hover }">
+              <v-avatar tile size="300">
+                <v-img :src="djangobaseurl + snapshot.screenshot.url"></v-img>
+                <v-fade-transition>
+                  <v-overlay v-if="hover" color="primary" opacity="0.6" absolute
+                    style="text-transform: none; white-space: normal; hyphens: auto;">
+                    <h5 style="font-weight: bold; line-height: 1.2em; padding:0.3em;">{{snapshot.title}}</h5>
+                    <span style="">{{snapshot.topic}}<br>-<br>{{snapshot.municipality.name}}</span>
+                  </v-overlay>
+                </v-fade-transition>
+              </v-avatar>
+            </v-hover>
           </v-btn>
           </div>
         </v-col>
 
-        <v-col cols="sm" sm="12" md="4" lg="3">
-          <v-btn icon href="https://stage.gemeindescan.ch/de/667E75" height="300">
-         <v-hover v-slot:default="{ hover }">
-          <v-avatar tile size="300">
-            <img src="https://cdn.vuetifyjs.com/images/cards/kitchen.png" alt="John">
-            <v-fade-transition>
-              <v-overlay v-if="hover" absolute style="z-index: 0">
-               <span>Use Case 1 Description</span>
-              </v-overlay>
-            </v-fade-transition>
-          </v-avatar>
-          </v-hover>
-          </v-btn>
-        </v-col>
-
-        <v-col cols="sm" sm="12" md="4" lg="3">
-          <v-btn icon href="https://stage.gemeindescan.ch/de/667E75" height="300">
-         <v-hover v-slot:default="{ hover }">
-          <v-avatar tile size="300">
-            <img src="https://cdn.vuetifyjs.com/images/cards/kitchen.png" alt="John">
-            <v-fade-transition>
-              <v-overlay v-if="hover" absolute style="z-index: 0">
-               <span>Use Case 1 Description</span>
-              </v-overlay>
-            </v-fade-transition>
-          </v-avatar>
-          </v-hover>
-          </v-btn>
-        </v-col>
       </v-row>
 
   </v-container>
 
+  <!--
   <v-container class="" justify-center my-12>
         <v-row justify="center">
         <v-col class="introtxt text-center py-12">
@@ -116,7 +91,7 @@
         </v-col>
       </v-row>
   </v-container>
-
+  -->
 
 </div>
 
@@ -146,15 +121,49 @@
 </style>
 
 <script>
+import gql from 'graphql-tag';
+
 export default {
   name: 'Home',
   data() {
-    return {};
+    return {
+      djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
+      snapshotsExamples: []
+    };
   },
-
   created() {
     this.$store.commit('setBfsnumber', '');
     this.$store.commit('setBfsname', '');
+  },
+  async mounted() {
+    await this.getSnapshotsExamples();
+  },
+  methods: {
+    async getSnapshotsExamples() {
+      const result = await this.$apollo.query({
+        query: gql`{
+          snapshots(isShowcase: true) {
+            edges {
+              node {
+                id
+                pk
+                title
+                topic
+                screenshot {
+                  url
+                }
+                municipality {
+                  name
+                }
+              }
+            }
+          }
+        }`
+      });
+      const snapshots = result.data.snapshots.edges.map(snapshot => snapshot.node);
+      // fake random, for more randomness, use https://www.npmjs.com/package/lodash.shuffle package
+      this.snapshotsExamples = snapshots.sort(() => (Math.random() > 0.5 ? -1 : 1)).slice(0, 3);
+    }
   }
 };
 </script>
