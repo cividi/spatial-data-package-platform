@@ -93,6 +93,7 @@
     <snapshot-map ref="map"
       :geojson="geojson"
       :geoboundsIn="geobounds"
+      :predecessor="predecessor"
     />
 
   </div>
@@ -133,7 +134,8 @@ export default {
       municipalityName: '',
       snapshotsExamples: [],
       snapshotsIdExamplesExclude: [],
-      snapshotsMunicipality: []
+      snapshotsMunicipality: [],
+      predecessor: null
     };
   },
 
@@ -189,6 +191,10 @@ export default {
             id
             pk
             data
+            predecessor {
+              id
+              pk
+            }
             municipality {
               bfsNumber
               fullname
@@ -230,7 +236,7 @@ export default {
         this.snapshotsExamples = result.data.snapshots.edges.map(snapshot => snapshot.node).filter(
           snapshot => !snapshotsIdExamplesExclude.includes(snapshot.id)
         );
-
+        this.predecessor = (result.data.snapshot.predecessor);
         this.$store.commit('setBfsnumber', result.data.snapshot.municipality.bfsNumber);
         this.$store.commit('setBfsname', result.data.snapshot.municipality.fullname);
       } else {

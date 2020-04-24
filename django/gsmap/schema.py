@@ -60,7 +60,7 @@ class SnapshotOnlyPublicFilter(FilterSet):
 class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
-        fields = ['is_showcase', 'title', 'topic', 'data', 'screenshot', 'municipality']
+        fields = ['is_showcase', 'title', 'topic', 'data', 'screenshot', 'municipality', 'predecessor']
         filter_fields = ['municipality__id', 'municipality__canton', 'is_showcase']
         interfaces = [graphene.relay.Node]
 
