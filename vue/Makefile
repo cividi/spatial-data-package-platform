@@ -1,6 +1,5 @@
 GEMEINDESCAN_WEBUI_VUE=0.3.3
-DOCKER_VUE_NAME=$(shell basename $(shell dirname `pwd`))_vue_1
-DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker exec -it $(DOCKER_VUE_NAME)")
+DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec -T vue")
 
 
 .PHONY: all

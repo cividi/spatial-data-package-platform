@@ -18,6 +18,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='snapshot',
             name='id',
-            field=models.CharField(default=gsmap.models.create_slug_hash, max_length=8, primary_key=True, serialize=False, unique=True),
+            field=models.CharField(max_length=8, primary_key=True, serialize=False, unique=True),
         ),
     ]
