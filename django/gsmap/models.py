@@ -158,7 +158,7 @@ class Workspace(models.Model):
 
     def get_absolute_url(self):
         first_id = self.snapshots.all().first().id
-        return f'{self.id}/{first_id}/'
+        return f'/{self.id}/{first_id}/'
 
 
     def save(self, *args, **kwargs):
