@@ -136,7 +136,7 @@ export default {
       snapshotsMunicipality: [],
       predecessor: null,
       screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
-      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnnail')
+      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail')
     };
   },
 

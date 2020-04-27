@@ -32,9 +32,11 @@
         v-bind:class="{open: mapinfoopen}"
         >
         <v-icon
+          v-show="!screenshotMode"
           style="position: absolute; top:0; right:0;"
           class="pa-2"
-          @click="mapinfoopen=!mapinfoopen" >mdi-close-circle-outline</v-icon>
+          @click="mapinfoopen=!mapinfoopen" >mdi-close-circle-outline
+        </v-icon>
         <snapshot-meta
           :title="title"
           :description="description"
@@ -112,7 +114,7 @@ export default {
       layers: [],
       geobounds: [],
       screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
-      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnnail')
+      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail')
     };
   },
 

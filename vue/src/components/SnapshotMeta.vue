@@ -57,6 +57,7 @@
     </v-list>
     <v-btn
       v-if="hasSecondaryLegend"
+      v-show="!screenshotMode"
       text x-small
       @click="showWholeLegend=!showWholeLegend"
       class="moreLegendToggle"
@@ -88,6 +89,7 @@
       </v-expand-transition>
     </div>
     <v-btn
+      v-show="!screenshotMode"
       text x-small
       class="sourcesToggle"
       :class="{sourcesvisible: showSources}"
@@ -176,7 +178,8 @@ export default {
   data() {
     return {
       showWholeLegend: false,
-      showSources: false
+      showSources: false,
+      screenshotMode: this.$route.query.hasOwnProperty('screenshot')
     };
   },
 
