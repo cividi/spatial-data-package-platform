@@ -45,4 +45,11 @@ COPY ./package/03/package.json ./package/03/yarn.lock /opt/vue/
 RUN --mount=type=cache,target=/tmp/yarn_cache \
     yarn install --ignore-optional
 
+ARG S6_OVERLAY_VERSION=v1.22.1.0
+RUN curl -Ls https://github.com/just-containers/s6-overlay/releases/download/$S6_OVERLAY_VERSION/s6-overlay-amd64.tar.gz | tar xz -C /
+
+COPY s6/etc/services.d /etc/services.d
+COPY s6/etc/cont-init.d /etc/cont-init.d
+ENTRYPOINT ["/init"]
+
 EXPOSE 8080
