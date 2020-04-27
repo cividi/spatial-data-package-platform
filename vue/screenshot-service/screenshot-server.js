@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const puppeteer = require('puppeteer');
 
 const app = express();
@@ -10,25 +11,34 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.get('/screenshot/:hash', async (req, res) => {
+app.get('*', async (req, res) => {
   console.log(req.params);
+  const path = req.params['0'];
   const browser = await puppeteer.launch({
     executablePath: '/usr/bin/chromium-browser',
     headless: true,
-    devtools: true,
+    devtools: false,
     args: [
       '--no-sandbox',
-      '--disable-dev-shm-usage',
-      '--remote-debugging-port=9222',
-      '--remote-debugging-address=0.0.0.0'
+      '--disable-dev-shm-usage'
+      // '--remote-debugging-port=9222',
+      // '--remote-debugging-address=0.0.0.0'
     ]
   });
+
+  let screenshotUrl = `http://localhost:8080${path}?screenshot`;
+  if (req.query.thumbnail) {
+    screenshotUrl += '&thumbnail';
+  }
+
   const page = await browser.newPage();
   page.setViewport({
-    width: 800,
-    height: 800
+    width: 1200,
+    height: 900,
+    deviceScaleFactor: 2,
+    isLandscape: true
   });
-  await page.goto(`http://localhost:8080/de/${req.params.hash}/screenshot/`);
+  await page.goto(screenshotUrl);
   await page.waitForSelector('#mapinfo .v-list-item__title');
   const screenshotBuffer = await page.screenshot({ encoding: 'binary' });
   await browser.close();
