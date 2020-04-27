@@ -225,7 +225,11 @@ export default {
       }).addTo(this.map);
 
       if (this.screenshotMode) {
+        // no zoom controls in screenshot mode
         document.querySelector('.leaflet-control-zoom').style.display = 'none';
+      } else {
+        // no attribution in normal mode
+        document.querySelector('.leaflet-control-attribution').style.display = 'none';
       }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
