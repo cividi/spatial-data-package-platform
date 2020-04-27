@@ -78,18 +78,6 @@ const routes = [
         }
       },
       {
-        path: ':hash([0-9A-Z]{6})/screenshot/',
-        pathToRegexpOptions: { sensitive: true, strict: true },
-        name: 'snapshotScreenshot',
-        component: () => import('@/views/Snapshot.vue'),
-        meta: {
-          layout: () => import('@/layouts/LayoutSnapshot.vue')
-        },
-        props: {
-          screenshotMode: true
-        }
-      },
-      {
         path: ':hash([0-9A-Z]{6})/',
         pathToRegexpOptions: { sensitive: true, strict: true },
         name: 'snapshot',

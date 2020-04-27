@@ -132,15 +132,10 @@ export default {
       municipalityName: '',
       snapshotsExamples: [],
       snapshotsIdExamplesExclude: [],
-      snapshotsMunicipality: []
+      snapshotsMunicipality: [],
+      screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
+      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnnail')
     };
-  },
-
-  props: {
-    screenshotMode: {
-      type: Boolean,
-      default: false
-    }
   },
 
   async mounted() {

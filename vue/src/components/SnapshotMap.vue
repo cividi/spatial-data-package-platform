@@ -15,7 +15,7 @@
       </v-container>
 
       <v-btn
-        v-if="hash && !screenshotMode"
+        v-if="hash && !screenshotIsThumbnail"
         fab absolute small
         style="bottom:2em; right:2em;"
         color="white"
@@ -25,7 +25,7 @@
 
       <v-card
         v-if="hash"
-        v-show="!screenshotMode"
+        v-show="!screenshotIsThumbnail"
         id="mapinfo"
         class="px-4 py-2"
         :style="'width:' + legendWidth"
@@ -105,7 +105,9 @@ export default {
       legend: [],
       sources: [],
       layers: [],
-      geobounds: []
+      geobounds: [],
+      screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
+      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnnail')
     };
   },
 
@@ -215,6 +217,10 @@ export default {
         metric: true,
         imperial: false
       }).addTo(this.map);
+
+      if (this.screenshotMode) {
+        document.querySelector('.leaflet-control-zoom').style.display = 'none';
+      }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     },
