@@ -38,6 +38,7 @@
         <snapshot-meta
           :title="title"
           :description="description"
+          :predecessor="predecessor"
           :hash="hash"
           :legend="legend"
           :sources="sources"
@@ -58,6 +59,10 @@ body,
 #map {
   position: relative;
   width: 100%;
+}
+
+#map .mapbox-improve-map {
+  display: none;
 }
 
 #mapinfo {
@@ -113,7 +118,8 @@ export default {
 
   props: {
     geojson: Object,
-    geoboundsIn: Array
+    geoboundsIn: Array,
+    predecessor: Object
   },
 
   created() {
