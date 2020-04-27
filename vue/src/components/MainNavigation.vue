@@ -48,7 +48,7 @@
       <v-list color="primary">
         <v-list-item
           v-for="item in mainnav" :key="item.textKey"
-          :to="'/' + $i18n.locale + item.route">
+          :to="'/' + $i18n.locale + item.route + '/'">
           <v-list-item-content>
             <v-list-item-title>{{ $t(item.textKey) }}</v-list-item-title>
           </v-list-item-content>
