@@ -73,6 +73,10 @@ body,
 #mapinfo.open {
   clip-path: circle(100% at center);
 }
+
+.mapbox-improve-map {
+  display: none;
+}
 </style>
 
 <script>
