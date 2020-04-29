@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv sh
 
-START_SCREENSHOTSERVICE=${START_START_SCREENSHOTSERVICE:-NO}
+START_SCREENSHOTSERVICE=${START_SCREENSHOTSERVICE:-NO}
 
-if [ "$START_START_SCREENSHOTSERVICE" = "YES" ]; then
+if [ "$START_SCREENSHOTSERVICE" = "YES" ]; then
     rm /etc/services.d/screenshotservice/down
 fi

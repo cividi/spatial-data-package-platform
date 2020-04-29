@@ -21,6 +21,9 @@ push:
 dev:
 	$(DOCKER_EXEC) yarn serve
 
+screenshotservice:
+	$(DOCKER_EXEC) node /opt/vue/screenshot-service/screenshot-server.js
+
 build:
 	$(DOCKER_EXEC) yarn build --mode production
 	$(DOCKER_EXEC) rsync -av --delete dist /var/services/django/static/

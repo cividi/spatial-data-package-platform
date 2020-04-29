@@ -26,6 +26,7 @@ services:
       service: vue
     environment:
       - TERM=xterm-256color
+      - START_SCREENSHOTSERVICE=NO
     working_dir: /opt/vue
     volumes:
       - ./vue:/opt/vue
@@ -36,7 +37,6 @@ services:
       - "8079:8079" # snapshost service
       - "8080:8080" # vue
       - "10001:10001" # vscode
-    command: tail -f /dev/null
 
   django:
     extends:
@@ -64,8 +64,8 @@ services:
     ports:
       - "8081:8081"
       - "10002:10002" # vscode
-    entrypoint: tail
-    command: -f /dev/null
+    # entrypoint: tail
+    # command: -f /dev/null
 
   # static:
   #   image: nginx:1.16-alpine
