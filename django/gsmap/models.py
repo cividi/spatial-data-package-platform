@@ -180,14 +180,17 @@ def save_screenshot_handler(sender, **kwargs):
         post_save.disconnect(save_screenshot_handler, sender=Snapshot)
         instance = kwargs.get('instance')
         if instance.data_changed(['data']): # only create snapshot if data changed
-            # disconnect to break save recursive loop
-            post_save.disconnect(save_screenshot_handler, sender=Snapshot)
-            screenshot_file = instance.create_screenshot_file()
-            thumbnail_file = instance.create_screenshot_file(is_thumbnail=True)
-            instance.screenshot = screenshot_file
-            instance.thumbnail = thumbnail_file
-            instance.save()
-        post_save.connect(save_screenshot_handler, sender=Snapshot)
+            try:
+                # disconnect to break save recursive loop
+                post_save.disconnect(save_screenshot_handler, sender=Snapshot)
+                screenshot_file = instance.create_screenshot_file()
+                thumbnail_file = instance.create_screenshot_file(is_thumbnail=True)
+                instance.screenshot = screenshot_file
+                instance.thumbnail = thumbnail_file
+                instance.save()
+            finally:
+                # always reconnect signal
+                post_save.connect(save_screenshot_handler, sender=Snapshot)
 
     save_screenshot()
 

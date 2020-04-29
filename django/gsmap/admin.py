@@ -55,7 +55,7 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         return mark_safe(
             '<a href="{url}" target="_blank">'
             '<img src="{url}" width="{width}" height={height} />'
-            '</a>'.format(url=obj.thumbnail.url, width=300, height='auto'))
+            '</a>'.format(url=obj.thumbnail.url, width=200, height='auto'))
 
 
 class WorkspaceAdmin(admin.OSMGeoAdmin):
