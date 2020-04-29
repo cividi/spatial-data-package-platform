@@ -25,7 +25,6 @@
 
       <v-card
         v-if="hash"
-        v-show="!screenshotIsThumbnail"
         id="mapinfo"
         class="px-4 py-2"
         :style="'width:' + legendWidth"
@@ -232,6 +231,9 @@ export default {
       } else {
         // no attribution in normal mode
         document.querySelector('.leaflet-control-attribution').style.display = 'none';
+      }
+      if (this.screenshotIsThumbnail) {
+        document.querySelector('#mapinfo').style.visibility = 'hidden';
       }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));

@@ -17,7 +17,10 @@
         v-for="snapshot in snapshots" :key="snapshot.id"
         :to="createRouteLink(snapshot.pk)">
           <v-list-item-avatar tile size="64" class="my-2">
-            <v-img :src="djangobaseurl + snapshot.screenshot.url"></v-img>
+            <v-img
+              v-if="snapshot.screenshot"
+              :src="djangobaseurl + '/media/' + snapshot.thumbnail">
+            </v-img>
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title style="font-weight:700">{{ snapshot.title }}</v-list-item-title>
@@ -26,10 +29,10 @@
           <v-list-item-action style="margin:0 0 4px 0; align-self: flex-end;">
             <v-btn icon
               v-on:click.stop="doThis"
-              :href="djangobaseurl + snapshot.screenshot.url"
+              :href="djangobaseurl + '/media/' + snapshot.screenshot"
               target="_blank">
                 <!--
-                  instead of target=blank, a forde download might be nice
+                  instead of target=blank, a force download might be nice
                   eiter with server headers or pure js lihe kere:
                   https://codepen.io/nigamshirish/pen/ZMpvRa
                 -->
