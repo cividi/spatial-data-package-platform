@@ -45,18 +45,25 @@ class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
         fields = [
-            'is_showcase', 'title', 'topic', 'data', 'thumbnail',
-            'screenshot', 'municipality', 'predecessor'
+            'is_showcase', 'title', 'topic', 'data', 'municipality', 'predecessor'
         ]
         filter_fields = ['municipality__id', 'municipality__canton', 'is_showcase']
         interfaces = [graphene.relay.Node]
 
     data = generic.GenericScalar(source='data')
     pk = graphene.String(source='id')
+    thumbnail = graphene.String()
+    screenshot = graphene.String()
 
     @classmethod
     def get_queryset(cls, queryset, info):
         return queryset.filter(Q_SNAPSHOT_WITH_NOT_LISTED)
+
+    def resolve_screenshot(self, info):
+        return self.screenshot
+
+    def resolve_thumbnail(self, info):
+        return self.thumbnail
 
 
 class MunicipalityNode(DjangoObjectType):

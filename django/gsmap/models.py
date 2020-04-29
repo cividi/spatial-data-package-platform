@@ -100,8 +100,10 @@ class Snapshot(models.Model):
     title = models.CharField(max_length=150, default='')
     topic = models.CharField(max_length=100, default='')
     data = pg_fields.JSONField(default=dict)
-    screenshot = ImageField(upload_to='snapshot-screenshots', null=True, blank=True)
-    thumbnail = ImageField(upload_to='snapshot-thumbnails', null=True, blank=True)
+    screenshot_generated = ImageField(upload_to='snapshot-screenshots', null=True, blank=True)
+    thumbnail_generated = ImageField(upload_to='snapshot-thumbnails', null=True, blank=True)
+    screenshot_manual = ImageField(upload_to='snapshot-screenshots', null=True, blank=True)
+    thumbnail_manual = ImageField(upload_to='snapshot-thumbnails', null=True, blank=True)
     predecessor = models.ForeignKey(
         'self', default=None, blank=True,
         null=True, on_delete=models.SET_NULL
@@ -130,6 +132,14 @@ class Snapshot(models.Model):
                     return True
                 return False
         return True
+
+    @property
+    def screenshot(self):
+        return self.screenshot_manual or self.screenshot_generated
+
+    @property
+    def thumbnail(self):
+        return self.thumbnail_manual or self.thumbnail_generated
 
     def get_absolute_link(self):
         domain = Site.objects.get_current().domain
@@ -185,8 +195,8 @@ def save_screenshot_handler(sender, **kwargs):
                 post_save.disconnect(save_screenshot_handler, sender=Snapshot)
                 screenshot_file = instance.create_screenshot_file()
                 thumbnail_file = instance.create_screenshot_file(is_thumbnail=True)
-                instance.screenshot = screenshot_file
-                instance.thumbnail = thumbnail_file
+                instance.screenshot_generated = screenshot_file
+                instance.thumbnail_generated = thumbnail_file
                 instance.save()
             finally:
                 # always reconnect signal
