@@ -62,7 +62,7 @@
           <v-btn icon :to="'/' + $i18n.locale +'/'+ snapshot.pk + '/'" height="300">
             <v-hover v-slot:default="{ hover }">
               <v-avatar tile size="300">
-                <v-img :src="djangobaseurl + snapshot.screenshot.url"></v-img>
+                <v-img :src="djangobaseurl + '/media/' + snapshot.thumbnail"></v-img>
                 <v-fade-transition>
                   <v-overlay v-if="hover" color="primary" opacity="0.6" absolute
                     style="text-transform: none; white-space: normal; hyphens: auto;">
@@ -149,9 +149,7 @@ export default {
                 pk
                 title
                 topic
-                screenshot {
-                  url
-                }
+                thumbnail
                 municipality {
                   name
                 }
