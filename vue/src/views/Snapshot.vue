@@ -204,9 +204,8 @@ export default {
                 pk
                 title
                 topic
-                screenshot {
-                  url
-                }
+                thumbnail
+                screenshot
               }
             }
           }
@@ -218,9 +217,8 @@ export default {
                 pk
                 title
                 topic
-                screenshot {
-                  url
-                }
+                thumbnail
+                screenshot
               }
             }
           }
@@ -259,9 +257,8 @@ export default {
               pk
               title
               topic
-              screenshot {
-                url
-              }
+              thumbnail
+              screenshot
             }
           }
 
@@ -272,9 +269,8 @@ export default {
                 pk
                 title
                 topic
-                screenshot {
-                  url
-                }
+                thumbnail
+                screenshot
               }
             }
           }
