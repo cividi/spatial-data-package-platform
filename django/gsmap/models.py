@@ -84,7 +84,7 @@ class Snapshot(models.Model):
 
     id = models.CharField(
         max_length=8, unique=True,
-        primary_key=True, default=create_slug_hash_6
+        primary_key=True
     )
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -127,10 +127,12 @@ class Snapshot(models.Model):
             if not self.pk or not self._old_values:
                 return True
 
+            changed_list = []
             for field in fields:
                 if getattr(self, field) != self._old_values[field]:
-                    return True
-                return False
+                    changed_list.append(True)
+                changed_list.append(False)
+            return any(changed_list)
         return True
 
     @property
@@ -158,7 +160,7 @@ class Snapshot(models.Model):
         if is_thumbnail:
             url += '&thumbnail'
             path = 'snapshot-thumbnails'
-        response = requests.get(url)
+        response = requests.get(url, timeout=(5, 30))
         date_suffix = timezone.now().strftime("%Y-%m-%d_%H-%M-%SZ")
         screenshot_file = SimpleUploadedFile(
             f'{path}/{self.pk}_{date_suffix}.png',
@@ -168,20 +170,24 @@ class Snapshot(models.Model):
 
     def save(self, *args, **kwargs):
         def test_exists(pk):
-            if self.__class__.objects.filter(pk=pk):
+            if list(self.__class__.objects.filter(pk=pk)):
                 new_id = create_slug_hash_6()
                 test_exists(new_id)
             else:
                 return pk
 
         if self._state.adding:
+            self.id = create_slug_hash_6()
             self.id = test_exists(self.id)
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.municipality.fullname}, {self.title}, ' \
-               f'{self.id} ({self.get_permission_display()})'
+        if self.municipality:
+            return f'{self.municipality.fullname}, {self.title}, ' \
+                f'{self.id} ({self.get_permission_display()})'
+        else:
+            return self.title
 
 
 @receiver(post_save, sender=Snapshot)
@@ -189,7 +195,10 @@ def save_screenshot_handler(sender, **kwargs):
     def save_screenshot():
         post_save.disconnect(save_screenshot_handler, sender=Snapshot)
         instance = kwargs.get('instance')
-        if instance.data_changed(['data']): # only create snapshot if data changed
+        # only create snapshot if data changed
+        if instance.data_changed(['data', 'screenshot_generated', 'thumbnail_generated']):
+            if not 'resources' in instance.data:
+                return
             try:
                 # disconnect to break save recursive loop
                 post_save.disconnect(save_screenshot_handler, sender=Snapshot)

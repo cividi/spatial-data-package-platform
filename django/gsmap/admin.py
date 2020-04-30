@@ -3,8 +3,10 @@ from django.contrib.postgres import fields
 from django.utils.translation import gettext as _
 from django_json_widget.widgets import JSONEditorWidget
 from django.utils.html import mark_safe
+from django.contrib import messages
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 from gsmap.models import Municipality, Snapshot, Workspace
+import requests
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
@@ -68,6 +70,13 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
 
     def thumbnail_manual_image(self, obj):
         return self._image_display(obj.thumbnail_manual.url, width=200)
+
+
+    def save_model(self, request, obj, form, change):
+        try:
+            obj.save()
+        except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
+            messages.error(request, "Couldn't create the screenshots, screenshot server problem.")
 
 
 class WorkspaceAdmin(admin.OSMGeoAdmin):
