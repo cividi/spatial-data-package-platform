@@ -45,11 +45,13 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+console.log(`PUBLIC_URL:${process.env.PUBLIC_URL}`);
+
 app.get('*', async (req, res) => {
   console.log(req.params);
   const path = req.params['0'];
 
-  let screenshotUrl = `http://localhost:8080${path}`;
+  let screenshotUrl = `${process.env.PUBLIC_URL}${path}`;
   let pageOptions = {
     width: 1200,
     height: 900,
