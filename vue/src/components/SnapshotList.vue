@@ -18,7 +18,7 @@
         :to="createRouteLink(snapshot.pk)">
           <v-list-item-avatar tile size="64" class="my-2">
             <v-img
-              v-if="snapshot.screenshot"
+              v-if="snapshot.thumbnail"
               :src="djangobaseurl + '/media/' + snapshot.thumbnail">
             </v-img>
           </v-list-item-avatar>
@@ -28,6 +28,7 @@
           </v-list-item-content>
           <v-list-item-action style="margin:0 0 4px 0; align-self: flex-end;">
             <v-btn icon
+              v-if="snapshot.screenshot"
               v-on:click.stop="doThis"
               :href="djangobaseurl + '/media/' + snapshot.screenshot + '?download'"
               target="_blank">
