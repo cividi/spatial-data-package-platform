@@ -27,6 +27,7 @@ services:
     environment:
       - TERM=xterm-256color
       - START_SCREENSHOTSERVICE=NO
+      - PUBLIC_URL=http://localhost:8080
     working_dir: /opt/vue
     volumes:
       - ./vue:/opt/vue
