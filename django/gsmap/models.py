@@ -84,7 +84,7 @@ class Snapshot(models.Model):
 
     id = models.CharField(
         max_length=8, unique=True,
-        primary_key=True, default=create_slug_hash_6
+        primary_key=True
     )
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -170,20 +170,24 @@ class Snapshot(models.Model):
 
     def save(self, *args, **kwargs):
         def test_exists(pk):
-            if self.__class__.objects.filter(pk=pk):
+            if list(self.__class__.objects.filter(pk=pk)):
                 new_id = create_slug_hash_6()
                 test_exists(new_id)
             else:
                 return pk
 
         if self._state.adding:
+            self.id = create_slug_hash_6()
             self.id = test_exists(self.id)
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.municipality.fullname}, {self.title}, ' \
-               f'{self.id} ({self.get_permission_display()})'
+        if self.municipality:
+            return f'{self.municipality.fullname}, {self.title}, ' \
+                f'{self.id} ({self.get_permission_display()})'
+        else:
+            return self.title
 
 
 @receiver(post_save, sender=Snapshot)
