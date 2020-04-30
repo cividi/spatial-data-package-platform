@@ -197,6 +197,8 @@ def save_screenshot_handler(sender, **kwargs):
         instance = kwargs.get('instance')
         # only create snapshot if data changed
         if instance.data_changed(['data', 'screenshot_generated', 'thumbnail_generated']):
+            if not 'resources' in instance.data:
+                return
             try:
                 # disconnect to break save recursive loop
                 post_save.disconnect(save_screenshot_handler, sender=Snapshot)
