@@ -144,6 +144,7 @@ export default {
               title
               topic
               screenshot
+              thumbnail
             }
           }
 
@@ -160,6 +161,7 @@ export default {
                 title
                 topic
                 screenshot
+                thumbnail
               }
             }
           }
