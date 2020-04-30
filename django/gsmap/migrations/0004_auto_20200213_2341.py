@@ -16,10 +16,5 @@ class Migration(migrations.Migration):
             model_name='snapshot',
             name='data',
             field=django.contrib.postgres.fields.jsonb.JSONField(default=dict),
-        ),
-        migrations.AlterField(
-            model_name='snapshot',
-            name='slug_hash',
-            field=models.CharField(default=gsmap.models.create_slug_hash, max_length=8, unique=True),
-        ),
+        )
     ]

@@ -1,5 +1,6 @@
-GEMEINDESCAN_WEBUI_VUE=0.3.2
-DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec -T vue")
+GEMEINDESCAN_WEBUI_VUE=0.3.4
+DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec vue")
+DOCKER_EXEC_CRON=$(shell command -v docker > /dev/null && echo "docker-compose exec -T vue")
 
 
 .PHONY: all
@@ -20,9 +21,16 @@ push:
 dev:
 	$(DOCKER_EXEC) yarn serve
 
+screenshotservice:
+	$(DOCKER_EXEC) node /opt/vue/screenshot-service/screenshot-server.js
+
 build:
 	$(DOCKER_EXEC) yarn build --mode production
 	$(DOCKER_EXEC) rsync -av --delete dist /var/services/django/static/
+
+build-cron:
+	$(DOCKER_EXEC_CRON) yarn build --mode production
+	$(DOCKER_EXEC_CRON) rsync -av --delete dist /var/services/django/static/
 
 build-dev-watch:
 	$(DOCKER_EXEC) yarn build --mode development --watch

@@ -6,7 +6,7 @@ services:
     hostname: pdb
 
   vue:
-    image: smartuse/gemeindescan-webui-vue:0.3.2
+    image: smartuse/gemeindescan-webui-vue:0.3.4
     hostname: vue
 
   django:

@@ -143,9 +143,7 @@ export default {
               pk
               title
               topic
-              screenshot {
-                url
-              }
+              screenshot
             }
           }
 
@@ -161,10 +159,8 @@ export default {
                 pk
                 title
                 topic
-                screenshot {
-                  url
-                }
-            }
+                screenshot
+              }
             }
           }
         }`,

@@ -27,22 +27,6 @@ def convert_field_to_geojson(field, registry=None):
     )
 
 
-class ThumbnailNode(graphene.ObjectType):
-    url = graphene.String()
-    size = graphene.String()
-
-
-class ImageNode(graphene.ObjectType):
-    url = graphene.String()
-    thumbnail = graphene.Field(ThumbnailNode, size=graphene.String())
-
-    def resolve_url(self, info):
-        return self.url
-
-    def resolve_thumbnail(self, info, size):
-        return ThumbnailNode(self, size=size)
-
-
 Q_SNAPSHOT_ONLY_PUBLIC = Q(permission__exact=SnapshotPermission.PUBLIC)
 Q_SNAPSHOT_WITH_NOT_LISTED = Q(permission__lte=SnapshotPermission.NOT_LISTED)
 
@@ -60,17 +44,26 @@ class SnapshotOnlyPublicFilter(FilterSet):
 class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
-        fields = ['is_showcase', 'title', 'topic', 'data', 'screenshot', 'municipality']
+        fields = [
+            'is_showcase', 'title', 'topic', 'data', 'municipality', 'predecessor'
+        ]
         filter_fields = ['municipality__id', 'municipality__canton', 'is_showcase']
         interfaces = [graphene.relay.Node]
 
     data = generic.GenericScalar(source='data')
-    screenshot = graphene.Field(ImageNode)
     pk = graphene.String(source='id')
+    thumbnail = graphene.String()
+    screenshot = graphene.String()
 
     @classmethod
     def get_queryset(cls, queryset, info):
         return queryset.filter(Q_SNAPSHOT_WITH_NOT_LISTED)
+
+    def resolve_screenshot(self, info):
+        return self.screenshot
+
+    def resolve_thumbnail(self, info):
+        return self.thumbnail
 
 
 class MunicipalityNode(DjangoObjectType):
