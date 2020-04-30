@@ -127,10 +127,12 @@ class Snapshot(models.Model):
             if not self.pk or not self._old_values:
                 return True
 
+            changed_list = []
             for field in fields:
                 if getattr(self, field) != self._old_values[field]:
-                    return True
-                return False
+                    changed_list.append(True)
+                changed_list.append(False)
+            return any(changed_list)
         return True
 
     @property
@@ -189,7 +191,8 @@ def save_screenshot_handler(sender, **kwargs):
     def save_screenshot():
         post_save.disconnect(save_screenshot_handler, sender=Snapshot)
         instance = kwargs.get('instance')
-        if instance.data_changed(['data']): # only create snapshot if data changed
+        # only create snapshot if data changed
+        if instance.data_changed(['data', 'screenshot_generated', 'thumbnail_generated']):
             try:
                 # disconnect to break save recursive loop
                 post_save.disconnect(save_screenshot_handler, sender=Snapshot)
