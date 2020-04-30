@@ -160,7 +160,7 @@ class Snapshot(models.Model):
         if is_thumbnail:
             url += '&thumbnail'
             path = 'snapshot-thumbnails'
-        response = requests.get(url)
+        response = requests.get(url, timeout=(5, 30))
         date_suffix = timezone.now().strftime("%Y-%m-%d_%H-%M-%SZ")
         screenshot_file = SimpleUploadedFile(
             f'{path}/{self.pk}_{date_suffix}.png',
