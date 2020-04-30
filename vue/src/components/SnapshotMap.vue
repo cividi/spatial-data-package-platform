@@ -73,10 +73,12 @@ body,
   min-width: 240px;
   clip-path: circle(0% at 95% 90%);
   transition: clip-path 0.3s ease-out;
+  pointer-events: none;
   z-index: 1000; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
+  pointer-events: auto;
   clip-path: circle(100% at center);
 }
 
