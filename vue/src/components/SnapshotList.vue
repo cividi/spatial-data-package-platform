@@ -29,9 +29,8 @@
           <v-list-item-action style="margin:0 0 4px 0; align-self: flex-end;">
             <v-btn icon
               v-if="snapshot.screenshot"
-              v-on:click.stop=""
-              :href="djangobaseurl + '/media/' + snapshot.screenshot + '?download'"
-              target="_blank">
+              v-on:click.stop="function(){}"
+              :href="djangobaseurl + '/downloads/' + snapshot.screenshot">
                 <v-icon color="grey lighten-1" >mdi-download</v-icon>
             </v-btn>
           </v-list-item-action>
