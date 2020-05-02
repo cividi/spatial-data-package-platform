@@ -160,7 +160,7 @@ class Snapshot(models.Model):
         if is_thumbnail:
             url += '&thumbnail'
             path = 'snapshot-thumbnails'
-        response = requests.get(url, timeout=(5, 30))
+        response = requests.get(url, timeout=(10, 50))
         date_suffix = timezone.now().strftime("%Y-%m-%d_%H-%M-%SZ")
         screenshot_file = SimpleUploadedFile(
             f'{path}/{self.pk}_{date_suffix}.png',
@@ -196,7 +196,9 @@ def save_screenshot_handler(sender, **kwargs):
         post_save.disconnect(save_screenshot_handler, sender=Snapshot)
         instance = kwargs.get('instance')
         # only create snapshot if data changed
-        if instance.data_changed(['data', 'screenshot_generated', 'thumbnail_generated']):
+        if instance.data_changed([
+                'data', 'screenshot_generated', 'thumbnail_generated'
+        ]) or not bool(instance.thumbnail_generated):
             if not 'resources' in instance.data:
                 return
             try:
