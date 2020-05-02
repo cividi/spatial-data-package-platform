@@ -4,9 +4,9 @@ from django.utils.translation import gettext as _
 from django_json_widget.widgets import JSONEditorWidget
 from django.utils.html import mark_safe
 from django.contrib import messages
+import requests
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 from gsmap.models import Municipality, Snapshot, Workspace
-import requests
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
@@ -48,28 +48,44 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         },
     }
 
-    list_display = ('id', 'title', 'municipality', 'permission', 'is_showcase',
-                    'created', 'modified')
+    list_display = ('id', 'thumbnail_list_image', 'title', 'municipality',
+                    'permission', 'is_showcase', 'created', 'modified')
     list_filter = ('is_showcase', 'permission')
     search_fields = ['title', 'municipality__name', 'municipality__canton']
 
-    def _image_display(self, url, width=None):
-        return mark_safe(
-            '<a href="{url}" target="_blank">'
-            '<img src="{url}" width="{width}" height={height} />'
-            '</a>'.format(url=url, width=width, height='auto'))
+    def _image_display(self, obj, width=None, link=True):
+        if hasattr(obj, 'url'):
+            html = '<img src="{url}" width="{width}" height={height} />'.format(
+                url=obj.url, width=width, height='auto'
+            )
+            if link:
+                html = '<a href="{url}" target="_blank">{html}</a>'.format(url=obj.url, html=html)
+            return mark_safe(html)
+        else:
+            return '-'
 
     def screenshot_generated_image(self, obj):
-        return self._image_display(obj.screenshot_generated.url, width=300)
+        return self._image_display(obj.screenshot_generated, width=300)
 
     def thumbnail_generated_image(self, obj):
-        return self._image_display(obj.thumbnail_generated.url, width=200)
+        return self._image_display(obj.thumbnail_generated, width=200)
+
+    def thumbnail_list_image(self, obj):
+        if obj.thumbnail_generated or obj.thumbnail_manual:
+            return self._image_display(
+                obj.thumbnail_generated or obj.thumbnail_manual,
+                width=50, link=False
+            )
+        else:
+            return '-'
+
+    thumbnail_list_image.short_description = 'thumbnail'
 
     def screenshot_manual_image(self, obj):
-        return self._image_display(obj.screenshot_manual.url, width=300)
+        return self._image_display(obj.screenshot_manual, width=300)
 
     def thumbnail_manual_image(self, obj):
-        return self._image_display(obj.thumbnail_manual.url, width=200)
+        return self._image_display(obj.thumbnail_manual, width=200)
 
 
     def save_model(self, request, obj, form, change):
