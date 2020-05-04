@@ -94,8 +94,6 @@
       :geojson="geojson"
       :geoboundsIn="geobounds"
       :predecessor="predecessor"
-      :screenshotFacebook="screenshotFacebook"
-      :screenshotTwitter="screenshotTwitter"
     />
   </div>
 </template>
@@ -130,8 +128,6 @@ export default {
     return {
       hash: this.$route.params.hash,
       bfsNumber: this.$route.params.bfsNumber,
-      screenshotFacebook: '',
-      screenshotTwitter: '',
       geojson: null,
       geobounds: [],
       municipalityName: '',
@@ -200,8 +196,6 @@ export default {
               id
               pk
             }
-            screenshotFacebook
-            screenshotTwitter
             municipality {
               bfsNumber
               fullname
@@ -211,6 +205,7 @@ export default {
                 title
                 topic
                 thumbnail
+                screenshot
               }
             }
           }
@@ -241,8 +236,6 @@ export default {
           snapshot => !snapshotsIdExamplesExclude.includes(snapshot.id)
         );
         this.predecessor = (result.data.snapshot.predecessor);
-        this.screenshotFacebook = result.data.snapshot.screenshotFacebook;
-        this.screenshotTwitter = (result.data.snapshot.screenshotTwitter);
         this.$store.commit('setBfsnumber', result.data.snapshot.municipality.bfsNumber);
         this.$store.commit('setBfsname', result.data.snapshot.municipality.fullname);
       } else {
@@ -265,6 +258,7 @@ export default {
               title
               topic
               thumbnail
+              screenshot
             }
           }
 

@@ -121,8 +121,6 @@ export default {
 
   props: {
     geojson: Object,
-    screenshotFacebook: String,
-    screenshotTwitter: String,
     geoboundsIn: Array,
     predecessor: Object
   },
@@ -177,7 +175,6 @@ export default {
       this.description = this.geojson.views[0].spec.description;
       this.legend = this.geojson.views[0].spec.legend;
       this.sources = this.geojson.sources;
-      this.setMetaShare();
     },
 
     setupMapbox() {
@@ -265,40 +262,6 @@ export default {
       this.layers = [];
       this.geobounds = [];
       this.map = null;
-      this.removeMetaTags();
-    },
-
-    addMetaTag(property, content) {
-      const metaTag = document.createElement('meta');
-      metaTag.setAttribute('property', property);
-      metaTag.content = content;
-      document.getElementsByTagName('head')[0].appendChild(metaTag);
-    },
-
-    removeMetaTags() {
-      const ogTitle = document.querySelector('[name=\'og:title\']');
-      const ogDescription = document.querySelector('[name=\'og:description\']');
-      const ogUrl = document.querySelector('[name=\'og:url\']');
-      const ogImage = document.querySelector('[name=\'og:image\']');
-      const twitterImage = document.querySelector('[name=\'twitter:image\']');
-      if (ogTitle) ogTitle.remove();
-      if (ogDescription) ogDescription.remove();
-      if (ogUrl) ogUrl.remove();
-      if (ogImage) ogImage.remove();
-      if (twitterImage) twitterImage.remove();
-    },
-
-    setMetaShare() {
-      this.removeMetaTags();
-      this.addMetaTag('og:title', this.title);
-      this.addMetaTag('og:description', this.description);
-      this.addMetaTag('og:url', `${document.location.origin}/${this.hash}`);
-      if (this.screenshotFacebook) {
-        this.addMetaTag('og:image', `${document.location.origin}/media/${this.screenshotFacebook}`);
-      }
-      if (this.screenshotTwitter) {
-        this.addMetaTag('twitter:image', `${document.location.origin}/media/${this.screenshotTwitter}`);
-      }
     }
   }
 };
