@@ -1,4 +1,4 @@
-GEMEINDESCAN_WEBUI_DJANGO=0.3.3
+GEMEINDESCAN_WEBUI_DJANGO=0.3.4
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec django")
 
 .PHONY: all
