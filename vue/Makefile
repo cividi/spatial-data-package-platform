@@ -24,6 +24,9 @@ dev:
 screenshotservice:
 	$(DOCKER_EXEC) node /opt/vue/screenshot-service/screenshot-server.js
 
+tests:
+	$(DOCKER_EXEC) yarn test
+
 build:
 	$(DOCKER_EXEC) yarn build --mode production
 	$(DOCKER_EXEC) rsync -av --delete dist /var/services/django/static/

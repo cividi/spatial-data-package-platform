@@ -17,8 +17,7 @@ query {
       }
     }
   }
-}''',
-                            context={})
+}''', context={})
     result = json.loads(json.dumps(result)) # remove OrderedDics, default in python 3.7+
     assert result == {
         "data": {
@@ -116,8 +115,7 @@ query {
             }
         }
     }
-}''',
-                            context={})
+}''', context={})
     result = json.loads(
         json.dumps(result))  # remove OrderedDics, default in python 3.7+
     assert result == {
