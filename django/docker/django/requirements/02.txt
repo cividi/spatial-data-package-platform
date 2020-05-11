@@ -42,6 +42,7 @@ pylint-django==2.0.13
 pylint-plugin-utils==0.6
 pyparsing==2.4.6
 pytest==5.3.5
+pytest-django==3.9.0
 pytz==2019.3
 requests==2.23.0
 Rx==1.6.1
