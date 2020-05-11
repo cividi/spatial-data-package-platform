@@ -1,4 +1,4 @@
-GEMEINDESCAN_WEBUI_VUE=0.3.4
+GEMEINDESCAN_WEBUI_VUE=0.3.5
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec vue")
 DOCKER_EXEC_CRON=$(shell command -v docker > /dev/null && echo "docker-compose exec -T vue")
 
@@ -23,6 +23,9 @@ dev:
 
 screenshotservice:
 	$(DOCKER_EXEC) node /opt/vue/screenshot-service/screenshot-server.js
+
+tests:
+	$(DOCKER_EXEC) yarn test
 
 build:
 	$(DOCKER_EXEC) yarn build --mode production

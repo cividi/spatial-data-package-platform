@@ -1,6 +1,5 @@
 SHELL = /bin/bash
-
-.PHONY: all
+.PHONY: tests
 
 init:
 	cd django && make init
@@ -63,3 +62,7 @@ dump-db:
 
 import-db:
 	@docker-compose exec pdb sh -c 'psql -U $$POSTGRES_USER $$POSTGRES_DB < /var/services/postgres/var/dump.sql'
+
+tests:
+	cd django && make tests
+	cd vue && make tests
