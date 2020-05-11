@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.contrib import admin
 from django.urls import path
-from graphene_django.views import GraphQLView
 from django.views.decorators.csrf import csrf_exempt
+from graphene_django.views import GraphQLView
 
 urlpatterns = [
     path('gmanage/', admin.site.urls),
@@ -16,5 +16,9 @@ if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(
         settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )
+    urlpatterns += static(
+        '/downloads',
         document_root=settings.MEDIA_ROOT
     )

@@ -12,11 +12,19 @@ The current tech stack of this project is:
 - Wagtail
 - Docker
 
+# Releases
+
+*See [RELEASE.md](/RELEASE.md)*
+
 # Developer guide
 
 :construction:
 
+For a tour of the app and a testing protocol see [`docs/testing.md`](/docs/testing.md).
+
 ## setup project
+
+Add `django` to the 127.0.0.1 entry in `/etc/hosts` (for screenshot service).
 
 ```bash
 touch env.hosts.prod # required file, can be empty and edited later
@@ -89,5 +97,8 @@ Type `make deploy_prod` in the project root. The file `env.hosts.prod` needs to 
 
 ## additional docs
 
-- [grahpql](/docs/graphql.md)
 - [architecture](/docs/architecture.md)
+- [django](/docs/django.md)
+- [links](/docs/links.md)
+- [grahpql](/docs/graphql.md)
+- [troubleshooting](/docs/troubleshooting.md)

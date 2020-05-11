@@ -1,6 +1,6 @@
-GEMEINDESCAN_WEBUI_DJANGO=0.3.3
+GEMEINDESCAN_WEBUI_DJANGO=0.3.4
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec django")
-
+all: run-tests run-tests-dev
 .PHONY: all
 default: dev
 
@@ -28,6 +28,12 @@ collectstatic:
 migrate:
 	$(DOCKER_EXEC) python3 manage.py migrate
 	make collectstatic
+
+tests:
+	$(DOCKER_EXEC) pytest --create-db
+
+tests-dev:
+	$(DOCKER_EXEC) pytest --reuse-db -vvv --nomigrations
 
 delete-gemeinden-django:
 	$(DOCKER_EXEC) python3 manage.py shell --command="from gsmap.models import Municipality;Municipality.objects.all().delete()"

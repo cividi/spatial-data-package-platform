@@ -60,7 +60,7 @@ ROOT_URLCONF = 'main.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['/opt/app/main/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,16 +90,20 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
@@ -111,7 +115,8 @@ USE_TZ = True
 
 FORMAT_MODULE_PATH = 'main.formats'
 
-STATIC_ROOT = os.environ.get('DJANGO_STATIC_DIR', '/var/services/django/static')
+STATIC_ROOT = os.environ.get('DJANGO_STATIC_DIR',
+                             '/var/services/django/static')
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_DIR', '/var/services/django/media')
@@ -122,6 +127,15 @@ GRAPHENE = {'SCHEMA': 'main.schema.schema'}
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:8080", "http://localhost:8081",
+    "http://localhost:8080",
+    "http://localhost:8081",
 ]
 CORS_ALLOW_CREDENTIALS = True
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'django_cache',
+    }
+}
+THUMBNAIL_BACKEND = 'main.utils.PermalinkThumbnailBackend'
+SAVE_SCREENSHOT_ENABLED = True

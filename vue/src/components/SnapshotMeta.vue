@@ -4,12 +4,14 @@
   "de": {
     "sources": "Quellenangaben",
     "expandlegend": "mehr",
-    "collapslegend": "weniger"
+    "collapslegend": "weniger",
+    "predecessor": "Vorgänerversion"
   },
   "fr": {
     "sources": "Source",
     "expandlegend": "plus",
-    "collapslegend": "moin"
+    "collapslegend": "moin",
+    "predecessor": "version prédécesseuse"
   }
 }
 </i18n>
@@ -24,7 +26,14 @@
         gemeindescan.ch/{{ hash }}/
         </a>
       </p>
-      <p>{{ description }}</p>
+      <p>
+        {{ description }}
+        <router-link v-if="predecessor" class="legend--hash"
+          :to="'/'+ $i18n.locale +'/'+ predecessor.pk + '/'">
+          {{ $t('predecessor') }}: {{ predecessor.pk }}
+        </router-link>
+      </p>
+
     </div>
     <v-list
       dense
@@ -48,6 +57,7 @@
     </v-list>
     <v-btn
       v-if="hasSecondaryLegend"
+      v-show="!screenshotMode"
       text x-small
       @click="showWholeLegend=!showWholeLegend"
       class="moreLegendToggle"
@@ -79,6 +89,7 @@
       </v-expand-transition>
     </div>
     <v-btn
+      v-show="!screenshotMode"
       text x-small
       class="sourcesToggle"
       :class="{sourcesvisible: showSources}"
@@ -87,9 +98,9 @@
         <v-icon small color="primary">mdi-chevron-right</v-icon>
         {{ $t('sources') }}
     </v-btn>
-    <img alt="gemeindescan logo" height="35"
+    <a href="https://gemeindescan.ch" target="_blank"><img alt="gemeindescan logo" height="35"
       style="float:right; opacity:0.55;"
-      src="@/assets/images/gemeindescan-logo.svg">
+      src="@/assets/images/gemeindescan-logo.svg"></a>
   </div>
 </template>
 
@@ -167,7 +178,8 @@ export default {
   data() {
     return {
       showWholeLegend: false,
-      showSources: false
+      showSources: false,
+      screenshotMode: this.$route.query.hasOwnProperty('screenshot')
     };
   },
 
@@ -175,6 +187,7 @@ export default {
     hash: String,
     title: String,
     description: String,
+    predecessor: Object,
     legend: Array,
     sources: Array
   },

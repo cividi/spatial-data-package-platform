@@ -75,9 +75,6 @@ const routes = [
         component: () => import('@/views/Snapshot.vue'),
         meta: {
           layout: () => import('@/layouts/LayoutSnapshot.vue')
-        },
-        props: {
-          hash: null
         }
       },
       {
@@ -87,9 +84,6 @@ const routes = [
         component: () => import('@/views/Snapshot.vue'),
         meta: {
           layout: () => import('@/layouts/LayoutSnapshot.vue')
-        },
-        props: {
-          bfsNumber: null
         }
       },
       {

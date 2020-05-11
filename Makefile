@@ -1,6 +1,5 @@
 SHELL = /bin/bash
-
-.PHONY: all
+.PHONY: tests
 
 init:
 	cd django && make init
@@ -41,7 +40,7 @@ deploy_dev:
 
 deploy_local:
 	docker-compose up -d
-	make -f vue/Makefile build
+	make -f vue/Makefile build-cron
 	source env.hosts.prod && rsync -av --delete vue/dist $$VUE_LOCAL_PATH
 	docker-compose exec -T django make migrate
 	docker-compose exec -T django killall -TERM gunicorn
@@ -63,3 +62,7 @@ dump-db:
 
 import-db:
 	@docker-compose exec pdb sh -c 'psql -U $$POSTGRES_USER $$POSTGRES_DB < /var/services/postgres/var/dump.sql'
+
+tests:
+	cd django && make tests
+	cd vue && make tests

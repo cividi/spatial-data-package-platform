@@ -7,3 +7,4 @@
 ## datapackages
 
 - [gemeindescan-sample](https://bitbucket.org/cividi/gemeindescan-sample), sample gemeindescan data
+- [gemeindescan package builder](https://github.com/cividitech/gemeindescan-package-builder)

@@ -8,7 +8,7 @@ from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
-# from sorl.thumbnail import get_thumbnail
+from sorl.thumbnail import get_thumbnail
 from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace
 
 
@@ -25,22 +25,6 @@ def convert_field_to_geojson(field, registry=None):
         description=field.help_text,
         required=not field.null
     )
-
-
-class ThumbnailNode(graphene.ObjectType):
-    url = graphene.String()
-    size = graphene.String()
-
-
-class ImageNode(graphene.ObjectType):
-    url = graphene.String()
-    thumbnail = graphene.Field(ThumbnailNode, size=graphene.String())
-
-    def resolve_url(self, info):
-        return self.url
-
-    def resolve_thumbnail(self, info, size):
-        return ThumbnailNode(self, size=size)
 
 
 Q_SNAPSHOT_ONLY_PUBLIC = Q(permission__exact=SnapshotPermission.PUBLIC)
@@ -60,17 +44,45 @@ class SnapshotOnlyPublicFilter(FilterSet):
 class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
-        fields = ['is_showcase', 'title', 'topic', 'data', 'screenshot', 'municipality']
-        filter_fields = ['municipality__id', 'municipality__canton', 'is_showcase']
+        fields = [
+            'is_showcase', 'title', 'topic', 'data', 'municipality',
+            'predecessor'
+        ]
+        filter_fields = [
+            'municipality__id', 'municipality__canton', 'is_showcase'
+        ]
         interfaces = [graphene.relay.Node]
 
     data = generic.GenericScalar(source='data')
-    screenshot = graphene.Field(ImageNode)
     pk = graphene.String(source='id')
+    thumbnail = graphene.String()
+    screenshot = graphene.String()
+    screenshot_facebook = graphene.String()
+    screenshot_twitter = graphene.String()
 
     @classmethod
     def get_queryset(cls, queryset, info):
         return queryset.filter(Q_SNAPSHOT_WITH_NOT_LISTED)
+
+    def resolve_screenshot(self, info):
+        return self.screenshot
+
+    def resolve_thumbnail(self, info):
+        return self.thumbnail
+
+    def resolve_screenshot_facebook(self, info):
+        screenshot = get_thumbnail(self.screenshot,
+                                   '1200x630',
+                                   crop='bottom',
+                                   format='PNG')
+        return screenshot
+
+    def resolve_screenshot_twitter(self, info):
+        screenshot = get_thumbnail(self.screenshot,
+                                   '1200x600',
+                                   crop='bottom',
+                                   format='PNG')
+        return screenshot
 
 
 class MunicipalityNode(DjangoObjectType):
@@ -90,7 +102,8 @@ class MunicipalityNode(DjangoObjectType):
     perimeter_bounds = graphene.List(graphene.Float)
 
     def resolve_snapshots(self, info):
-        return Snapshot.objects.filter(Q_SNAPSHOT_ONLY_PUBLIC & Q(municipality__id=self.pk))
+        return Snapshot.objects.filter(Q_SNAPSHOT_ONLY_PUBLIC
+                                       & Q(municipality__id=self.pk))
 
     def resolve_perimeter_centroid(self, info):
         return self.perimeter.centroid
@@ -102,9 +115,7 @@ class MunicipalityNode(DjangoObjectType):
 class WorkspaceNode(DjangoObjectType):
     class Meta:
         model = Workspace
-        fields = [
-            'title', 'description'
-        ]
+        fields = ['title', 'description']
         interfaces = [graphene.relay.Node]
 
     pk = graphene.String(source='id')
@@ -120,7 +131,6 @@ class Query(object):
 
     snapshot = graphene.relay.Node.Field(SnapshotNode)
     snapshots = DjangoFilterConnectionField(
-        SnapshotNode, filterset_class=SnapshotOnlyPublicFilter
-    )
+        SnapshotNode, filterset_class=SnapshotOnlyPublicFilter)
 
     workspace = graphene.relay.Node.Field(WorkspaceNode)

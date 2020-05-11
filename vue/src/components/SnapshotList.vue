@@ -16,13 +16,24 @@
       <v-list-item class="px-2 mb-4" dense
         v-for="snapshot in snapshots" :key="snapshot.id"
         :to="createRouteLink(snapshot.pk)">
-        <v-list-item-avatar tile size="64" class="my-2">
-          <v-img :src="djangobaseurl + snapshot.screenshot.url"></v-img>
-        </v-list-item-avatar>
+          <v-list-item-avatar tile size="64" class="my-2">
+            <v-img
+              v-if="snapshot.thumbnail"
+              :src="djangobaseurl + '/media/' + snapshot.thumbnail">
+            </v-img>
+          </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title style="font-weight:700">{{ snapshot.title }}</v-list-item-title>
             <v-list-item-subtitle>{{ snapshot.topic }}</v-list-item-subtitle>
           </v-list-item-content>
+          <v-list-item-action style="margin:0 0 4px 0; align-self: flex-end;">
+            <v-btn icon
+              v-if="snapshot.screenshot"
+              v-on:click.stop="function(){}"
+              :href="djangobaseurl + '/downloads/' + snapshot.screenshot">
+                <v-icon color="grey lighten-1" >mdi-download</v-icon>
+            </v-btn>
+          </v-list-item-action>
       </v-list-item>
   </v-list>
 </template>

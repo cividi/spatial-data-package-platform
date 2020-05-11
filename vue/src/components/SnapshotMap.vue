@@ -15,7 +15,7 @@
       </v-container>
 
       <v-btn
-        v-if="hash"
+        v-if="hash && !screenshotIsThumbnail"
         fab absolute small
         style="bottom:2em; right:2em;"
         color="white"
@@ -31,12 +31,15 @@
         v-bind:class="{open: mapinfoopen}"
         >
         <v-icon
+          v-show="!screenshotMode"
           style="position: absolute; top:0; right:0;"
           class="pa-2"
-          @click="mapinfoopen=!mapinfoopen" >mdi-close-circle-outline</v-icon>
+          @click="mapinfoopen=!mapinfoopen" >mdi-close-circle-outline
+        </v-icon>
         <snapshot-meta
           :title="title"
           :description="description"
+          :predecessor="predecessor"
           :hash="hash"
           :legend="legend"
           :sources="sources"
@@ -59,6 +62,10 @@ body,
   width: 100%;
 }
 
+#map .mapbox-improve-map {
+  display: none;
+}
+
 #mapinfo {
   position: absolute;
   bottom: 2em;
@@ -66,11 +73,17 @@ body,
   min-width: 240px;
   clip-path: circle(0% at 95% 90%);
   transition: clip-path 0.3s ease-out;
+  pointer-events: none;
   z-index: 1000; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
+  pointer-events: auto;
   clip-path: circle(100% at center);
+}
+
+.mapbox-improve-map {
+  display: none;
 }
 </style>
 
@@ -100,13 +113,16 @@ export default {
       legend: [],
       sources: [],
       layers: [],
-      geobounds: []
+      geobounds: [],
+      screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
+      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail')
     };
   },
 
   props: {
     geojson: Object,
-    geoboundsIn: Array
+    geoboundsIn: Array,
+    predecessor: Object
   },
 
   created() {
@@ -210,6 +226,17 @@ export default {
         metric: true,
         imperial: false
       }).addTo(this.map);
+
+      if (this.screenshotMode) {
+        // no zoom controls in screenshot mode
+        document.querySelector('.leaflet-control-zoom').style.display = 'none';
+      } else {
+        // no attribution in normal mode
+        document.querySelector('.leaflet-control-attribution').style.display = 'none';
+      }
+      if (this.screenshotIsThumbnail) {
+        document.querySelector('#mapinfo').style.visibility = 'hidden';
+      }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     },
