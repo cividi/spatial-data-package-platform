@@ -10,6 +10,7 @@ from django.contrib.gis.db import models
 from django.contrib.postgres import fields as pg_fields
 from django.contrib.sites.models import Site
 from django.utils.html import format_html
+from django.conf import settings
 from sortedm2m.fields import SortedManyToManyField
 from sorl.thumbnail import ImageField
 from gsuser.models import User
@@ -212,8 +213,8 @@ def save_screenshot_handler(sender, **kwargs):
             finally:
                 # always reconnect signal
                 post_save.connect(save_screenshot_handler, sender=Snapshot)
-
-    save_screenshot()
+    if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
+        save_screenshot()
 
 
 class Workspace(models.Model):

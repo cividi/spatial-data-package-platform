@@ -138,3 +138,4 @@ CACHES = {
     }
 }
 THUMBNAIL_BACKEND = 'main.utils.PermalinkThumbnailBackend'
+SAVE_SCREENSHOT_ENABLED = True
