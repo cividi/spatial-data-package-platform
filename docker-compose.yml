@@ -36,7 +36,6 @@ services:
     ports:
       # - "9222:9222" # debug chrome
       - "8079:8079" # snapshost service
-      - "8080:8080" # vue
       - "10001:10001" # vscode
 
   django:
@@ -63,18 +62,19 @@ services:
     links:
      - pdb
     ports:
-      - "8081:8081"
       - "10002:10002" # vscode
     # entrypoint: tail
     # command: -f /dev/null
 
-  # static:
-  #   image: nginx:1.16-alpine
-  #   hostname: static
-  #   volumes:
-  #     - ./etc/nginx:/etc/nginx/conf.d
-  #     - var-gemeindescan-webui:/var/services
-  #   links:
-  #     - django
-  #   ports:
-  #     - 80:80
+  www:
+    image: openresty/openresty:1.15.8.3-alpine
+    hostname: www
+    volumes:
+      - ./etc/nginx:/etc/nginx/conf.d
+      - var-gemeindescan-webui:/var/services
+    links:
+      - django
+      - vue
+    ports:
+      - 8080:80
+    command: tail -f /dev/null
