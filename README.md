@@ -66,6 +66,17 @@ Database files and static generated files are stored in `var` folder.
 make up
 ```
 
+### tests
+
+```bash
+make tests
+```
+
+This command runs first the backend tests and afterwards the frontend test.
+
+For the backend tests a new test database is generated and the fixtures are loaded.
+
+
 ### editor
 
 The project is setup to work with visual studio code as editor. Any other editor is also fine.
