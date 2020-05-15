@@ -95,6 +95,10 @@
       :geoboundsIn="geobounds"
       :predecessor="predecessor"
     />
+
+     <error-message
+      :settings="errorsettings"
+    />
   </div>
 </template>
 
@@ -119,9 +123,11 @@ import Vue from 'vue';
 import gql from 'graphql-tag';
 import SnapshotList from '../components/SnapshotList.vue';
 import SnapshotMap from '../components/SnapshotMap.vue';
+import ErrorMessage from '../components/ErrorMessage.vue';
 
 Vue.component('snapshot-list', SnapshotList);
 Vue.component('snapshot-map', SnapshotMap);
+Vue.component('error-message', ErrorMessage);
 
 export default {
   data() {
@@ -136,7 +142,8 @@ export default {
       snapshotsMunicipality: [],
       predecessor: null,
       screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
-      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail')
+      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail'),
+      errorsettings: {}
     };
   },
 
@@ -227,7 +234,7 @@ export default {
           hash: btoa(`SnapshotNode:${hash}`)
         }
       }).catch((error) => {
-        console.log(error);
+        this.errorsettings = { type: 'netwokerror', open: true, error };
       });
       if (result) {
         if (result.data.hasOwnProperty('snapshot') && result.data.snapshot) {
@@ -287,7 +294,7 @@ export default {
           bfsNumber: btoa(`MunicipalityNode:${bfsNumber}`)
         }
       }).catch((error) => {
-        console.log(error);
+        this.errorsettings = { type: 'netwokerror', open: true, error };
       });
       if (result) {
         this.municipalityName = result.data.municipality.fullname;
