@@ -74,7 +74,7 @@ body,
   clip-path: circle(0% at 95% 90%);
   transition: clip-path 0.3s ease-out;
   pointer-events: none;
-  z-index: 1000; /* must be above mapbox icons */
+  z-index: 500; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
