@@ -8,7 +8,6 @@ from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
-from sorl.thumbnail import get_thumbnail
 from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace
 
 
@@ -71,18 +70,10 @@ class SnapshotNode(DjangoObjectType):
         return self.thumbnail
 
     def resolve_screenshot_facebook(self, info):
-        screenshot = get_thumbnail(self.screenshot,
-                                   '1200x630',
-                                   crop='bottom',
-                                   format='PNG')
-        return screenshot
+        return self.image_facebook()
 
     def resolve_screenshot_twitter(self, info):
-        screenshot = get_thumbnail(self.screenshot,
-                                   '1200x600',
-                                   crop='bottom',
-                                   format='PNG')
-        return screenshot
+        return self.image_twitter()
 
 
 class MunicipalityNode(DjangoObjectType):

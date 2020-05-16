@@ -1,6 +1,6 @@
 GEMEINDESCAN_WEBUI_DJANGO=0.3.4
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec django")
-all: run-tests run-tests-dev
+all: dev run-tests run-tests-dev
 .PHONY: all
 default: dev
 
@@ -25,6 +25,9 @@ adminuser:
 collectstatic:
 	$(DOCKER_EXEC) python3 manage.py collectstatic --noinput
 
+symlinks:
+	$(DOCKER_EXEC) sh -c "cd /var/services/django; ln -s media downloads"
+
 migrate:
 	$(DOCKER_EXEC) python3 manage.py migrate
 	make collectstatic
@@ -45,6 +48,7 @@ import-gemeinden-json:
 	$(DOCKER_EXEC) rm ./tmp/gemeinden.geojson
 
 init:
+	make symlinks
 	make migrate
 	make adminuser
 	make import-gemeinden-json

@@ -2,6 +2,7 @@ import secrets
 import string
 from enum import IntFlag
 import requests
+import os
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -11,9 +12,19 @@ from django.contrib.postgres import fields as pg_fields
 from django.contrib.sites.models import Site
 from django.utils.html import format_html
 from django.conf import settings
+from django.core.files.base import ContentFile
+from django.core.files.storage import FileSystemStorage
 from sortedm2m.fields import SortedManyToManyField
-from sorl.thumbnail import ImageField
+from sorl.thumbnail import ImageField, get_thumbnail
 from gsuser.models import User
+
+
+class OverwriteStorage(FileSystemStorage):
+    def get_available_name(self, name, max_length=None):
+        # If the filename already exists, remove it as if it was a true file system
+        if self.exists(name):
+            os.remove(os.path.join(settings.MEDIA_ROOT, name))
+        return name
 
 
 class Municipality(models.Model):
@@ -146,8 +157,9 @@ class Snapshot(models.Model):
 
     def get_absolute_link(self):
         domain = Site.objects.get_current().domain
+        proto = 'https' if settings.USE_HTTPS else 'http'
         return format_html(
-            f'<a href="//{domain}{self.get_absolute_url()}" target="_blank">'
+            f'<a href="{proto}://{domain}{self.get_absolute_url()}" target="_blank">'
             f'{domain}{self.get_absolute_url()}</a>'
         )
     get_absolute_link.short_description = "Snapshot Url"
@@ -183,6 +195,18 @@ class Snapshot(models.Model):
 
         super().save(*args, **kwargs)
 
+    def image_twitter(self):
+        return get_thumbnail(
+            self.screenshot, '1200x630',
+            crop='bottom', format='PNG'
+        )
+
+    def image_facebook(self):
+        return get_thumbnail(
+            self.screenshot, '1200x630',
+            crop='bottom', format='PNG'
+        )
+
     def __str__(self):
         if self.municipality:
             return f'{self.municipality.fullname}, {self.title}, ' \
@@ -193,9 +217,10 @@ class Snapshot(models.Model):
 
 @receiver(post_save, sender=Snapshot)
 def save_screenshot_handler(sender, **kwargs):
+    instance = kwargs.get('instance')
+
     def save_screenshot():
         post_save.disconnect(save_screenshot_handler, sender=Snapshot)
-        instance = kwargs.get('instance')
         # only create snapshot if data changed
         if instance.data_changed([
                 'data', 'screenshot_generated', 'thumbnail_generated'
@@ -213,8 +238,26 @@ def save_screenshot_handler(sender, **kwargs):
             finally:
                 # always reconnect signal
                 post_save.connect(save_screenshot_handler, sender=Snapshot)
+
+    def save_meta(storage):
+        domain = Site.objects.get_current().domain
+        proto = 'https' if settings.USE_HTTPS else 'http'
+        meta = f'''name="og:title" content="{instance.title}"
+name="og:url" content="{instance.get_absolute_link()}"
+name="og:image" content="{proto}://{domain}/{instance.image_facebook()}"
+name="twitter:image" content="{proto}://{domain}/{instance.image_twitter()}"
+'''
+        storage.save(f'snapshot-meta/{instance.id}.html', ContentFile(meta))
+
     if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
         save_screenshot()
+
+    if instance.screenshot:
+        storage = OverwriteStorage()
+        if instance.permission is int(SnapshotPermission.PUBLIC):
+            save_meta(storage)
+        else:
+            storage.delete(f'snapshot-meta/{instance.id}.html')
 
 
 class Workspace(models.Model):
@@ -234,9 +277,10 @@ class Workspace(models.Model):
     snapshots = SortedManyToManyField(Snapshot)
 
     def get_absolute_link(self):
+        proto = 'https' if settings.USE_HTTPS else 'http'
         domain = Site.objects.get_current().domain
         return format_html(
-            f'<a href="//{domain}{self.get_absolute_url()}" target="_blank">'
+            f'<a href="{proto}://{domain}{self.get_absolute_url()}" target="_blank">'
             f'{domain}{self.get_absolute_url()}</a>'
         )
     get_absolute_link.short_description = "Workspace Url"
@@ -244,7 +288,6 @@ class Workspace(models.Model):
     def get_absolute_url(self):
         first_id = self.snapshots.all().first().id
         return f'/{self.id}/{first_id}/'
-
 
     def save(self, *args, **kwargs):
         def test_exists(pk):
