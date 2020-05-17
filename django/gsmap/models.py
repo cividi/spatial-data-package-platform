@@ -243,9 +243,9 @@ def save_screenshot_handler(sender, **kwargs):
         domain = Site.objects.get_current().domain
         proto = 'https' if settings.USE_HTTPS else 'http'
         meta = f'''
-<meta name="og:title" content="{instance.title}">
-<meta name="og:url" content="{proto}://{domain}{instance.get_absolute_url()}">
-<meta name="og:image" content="{proto}://{domain}/{instance.image_facebook()}">
+<meta property="og:title" content="{instance.title}">
+<meta property="og:url" content="{proto}://{domain}{instance.get_absolute_url()}">
+<meta property="og:image" content="{proto}://{domain}/{instance.image_facebook()}">
 <meta name="twitter:image" content="{proto}://{domain}/{instance.image_twitter()}">
 '''
         storage.save(f'snapshot-meta/{instance.id}.html', ContentFile(meta))
