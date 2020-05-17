@@ -155,6 +155,20 @@ class Snapshot(models.Model):
     def thumbnail(self):
         return self.thumbnail_manual or self.thumbnail_generated
 
+    @property
+    def title_data(self):
+        try:
+            return self.data['views'][0]['spec']['title']
+        except KeyError:
+            return self.title
+
+    @property
+    def description_data(self):
+        try:
+            return self.data['views'][0]['spec']['description']
+        except KeyError:
+            return ''
+
     def get_absolute_link(self):
         domain = Site.objects.get_current().domain
         proto = 'https' if settings.USE_HTTPS else 'http'
@@ -243,7 +257,9 @@ def save_screenshot_handler(sender, **kwargs):
         domain = Site.objects.get_current().domain
         proto = 'https' if settings.USE_HTTPS else 'http'
         meta = f'''
-<meta property="og:title" content="{instance.title}">
+<meta property="og:title" content="{instance.title_data}">
+<meta property="og:description" content="{instance.description_data}">
+<meta property="og:type" content="website">
 <meta property="og:url" content="{proto}://{domain}{instance.get_absolute_url()}">
 <meta property="og:image" content="{proto}://{domain}/{instance.image_facebook()}">
 <meta name="twitter:image" content="{proto}://{domain}/{instance.image_twitter()}">
@@ -253,7 +269,7 @@ def save_screenshot_handler(sender, **kwargs):
     if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
         save_screenshot()
 
-    if instance.screenshot:
+    if instance.data:
         storage = OverwriteStorage()
         if instance.permission is int(SnapshotPermission.PUBLIC):
             save_meta(storage)
