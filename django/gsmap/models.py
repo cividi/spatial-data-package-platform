@@ -210,16 +210,19 @@ class Snapshot(models.Model):
         super().save(*args, **kwargs)
 
     def image_twitter(self):
-        return get_thumbnail(
-            self.screenshot, '1200x630',
-            crop='bottom', format='PNG'
-        )
+        if bool(self.screenshot):
+            return get_thumbnail(
+                self.screenshot, '1200x630',
+                crop='bottom', format='PNG'
+            )
+        return ''
 
     def image_facebook(self):
-        return get_thumbnail(
-            self.screenshot, '1200x630',
-            crop='bottom', format='PNG'
-        )
+        if bool(self.screenshot):
+            return get_thumbnail(
+                self.screenshot, '1200x630',
+                crop='bottom', format='PNG'
+            )
 
     def __str__(self):
         if self.municipality:
