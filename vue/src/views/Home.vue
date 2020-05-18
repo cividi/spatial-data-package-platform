@@ -11,7 +11,8 @@
       "Gemeindescan Schweiz",
     "h2.2": "Fallbeispiele",
     "p.3": "«Als Gemeindepräsident ist es mir wichtig, der Bevölkerung und dem Gemeinderat die Komplexität des Ortsplanungsprozesses und der Standortentwicklung verständlich und einfach zu übermitteln. Mit Hilfe von Daten und Visualisierungen über den Gemeindescan fällt es mir leichter, Lösungen und wichtige Entscheide zu fällen!»",
-    "p.4": "Gemeindepräsident Wittenbach"
+    "p.4": "Gemeindepräsident Wittenbach",
+    "networkerror": "Die Gemeindesuche ist zZ nicht verfügbar."
   },
   "fr": {
     "h1.1": "Découvrez le potentiel en terme d'habitat de votre communauté.",
@@ -23,7 +24,8 @@
       "Le Gemeindescan Suisse",
     "h2.2": "Examples",
     "p.3": "«En tant que maire, il est important pour moi de communiquer la complexité du processus de planification locale et du développement urbain à la population et au conseil municipal de manière simple et compréhensible. Avec l'aide des données et des visualisations via les analyses de la communauté, il m'est plus facile de trouver des solutions et de prendre des décisions importantes!»",
-    "p.4": "Le maire de la municipalité Wittenbach"
+    "p.4": "Le maire de la municipalité Wittenbach",
+    "networkerror": "Die Gemeindesuche ist zZ nicht verfügbar."
   }
 }
 </i18n>
@@ -31,7 +33,6 @@
 
 <template>
 <div>
-  <!-- eslint-disable max-len -->
   <v-container my-12 >
       <div class="gmdscn">
           <img :alt="$t('img.1.alt')" class="" width="100%"
@@ -47,7 +48,7 @@
       </v-row>
   </v-container>
 
-  <v-container class="center" fluid mb-12>
+  <v-container v-if="!{networkError}" class="center" fluid mb-12>
       <v-row justify="center" >
         <v-col class="introtxt text-center">
           <h2>{{ $t('h2.2') }}</h2>
@@ -66,7 +67,9 @@
                 <v-fade-transition>
                   <v-overlay v-if="hover" color="primary" opacity="0.6" absolute
                     style="text-transform: none; white-space: normal; hyphens: auto;">
-                    <h5 style="font-weight: bold; line-height: 1.2em; padding:0.3em;">{{snapshot.title}}</h5>
+                    <h5 style="font-weight: bold; line-height: 1.2em; padding:0.3em;">
+                      {{snapshot.title}}
+                    </h5>
                     <span style="">{{snapshot.topic}}<br>-<br>{{snapshot.municipality.name}}</span>
                   </v-overlay>
                 </v-fade-transition>
@@ -75,11 +78,15 @@
           </v-btn>
           </div>
         </v-col>
-
       </v-row>
-
   </v-container>
 
+  <v-snackbar color="primary" v-model="snackbar" :timeout="9000">
+    {{ $t('networkerror') }}
+    <v-btn icon @click="snackbar=false" >
+      <v-icon>mdi-close-circle-outline</v-icon>
+    </v-btn>
+  </v-snackbar>
   <!--
   <v-container class="" justify-center my-12>
         <v-row justify="center">
@@ -128,7 +135,9 @@ export default {
   data() {
     return {
       djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
-      snapshotsExamples: []
+      snapshotsExamples: [],
+      networkError: false,
+      snackbar: false
     };
   },
   created() {
@@ -157,10 +166,15 @@ export default {
             }
           }
         }`
+      }).catch((error) => {
+        console.log(error);
+        this.snackbar = true;
       });
-      const snapshots = result.data.snapshots.edges.map(snapshot => snapshot.node);
-      // fake random, for more randomness, use https://www.npmjs.com/package/lodash.shuffle package
-      this.snapshotsExamples = snapshots.sort(() => (Math.random() > 0.5 ? -1 : 1)).slice(0, 3);
+      if (result) {
+        const snapshots = result.data.snapshots.edges.map(snapshot => snapshot.node);
+        // fake random, for more randomness, use https://www.npmjs.com/package/lodash.shuffle package
+        this.snapshotsExamples = snapshots.sort(() => (Math.random() > 0.5 ? -1 : 1)).slice(0, 3);
+      }
     }
   }
 };

@@ -95,6 +95,10 @@
       :geoboundsIn="geobounds"
       :predecessor="predecessor"
     />
+
+     <error-message
+      :settings="errorsettings"
+    />
   </div>
 </template>
 
@@ -119,9 +123,11 @@ import Vue from 'vue';
 import gql from 'graphql-tag';
 import SnapshotList from '../components/SnapshotList.vue';
 import SnapshotMap from '../components/SnapshotMap.vue';
+import ErrorMessage from '../components/ErrorMessage.vue';
 
 Vue.component('snapshot-list', SnapshotList);
 Vue.component('snapshot-map', SnapshotMap);
+Vue.component('error-message', ErrorMessage);
 
 export default {
   data() {
@@ -136,7 +142,8 @@ export default {
       snapshotsMunicipality: [],
       predecessor: null,
       screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
-      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail')
+      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail'),
+      errorsettings: {}
     };
   },
 
@@ -226,20 +233,28 @@ export default {
         variables: {
           hash: btoa(`SnapshotNode:${hash}`)
         }
+      }).catch((error) => {
+        this.errorsettings = { type: 'netwokerror', open: true, error };
       });
-      if (result.data.hasOwnProperty('snapshot') && result.data.snapshot) {
-        this.geojson = result.data.snapshot.data;
-        this.municipalityName = result.data.snapshot.municipality.fullname;
-        this.snapshotsMunicipality = result.data.snapshot.municipality.snapshots;
-        const snapshotsIdExamplesExclude = this.snapshotsMunicipality.map(snapshot => snapshot.id);
-        this.snapshotsExamples = result.data.snapshots.edges.map(snapshot => snapshot.node).filter(
-          snapshot => !snapshotsIdExamplesExclude.includes(snapshot.id)
-        );
-        this.predecessor = (result.data.snapshot.predecessor);
-        this.$store.commit('setBfsnumber', result.data.snapshot.municipality.bfsNumber);
-        this.$store.commit('setBfsname', result.data.snapshot.municipality.fullname);
-      } else {
-        this.$router.push({ name: 'home' });
+      if (result) {
+        if (result.data.hasOwnProperty('snapshot') && result.data.snapshot) {
+          this.geojson = result.data.snapshot.data;
+          this.municipalityName = result.data.snapshot.municipality.fullname;
+          this.snapshotsMunicipality = result.data.snapshot.municipality.snapshots;
+          const snapshotsIdExamplesExclude = this.snapshotsMunicipality.map(
+            snapshot => snapshot.id
+          );
+          this.snapshotsExamples = result.data.snapshots.edges.map(
+            snapshot => snapshot.node
+          ).filter(
+            snapshot => !snapshotsIdExamplesExclude.includes(snapshot.id)
+          );
+          this.predecessor = (result.data.snapshot.predecessor);
+          this.$store.commit('setBfsnumber', result.data.snapshot.municipality.bfsNumber);
+          this.$store.commit('setBfsname', result.data.snapshot.municipality.fullname);
+        } else {
+          this.$router.push({ name: 'home' });
+        }
       }
     },
 
@@ -278,13 +293,17 @@ export default {
         variables: {
           bfsNumber: btoa(`MunicipalityNode:${bfsNumber}`)
         }
+      }).catch((error) => {
+        this.errorsettings = { type: 'netwokerror', open: true, error };
       });
-      this.municipalityName = result.data.municipality.fullname;
-      this.geojson = result.data.municipality.perimeter;
-      this.geobounds = result.data.municipality.perimeterBounds;
-      this.snapshotsExamples = result.data.snapshots.edges.map(snapshot => snapshot.node);
-      this.$store.commit('setBfsnumber', result.data.municipality.bfsNumber);
-      this.$store.commit('setBfsname', result.data.municipality.fullname);
+      if (result) {
+        this.municipalityName = result.data.municipality.fullname;
+        this.geojson = result.data.municipality.perimeter;
+        this.geobounds = result.data.municipality.perimeterBounds;
+        this.snapshotsExamples = result.data.snapshots.edges.map(snapshot => snapshot.node);
+        this.$store.commit('setBfsnumber', result.data.municipality.bfsNumber);
+        this.$store.commit('setBfsname', result.data.municipality.fullname);
+      }
     }
   }
 };
