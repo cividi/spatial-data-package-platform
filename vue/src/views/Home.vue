@@ -81,7 +81,7 @@
       </v-row>
   </v-container>
 
-  <v-snackbar color="primary" v-model="snackbar" timeout=9999>
+  <v-snackbar color="primary" v-model="snackbar" :timeout="9000">
     {{ $t('networkerror') }}
     <v-btn icon @click="snackbar=false" >
       <v-icon>mdi-close-circle-outline</v-icon>
