@@ -32,8 +32,8 @@
         <v-card-text>{{textString}}</v-card-text>
         <v-card-actions class="pb-4 pr-4">
           <v-spacer></v-spacer>
-          <v-btn color="gray" @click="composeEmail">{{$t('button.contact')}}</v-btn>
-          <v-btn color="primary" class="ml-4" :to="'/' + $i18n.locale + '/'">
+          <v-btn depressed color="gray" @click="composeEmail">{{$t('button.contact')}}</v-btn>
+          <v-btn depressed color="primary" class="ml-4" :to="'/' + $i18n.locale + '/'">
             {{$t('button.back')}}
           </v-btn>
         </v-card-actions>
