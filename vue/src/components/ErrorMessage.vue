@@ -8,7 +8,8 @@
     "netwokerror.text": "Benötigte Daten konnten nicht geladen werden.",
     "button.ok": "OK",
     "button.retry": "Seite neu laden",
-    "button.back": "Zur Startseite"
+    "button.back": "Zur Startseite",
+    "button.contact": "Problem melden"
   },
   "fr": {
     "title": "Fehler",
@@ -17,7 +18,8 @@
     "netwokerror.text": "Benötigte Daten konnten nicht geladen werden.",
     "button.ok": "OK",
     "button.retry": "Nochmals versuchen",
-    "button.back": "Zur Startseite"
+    "button.back": "Zur Startseite",
+    "button.contact": "Problem melden"
   }
 }
 </i18n>
@@ -30,7 +32,7 @@
         <v-card-text>{{textString}}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="forceReload">{{$t('button.retry')}}</v-btn>
+          <v-btn text @click="composeEmail">{{$t('button.contact')}}</v-btn>
           <v-btn color="primary" text :to="'/' + $i18n.locale + '/'">{{$t('button.back')}}</v-btn>
         </v-card-actions>
       </v-card>
@@ -75,6 +77,9 @@ export default {
   methods: {
     forceReload() {
       window.location.reload();
+    },
+    composeEmail() {
+      window.location.href = `mailto:kontakt@gemeindescan.ch?subject=${this.titleString}&body=`;
     }
   }
 };
