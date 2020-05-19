@@ -5,21 +5,21 @@
     "title": "Fehler",
     "text": "Da ist was schiefgegangen...",
     "netwokerror.title": "Verbindungsfehler",
-    "netwokerror.text": "Benötigte Daten konnten nicht geladen werden.",
+    "netwokerror.text": "Daten konnten nicht geladen werden.",
     "button.ok": "OK",
     "button.retry": "Seite neu laden",
     "button.back": "Zur Startseite",
     "button.contact": "Problem melden"
   },
   "fr": {
-    "title": "Fehler",
-    "text": "Da ist was schiefgegangen...",
-    "netwokerror.title": "Verbindungsfehler",
-    "netwokerror.text": "Benötigte Daten konnten nicht geladen werden.",
+    "title": "Erreur",
+    "text": "Quelque chose a mal tourné...",
+    "netwokerror.title": "Erreur de connexion",
+    "netwokerror.text": "Les données n'ont pas pu être chargées.",
     "button.ok": "OK",
-    "button.retry": "Nochmals versuchen",
-    "button.back": "Zur Startseite",
-    "button.contact": "Problem melden"
+    "button.retry": "Recharger la page",
+    "button.back": "Vers la page d'accueil",
+    "button.contact": "Signaler un problème"
   }
 }
 </i18n>
