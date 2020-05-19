@@ -167,7 +167,6 @@ export default {
           }
         }`
       }).catch((error) => {
-        console.log(error);
         this.snackbar = true;
       });
       if (result) {
