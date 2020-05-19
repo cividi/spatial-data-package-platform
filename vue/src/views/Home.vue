@@ -166,7 +166,7 @@ export default {
             }
           }
         }`
-      }).catch((error) => {
+      }).catch(() => {
         this.snackbar = true;
       });
       if (result) {
