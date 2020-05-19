@@ -77,4 +77,4 @@ services:
       - vue
     ports:
       - 8080:80
-    command: tail -f /dev/null
+    # command: tail -f /dev/null
