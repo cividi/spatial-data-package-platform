@@ -48,7 +48,7 @@
       </v-row>
   </v-container>
 
-  <v-container v-if="!{networkError}" class="center" fluid mb-12>
+  <v-container v-if="!networkError" class="center" fluid mb-12>
       <v-row justify="center" >
         <v-col class="introtxt text-center">
           <h2>{{ $t('h2.2') }}</h2>
@@ -87,19 +87,6 @@
       <v-icon>mdi-close-circle-outline</v-icon>
     </v-btn>
   </v-snackbar>
-  <!--
-  <v-container class="" justify-center my-12>
-        <v-row justify="center">
-        <v-col class="introtxt text-center py-12">
-        <p class="quotetxt">{{ $t('p.3') }}</p>
-        <br>
-        <p >Oliver Gröble<br>{{ $t('p.4') }}</p>
-
-        </v-col>
-      </v-row>
-  </v-container>
-  -->
-
 </div>
 
 </template>
@@ -168,11 +155,14 @@ export default {
         }`
       }).catch(() => {
         this.snackbar = true;
+        this.networkError = true;
       });
       if (result) {
         const snapshots = result.data.snapshots.edges.map(snapshot => snapshot.node);
         // fake random, for more randomness, use https://www.npmjs.com/package/lodash.shuffle package
         this.snapshotsExamples = snapshots.sort(() => (Math.random() > 0.5 ? -1 : 1)).slice(0, 3);
+        this.snackbar = false;
+        this.networkError = false;
       }
     }
   }
