@@ -27,7 +27,7 @@ services:
     environment:
       - TERM=xterm-256color
       - START_SCREENSHOTSERVICE=NO
-      - PUBLIC_URL=http://localhost:8080
+      - PUBLIC_URL=http://www:8000
       - VUE_APP_MAPBOX_ACCESSTOKEN=pk.eyJ1IjoiZ2VtZWluZGVzY2FuIiwiYSI6ImNrNXdrOXV2ZjEwdXcza28wcXNoYXE1ZGMifQ.P-nCvxNRK4AOs7YdRbHCLg
       - VUE_APP_MAPBOX_DEFAULT_STYLES=mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz
     working_dir: /opt/vue
@@ -36,7 +36,7 @@ services:
       - var-gemeindescan-webui:/var/services/
       - vscode-remote-vue:/root/.vscode-server
     ports:
-      # - "9222:9222" # debug chrome
+      - "9222:9222" # debug chrome
       - "8079:8079" # snapshost service
       - "10001:10001" # vscode
 
@@ -55,14 +55,12 @@ services:
       - DJANGO_HTTPS=False
       - DJANGO_EMAIL_HOST=maildev
       - DJANGO_SECRET_KEY=adddxxccxx4rt0ioywg3yf5kjq64-t5
-      - DJANGO_ALLOWED_HOSTS=local.gemeindescan.ch,localhost,django
+      - DJANGO_ALLOWED_HOSTS=www,www.local,localhost,django
     working_dir: /opt/app
     volumes:
       - ./django:/opt/app
       - var-gemeindescan-webui:/var/services
       - vscode-remote-django:/root/.vscode-server
-    links:
-     - pdb
     ports:
       - "10002:10002" # vscode
     # entrypoint: tail
@@ -74,9 +72,6 @@ services:
     volumes:
       - ./etc/nginx:/etc/nginx/conf.d
       - var-gemeindescan-webui:/var/services
-    links:
-      - django
-      - vue
     ports:
-      - 8080:80
+      - 8000:8000
     # command: tail -f /dev/null
