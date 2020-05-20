@@ -24,7 +24,7 @@ For a tour of the app and a testing protocol see [`docs/testing.md`](/docs/testi
 
 ## setup project
 
-Add `django` to the 127.0.0.1 entry in `/etc/hosts` (for screenshot service).
+Add `www.local` and `django` to the 127.0.0.1 entry in `/etc/hosts` (for screenshot service).
 
 ```bash
 touch env.hosts.prod # required file, can be empty and edited later
@@ -65,6 +65,19 @@ Database files and static generated files are stored in `var` folder.
 ```bash
 make up
 ```
+
+**start services**
+
+```bash
+# 1. shell
+make start_vue
+# 2. shell
+make start_django
+# 3. shell
+make start_screenshotservice
+```
+
+You can also start the vue / django service from the vscode shell (see editor).
 
 ### tests
 
