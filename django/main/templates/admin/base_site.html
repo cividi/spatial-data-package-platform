@@ -5,5 +5,53 @@
     #id_thumbnail_generated, #id_screenshot_generated {
         display: none;
     }
+
+    a:focus, a:hover, a:link, a:visited {
+        color: #61388B;
+    }
+
+    #changelist-filter a:focus, #changelist-filter a:hover, #changelist-filter li.selected a:focus, #changelist-filter li.selected a:hover {
+        color: #543076 !important;
+    }
+
+    div.breadcrumbs a:hover {
+        color: #ccc;
+    }
+
+    #header {
+        background: {{ ADMIN_HEADER_COLOR }};
+        color: #fff;
+    }
+
+    .module h2, .module caption, .inline-group h2 {
+        background: #543076;
+        color: #fff;
+    }
+
+    #branding h1, #branding h1 a:link, #branding h1 a:visited {
+        color: #fff;
+    }
+
+    div.breadcrumbs {
+        background: #999;
+        color: #fff;
+    }
+
+    .paginator a:link, .paginator a:visited {
+        background: #543076 !important;
+    }
+
+    #changelist-filter li.selected a {
+        color: #222 !important;
+    }
+
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: #824DB7;
+    }
+
+    .button.default, input[type=submit].default, .submit-row input.default {
+        background: #543076;
+    }
+
 </style>
 {% endblock %}

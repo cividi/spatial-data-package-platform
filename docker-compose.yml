@@ -56,6 +56,8 @@ services:
       - DJANGO_EMAIL_HOST=maildev
       - DJANGO_SECRET_KEY=adddxxccxx4rt0ioywg3yf5kjq64-t5
       - DJANGO_ALLOWED_HOSTS=www,www.local,localhost,django
+      - DJANGO_ADMIN_NAME=gemeindescan DEV
+      - DJANGO_ADMIN_HEADER_COLOR=#ff0000
     working_dir: /opt/app
     volumes:
       - ./django:/opt/app
