@@ -201,6 +201,7 @@ export default {
       const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
       this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
       this.layerContainer = new L.LayerGroup();
+      // default test layer // this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/light-v10'));
       if (this.hash) { // full snapshot with hash
         this.layers.forEach((layer) => {
           if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
@@ -219,7 +220,11 @@ export default {
         this.geojson.coordinates.forEach((polygon) => {
           this.layerContainer.addLayer(L.polygon(polygon, { color: '#543076' }));
         });
-        this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz'));
+        if (process.env.VUE_APP_MAPBOX_DEFAULT_STYLES) {
+          this.layerContainer.addLayer(L.mapbox.styleLayer(
+            process.env.VUE_APP_MAPBOX_DEFAULT_STYLES
+          ));
+        }
       }
       this.layerContainer.addTo(this.map);
       L.control.scale({

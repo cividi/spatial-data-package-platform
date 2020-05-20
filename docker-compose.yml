@@ -28,6 +28,8 @@ services:
       - TERM=xterm-256color
       - START_SCREENSHOTSERVICE=NO
       - PUBLIC_URL=http://localhost:8080
+      - VUE_APP_MAPBOX_ACCESSTOKEN=pk.eyJ1IjoiZ2VtZWluZGVzY2FuIiwiYSI6ImNrNXdrOXV2ZjEwdXcza28wcXNoYXE1ZGMifQ.P-nCvxNRK4AOs7YdRbHCLg
+      - VUE_APP_MAPBOX_DEFAULT_STYLES=mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz
     working_dir: /opt/vue
     volumes:
       - ./vue:/opt/vue
