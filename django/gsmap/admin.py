@@ -4,13 +4,25 @@ from django.utils.translation import gettext as _
 from django_json_widget.widgets import JSONEditorWidget
 from django.utils.html import mark_safe
 from django.contrib import messages
+from django.forms.widgets import Textarea
 import requests
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 from gsmap.models import Municipality, Snapshot, Workspace
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
-    pass
+    readonly_fields = ('bfs_number',)
+    fields = ('bfs_number', 'name', 'canton', 'perimeter')
+    list_display = (
+        'name',
+        'bfs_number',
+    )
+    list_filter = ('canton',)
+    search_fields = ('id', 'name', 'canton')
+
+    def get_map_widget(self, db_field):
+        return Textarea
+
 
 
 class SnapshotAdmin(admin.OSMGeoAdmin):
@@ -92,7 +104,17 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         try:
             obj.save()
         except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
-            messages.error(request, "Couldn't create the screenshots, screenshot server problem.")
+            print(repr(e))
+            messages.error(
+                request,
+                "Couldn't create the screenshots, screenshot server problem. (ReadTimeout, ConnectionError)"
+            )
+        except Exception as e:
+            print(repr(e))
+            messages.error(
+                request,
+                "Couldn't create the screenshots, screenshot server problem. (Other Error)"
+            )
 
 
 class WorkspaceAdmin(admin.OSMGeoAdmin):

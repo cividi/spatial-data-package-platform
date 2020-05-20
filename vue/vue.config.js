@@ -1,4 +1,16 @@
 module.exports = {
+  devServer: {
+    compress: true,
+    inline: true,
+    port: '8080',
+    public: 'www',
+    allowedHosts: [
+      'www',
+      'www.local',
+      'localhost',
+      'vue'
+    ]
+  },
   transpileDependencies: [
     'vuetify'
   ],
