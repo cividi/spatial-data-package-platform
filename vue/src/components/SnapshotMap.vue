@@ -11,7 +11,7 @@
       </v-slide-x-reverse-transition>
 
       <v-container fluid class="pa-0" ref="mapbox">
-        <div id="map"></div>
+        <div id="map" :class="{ loaded: isMapLoaded}"></div>
       </v-container>
 
       <v-btn
@@ -115,7 +115,8 @@ export default {
       layers: [],
       geobounds: [],
       screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
-      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail')
+      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail'),
+      isMapLoaded: false
     };
   },
 
@@ -205,7 +206,9 @@ export default {
       if (this.hash) { // full snapshot with hash
         this.layers.forEach((layer) => {
           if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
-            this.layerContainer.addLayer(L.mapbox.styleLayer(layer.path));
+            const tileLayer = L.mapbox.styleLayer(layer.path);
+            tileLayer.on('load', () => { this.isMapLoaded = true; });
+            this.layerContainer.addLayer(tileLayer);
           } else if (layer.mediatype === 'application/geo+json') {
             this.layerContainer.addLayer(L.mapbox.featureLayer(layer.data, {
               attribution: this.geojson.views[0].spec.attribution
@@ -267,6 +270,7 @@ export default {
       this.layers = [];
       this.geobounds = [];
       this.map = null;
+      this.isMapLoaded = false;
     }
   }
 };
