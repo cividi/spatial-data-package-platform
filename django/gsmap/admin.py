@@ -4,6 +4,7 @@ from django.utils.translation import gettext as _
 from django_json_widget.widgets import JSONEditorWidget
 from django.utils.html import mark_safe
 from django.contrib import messages
+from django.forms.widgets import Textarea
 import requests
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 from gsmap.models import Municipality, Snapshot, Workspace
@@ -18,6 +19,10 @@ class MunicipalityAdmin(admin.OSMGeoAdmin):
     )
     list_filter = ('canton',)
     search_fields = ('id', 'name', 'canton')
+
+    def get_map_widget(self, db_field):
+        return Textarea
+
 
 
 class SnapshotAdmin(admin.OSMGeoAdmin):
