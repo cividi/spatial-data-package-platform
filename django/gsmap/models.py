@@ -2,6 +2,7 @@ import secrets
 import string
 from enum import IntFlag
 import requests
+import os
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -11,9 +12,19 @@ from django.contrib.postgres import fields as pg_fields
 from django.contrib.sites.models import Site
 from django.utils.html import format_html
 from django.conf import settings
+from django.core.files.base import ContentFile
+from django.core.files.storage import FileSystemStorage
 from sortedm2m.fields import SortedManyToManyField
-from sorl.thumbnail import ImageField
+from sorl.thumbnail import ImageField, get_thumbnail
 from gsuser.models import User
+
+
+class OverwriteStorage(FileSystemStorage):
+    def get_available_name(self, name, max_length=None):
+        # If the filename already exists, remove it as if it was a true file system
+        if self.exists(name):
+            os.remove(os.path.join(settings.MEDIA_ROOT, name))
+        return name
 
 
 class Municipality(models.Model):
@@ -58,6 +69,10 @@ class Municipality(models.Model):
     @property
     def fullname(self):
         return f'{self.name} ({self.canton})'
+
+    @property
+    def bfs_number(self):
+        return self.id
 
     def __str__(self):
         return self.fullname
@@ -144,10 +159,25 @@ class Snapshot(models.Model):
     def thumbnail(self):
         return self.thumbnail_manual or self.thumbnail_generated
 
+    @property
+    def title_data(self):
+        try:
+            return self.data['views'][0]['spec']['title']
+        except KeyError:
+            return self.title
+
+    @property
+    def description_data(self):
+        try:
+            return self.data['views'][0]['spec']['description']
+        except KeyError:
+            return ''
+
     def get_absolute_link(self):
         domain = Site.objects.get_current().domain
+        proto = 'https' if settings.USE_HTTPS else 'http'
         return format_html(
-            f'<a href="//{domain}{self.get_absolute_url()}" target="_blank">'
+            f'<a href="{proto}://{domain}{self.get_absolute_url()}" target="_blank">'
             f'{domain}{self.get_absolute_url()}</a>'
         )
     get_absolute_link.short_description = "Snapshot Url"
@@ -169,6 +199,28 @@ class Snapshot(models.Model):
         )
         return screenshot_file
 
+    def image_twitter(self):
+        if bool(self.screenshot):
+            return get_thumbnail(
+                self.screenshot, '1200x630',
+                crop='bottom', format='PNG'
+            )
+        return ''
+
+    def image_facebook(self):
+        if bool(self.screenshot):
+            return get_thumbnail(
+                self.screenshot, '1200x630',
+                crop='bottom', format='PNG'
+            )
+
+    def __str__(self):
+        if self.municipality:
+            return f'{self.municipality.fullname}, {self.title}, ' \
+                f'{self.id} ({self.get_permission_display()})'
+        else:
+            return self.title
+
     def save(self, *args, **kwargs):
         def test_exists(pk):
             if list(self.__class__.objects.filter(pk=pk)):
@@ -181,40 +233,46 @@ class Snapshot(models.Model):
             self.id = create_slug_hash_6()
             self.id = test_exists(self.id)
 
+        if self.data:
+            storage = OverwriteStorage()
+            if self.permission is int(SnapshotPermission.PUBLIC):
+                self.create_meta(storage)
+            else:
+                storage.delete(f'snapshot-meta/{self.id}.html')
+
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        if self.municipality:
-            return f'{self.municipality.fullname}, {self.title}, ' \
-                f'{self.id} ({self.get_permission_display()})'
-        else:
-            return self.title
+        if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
+            self.create_screenshot()
 
+        super().save(*args, **kwargs)
 
-@receiver(post_save, sender=Snapshot)
-def save_screenshot_handler(sender, **kwargs):
-    def save_screenshot():
-        post_save.disconnect(save_screenshot_handler, sender=Snapshot)
-        instance = kwargs.get('instance')
+    def create_screenshot(self):
         # only create snapshot if data changed
-        if instance.data_changed([
+        if self.data_changed([
                 'data', 'screenshot_generated', 'thumbnail_generated'
-        ]) or not bool(instance.thumbnail_generated):
-            if not 'resources' in instance.data:
-                return
-            try:
-                # disconnect to break save recursive loop
-                post_save.disconnect(save_screenshot_handler, sender=Snapshot)
-                screenshot_file = instance.create_screenshot_file()
-                thumbnail_file = instance.create_screenshot_file(is_thumbnail=True)
-                instance.screenshot_generated = screenshot_file
-                instance.thumbnail_generated = thumbnail_file
-                instance.save()
-            finally:
-                # always reconnect signal
-                post_save.connect(save_screenshot_handler, sender=Snapshot)
-    if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
-        save_screenshot()
+        ]) or not bool(self.thumbnail_generated):
+            print('resources', 'resources' in self.data)
+            if not 'resources' in self.data:
+                raise ValueError('no resources key in data')
+
+            screenshot_file = self.create_screenshot_file()
+            thumbnail_file = self.create_screenshot_file(is_thumbnail=True)
+            self.screenshot_generated = screenshot_file
+            self.thumbnail_generated = thumbnail_file
+
+    def create_meta(self, storage):
+        domain = Site.objects.get_current().domain
+        proto = 'https' if settings.USE_HTTPS else 'http'
+        meta = f'''
+<meta property="og:title" content="{self.title_data}">
+<meta property="og:description" content="{self.description_data}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{proto}://{domain}{self.get_absolute_url()}">
+<meta property="og:image" content="{proto}://{domain}/{self.image_facebook()}">
+<meta name="twitter:image" content="{proto}://{domain}/{self.image_twitter()}">
+'''
+        storage.save(f'snapshot-meta/{self.id}.html', ContentFile(meta))
 
 
 class Workspace(models.Model):
@@ -234,9 +292,10 @@ class Workspace(models.Model):
     snapshots = SortedManyToManyField(Snapshot)
 
     def get_absolute_link(self):
+        proto = 'https' if settings.USE_HTTPS else 'http'
         domain = Site.objects.get_current().domain
         return format_html(
-            f'<a href="//{domain}{self.get_absolute_url()}" target="_blank">'
+            f'<a href="{proto}://{domain}{self.get_absolute_url()}" target="_blank">'
             f'{domain}{self.get_absolute_url()}</a>'
         )
     get_absolute_link.short_description = "Workspace Url"
@@ -244,7 +303,6 @@ class Workspace(models.Model):
     def get_absolute_url(self):
         first_id = self.snapshots.all().first().id
         return f'/{self.id}/{first_id}/'
-
 
     def save(self, *args, **kwargs):
         def test_exists(pk):

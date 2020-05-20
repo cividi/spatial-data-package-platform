@@ -11,7 +11,7 @@
       </v-slide-x-reverse-transition>
 
       <v-container fluid class="pa-0" ref="mapbox">
-        <div id="map"></div>
+        <div id="map" :class="{ loaded: isMapLoaded}"></div>
       </v-container>
 
       <v-btn
@@ -74,7 +74,7 @@ body,
   clip-path: circle(0% at 95% 90%);
   transition: clip-path 0.3s ease-out;
   pointer-events: none;
-  z-index: 1000; /* must be above mapbox icons */
+  z-index: 500; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
@@ -115,7 +115,8 @@ export default {
       layers: [],
       geobounds: [],
       screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
-      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail')
+      screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail'),
+      isMapLoaded: false
     };
   },
 
@@ -201,10 +202,13 @@ export default {
       const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
       this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
       this.layerContainer = new L.LayerGroup();
+      // default test layer // this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/light-v10'));
       if (this.hash) { // full snapshot with hash
         this.layers.forEach((layer) => {
           if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
-            this.layerContainer.addLayer(L.mapbox.styleLayer(layer.path));
+            const tileLayer = L.mapbox.styleLayer(layer.path);
+            tileLayer.on('load', () => { this.isMapLoaded = true; });
+            this.layerContainer.addLayer(tileLayer);
           } else if (layer.mediatype === 'application/geo+json') {
             this.layerContainer.addLayer(L.mapbox.featureLayer(layer.data, {
               attribution: this.geojson.views[0].spec.attribution
@@ -219,7 +223,11 @@ export default {
         this.geojson.coordinates.forEach((polygon) => {
           this.layerContainer.addLayer(L.polygon(polygon, { color: '#543076' }));
         });
-        this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz'));
+        if (process.env.VUE_APP_MAPBOX_DEFAULT_STYLES) {
+          this.layerContainer.addLayer(L.mapbox.styleLayer(
+            process.env.VUE_APP_MAPBOX_DEFAULT_STYLES
+          ));
+        }
       }
       this.layerContainer.addTo(this.map);
       L.control.scale({
@@ -262,6 +270,7 @@ export default {
       this.layers = [];
       this.geobounds = [];
       this.map = null;
+      this.isMapLoaded = false;
     }
   }
 };

@@ -55,7 +55,9 @@
       :geojson="geojson"
       :geoboundsIn="geobounds"
     />
-
+     <error-message
+      :settings="errorsettings"
+    />
   </div>
 </template>
 
@@ -84,9 +86,11 @@ import Vue from 'vue';
 import gql from 'graphql-tag';
 import SnapshotList from '../components/SnapshotList.vue';
 import SnapshotMap from '../components/SnapshotMap.vue';
+import ErrorMessage from '../components/ErrorMessage.vue';
 
 Vue.component('snapshot-list', SnapshotList);
 Vue.component('snapshot-map', SnapshotMap);
+Vue.component('error-message', ErrorMessage);
 
 export default {
   data() {
@@ -98,7 +102,8 @@ export default {
       municipalityName: '',
       snapshotsWorkspace: [],
       title: '',
-      description: ''
+      description: '',
+      errorsettings: {}
     };
   },
 
@@ -170,22 +175,26 @@ export default {
           wshash: btoa(`WorkspaceNode:${this.wshash}`),
           hash: btoa(`SnapshotNode:${this.hash}`)
         }
+      }).catch((error) => {
+        this.errorsettings = { type: 'netwokerror', open: true, error };
       });
-      if (result.data.hasOwnProperty('workspace') && result.data.workspace) {
-        const workspace = result.data.workspace;
-        const snapshot = result.data.snapshot;
-        if (!workspace.snapshots.map(s => s.pk).includes(snapshot.pk)) {
+      if (result) {
+        if (result.data.hasOwnProperty('workspace') && result.data.workspace) {
+          const workspace = result.data.workspace;
+          const snapshot = result.data.snapshot;
+          if (!workspace.snapshots.map(s => s.pk).includes(snapshot.pk)) {
+            this.$router.push({ name: 'home' });
+          }
+          this.geojson = snapshot.data;
+          this.municipalityName = snapshot.municipality.fullname;
+          this.snapshotsWorkspace = workspace.snapshots;
+          this.title = workspace.title;
+          this.description = workspace.description;
+          this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);
+          this.$store.commit('setBfsname', snapshot.municipality.fullname);
+        } else {
           this.$router.push({ name: 'home' });
         }
-        this.geojson = snapshot.data;
-        this.municipalityName = snapshot.municipality.fullname;
-        this.snapshotsWorkspace = workspace.snapshots;
-        this.title = workspace.title;
-        this.description = workspace.description;
-        this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);
-        this.$store.commit('setBfsname', snapshot.municipality.fullname);
-      } else {
-        this.$router.push({ name: 'home' });
       }
     }
   }

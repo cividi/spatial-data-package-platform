@@ -1,4 +1,8 @@
 SHELL = /bin/bash
+DOCKER_EXEC_DJANGO=$(shell command -v docker > /dev/null && echo "docker-compose exec django")
+DOCKER_EXEC_VUE=$(shell command -v docker > /dev/null && echo "docker-compose exec vue")
+DOCKER_EXEC_WWW=$(shell command -v docker > /dev/null && echo "docker-compose exec www")
+
 .PHONY: tests
 
 init:
@@ -17,10 +21,26 @@ push:
 	cd vue && make push
 
 enter_django:
-	cd django && make enter
+	$(DOCKER_EXEC_DJANGO) ash
 
 enter_vue:
-	cd vue && make enter
+	$(DOCKER_EXEC_VUE) ash
+
+enter_www:
+	$(DOCKER_EXEC_WWW) ash
+
+start_vue:
+	$(DOCKER_EXEC_VUE) make
+
+start_django:
+	$(DOCKER_EXEC_DJANGO) make
+
+start_screenshotservice:
+	$(DOCKER_EXEC_VUE) make screenshotservice
+
+reload_www:
+	$(DOCKER_EXEC_WWW) sh -c 'openresty -t & openresty -s reload'
+
 
 deploy_prod:
 	cd vue && make build

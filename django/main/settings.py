@@ -4,6 +4,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
 USE_HTTPS = os.getenv('DJANGO_HTTPS') == 'True'
 
+
 if USE_HTTPS:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
@@ -14,6 +15,8 @@ EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST', 'maildev')
 ADMINS = os.environ.get('DJANGO_ADMINS', 'admin@local.lan').split(',')
 ADMINS = list(zip(ADMINS, ADMINS))
 MANAGERS = ADMINS
+ADMIN_NAME = os.environ.get('DJANGO_ADMIN_NAME', 'gemeindescan DEV')
+ADMIN_HEADER_COLOR = os.environ.get('DJANGO_ADMIN_HEADER_COLOR', '#543076')
 
 if os.environ.get('DJANGO_ALLOWED_HOSTS'):
     ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
@@ -68,6 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'main.utils.context_processor'
             ],
         },
     },
@@ -129,6 +133,8 @@ CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:8080",
     "http://localhost:8081",
+    "http://www:8000",
+    "http://www.local:8000",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CACHES = {
@@ -138,4 +144,5 @@ CACHES = {
     }
 }
 THUMBNAIL_BACKEND = 'main.utils.PermalinkThumbnailBackend'
+THUMBNAIL_PREFIX = 'cache/'
 SAVE_SCREENSHOT_ENABLED = True
