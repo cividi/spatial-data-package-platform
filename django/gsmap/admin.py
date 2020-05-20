@@ -10,7 +10,14 @@ from gsmap.models import Municipality, Snapshot, Workspace
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
-    pass
+    readonly_fields = ('bfs_number',)
+    fields = ('bfs_number', 'name', 'canton', 'perimeter')
+    list_display = (
+        'name',
+        'bfs_number',
+    )
+    list_filter = ('canton',)
+    search_fields = ('id', 'name', 'canton')
 
 
 class SnapshotAdmin(admin.OSMGeoAdmin):
@@ -92,7 +99,17 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         try:
             obj.save()
         except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
-            messages.error(request, "Couldn't create the screenshots, screenshot server problem.")
+            print(repr(e))
+            messages.error(
+                request,
+                "Couldn't create the screenshots, screenshot server problem. (ReadTimeout, ConnectionError)"
+            )
+        except Exception as e:
+            print(repr(e))
+            messages.error(
+                request,
+                "Couldn't create the screenshots, screenshot server problem. (Other Error)"
+            )
 
 
 class WorkspaceAdmin(admin.OSMGeoAdmin):

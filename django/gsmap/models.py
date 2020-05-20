@@ -70,6 +70,10 @@ class Municipality(models.Model):
     def fullname(self):
         return f'{self.name} ({self.canton})'
 
+    @property
+    def bfs_number(self):
+        return self.id
+
     def __str__(self):
         return self.fullname
 
