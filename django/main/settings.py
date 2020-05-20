@@ -4,6 +4,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
 USE_HTTPS = os.getenv('DJANGO_HTTPS') == 'True'
 
+
 if USE_HTTPS:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
@@ -143,4 +144,5 @@ CACHES = {
     }
 }
 THUMBNAIL_BACKEND = 'main.utils.PermalinkThumbnailBackend'
+THUMBNAIL_PREFIX = 'cache/'
 SAVE_SCREENSHOT_ENABLED = True

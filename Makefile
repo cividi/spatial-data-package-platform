@@ -1,5 +1,5 @@
 SHELL = /bin/bash
-DOCKER_EXEC_DJANGO=$(shell command -v docker > /dev/null && echo "docker-compose exec -T django")
+DOCKER_EXEC_DJANGO=$(shell command -v docker > /dev/null && echo "docker-compose exec django")
 DOCKER_EXEC_VUE=$(shell command -v docker > /dev/null && echo "docker-compose exec vue")
 DOCKER_EXEC_WWW=$(shell command -v docker > /dev/null && echo "docker-compose exec www")
 
