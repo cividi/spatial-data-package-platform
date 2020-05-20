@@ -199,20 +199,6 @@ class Snapshot(models.Model):
         )
         return screenshot_file
 
-    def save(self, *args, **kwargs):
-        def test_exists(pk):
-            if list(self.__class__.objects.filter(pk=pk)):
-                new_id = create_slug_hash_6()
-                test_exists(new_id)
-            else:
-                return pk
-
-        if self._state.adding:
-            self.id = create_slug_hash_6()
-            self.id = test_exists(self.id)
-
-        super().save(*args, **kwargs)
-
     def image_twitter(self):
         if bool(self.screenshot):
             return get_thumbnail(
@@ -235,53 +221,58 @@ class Snapshot(models.Model):
         else:
             return self.title
 
+    def save(self, *args, **kwargs):
+        def test_exists(pk):
+            if list(self.__class__.objects.filter(pk=pk)):
+                new_id = create_slug_hash_6()
+                test_exists(new_id)
+            else:
+                return pk
 
-@receiver(post_save, sender=Snapshot)
-def save_screenshot_handler(sender, **kwargs):
-    instance = kwargs.get('instance')
+        if self._state.adding:
+            self.id = create_slug_hash_6()
+            self.id = test_exists(self.id)
 
-    def save_screenshot():
-        post_save.disconnect(save_screenshot_handler, sender=Snapshot)
+        if self.data:
+            storage = OverwriteStorage()
+            if self.permission is int(SnapshotPermission.PUBLIC):
+                self.create_meta(storage)
+            else:
+                storage.delete(f'snapshot-meta/{self.id}.html')
+
+        super().save(*args, **kwargs)
+
+        if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
+            self.create_screenshot()
+
+        super().save(*args, **kwargs)
+
+    def create_screenshot(self):
         # only create snapshot if data changed
-        if instance.data_changed([
+        if self.data_changed([
                 'data', 'screenshot_generated', 'thumbnail_generated'
-        ]) or not bool(instance.thumbnail_generated):
-            if not 'resources' in instance.data:
-                return
-            try:
-                # disconnect to break save recursive loop
-                post_save.disconnect(save_screenshot_handler, sender=Snapshot)
-                screenshot_file = instance.create_screenshot_file()
-                thumbnail_file = instance.create_screenshot_file(is_thumbnail=True)
-                instance.screenshot_generated = screenshot_file
-                instance.thumbnail_generated = thumbnail_file
-                instance.save()
-            finally:
-                # always reconnect signal
-                post_save.connect(save_screenshot_handler, sender=Snapshot)
+        ]) or not bool(self.thumbnail_generated):
+            print('resources', 'resources' in self.data)
+            if not 'resources' in self.data:
+                raise ValueError('no resources key in data')
 
-    def save_meta(storage):
+            screenshot_file = self.create_screenshot_file()
+            thumbnail_file = self.create_screenshot_file(is_thumbnail=True)
+            self.screenshot_generated = screenshot_file
+            self.thumbnail_generated = thumbnail_file
+
+    def create_meta(self, storage):
         domain = Site.objects.get_current().domain
         proto = 'https' if settings.USE_HTTPS else 'http'
         meta = f'''
-<meta property="og:title" content="{instance.title_data}">
-<meta property="og:description" content="{instance.description_data}">
+<meta property="og:title" content="{self.title_data}">
+<meta property="og:description" content="{self.description_data}">
 <meta property="og:type" content="website">
-<meta property="og:url" content="{proto}://{domain}{instance.get_absolute_url()}">
-<meta property="og:image" content="{proto}://{domain}/{instance.image_facebook()}">
-<meta name="twitter:image" content="{proto}://{domain}/{instance.image_twitter()}">
+<meta property="og:url" content="{proto}://{domain}{self.get_absolute_url()}">
+<meta property="og:image" content="{proto}://{domain}/{self.image_facebook()}">
+<meta name="twitter:image" content="{proto}://{domain}/{self.image_twitter()}">
 '''
-        storage.save(f'snapshot-meta/{instance.id}.html', ContentFile(meta))
-
-    if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
-        save_screenshot()
-
-    if instance.data:
-        storage = OverwriteStorage()
-        if instance.permission is int(SnapshotPermission.PUBLIC):
-            save_meta(storage)
-        else:
-            storage.delete(f'snapshot-meta/{instance.id}.html')
+        storage.save(f'snapshot-meta/{self.id}.html', ContentFile(meta))
 
 
 class Workspace(models.Model):
