@@ -78,8 +78,8 @@ app.get('*', async (req, res) => {
     waitLoad: true,
     waitNetworkIdle: true
   });
-  await page.waitForSelector('#mapinfo .v-list-item__title');
-  // await page.waitFor(1000); // extra 1sec wait, for map tiles
+  await page.waitForSelector('#map.loaded');
+  await page.waitFor(500); // extra 500ms wait, for map tiles
   const screenshotBuffer = await page.screenshot({ encoding: 'binary' });
   // await browser.close();
   await browserPool.release(page);
