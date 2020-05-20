@@ -14,6 +14,8 @@ EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST', 'maildev')
 ADMINS = os.environ.get('DJANGO_ADMINS', 'admin@local.lan').split(',')
 ADMINS = list(zip(ADMINS, ADMINS))
 MANAGERS = ADMINS
+ADMIN_NAME = os.environ.get('DJANGO_ADMIN_NAME', 'gemeindescan DEV')
+ADMIN_HEADER_COLOR = os.environ.get('DJANGO_ADMIN_HEADER_COLOR', '#543076')
 
 if os.environ.get('DJANGO_ALLOWED_HOSTS'):
     ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
@@ -68,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'main.utils.context_processor'
             ],
         },
     },
