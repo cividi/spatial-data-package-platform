@@ -105,16 +105,14 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         try:
             obj.save()
         except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
-            print(repr(e))
             messages.error(
                 request,
-                "Couldn't create the screenshots, screenshot server problem. (ReadTimeout, ConnectionError)"
+                f"Couldn't create the screenshots, screenshot server problem. (ReadTimeout, ConnectionError) {repr(e)}"
             )
         except Exception as e:
-            print(repr(e))
             messages.error(
                 request,
-                "Couldn't create the screenshots, screenshot server problem. (Other Error)"
+                f"Couldn't create the screenshots, screenshot server problem. (Other Error) {repr(e)}"
             )
 
 
