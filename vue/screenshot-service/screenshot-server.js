@@ -18,7 +18,10 @@ const browserFactory = {
         devtools: false,
         args: [
           '--no-sandbox',
-          '--disable-dev-shm-usage'
+          '--disable-dev-shm-usage',
+          '--disable-setuid-sandbox',
+          '--disable-accelerated-2d-canvas',
+          '--disable-gpu'
           // '--remote-debugging-port=9222',
           // '--remote-debugging-address=0.0.0.0'
         ]
@@ -71,9 +74,12 @@ app.get('*', async (req, res) => {
 
   const page = await browserPool.acquire();
   page.setViewport(pageOptions);
-  await page.goto(screenshotUrl);
+  await page.goto(screenshotUrl, {
+    waitLoad: true,
+    waitNetworkIdle: true
+  });
   await page.waitForSelector('#mapinfo .v-list-item__title');
-  await page.waitFor(1000); // extra 1sec wait, for map tiles
+  // await page.waitFor(1000); // extra 1sec wait, for map tiles
   const screenshotBuffer = await page.screenshot({ encoding: 'binary' });
   // await browser.close();
   await browserPool.release(page);
