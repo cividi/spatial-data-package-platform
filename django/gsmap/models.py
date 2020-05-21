@@ -14,6 +14,7 @@ from django.utils.html import format_html
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
+from django.utils.html import escape
 from sortedm2m.fields import SortedManyToManyField
 from sorl.thumbnail import ImageField, get_thumbnail
 from gsuser.models import User
@@ -265,12 +266,12 @@ class Snapshot(models.Model):
         domain = Site.objects.get_current().domain
         proto = 'https' if settings.USE_HTTPS else 'http'
         meta = f'''
-<meta property="og:title" content="{self.title_data}">
-<meta property="og:description" content="{self.description_data}">
+<meta property="og:title" content="{ escape(self.title_data) }">
+<meta property="og:description" content="{ escape(self.description_data) }">
 <meta property="og:type" content="website">
-<meta property="og:url" content="{proto}://{domain}{self.get_absolute_url()}">
-<meta property="og:image" content="{proto}://{domain}/{self.image_facebook()}">
-<meta name="twitter:image" content="{proto}://{domain}/{self.image_twitter()}">
+<meta property="og:url" content="{ proto }://{ domain }{ self.get_absolute_url() }">
+<meta property="og:image" content="{ proto }://{ domain }/{ self.image_facebook() }">
+<meta name="twitter:image" content="{ proto }://{ domain }/{ self.image_twitter() }">
 '''
         storage.save(f'snapshot-meta/{self.id}.html', ContentFile(meta))
 
