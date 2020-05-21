@@ -202,7 +202,7 @@ class Snapshot(models.Model):
     def image_twitter(self):
         if bool(self.screenshot):
             return get_thumbnail(
-                self.screenshot, '1200x630',
+                self.screenshot, '1200x600',
                 crop='bottom', format='PNG'
             )
         return ''
