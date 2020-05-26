@@ -61,6 +61,7 @@ body,
 #map {
   position: relative;
   width: 100%;
+  overflow: hidden;
 }
 
 #map .mapbox-improve-map {
