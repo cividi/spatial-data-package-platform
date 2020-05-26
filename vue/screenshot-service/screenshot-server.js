@@ -78,7 +78,7 @@ app.get('*', async (req, res) => {
     waitLoad: true,
     waitNetworkIdle: true
   });
-  await page.waitForSelector('#map.loaded');
+  await page.waitForSelector('#mapstatus.loaded');
   await page.waitFor(500); // extra 500ms wait, for map tiles
   const screenshotBuffer = await page.screenshot({ encoding: 'binary' });
   // await browser.close();
