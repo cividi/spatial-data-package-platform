@@ -11,7 +11,8 @@
       </v-slide-x-reverse-transition>
 
       <v-container fluid class="pa-0" ref="mapbox">
-        <div id="map" :class="{ loaded: isMapLoaded}"></div>
+        <div id="map"></div>
+        <span id="mapstatus" :class="{ loaded: isMapLoaded, waiting: !isMapLoaded }"></span>
       </v-container>
 
       <v-btn
@@ -60,6 +61,7 @@ body,
 #map {
   position: relative;
   width: 100%;
+  overflow: hidden;
 }
 
 #map .mapbox-improve-map {

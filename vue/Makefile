@@ -29,11 +29,9 @@ tests:
 
 build:
 	$(DOCKER_EXEC) yarn build --mode production
-	$(DOCKER_EXEC) rsync -av --delete dist /var/services/django/static/
 
 build-cron:
 	$(DOCKER_EXEC_CRON) yarn build --mode production
-	$(DOCKER_EXEC_CRON) rsync -av --delete dist /var/services/django/static/
 
 build-dev-watch:
 	$(DOCKER_EXEC) yarn build --mode development --watch
