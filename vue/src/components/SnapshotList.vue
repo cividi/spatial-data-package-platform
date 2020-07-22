@@ -105,22 +105,18 @@ export default {
   watch: {
     snapshots(newsnaps) {
       const topicgroups = {};
-      console.log('groupedsnapshots function');
-      console.log(newsnaps);
       newsnaps.forEach((snapshot) => {
         if (typeof (topicgroups[snapshot.topic]) === 'undefined') {
           topicgroups[snapshot.topic] = [];
         }
         topicgroups[snapshot.topic].push(snapshot);
       });
-      console.log(topicgroups);
 
       Object.keys(topicgroups).forEach((group) => {
         topicgroups[group].forEach((snapshot) => {
           this.groupedsnapshots.push(snapshot);
         });
       });
-      console.log(this.groupedsnapshots);
     }
   }
 };
