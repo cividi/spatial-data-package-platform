@@ -87,4 +87,14 @@ a {
   padding-bottom: 6em;
 }
 
+.v-btn.nobg::before{
+  content: none;
+}
+.v-btn.nobg .v-icon{
+  transition: color 0.3s;
+}
+.v-btn.nobg:hover .v-icon{
+  color: #543076 !important;
+}
+
 /* SNAPSHOTS END */
