@@ -13,7 +13,9 @@
   <v-list class="snapshotlist"
     three-line>
       <div v-for="(snapshot, index) in groupedsnapshots" :key="snapshot.id">
-       <v-subheader v-if="showTopic(index)" class="px-0">{{ snapshot.topic }}</v-subheader>
+       <v-subheader
+        v-if="showTopic(index) && withTopic"
+        class="px-0">{{ snapshot.topic }}</v-subheader>
       <v-list-item class="px-0 mb-4" dense
 
         :to="createRouteLink(snapshot.pk)">
@@ -83,7 +85,11 @@ export default {
       type: String,
       default: ''
     },
-    snapshots: Array
+    snapshots: Array,
+    withTopic: {
+      type: Boolean,
+      default: true
+    }
   },
 
   methods: {

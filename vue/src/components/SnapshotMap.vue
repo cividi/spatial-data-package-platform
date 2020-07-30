@@ -62,6 +62,7 @@ body,
   position: relative;
   width: 100%;
   overflow: hidden;
+  background: #dedede;
 }
 
 #map .mapbox-improve-map {
