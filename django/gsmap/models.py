@@ -15,6 +15,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.utils.html import escape
+from django.db import transaction, DatabaseError
 from sortedm2m.fields import SortedManyToManyField
 from sorl.thumbnail import ImageField, get_thumbnail
 from gsuser.models import User
@@ -241,12 +242,18 @@ class Snapshot(models.Model):
             else:
                 storage.delete(f'snapshot-meta/{self.id}.html')
 
-        super().save(*args, **kwargs)
+        try:
+            super().save(*args, **kwargs)
+        except DatabaseError:
+            transaction.rollback()
 
         if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
             self.create_screenshot()
 
-        super().save(*args, **kwargs)
+        try:
+            super().save(*args, **kwargs)
+        except DatabaseError:
+            transaction.rollback()
 
     def create_screenshot(self):
         # only create snapshot if data changed
