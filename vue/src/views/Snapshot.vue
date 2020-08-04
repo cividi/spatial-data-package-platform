@@ -66,7 +66,7 @@
 
         <snapshot-list
           v-if="snapshotsExamples"
-          :snapshots="snapshotsExamples"
+          :snapshots="snapshotsExamples" :withTopic="false"
         />
 
         <div class="useractions">

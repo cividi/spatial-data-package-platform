@@ -32,6 +32,9 @@ migrate:
 	$(DOCKER_EXEC) python3 manage.py migrate
 	make collectstatic
 
+createcachetable:
+	$(DOCKER_EXEC) python3 manage.py createcachetable
+
 tests:
 	$(DOCKER_EXEC) pytest --create-db
 
@@ -50,5 +53,6 @@ import-gemeinden-json:
 init:
 	make symlinks
 	make migrate
+	make createcachetable
 	make adminuser
 	make import-gemeinden-json

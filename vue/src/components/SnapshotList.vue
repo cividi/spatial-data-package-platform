@@ -12,11 +12,14 @@
 <template>
   <v-list class="snapshotlist"
     three-line>
+      <div v-for="(snapshot, index) in groupedsnapshots" :key="snapshot.id">
+       <v-subheader
+        v-if="showTopic(index) && withTopic"
+        class="px-0">{{ snapshot.topic }}</v-subheader>
+      <v-list-item class="px-0 mb-4" dense
 
-      <v-list-item class="px-2 mb-4" dense
-        v-for="snapshot in snapshots" :key="snapshot.id"
         :to="createRouteLink(snapshot.pk)">
-          <v-list-item-avatar tile size="64" class="my-2">
+          <v-list-item-avatar tile size="64" class="my-0">
             <v-img
               v-if="snapshot.thumbnail"
               :src="djangobaseurl + '/media/' + snapshot.thumbnail">
@@ -24,10 +27,10 @@
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title style="font-weight:700">{{ snapshot.title }}</v-list-item-title>
-            <v-list-item-subtitle>{{ snapshot.topic }}</v-list-item-subtitle>
           </v-list-item-content>
-          <v-list-item-action style="margin:0 0 4px 0; align-self: flex-end;">
+          <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
             <v-btn icon
+              class="nobg"
               v-if="snapshot.screenshot"
               v-on:click.stop="function(){}"
               :href="djangobaseurl + '/downloads/' + snapshot.screenshot">
@@ -35,6 +38,7 @@
             </v-btn>
           </v-list-item-action>
       </v-list-item>
+      </div>
   </v-list>
 </template>
 
@@ -42,15 +46,26 @@
 .snapshotlist .v-list-item {
   background-color: #f8f8f8;
   border-radius: 4px;
+  overflow: hidden;
 }
 .snapshotlist .v-list-item,
 .snapshotlist .v-list-item__content {
-  min-height: 80px;
+  min-height: 64px;
 }
+
 .snapshotlist .v-list-item--active::before {
-  background-color: transparent;
+  background-color: #543076;
   border: 1px solid #000;
   border-radius: 4px;
+}
+
+.v-list-item__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  white-space: initial;
+  text-overflow: ellipsis;
 }
 </style>
 
@@ -60,7 +75,8 @@ export default {
   name: 'SnapshotList',
   data() {
     return {
-      djangobaseurl: process.env.VUE_APP_DJANGOBASEURL
+      djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
+      groupedsnapshots: []
     };
   },
 
@@ -69,7 +85,11 @@ export default {
       type: String,
       default: ''
     },
-    snapshots: Array
+    snapshots: Array,
+    withTopic: {
+      type: Boolean,
+      default: true
+    }
   },
 
   methods: {
@@ -78,6 +98,32 @@ export default {
         return `/${this.$i18n.locale}/${this.workspaceHash}/${hash}/`;
       }
       return `/${this.$i18n.locale}/${hash}/`;
+    },
+    showTopic(curindex) {
+      if (curindex > 0) {
+        if (this.groupedsnapshots[curindex - 1].topic !== this.groupedsnapshots[curindex].topic) {
+          return true;
+        }
+        return false;
+      }
+      return true;
+    }
+  },
+  watch: {
+    snapshots(newsnaps) {
+      const topicgroups = {};
+      newsnaps.forEach((snapshot) => {
+        if (typeof (topicgroups[snapshot.topic]) === 'undefined') {
+          topicgroups[snapshot.topic] = [];
+        }
+        topicgroups[snapshot.topic].push(snapshot);
+      });
+
+      Object.keys(topicgroups).forEach((group) => {
+        topicgroups[group].forEach((snapshot) => {
+          this.groupedsnapshots.push(snapshot);
+        });
+      });
     }
   }
 };
