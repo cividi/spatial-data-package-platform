@@ -62,7 +62,26 @@ body,
   position: relative;
   width: 100%;
   overflow: hidden;
+  background: #dedede
+    linear-gradient(90deg, #dedede 0%, #f2f2f2 17%, #dedede 23%) repeat-y;
+  background-size: 125% 10%;
+  animation: BGani 2s ease infinite;
+}
+
+@keyframes BGani {
+  0% {
+    background-position: 110% 0%;
+  }
+  66% {
+    background-position: -410% 0%;
+  }
+  100% {
+    background-position: -410% 0%;
+  }
+}
+#map.leaflet-container {
   background: #dedede;
+  animation: none;
 }
 
 #map .mapbox-improve-map {
