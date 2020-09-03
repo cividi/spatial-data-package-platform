@@ -67,6 +67,9 @@
   white-space: initial;
   text-overflow: ellipsis;
 }
+.v-image__image {
+  background-color: rgba(0, 0, 0, 0.1);
+}
 </style>
 
 

@@ -149,7 +149,9 @@ export default {
 
   async mounted() {
     if (this.hash) {
-      await this.getSnapshot(this.hash);
+      await this.getSnapshotInfo(this.hash);
+
+      await this.getSnapshotData(this.hash);
       if (this.geojson) {
         this.$refs.map.setupMeta();
         this.$refs.map.setupMapbox();
@@ -192,13 +194,12 @@ export default {
   },
 
   methods: {
-    async getSnapshot(hash) {
+    async getSnapshotInfo(hash) {
       const result = await this.$apollo.query({
         query: gql`query getsnapshot($hash: ID!) {
           snapshot(id: $hash) {
             id
             pk
-            data
             predecessor {
               id
               pk
@@ -238,7 +239,6 @@ export default {
       });
       if (result) {
         if (result.data.hasOwnProperty('snapshot') && result.data.snapshot) {
-          this.geojson = result.data.snapshot.data;
           this.municipalityName = result.data.snapshot.municipality.fullname;
           this.snapshotsMunicipality = result.data.snapshot.municipality.snapshots;
           const snapshotsIdExamplesExclude = this.snapshotsMunicipality.map(
@@ -252,6 +252,30 @@ export default {
           this.predecessor = (result.data.snapshot.predecessor);
           this.$store.commit('setBfsnumber', result.data.snapshot.municipality.bfsNumber);
           this.$store.commit('setBfsname', result.data.snapshot.municipality.fullname);
+        } else {
+          this.$router.push({ name: 'home' });
+        }
+      }
+    },
+
+    async getSnapshotData(hash) {
+      const result = await this.$apollo.query({
+        query: gql`query getsnapshot($hash: ID!) {
+          snapshot(id: $hash) {
+            id
+            pk
+            data
+          }
+        }`,
+        variables: {
+          hash: btoa(`SnapshotNode:${hash}`)
+        }
+      }).catch((error) => {
+        this.errorsettings = { type: 'netwokerror', open: true, error };
+      });
+      if (result) {
+        if (result.data.hasOwnProperty('snapshot') && result.data.snapshot) {
+          this.geojson = result.data.snapshot.data;
         } else {
           this.$router.push({ name: 'home' });
         }

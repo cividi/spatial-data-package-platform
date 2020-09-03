@@ -108,7 +108,8 @@ export default {
   },
 
   async mounted() {
-    await this.getWorkspace();
+    await this.getWorkspaceInfo();
+    await this.getWorkspaceData();
     if (this.geojson) {
       this.$refs.map.setupMeta();
       this.$refs.map.setupMapbox();
@@ -135,31 +136,17 @@ export default {
   },
 
   methods: {
-    async getWorkspace() {
-      const result = await this.$apollo.query({
-        query: gql`query getworkspace($wshash: ID!, $hash: ID!) {
-          workspace(id: $wshash) {
-            id
-            pk
-            title
-            description
-            snapshots {
+    async getWorkspaceInfo() {
+      let workspaceInfo = this.$store.getters.WorkspaceInfoByHash(this.wshash);
+
+      if (!workspaceInfo) {
+        const result = await this.$apollo.query({
+          query: gql`query getworkspace($wshash: ID!, $hash: ID!) {
+            workspace(id: $wshash) {
               id
               pk
               title
-              topic
-              screenshot
-              thumbnail
-            }
-          }
-
-          snapshot(id: $hash) {
-            id
-            pk
-            data
-            municipality {
-              bfsNumber
-              fullname
+              description
               snapshots {
                 id
                 pk
@@ -169,6 +156,65 @@ export default {
                 thumbnail
               }
             }
+
+            snapshot(id: $hash) {
+              id
+              pk
+              municipality {
+                bfsNumber
+                fullname
+                snapshots {
+                  id
+                  pk
+                  title
+                  topic
+                  screenshot
+                  thumbnail
+                }
+              }
+            }
+          }`,
+          variables: {
+            wshash: btoa(`WorkspaceNode:${this.wshash}`),
+            hash: btoa(`SnapshotNode:${this.hash}`)
+          }
+        }).catch((error) => {
+          this.errorsettings = { type: 'netwokerror', open: true, error };
+        });
+        if (result) {
+          if (result.data.hasOwnProperty('workspace') && result.data.workspace) {
+            workspaceInfo = result.data;
+            this.$store.commit('addWorkspaceInfo', { hash: this.wshash, value: workspaceInfo });
+          } else {
+            this.$router.push({ name: 'home' });
+          }
+        }
+      }
+      const workspace = workspaceInfo.workspace;
+      const snapshot = workspaceInfo.snapshot;
+      if (!workspace.snapshots.map(s => s.pk).includes(snapshot.pk)) {
+        this.$router.push({ name: 'home' });
+      }
+      this.municipalityName = snapshot.municipality.fullname;
+      this.snapshotsWorkspace = workspace.snapshots;
+      this.title = workspace.title;
+      this.description = workspace.description;
+      this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);
+      this.$store.commit('setBfsname', snapshot.municipality.fullname);
+    },
+
+    async getWorkspaceData() {
+      const result = await this.$apollo.query({
+        query: gql`query getworkspace($wshash: ID!, $hash: ID!) {
+          workspace(id: $wshash) {
+            id
+            pk
+            title
+          }
+          snapshot(id: $hash) {
+            id
+            pk
+            data
           }
         }`,
         variables: {
@@ -180,18 +226,7 @@ export default {
       });
       if (result) {
         if (result.data.hasOwnProperty('workspace') && result.data.workspace) {
-          const workspace = result.data.workspace;
-          const snapshot = result.data.snapshot;
-          if (!workspace.snapshots.map(s => s.pk).includes(snapshot.pk)) {
-            this.$router.push({ name: 'home' });
-          }
-          this.geojson = snapshot.data;
-          this.municipalityName = snapshot.municipality.fullname;
-          this.snapshotsWorkspace = workspace.snapshots;
-          this.title = workspace.title;
-          this.description = workspace.description;
-          this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);
-          this.$store.commit('setBfsname', snapshot.municipality.fullname);
+          this.geojson = result.data.snapshot.data;
         } else {
           this.$router.push({ name: 'home' });
         }

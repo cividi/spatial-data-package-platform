@@ -8,7 +8,8 @@ export default new Vuex.Store({
     notIframe: window.self === window.top,
     bfsnumber: '',
     bfsname: '',
-    snapshotnav: false
+    snapshotnav: false,
+    workspacesInfo: {}
   },
   mutations: {
     setBfsnumber(state, nr) {
@@ -21,6 +22,18 @@ export default new Vuex.Store({
 
     setSnapshotnav(state, value) {
       state.snapshotnav = value;
+    },
+
+    addWorkspaceInfo(state, hashNvalue) {
+      state.workspacesInfo[hashNvalue.hash] = hashNvalue.value;
+    }
+  },
+  getters: {
+    WorkspaceInfoByHash: state => (hash) => {
+      if (state.workspacesInfo.hasOwnProperty(hash)) {
+        return state.workspacesInfo[hash];
+      }
+      return false;
     }
   },
   actions: {
