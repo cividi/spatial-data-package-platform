@@ -66,6 +66,14 @@ Database files and static generated files are stored in `var` folder.
 make up
 ```
 
+The front- and backend should now be accessible via
+
+```
+Frontend: http://www:8000
+Backend:  http://www:8000/gmanage
+GraphQLi: http://www:8000/graphql
+```
+
 **start services**
 
 ```bash
@@ -103,11 +111,11 @@ After they started you need to click on `reopen in container` (first time start 
 
 #### vue vscode
 
-Type `make` in the vscode terminal, that creates the node dev server on you maschine on the url [http://localhost:8080](http://localhost:8080)
+Type `make` in the vscode terminal, that creates the node dev server on your maschine which is accessible via [http://www:8000](http://www:8000). Make sure to add `www` and `www.local` to your `/etc/hosts` file to point to `127.0.0.1`.
 
 #### django vscode
 
-Type `make` in the vscode terminal, that creates the django dev server on you maschine on the url [http://localhost:8081](http://localhost:8081)
+Type `make` in the vscode terminal, that creates the django dev server on your maschine on the url [http://www:8000/gmanage](http://www:8000/gmanage).
 
 ## push to docker hub
 
