@@ -2,11 +2,17 @@
 
 A web application for publishing and collaborating around urban planning projects. This project is part of the  [Cividi](https://cividi.ch) solution for holistic urban assessments, used as a tool for setting planning priorities.
 
-For more information, please visit https://gemeindescan.ch or read our [whitepaper](https://bitbucket.org/cividi/whitepaper).
+For more information, please visit [Gemeindescan.ch](https://gemeindescan.ch) and read our [Whitepaper](https://bitbucket.org/cividi/whitepaper).
 
-# Releases
+# Additional documentation
 
-*See [RELEASE.md](/RELEASE.md)*
+- [Release notes](./RELEASE.md)
+- [Architecture](./docs/architecture.md)
+- [Troubleshooting](./docs/troubleshooting.md)
+- [Test guide](./docs/testing.md)
+- [Django](./docs/django.md)
+- [GraphQL](./docs/graphql.md)
+- [Further links](./docs/links.md)
 
 # Developer guide
 
@@ -20,7 +26,7 @@ For more information, please visit https://gemeindescan.ch or read our [whitepap
 - Wagtail
 - Docker
 
-For a tour of the app and a testing protocol see [`docs/testing.md`](/docs/testing.md).
+For a tour of the app and a testing protocol see [`docs/testing.md`](./docs/testing.md).
 
 ## setup project
 
@@ -140,11 +146,3 @@ Type `make` in the vscode terminal, that creates the django dev server on your m
 ## deploy
 
 Type `make deploy_prod` in the project root. The file `env.hosts.prod` needs to have the right settings.
-
-## additional docs
-
-- [architecture](/docs/architecture.md)
-- [django](/docs/django.md)
-- [links](/docs/links.md)
-- [grahpql](/docs/graphql.md)
-- [troubleshooting](/docs/troubleshooting.md)

@@ -1,8 +1,10 @@
-# graphql
+# GraphQL
 
-go to '/graphql/' which opens the GraphiQL browser
+_Notes on our usage of the GraphQL-based query API._
 
 ## sample queries
+
+go to '/graphql/' which opens the GraphiQL browser
 
 ### gemeinden
 
@@ -45,5 +47,3 @@ The `MunicipalityNode` has the fields
   }
 }
 ```
-
-

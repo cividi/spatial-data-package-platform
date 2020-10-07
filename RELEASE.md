@@ -2,6 +2,16 @@
 
 ## Releases
 
+### 0.6.1
+
+### 0.6.0
+
+### 0.5.1
+
+### 0.5.0
+
+### 0.4.0
+
 ### 0.3.1
 [Released: *2020-04-09*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.3.1)
 [Sprint: 4 "Out of the Box"](https://bitbucket.org/cividi/gemeindescan-webui/issues?milestone=SP+4%3A+Out+of+the+box)
