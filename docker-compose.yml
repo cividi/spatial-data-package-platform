@@ -32,7 +32,7 @@ services:
       - VUE_APP_MAPBOX_DEFAULT_STYLES=mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz
     working_dir: /opt/vue
     volumes:
-      - ./vue:/opt/vue
+      - ./vue:/opt/vue:Z
       - var-gemeindescan-webui:/var/services/
       - vscode-remote-vue:/root/.vscode-server
     ports:
@@ -60,7 +60,7 @@ services:
       - DJANGO_ADMIN_HEADER_COLOR=#ff0000
     working_dir: /opt/app
     volumes:
-      - ./django:/opt/app
+      - ./django:/opt/app:Z
       - var-gemeindescan-webui:/var/services
       - vscode-remote-django:/root/.vscode-server
     ports:
@@ -72,7 +72,7 @@ services:
     image: openresty/openresty:1.15.8.3-alpine
     hostname: www
     volumes:
-      - ./etc/nginx:/etc/nginx/conf.d
+      - ./etc/nginx:/etc/nginx/conf.d:Z
       - var-gemeindescan-webui:/var/services
     ports:
       - 8000:8000
