@@ -1,23 +1,26 @@
+import json
+import os
+import requests
 import secrets
 import string
 from enum import IntFlag
-import requests
-import os
-from django.utils import timezone
+
+from sortedm2m.fields import SortedManyToManyField
+from sorl.thumbnail import ImageField, get_thumbnail
+
+from django.db import transaction, DatabaseError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.gis.db import models
 from django.contrib.postgres import fields as pg_fields
 from django.contrib.sites.models import Site
-from django.utils.html import format_html
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
-from django.utils.html import escape
-from django.db import transaction, DatabaseError
-from sortedm2m.fields import SortedManyToManyField
-from sorl.thumbnail import ImageField, get_thumbnail
+from django.utils import timezone
+from django.utils.html import escape, format_html
+
 from gsuser.models import User
 
 
@@ -117,7 +120,8 @@ class Snapshot(models.Model):
 
     title = models.CharField(max_length=150, default='')
     topic = models.CharField(max_length=100, default='')
-    data = pg_fields.JSONField(default=dict)
+    data = pg_fields.JSONField(default=dict, blank=True)
+    data_file = models.FileField(upload_to='data-files', null=True, blank=True)
     screenshot_generated = ImageField(upload_to='snapshot-screenshots', null=True, blank=True)
     thumbnail_generated = ImageField(upload_to='snapshot-thumbnails', null=True, blank=True)
     screenshot_manual = ImageField(upload_to='snapshot-screenshots', null=True, blank=True)
@@ -162,16 +166,24 @@ class Snapshot(models.Model):
         return self.thumbnail_manual or self.thumbnail_generated
 
     @property
+    def data_file_dict(self):
+        self.data_file.open()
+        data = self.data_file.read()
+        return data
+
+    @property
     def title_data(self):
         try:
-            return self.data['views'][0]['spec']['title']
+            data = json.loads(self.data_file_dict)
+            return data['views'][0]['spec']['title']
         except KeyError:
             return self.title
 
     @property
     def description_data(self):
         try:
-            return self.data['views'][0]['spec']['description']
+            data = json.loads(self.data_file_dict)
+            return data['views'][0]['spec']['description']
         except KeyError:
             return ''
 
@@ -235,7 +247,7 @@ class Snapshot(models.Model):
             self.id = create_slug_hash_6()
             self.id = test_exists(self.id)
 
-        if self.data:
+        if bool(self.data_file):
             storage = OverwriteStorage()
             if self.permission is int(SnapshotPermission.PUBLIC):
                 self.create_meta(storage)
@@ -258,10 +270,11 @@ class Snapshot(models.Model):
     def create_screenshot(self):
         # only create snapshot if data changed
         if self.data_changed([
-                'data', 'screenshot_generated', 'thumbnail_generated'
+                'data_file', 'screenshot_generated', 'thumbnail_generated'
         ]) or not bool(self.thumbnail_generated):
-            print('resources', 'resources' in self.data)
-            if not 'resources' in self.data:
+            data = json.loads(self.data_file_dict)
+            print('resources', 'resources' in data)
+            if not 'resources' in data:
                 raise ValueError('no resources key in data')
 
             screenshot_file = self.create_screenshot_file()
