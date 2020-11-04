@@ -52,7 +52,7 @@ class SnapshotNode(DjangoObjectType):
         ]
         interfaces = [graphene.relay.Node]
 
-    data = generic.GenericScalar(source='data')
+    data = generic.GenericScalar(source='data_file_json')
     pk = graphene.String(source='id')
     thumbnail = graphene.String()
     screenshot = graphene.String()

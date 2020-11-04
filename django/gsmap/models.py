@@ -172,9 +172,13 @@ class Snapshot(models.Model):
         return data
 
     @property
+    def data_file_json(self):
+        return json.loads(self.data_file_dict)
+
+    @property
     def title_data(self):
         try:
-            data = json.loads(self.data_file_dict)
+            data = self.data_file_json
             return data['views'][0]['spec']['title']
         except KeyError:
             return self.title
@@ -182,7 +186,7 @@ class Snapshot(models.Model):
     @property
     def description_data(self):
         try:
-            data = json.loads(self.data_file_dict)
+            data = self.data_file_json
             return data['views'][0]['spec']['description']
         except KeyError:
             return ''
@@ -272,7 +276,7 @@ class Snapshot(models.Model):
         if self.data_changed([
                 'data_file', 'screenshot_generated', 'thumbnail_generated'
         ]) or not bool(self.thumbnail_generated):
-            data = json.loads(self.data_file_dict)
+            data = self.data_file_json
             print('resources', 'resources' in data)
             if not 'resources' in data:
                 raise ValueError('no resources key in data')
