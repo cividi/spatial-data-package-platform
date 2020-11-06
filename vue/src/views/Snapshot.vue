@@ -8,7 +8,7 @@
     "hasSnapshot.p2": "Erkunden Sie unsere weiteren Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
     "noSnapshot.title": "Datenverfügbarkeit",
     "noSnapshot.municipalityText": "diese Gemeinde",
-    "noSnapshot.p1": "Für {municipalityText} stehen zur Zeit noch keine Daten zur Verfügung.",
+    "noSnapshot.p1": "Für {municipalityText} sind zur Zeit noch keine Analysen freigeschaltet.",
     "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
     "listtitle": "Fallbeispiele",
     "listtitleMore": "Weitere Fallbeispiele"
@@ -47,18 +47,31 @@
       <div id="snapshotnavContent" class="ma-4">
         <search :dense="true" :term="municipalityName"/>
 
-        <div class="nodata pb-8">
-          <div v-if="!hash" class="smaller hint">
-            <h4>{{ $t('noSnapshot.title') }}</h4>
+        <div v-if="!hash" class="nodata pb-8">
+          <div class="smaller hint">
+            <!-- <h4>{{ $t('noSnapshot.title') }}</h4> -->
             <p>{{ $t('noSnapshot.p1', { municipalityText: municipalityText }) }}</p>
             <p>{{ $t('noSnapshot.p2') }}</p>
           </div>
-
-          <snapshot-list
-            v-if="snapshotsMunicipality"
-            :snapshots="snapshotsMunicipality"
-          />
         </div>
+
+        <div class="useractions">
+          <v-btn small block outlined color="primary">
+            <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
+              {{ $t('calltoactionText', { municipalityText: municipalityText }) }}
+            </router-link>
+          </v-btn>
+        </div>
+
+        <snapshot-list
+            v-if="hash"
+            :snapshots="snapshotsMunicipality" :withTopic="false"
+          />
+
+        <snapshot-list
+          v-if="snapshotsStore"
+          :snapshots="snapshotsStore" :withTopic="true"
+        />
 
         <v-subheader
           class="px-0 snapshot-list-title">{{ listtitleText }}
@@ -69,13 +82,6 @@
           :snapshots="snapshotsExamples" :withTopic="false"
         />
 
-        <div class="useractions">
-          <v-btn small block outlined color="primary">
-            <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
-              {{ $t('calltoactionText', { municipalityText: municipalityText }) }}
-            </router-link>
-          </v-btn>
-        </div>
       </div>
 
       <v-toolbar
@@ -134,9 +140,11 @@ export default {
     return {
       hash: this.$route.params.hash,
       bfsNumber: this.$route.params.bfsNumber,
+      snapshotStoreUrl: process.env.VUE_APP_SNAPSHOTSTOREURL,
       geojson: null,
       geobounds: [],
       municipalityName: '',
+      snapshotsStore: [],
       snapshotsExamples: [],
       snapshotsIdExamplesExclude: [],
       snapshotsMunicipality: [],
@@ -148,6 +156,16 @@ export default {
   },
 
   async mounted() {
+    fetch(`${this.snapshotStoreUrl}/pipelines.${this.$i18n.locale}.json`)
+      .then(response => response.json())
+      .then((data) => {
+        data.forEach((el, i) => {
+          data[i].thumbnail = `${this.snapshotStoreUrl}/${el.thumbnail}`;
+        });
+
+        this.snapshotsStore = data;
+      });
+
     if (this.hash) {
       await this.getSnapshotInfo(this.hash);
 
