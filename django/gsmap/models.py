@@ -120,7 +120,6 @@ class Snapshot(models.Model):
 
     title = models.CharField(max_length=150, default='')
     topic = models.CharField(max_length=100, default='')
-    data = pg_fields.JSONField(default=dict, blank=True)
     data_file = models.FileField(upload_to='data-files', null=True, blank=True)
     screenshot_generated = ImageField(upload_to='snapshot-screenshots', null=True, blank=True)
     thumbnail_generated = ImageField(upload_to='snapshot-thumbnails', null=True, blank=True)
@@ -135,6 +134,13 @@ class Snapshot(models.Model):
         null=True, on_delete=models.SET_NULL
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        if self.municipality:
+            return f'{self.municipality.fullname}, {self.title}, ' \
+                f'{self.id} ({self.get_permission_display()})'
+        else:
+            return self.title
 
     @classmethod
     def from_db(cls, db, field_names, values):
@@ -203,20 +209,6 @@ class Snapshot(models.Model):
     def get_absolute_url(self):
         return f'/{self.id}/'
 
-    def create_screenshot_file(self, is_thumbnail=False):
-        url = f'http://vue:8079/de/{self.pk}/?screenshot'
-        path = 'snapshot-screenshots'
-        if is_thumbnail:
-            url += '&thumbnail'
-            path = 'snapshot-thumbnails'
-        response = requests.get(url, timeout=(10, 300))
-        date_suffix = timezone.now().strftime("%Y-%m-%d_%H-%M-%SZ")
-        screenshot_file = SimpleUploadedFile(
-            f'{path}/{self.pk}_{date_suffix}.png',
-            response.content, content_type="image/png"
-        )
-        return screenshot_file
-
     def image_twitter(self):
         if bool(self.screenshot):
             return get_thumbnail(
@@ -232,13 +224,6 @@ class Snapshot(models.Model):
                 crop='bottom', format='PNG'
             )
 
-    def __str__(self):
-        if self.municipality:
-            return f'{self.municipality.fullname}, {self.title}, ' \
-                f'{self.id} ({self.get_permission_display()})'
-        else:
-            return self.title
-
     def save(self, *args, **kwargs):
         def test_exists(pk):
             if list(self.__class__.objects.filter(pk=pk)):
@@ -251,20 +236,17 @@ class Snapshot(models.Model):
             self.id = create_slug_hash_6()
             self.id = test_exists(self.id)
 
-        if bool(self.data_file):
-            storage = OverwriteStorage()
-            if self.permission is int(SnapshotPermission.PUBLIC):
-                self.create_meta(storage)
-            else:
-                storage.delete(f'snapshot-meta/{self.id}.html')
+        if not self._state.adding:
+            if bool(self.data_file):
+                storage = OverwriteStorage()
+                if self.permission is int(SnapshotPermission.PUBLIC):
+                    self.create_meta(storage)
+                else:
+                    storage.delete(f'snapshot-meta/{self.id}.html')
 
-        try:
-            super().save(*args, **kwargs)
-        except DatabaseError:
-            transaction.rollback()
-
-        if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
-            self.create_screenshot()
+        if not self._state.adding:
+            if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
+                self.create_screenshot()
 
         try:
             super().save(*args, **kwargs)
@@ -286,6 +268,20 @@ class Snapshot(models.Model):
             self.screenshot_generated = screenshot_file
             self.thumbnail_generated = thumbnail_file
 
+    def create_screenshot_file(self, is_thumbnail=False):
+        url = f'http://vue:8079/de/{self.pk}/?screenshot'
+        path = 'snapshot-screenshots'
+        if is_thumbnail:
+            url += '&thumbnail'
+            path = 'snapshot-thumbnails'
+        response = requests.get(url, timeout=(100, 300))
+        date_suffix = timezone.now().strftime("%Y-%m-%d_%H-%M-%SZ")
+        screenshot_file = SimpleUploadedFile(
+            f'{path}/{self.pk}_{date_suffix}.png',
+            response.content, content_type="image/png"
+        )
+        return screenshot_file
+
     def create_meta(self, storage):
         domain = Site.objects.get_current().domain
         proto = 'https' if settings.USE_HTTPS else 'http'
@@ -298,6 +294,16 @@ class Snapshot(models.Model):
 <meta name="twitter:image" content="{ proto }://{ domain }/{ self.image_twitter() }">
 '''
         storage.save(f'snapshot-meta/{self.id}.html', ContentFile(meta))
+
+
+@receiver(post_save, sender=Snapshot)
+def resave(sender, instance, created, **kwargs):
+    """
+    Triggers meta and image creations on an instance already
+    in the database.
+    """
+    if created:
+        transaction.on_commit(lambda: instance.save())
 
 
 class Workspace(models.Model):
