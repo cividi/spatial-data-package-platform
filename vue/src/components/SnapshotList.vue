@@ -58,7 +58,7 @@
             <v-btn icon
               class="nobg"
               v-on:click.stop="function(){}"
-              :href="djangobaseurl + '/signup/'"
+              :href="djangobaseurl + '/' + $i18n.locale +'/signup/'"
               target="_blank"
               >
                 <v-icon color="grey lighten-1" >mdi-arrow-right-bold-circle-outline</v-icon>
