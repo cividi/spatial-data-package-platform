@@ -173,9 +173,11 @@ class Snapshot(models.Model):
 
     @property
     def data_file_dict(self):
-        self.data_file.open()
-        data = self.data_file.read()
-        return data
+        if self.data_file:
+            self.data_file.open()
+            data = self.data_file.read()
+            return data
+        return str(dict())
 
     @property
     def data_file_json(self):
@@ -334,6 +336,9 @@ class Workspace(models.Model):
     def get_absolute_url(self):
         first_id = self.snapshots.all().first().id
         return f'/{self.id}/{first_id}/'
+
+    def get_relative_url(self):
+        return self.get_absolute_url()[1:-1]
 
     def save(self, *args, **kwargs):
         def test_exists(pk):

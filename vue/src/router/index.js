@@ -40,6 +40,13 @@ const routes = [
         }
       },
       {
+        path: 'logout/',
+        name: 'logout',
+        beforeEnter: () => {
+          window.location.href = '/account/logout/';
+        }
+      },
+      {
         path: 'signup/',
         name: 'signup',
         component: () => import('@/views/Signup.vue'),

@@ -145,6 +145,8 @@ CACHES = {
         'LOCATION': 'django_cache',
     }
 }
+SESSION_COOKIE_HTTPONLY = False
+
 THUMBNAIL_BACKEND = 'main.utils.PermalinkThumbnailBackend'
 THUMBNAIL_PREFIX = 'cache/'
 SAVE_SCREENSHOT_ENABLED = True

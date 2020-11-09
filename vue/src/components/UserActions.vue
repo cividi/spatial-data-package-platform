@@ -3,10 +3,12 @@
 {
   "de": {
     "loginText": "Login",
+    "logoutText": "Logout",
     "signupText": "Unverbindliche Anfrage"
 },
   "fr": {
     "loginText": "Login",
+    "logoutText": "Logout",
     "signupText": "Demande sans engagement"
   }
 }

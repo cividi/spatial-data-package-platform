@@ -132,6 +132,16 @@ export default {
     this.$store.commit('setBfsname', '');
   },
   async mounted() {
+    const sessionid = this.$cookies.get('sessionid', '');
+    if (sessionid) {
+      const workspaceid = this.$cookies.get('workspaceid', '');
+      if (workspaceid) {
+        const hashed = workspaceid.replace(/^"|"$/g, '').split('/');
+        const wshash = hashed[0];
+        const hash = hashed[1];
+        this.$router.push({ name: 'workspaceRedirect', params: { wshash, hash } });
+      }
+    }
     await this.getSnapshotsExamples();
   },
   methods: {

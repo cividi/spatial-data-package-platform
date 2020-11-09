@@ -1,12 +1,14 @@
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.auth.views import LoginView
+# from django.contrib.auth.views import LoginView
+from gsmap.views import CustomLoginView, logout
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from graphene_django.views import GraphQLView
 
 urlpatterns = [
-    path('account/login/', LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('account/login/', CustomLoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('account/logout/', logout, name='logout'),
     path('gmanage/', admin.site.urls),
     path('graphql/', csrf_exempt(GraphQLView.as_view(graphiql=True))),
 ]

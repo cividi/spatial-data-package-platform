@@ -36,6 +36,7 @@
         <snapshot-list
           :snapshots="snapshotsWorkspace"
           :workspaceHash="wshash"
+          :snapshotHash="hash"
         />
       </div>
 
@@ -154,6 +155,7 @@ export default {
                 topic
                 screenshot
                 thumbnail
+                datafile
               }
             }
 
@@ -170,6 +172,7 @@ export default {
                   topic
                   screenshot
                   thumbnail
+                  datafile
                 }
               }
             }

@@ -44,7 +44,7 @@ class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
         fields = [
-            'is_showcase', 'title', 'topic', 'data', 'municipality',
+            'is_showcase', 'title', 'topic', 'data', 'datafile', 'municipality',
             'predecessor'
         ]
         filter_fields = [
@@ -53,6 +53,7 @@ class SnapshotNode(DjangoObjectType):
         interfaces = [graphene.relay.Node]
 
     data = generic.GenericScalar(source='data_file_json')
+    datafile = graphene.String()
     pk = graphene.String(source='id')
     thumbnail = graphene.String()
     screenshot = graphene.String()
@@ -74,6 +75,9 @@ class SnapshotNode(DjangoObjectType):
 
     def resolve_screenshot_twitter(self, info):
         return self.image_twitter()
+
+    def resolve_datafile(self, info):
+        return self.data_file if self.data_file else None
 
 
 class MunicipalityNode(DjangoObjectType):
@@ -116,6 +120,21 @@ class WorkspaceNode(DjangoObjectType):
         return self.snapshots.all()
 
 
+class SnapshotMutation(graphene.Mutation):
+    class Arguments:
+        title = graphene.String(required=False)
+        topic = graphene.String(required=False)
+        # data_file = ?
+        pk = graphene.String(source='id')
+
+    snapshot = graphene.Field(SnapshotNode)
+
+    @classmethod
+    def mutate(cls, root, title, topic, pk):
+        # TODO 
+        return SnapshotMutation()
+
+
 class Query(object):
     municipality = graphene.relay.Node.Field(MunicipalityNode)
     municipalities = DjangoFilterConnectionField(MunicipalityNode)
@@ -125,3 +144,7 @@ class Query(object):
         SnapshotNode, filterset_class=SnapshotOnlyPublicFilter)
 
     workspace = graphene.relay.Node.Field(WorkspaceNode)
+
+
+# class Mutation(graphene.ObjectType):
+#     update_snapshot = SnapshotMutation.Field()

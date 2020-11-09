@@ -31,10 +31,27 @@
           <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
             <v-btn icon
               class="nobg"
+              v-if="snapshot.pk === snapshotHash"
+              v-on:click.stop="showDetails()">
+                <v-icon color="grey lighten-1" >mdi-tune</v-icon>
+            </v-btn>
+          </v-list-item-action>
+          <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
+            <v-btn icon
+              class="nobg"
+              v-if="snapshot.datafile"
+              v-on:click.stop="function(){}"
+              :href="djangobaseurl + '/downloads/' + snapshot.datafile">
+                <v-icon color="grey lighten-1" >mdi-download</v-icon>
+            </v-btn>
+          </v-list-item-action>
+          <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
+            <v-btn icon
+              class="nobg"
               v-if="snapshot.screenshot"
               v-on:click.stop="function(){}"
               :href="djangobaseurl + '/downloads/' + snapshot.screenshot">
-                <v-icon color="grey lighten-1" >mdi-download</v-icon>
+                <v-icon color="grey lighten-1" >mdi-image</v-icon>
             </v-btn>
           </v-list-item-action>
       </v-list-item>
@@ -74,6 +91,11 @@
 
 
 <script>
+// import Vue from 'vue';
+// import SnapshotChange from './SnapshotChange.vue';
+
+// Vue.component('snapshot-change', SnapshotChange);
+
 export default {
   name: 'SnapshotList',
   data() {
@@ -85,6 +107,10 @@ export default {
 
   props: {
     workspaceHash: {
+      type: String,
+      default: ''
+    },
+    snapshotHash: {
       type: String,
       default: ''
     },
@@ -110,6 +136,9 @@ export default {
         return false;
       }
       return true;
+    },
+    showDetails() {
+      //
     }
   },
   watch: {
