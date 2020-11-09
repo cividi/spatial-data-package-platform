@@ -10,6 +10,11 @@
     "noSnapshot.municipalityText": "diese Gemeinde",
     "noSnapshot.p1": "Für {municipalityText} sind zur Zeit noch keine Analysen freigeschaltet.",
     "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
+    "noSnapshot.p3.1": "Gerne beraten wir sie via",
+    "noSnapshot.p3.2": "oder telefonisch unter",
+    "contactEmail": "info@gemeindescan.ch",
+    "contactEmailSubject": "Anfrage Gemeindescan",
+    "contactPhone": "+41 43 543 44 48",
     "listtitle": "Fallbeispiele",
     "listtitleMore": "Weitere Fallbeispiele"
   },
@@ -22,6 +27,11 @@
     "noSnapshot.municipalityText": "cette communauté",
     "noSnapshot.p1": "En ce moment il n’éxiste pas encore de données pour {municipalityText}.",
     "noSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
+    "noSnapshot.p3.1": "Gerne beraten wir sie via",
+    "noSnapshot.p3.2": "oder telefonisch unter",
+    "contactEmail": "info@gemeindescan.ch",
+    "contactEmailSubject": "Offre pour Gemeindescan",
+    "contactPhone": "+41 43 543 44 48",
     "listtitle": "Examples",
     "listtitleMore": "D'autres examples"
   }
@@ -52,6 +62,12 @@
             <!-- <h4>{{ $t('noSnapshot.title') }}</h4> -->
             <p>{{ $t('noSnapshot.p1', { municipalityText: municipalityText }) }}</p>
             <p>{{ $t('noSnapshot.p2') }}</p>
+            <p>
+              {{ $t('noSnapshot.p3.1') }}
+              <a @click="composeEmail">{{$t('contactEmail')}}</a>
+              {{ $t('noSnapshot.p3.2') }}
+              <a @click="makeCall">{{$t('contactPhone')}}</a>.
+            </p>
           </div>
         </div>
 
@@ -346,6 +362,12 @@ export default {
         this.$store.commit('setBfsnumber', result.data.municipality.bfsNumber);
         this.$store.commit('setBfsname', result.data.municipality.fullname);
       }
+    },
+    composeEmail() {
+      window.location.href = `mailto:${this.$t('contactEmail')}?subject=${this.$t('contactEmailSubject')}&body=`;
+    },
+    makeCall() {
+      window.location.href = `tel:${this.$t('contactPhone')}`;
     }
   }
 };
