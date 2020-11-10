@@ -12,6 +12,8 @@
     "h2.2": "Fallbeispiele",
     "p.3": "«Als Gemeindepräsident ist es mir wichtig, der Bevölkerung und dem Gemeinderat die Komplexität des Ortsplanungsprozesses und der Standortentwicklung verständlich und einfach zu übermitteln. Mit Hilfe von Daten und Visualisierungen über den Gemeindescan fällt es mir leichter, Lösungen und wichtige Entscheide zu fällen!»",
     "p.4": "Gemeindepräsident Wittenbach",
+    "btn": "Mehr erfahren",
+    "btn.href": "https:\/\/cividi.ch\/gemeindescan",
     "networkerror": "Die Gemeindesuche ist zur Zeit nicht verfügbar."
   },
   "fr": {
@@ -25,6 +27,8 @@
     "h2.2": "Examples",
     "p.3": "«En tant que maire, il est important pour moi de communiquer la complexité du processus de planification locale et du développement urbain à la population et au conseil municipal de manière simple et compréhensible. Avec l'aide des données et des visualisations via les analyses de la communauté, il m'est plus facile de trouver des solutions et de prendre des décisions importantes!»",
     "p.4": "Le maire de la municipalité Wittenbach",
+    "btn": "En savoir plus",
+    "btn.href": "https:\/\/cividi.ch\/gemeindescan-fr",
     "networkerror": "La recherche de communauté n'est pas disponible actuellement."
   }
 }
@@ -44,6 +48,14 @@
           <h1>{{ $t('h1.1') }}</h1>
           <p>{{ $t('p.1') }}</p>
           <p>{{ $t('p.2') }}</p>
+          <p><br></p>
+          <v-btn
+            color="primary"
+            elevation="2"
+            x-large
+            target="_blank"
+            :href="$t('btn.href')"
+          >{{ $t('btn') }}</v-btn>
         </v-col>
       </v-row>
   </v-container>
