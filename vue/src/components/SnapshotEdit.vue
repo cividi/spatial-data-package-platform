@@ -3,10 +3,11 @@
 {
   "de": {
     "editsnapshot": "Snapshot bearbeiten",
-    "newsnapshot": "Neuer Snapshot anlegen",
+    "newsnapshot": "Neuen Snapshot anlegen",
     "title": "Titel",
     "topic": "Thema",
     "municipality": "Gemeinde",
+    "currentfile": "Aktuelle Datei",
     "file": "Datei (JSON)",
     "cancel": "abbrechen",
     "save": "speichern",
@@ -14,10 +15,11 @@
   },
   "fr": {
     "editsnapshot": "Snapshot bearbeiten",
-    "newsnapshot": "Neuer Snapshot anlegen",
+    "newsnapshot": "Neuen Snapshot anlegen",
     "title": "Titre",
     "topic": "Sujet",
     "municipality": "Municipalité",
+    "currentfile": "Aktuelle Datei",
     "file": "Fichier (JSON)",
     "cancel": "abbrechen",
     "save": "speichern",
@@ -32,7 +34,7 @@
   <v-card id="snapshotedit" light width="400" class="pa-4">
     <h3 v-if="isNew">{{ $t('newsnapshot') }}</h3>
     <h3 v-else>{{ $t('editsnapshot') }}</h3>
-    <v-form>
+    <v-form class="pt-4">
       <!--
                    :rules="rules"
             counter="25"
@@ -47,22 +49,26 @@
             :label="$t('topic')"
           ></v-text-field>
 
+          <div v-if="!isNew">
+            <p class="small">  {{ $t('currentfile') }}:   {{snapshot.datafile}}</p>
+          </div>
           <v-file-input
-            v-model="snapshot.datafile"
             accept=".json"
             :label="$t('file')"
             truncate-length="20"
           ></v-file-input>
-          <v-btn
-          @click="$emit('cancel')">
-            {{ $t('cancel') }}
-          </v-btn>
-          <v-btn
-          color="primary"
-          @click="saveSnapshot"
-          >
-            {{ $t('save') }}
-          </v-btn>
+          <div class="d-flex justify-space-between mt-4">
+            <v-btn
+            @click="$emit('cancel')">
+              {{ $t('cancel') }}
+            </v-btn>
+            <v-btn
+            color="primary"
+            @click="saveSnapshot"
+            >
+              {{ $t('save') }}
+            </v-btn>
+          </div>
     </v-form>
   </v-card>
 </template>
@@ -75,7 +81,7 @@ export default {
   name: 'SnapshotEdit',
   data() {
     return {
-      isNew: false
+
     };
   },
 
@@ -84,7 +90,12 @@ export default {
   },
 
   computed: {
-
+    isNew() {
+      if (this.snapshot.pk) {
+        return false;
+      }
+      return true;
+    }
   },
   methods: {
     saveSnapshot() {

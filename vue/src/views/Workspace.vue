@@ -39,6 +39,11 @@
           :snapshotHash="hash"
           v-on:editme="editSnapshot"
         />
+
+        <v-btn fab color="primary"
+        @click="newSnapshot" >
+        <v-icon>mdi-plus</v-icon>
+        </v-btn>
       </div>
 
       <v-toolbar
@@ -262,6 +267,12 @@ export default {
     abortEdit() {
       this.editing = false;
       this.snapshotEdit = {};
+    },
+    newSnapshot() {
+      this.snapshotEdit = {
+        pk: '', title: '', topic: '', municipality: ''
+      };
+      this.editing = true;
     }
   }
 
