@@ -19,3 +19,11 @@ class SnapshotSerializer(serializers.ModelSerializer):
             user = get_user_from_sessionid(sessionid)
         instance = Snapshot.objects.create(user=user, **validated_data)
         return instance
+
+
+class SnapshotDataUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Snapshot
+        fields = (
+            'data_file',
+        )
