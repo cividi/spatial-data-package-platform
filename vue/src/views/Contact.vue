@@ -11,6 +11,8 @@
       "cividi - digitale Werkzeuge für die analoge Stadt.",
     "p.4":
       "<small>Das Pionierprojekt wird ermöglicht durch <a href=\"https://www.engagement-migros.ch/de\" target=\"_blank\">Engagement Migros</a>,<br>dem Förderfonds der Migros-Gruppe.</small>",
+    "p.5": 
+      "Der Gemeindescan ist eine <a href=\"https://cividi.ch\" target=\"_blank\">cividi</a> Anwendung, die in Zusammenarbeit mit <a href=\"https://taywa.ch\" target=\"_blank\">Taywa</a> entwickelt wird.",
     "cividi.link":
       "https://cividi.ch",
     "em.link":
@@ -26,6 +28,8 @@
       "cividi - Des outils numériques pour la ville analogique",
     "p.4":
       "<small>Ce projet innovateur est rendu possible grâce à <a href=\"https://www.engagement-migros.ch/fr\" target=\"_blank\">l'engagement de Migros</a>,<br>le fonds de développement du groupe Migros.</small>",
+    "p.5":
+      "Le Gemeindescan est une application <a href=\"https://cividi.ch/societe/\" target=\"_blank\">cividi</a> développée en coopération avec <a href=\"https://taywa.ch\" target=\"_blank\">Taywa</a>.",
     "cividi.link":
       "https://cividi.ch/societe",
     "em.link":
@@ -44,6 +48,8 @@
           <h1>
             {{ $t('h1.1')}}
           </h1>
+          <p v-html="$t('p.5')">
+          </p>
           <p v-html="$t('p.1')">
           </p>
           <p v-html="$t('p.2')">

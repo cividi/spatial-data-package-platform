@@ -8,8 +8,13 @@
     "hasSnapshot.p2": "Erkunden Sie unsere weiteren Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
     "noSnapshot.title": "Datenverfügbarkeit",
     "noSnapshot.municipalityText": "diese Gemeinde",
-    "noSnapshot.p1": "Für {municipalityText} stehen zur Zeit noch keine Daten zur Verfügung.",
+    "noSnapshot.p1": "Für {municipalityText} sind zur Zeit noch keine Analysen freigeschaltet.",
     "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
+    "noSnapshot.p3.1": "Gerne beraten wir sie via",
+    "noSnapshot.p3.2": "oder telefonisch unter",
+    "contactEmail": "info@gemeindescan.ch",
+    "contactEmailSubject": "Anfrage Gemeindescan",
+    "contactPhone": "+41 43 543 44 48",
     "listtitle": "Fallbeispiele",
     "listtitleMore": "Weitere Fallbeispiele"
   },
@@ -22,6 +27,11 @@
     "noSnapshot.municipalityText": "cette communauté",
     "noSnapshot.p1": "En ce moment il n’éxiste pas encore de données pour {municipalityText}.",
     "noSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
+    "noSnapshot.p3.1": "Gerne beraten wir sie via",
+    "noSnapshot.p3.2": "oder telefonisch unter",
+    "contactEmail": "info@gemeindescan.ch",
+    "contactEmailSubject": "Offre pour Gemeindescan",
+    "contactPhone": "+41 43 543 44 48",
     "listtitle": "Examples",
     "listtitleMore": "D'autres examples"
   }
@@ -47,18 +57,37 @@
       <div id="snapshotnavContent" class="ma-4">
         <search :dense="true" :term="municipalityName"/>
 
-        <div class="nodata pb-8">
-          <div v-if="!hash" class="smaller hint">
-            <h4>{{ $t('noSnapshot.title') }}</h4>
+        <div v-if="!hash" class="nodata pb-8">
+          <div class="smaller hint">
+            <!-- <h4>{{ $t('noSnapshot.title') }}</h4> -->
             <p>{{ $t('noSnapshot.p1', { municipalityText: municipalityText }) }}</p>
             <p>{{ $t('noSnapshot.p2') }}</p>
+            <p>
+              {{ $t('noSnapshot.p3.1') }}
+              <a @click="composeEmail">{{$t('contactEmail')}}</a>
+              {{ $t('noSnapshot.p3.2') }}
+              <a @click="makeCall">{{$t('contactPhone')}}</a>.
+            </p>
           </div>
-
-          <snapshot-list
-            v-if="snapshotsMunicipality"
-            :snapshots="snapshotsMunicipality"
-          />
         </div>
+
+        <div class="useractions">
+          <v-btn small block outlined color="primary">
+            <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
+              {{ $t('calltoactionText', { municipalityText: municipalityText }) }}
+            </router-link>
+          </v-btn>
+        </div>
+
+        <snapshot-list
+            v-if="hash"
+            :snapshots="snapshotsMunicipality" :withTopic="false"
+          />
+
+        <snapshot-list
+          v-if="snapshotsStore"
+          :snapshots="snapshotsStore" :withTopic="true"
+        />
 
         <v-subheader
           class="px-0 snapshot-list-title">{{ listtitleText }}
@@ -69,13 +98,6 @@
           :snapshots="snapshotsExamples" :withTopic="false"
         />
 
-        <div class="useractions">
-          <v-btn small block outlined color="primary">
-            <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
-              {{ $t('calltoactionText', { municipalityText: municipalityText }) }}
-            </router-link>
-          </v-btn>
-        </div>
       </div>
 
       <v-toolbar
@@ -134,9 +156,11 @@ export default {
     return {
       hash: this.$route.params.hash,
       bfsNumber: this.$route.params.bfsNumber,
+      snapshotStoreUrl: process.env.VUE_APP_SNAPSHOTSTOREURL,
       geojson: null,
       geobounds: [],
       municipalityName: '',
+      snapshotsStore: [],
       snapshotsExamples: [],
       snapshotsIdExamplesExclude: [],
       snapshotsMunicipality: [],
@@ -148,6 +172,16 @@ export default {
   },
 
   async mounted() {
+    fetch(`${this.snapshotStoreUrl}/pipelines.${this.$i18n.locale}.json`)
+      .then(response => response.json())
+      .then((data) => {
+        data.forEach((el, i) => {
+          data[i].thumbnail = `${this.snapshotStoreUrl}/${el.thumbnail}`;
+        });
+
+        this.snapshotsStore = data;
+      });
+
     if (this.hash) {
       await this.getSnapshotInfo(this.hash);
 
@@ -328,6 +362,12 @@ export default {
         this.$store.commit('setBfsnumber', result.data.municipality.bfsNumber);
         this.$store.commit('setBfsname', result.data.municipality.fullname);
       }
+    },
+    composeEmail() {
+      window.location.href = `mailto:${this.$t('contactEmail')}?subject=${this.$t('contactEmailSubject')}&body=`;
+    },
+    makeCall() {
+      window.location.href = `tel:${this.$t('contactPhone')}`;
     }
   }
 };

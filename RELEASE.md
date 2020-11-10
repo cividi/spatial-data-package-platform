@@ -2,6 +2,37 @@
 
 ## Releases
 
+### 0.6.1
+[Released: *2020-09-03*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.6.1)
+
+- Improved snapshot loading and switching
+
+### 0.6.0
+[Released: *2020-08-04*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.6.0)
+
+- Added snapshot sections in workspaces and municipalities based on topic
+
+### 0.5.1
+[Released: *2020-05-27*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.5.1)
+
+- Improved OpenGraph Support
+- Improved screenshot server
+
+### 0.5.0
+[Released: *2020-05-20*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.5.0)
+
+- Added OpenGraph support for public snapshots (rich social media links)
+- Improved error messages in frontend
+- Improved screenshot server
+- Improved django backend
+
+### 0.4.0
+[Released: *2020-05-11*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.4.0)
+
+- Added PNG downloads
+- Added screenshot server
+- Added Django and Vue tests
+
 ### 0.3.1
 [Released: *2020-04-09*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.3.1)
 [Sprint: 4 "Out of the Box"](https://bitbucket.org/cividi/gemeindescan-webui/issues?milestone=SP+4%3A+Out+of+the+box)

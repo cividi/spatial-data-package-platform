@@ -1,15 +1,15 @@
-# troubleshooting
+# Troubleshooting
 
 ## init
 
 If you want/need a clean state you can delete the var docker volume.
 `docker volume rm var-gemeindescan-webui`
 
-## vscode 
+## vscode
 
 If you have a vscode related problem it could help to delete the vscode docker volume.
-- django: `docker volume rm gemeindescan-webui_vscode-remote-django` 
-- vue: `docker volume rm gemeindescan-webui_vscode-remote-vue` 
+- django: `docker volume rm gemeindescan-webui_vscode-remote-django`
+- vue: `docker volume rm gemeindescan-webui_vscode-remote-vue`
 
 ## windows
 
