@@ -33,7 +33,7 @@
               class="nobg"
               v-if="snapshot.pk === snapshotHash"
               v-on:click.stop.prevent="$emit('editme', snapshot)">
-                <v-icon color="grey lighten-1" >mdi-tune</v-icon>
+                <v-icon color="grey lighten-1" >mdi-pencil</v-icon>
             </v-btn>
           </v-list-item-action>
           <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
