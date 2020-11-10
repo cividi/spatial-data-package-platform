@@ -104,25 +104,6 @@ body,
   clip-path: circle(100% at center);
 }
 
-#snapshotchange {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  bottom: 2em;
-  right: 2em;
-  min-width: 240px;
-  clip-path: circle(0% at 95% 90%);
-  transition: clip-path 0.3s ease-out;
-  pointer-events: none;
-  z-index: 500; /* must be above mapbox icons */
-}
-
-#snapshotchange.open {
-  pointer-events: auto;
-  clip-path: circle(100% at center);
-}
-
 .mapbox-improve-map {
   display: none;
 }
@@ -133,10 +114,8 @@ import Vue from 'vue';
 import L from 'mapbox.js';
 import geoViewport from '@mapbox/geo-viewport';
 import SnapshotMeta from './SnapshotMeta.vue';
-import SnapshotChange from './SnapshotChange.vue';
 
 Vue.component('snapshot-meta', SnapshotMeta);
-Vue.component('snapshot-change', SnapshotChange);
 
 function geostring2array(s) {
   const array = s.split(':')[1].split(',');

@@ -91,11 +91,6 @@
 
 
 <script>
-// import Vue from 'vue';
-// import SnapshotChange from './SnapshotChange.vue';
-
-// Vue.component('snapshot-change', SnapshotChange);
-
 export default {
   name: 'SnapshotList',
   data() {
