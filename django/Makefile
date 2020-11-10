@@ -1,5 +1,5 @@
-GEMEINDESCAN_WEBUI_DJANGO=0.3.5
-GEMEINDESCAN_WEBUI_DJANGO_PREV=0.3.4
+GEMEINDESCAN_WEBUI_DJANGO=0.3.6
+GEMEINDESCAN_WEBUI_DJANGO_PREV=0.3.5
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec django")
 all: dev run-tests run-tests-dev
 .PHONY: all

@@ -52,7 +52,7 @@ RUN apk --no-cache add yajl build-base yajl-dev python3-dev \
 COPY ./requirements/02.txt /tmp/requirements.txt
 RUN cd /opt && pip3 install -r /tmp/requirements.txt
 
-# python requirements 03 layer, graphene file upload
+# python requirements 03 layer, graphene file upload, django DRF
 COPY ./requirements/03.txt /tmp/requirements.txt
 RUN cd /opt && pip3 install -r /tmp/requirements.txt
 
