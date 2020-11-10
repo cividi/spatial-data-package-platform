@@ -44,13 +44,31 @@
             v-model="snapshot.title"
             :label="$t('title')"
           ></v-text-field>
-                  <v-text-field
+          <v-text-field
             v-model="snapshot.topic"
             :label="$t('topic')"
           ></v-text-field>
 
+          <v-autocomplete
+            class="gemeindesuche"
+            :placeholder="$t('municipality')"
+            append-icon="mdi-magnify"
+            v-model="select[0]"
+            :items="municipalities"
+            :search-input.sync="search"
+            :menu-props="menuProps"
+            item-text="node.fullname"
+            item-value="node.bfsNumber"
+            hide-no-data
+            return-object
+            ></v-autocomplete>
+  <!--  hide-no-data -->
+
+
           <div v-if="!isNew">
-            <p class="small">  {{ $t('currentfile') }}:   {{snapshot.datafile}}</p>
+            <p class="small mb-0">
+              <strong>{{ $t('currentfile') }}:</strong> {{snapshot.datafile}}
+            </p>
           </div>
           <v-file-input
             accept=".json"
@@ -77,11 +95,16 @@
 </style>
 
 <script>
+import gql from 'graphql-tag';
+
 export default {
   name: 'SnapshotEdit',
   data() {
     return {
-
+      select: null,
+      search: null,
+      municipalities: [],
+      inidone: false
     };
   },
 
@@ -95,11 +118,48 @@ export default {
         return false;
       }
       return true;
+    },
+    menuProps() {
+      return !this.search ? { value: false } : {};
     }
   },
+  mounted() {
+    this.municipalities.push({ node: this.snapshot.municipality });
+    this.select = [{ node: this.snapshot.municipality }];
+
+    setTimeout(() => { this.inidone = true; }, 500);
+  },
   methods: {
+    async queryMunicipalities(val) { // event
+      const result = await this.$apollo.query({
+        query: gql`query getmunicipalities($q: String!){
+          municipalities(name_Icontains: $q) {
+            edges {
+              node {
+                bfsNumber
+                fullname
+              }
+            }
+          }
+        }`,
+        variables: {
+          q: val
+        }
+      });
+      return result;
+    },
+
     saveSnapshot() {
       console.log('saveSnapshot');
+    }
+  },
+  watch: {
+    async search(val) {
+      if (this.inidone) {
+        console.log(`search${val}`);
+        const result = await this.queryMunicipalities(val);
+        this.municipalities = result.data.municipalities.edges;
+      }
     }
   }
 };

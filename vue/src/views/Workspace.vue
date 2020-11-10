@@ -180,6 +180,10 @@ export default {
                 screenshot
                 thumbnail
                 datafile
+                municipality {
+                  bfsNumber
+                  fullname
+                }
               }
             }
 
@@ -270,7 +274,7 @@ export default {
     },
     newSnapshot() {
       this.snapshotEdit = {
-        pk: '', title: '', topic: '', municipality: ''
+        pk: '', title: '', topic: '', municipality: { bfsNumber: 0, fullname: '' }
       };
       this.editing = true;
     }
