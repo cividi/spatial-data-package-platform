@@ -9,6 +9,8 @@ from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
 from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace
+from graphene_django.rest_framework.mutation import SerializerMutation
+from .serializers import SnapshotSerializer
 
 
 class GeoJSON(graphene.Scalar):
@@ -120,19 +122,11 @@ class WorkspaceNode(DjangoObjectType):
         return self.snapshots.all()
 
 
-class SnapshotMutation(graphene.Mutation):
-    class Arguments:
-        title = graphene.String(required=False)
-        topic = graphene.String(required=False)
-        # data_file = ?
-        pk = graphene.String(source='id')
-
-    snapshot = graphene.Field(SnapshotNode)
-
-    @classmethod
-    def mutate(cls, root, title, topic, pk):
-        # TODO 
-        return SnapshotMutation()
+class SnapshotMutation(SerializerMutation):
+    class Meta:
+        serializer_class = SnapshotSerializer
+        model_operations = ['create', 'update']
+        lookup_field = 'id'
 
 
 class Query(object):
@@ -146,5 +140,5 @@ class Query(object):
     workspace = graphene.relay.Node.Field(WorkspaceNode)
 
 
-# class Mutation(graphene.ObjectType):
-#     update_snapshot = SnapshotMutation.Field()
+class Mutation(graphene.ObjectType):
+    snapshotmutation = SnapshotMutation.Field()

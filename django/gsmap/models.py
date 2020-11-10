@@ -247,8 +247,9 @@ class Snapshot(models.Model):
                     storage.delete(f'snapshot-meta/{self.id}.html')
 
         if not self._state.adding:
-            if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
-                self.create_screenshot()
+            if bool(self.data_file):
+                if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
+                    self.create_screenshot()
 
         try:
             super().save(*args, **kwargs)
