@@ -32,7 +32,7 @@
             <v-btn icon
               class="nobg"
               v-if="snapshot.pk === snapshotHash"
-              v-on:click.stop="showDetails()">
+              v-on:click.stop.prevent="$emit('editme', snapshot)">
                 <v-icon color="grey lighten-1" >mdi-tune</v-icon>
             </v-btn>
           </v-list-item-action>
@@ -136,9 +136,6 @@ export default {
         return false;
       }
       return true;
-    },
-    showDetails() {
-      //
     }
   },
   watch: {

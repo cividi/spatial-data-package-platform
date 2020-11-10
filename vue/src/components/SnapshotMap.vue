@@ -46,18 +46,6 @@
           :sources="sources"
         />
       </v-card>
-
-      <v-card
-        v-if="hash"
-        id="snapshotchange"
-        class="px-4 py-2"
-        :style="'width:' + legendWidth"
-        v-bind:class="{open: true}"
-        >
-        <snapshot-change
-          :title="title"
-        />
-      </v-card>
     </v-content>
 </template>
 

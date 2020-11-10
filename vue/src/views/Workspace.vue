@@ -37,6 +37,7 @@
           :snapshots="snapshotsWorkspace"
           :workspaceHash="wshash"
           :snapshotHash="hash"
+          v-on:editme="editSnapshot"
         />
       </div>
 
@@ -56,9 +57,23 @@
       :geojson="geojson"
       :geoboundsIn="geobounds"
     />
+    <v-overlay
+      absolute="absolute"
+      opacity="0.2"
+      z-index="1000"
+      :value="editing"
+      >
+      <snapshot-edit
+        v-if="editing"
+        :snapshot="snapshotEdit"
+        v-on:cancel="abortEdit"
+      />
+     </v-overlay>
+
      <error-message
       :settings="errorsettings"
     />
+
   </div>
 </template>
 
@@ -87,10 +102,12 @@ import Vue from 'vue';
 import gql from 'graphql-tag';
 import SnapshotList from '../components/SnapshotList.vue';
 import SnapshotMap from '../components/SnapshotMap.vue';
+import SnapshotEdit from '../components/SnapshotEdit.vue';
 import ErrorMessage from '../components/ErrorMessage.vue';
 
 Vue.component('snapshot-list', SnapshotList);
 Vue.component('snapshot-map', SnapshotMap);
+Vue.component('snapshot-edit', SnapshotEdit);
 Vue.component('error-message', ErrorMessage);
 
 export default {
@@ -104,7 +121,9 @@ export default {
       snapshotsWorkspace: [],
       title: '',
       description: '',
-      errorsettings: {}
+      errorsettings: {},
+      snapshotEdit: Object,
+      editing: false
     };
   },
 
@@ -234,7 +253,17 @@ export default {
           this.$router.push({ name: 'home' });
         }
       }
+    },
+    editSnapshot(snapshot) {
+      console.log('editSnapshot called');
+      this.snapshotEdit = snapshot;
+      this.editing = true;
+    },
+    abortEdit() {
+      this.editing = false;
+      this.snapshotEdit = {};
     }
   }
+
 };
 </script>
