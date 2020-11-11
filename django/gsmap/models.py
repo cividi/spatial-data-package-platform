@@ -165,11 +165,11 @@ class Snapshot(models.Model):
 
     @property
     def screenshot(self):
-        return self.screenshot_manual or self.screenshot_generated
+        return self.screenshot_manual or self.screenshot_generated or None
 
     @property
     def thumbnail(self):
-        return self.thumbnail_manual or self.thumbnail_generated
+        return self.thumbnail_manual or self.thumbnail_generated or None
 
     @property
     def data_file_dict(self):
@@ -249,14 +249,14 @@ class Snapshot(models.Model):
         if not self._state.adding:
             if bool(self.data_file):
                 if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
-                    self.create_screenshot()
+                    self.clean_screenshot()
 
         try:
             super().save(*args, **kwargs)
         except DatabaseError:
             transaction.rollback()
 
-    def create_screenshot(self):
+    def clean_screenshot(self):
         # only create snapshot if data changed
         if self.data_changed([
                 'data_file', 'screenshot_generated', 'thumbnail_generated'
@@ -266,10 +266,14 @@ class Snapshot(models.Model):
             if not 'resources' in data:
                 raise ValueError('no resources key in data')
 
-            screenshot_file = self.create_screenshot_file()
-            thumbnail_file = self.create_screenshot_file(is_thumbnail=True)
-            self.screenshot_generated = screenshot_file
-            self.thumbnail_generated = thumbnail_file
+            # screenshot_file = self.create_screenshot_file()
+            # thumbnail_file = self.create_screenshot_file(is_thumbnail=True)
+            # self.screenshot_generated = screenshot_file
+            # self.thumbnail_generated = thumbnail_file
+            if self.screenshot_generated:
+                self.screenshot_generated.delete()
+            if self.thumbnail_generated:
+                self.thumbnail_generated.delete()
 
     def create_screenshot_file(self, is_thumbnail=False):
         url = f'http://vue:8079/de/{self.pk}/?screenshot'
