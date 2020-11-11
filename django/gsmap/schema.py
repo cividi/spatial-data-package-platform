@@ -4,13 +4,13 @@ import graphene
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models import Q
 from django_filters import FilterSet
+from graphql_relay import from_global_id
 from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
 from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace
 from graphene_django.rest_framework.mutation import SerializerMutation
-from .serializers import SnapshotSerializer
 
 
 class GeoJSON(graphene.Scalar):
@@ -122,11 +122,34 @@ class WorkspaceNode(DjangoObjectType):
         return self.snapshots.all()
 
 
-class SnapshotMutation(SerializerMutation):
-    class Meta:
-        serializer_class = SnapshotSerializer
-        model_operations = ['create', 'update']
-        lookup_field = 'id'
+class SnapshotMutation(graphene.relay.ClientIDMutation):
+    class Input:
+        title = graphene.String()
+        topic = graphene.String()
+        wshash = graphene.String()
+        bfsNumber = graphene.String()
+
+    snapshot = graphene.Field(SnapshotNode)
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, client_mutation_id=None, **data):
+        if not info.context.user.is_authenticated:
+            return SnapshotMutation(snapshot=None)
+        municipality = Municipality.objects.get(pk=int(data['bfsNumber']))
+        if client_mutation_id:
+            snapshot = Snapshot.objects.get(pk=from_global_id(client_mutation_id)[1])
+            snapshot.title = data['title']
+            snapshot.topic = data['topic']
+            snapshot.municipality = municipality
+            snapshot.save()
+        else:
+            workspace = Workspace.objects.get(pk=from_global_id(data['wshash'])[1])
+            snapshot = Snapshot(title=data['title'], topic=data['topic'])
+            snapshot.user = info.context.user
+            snapshot.municipality = municipality
+            snapshot.save()
+            workspace.snapshots.add(snapshot)
+        return SnapshotMutation(snapshot=snapshot)
 
 
 class Query(object):
