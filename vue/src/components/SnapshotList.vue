@@ -24,10 +24,7 @@
               v-if="snapshot.thumbnail"
               :src="djangobaseurl + '/media/' + snapshot.thumbnail">
             </v-img>
-            <object v-else
-              data="/mapani.svg" type="image/svg+xml">
-              <img src="@/assets/images/mapani.svg"/>
-            </object>
+            <img v-else src="@/assets/images/mapani.svg" />
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title style="font-weight:700">{{ snapshot.title }}</v-list-item-title>

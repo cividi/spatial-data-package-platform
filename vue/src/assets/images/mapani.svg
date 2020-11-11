@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
-  <defs>
-    <bx:grid x="0" y="0" width="8" height="8"/>
-  </defs>
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
   <style type="text/css">
     <![CDATA[
       @keyframes fadein {
@@ -33,23 +30,16 @@
       }
       #park {
         fill: #DDD;
-      }
-      .playing #park{
         animation: fadein 1s linear both;
       }
       #buidings polygon {
         fill: #DDD;
-      }
-      .playing #buidings polygon{
         animation: pop 1s ease-out both;
       }
 
       path, line {
         stroke-dasharray: 1000;
         stroke-dashoffset: 1000;
-      }
-      .playing path,
-      .playing line {
         animation: draw 5s linear both;
       }
     ]]>
@@ -70,16 +60,4 @@
       <polygon style="animation-delay: 2.5s; transform-origin: 56px 56px;" points="48 32 64 48 64 64 48 64"/>
     </g>
   </g>
-  <script type="text/javascript"><![CDATA[
-    const stopani = function(){
-      document.getElementById('animation').setAttribute('class', '');
-    }
-    const startani = function(){
-      document.getElementById('animation').setAttribute('class', 'playing');
-      window.setTimeout(stopani, 6000);
-      window.setTimeout(startani, 6200);
-    }
-    window.setTimeout(startani, 0);
-    
-  ]]></script>
 </svg>
