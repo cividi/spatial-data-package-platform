@@ -202,13 +202,15 @@ export default {
     },
 
     httpupload(file, onUploadProgress) {
+      const csrftoken = this.$cookies.get('csrftoken', '');
       const formData = new FormData();
 
       formData.append('onUploadProgress', file);
 
       return this.$restApi.patch(`snapshots/${this.snapshot.pk}/`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'X-CSRFToken': csrftoken
         },
         onUploadProgress
       });
