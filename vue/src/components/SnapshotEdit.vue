@@ -70,10 +70,19 @@
               <strong>{{ $t('currentfile') }}:</strong> {{snapshot.datafile}}
             </p>
           </div>
+          <v-progress-linear
+            v-model="progress"
+            color="light-blue"
+            height="25"
+            reactive
+          >
+            <strong>{{ progress }} %</strong>
+          </v-progress-linear>
           <v-file-input
             accept=".json"
             :label="$t('file')"
             truncate-length="20"
+            @change="selectFile"
           ></v-file-input>
           <div class="d-flex justify-space-between mt-4">
             <v-btn
@@ -104,7 +113,9 @@ export default {
       select: null,
       search: null,
       municipalities: [],
-      inidone: false
+      inidone: false,
+      currentFile: undefined,
+      progress: 0
     };
   },
 
@@ -160,6 +171,7 @@ export default {
       if (this.snapshot.id) {
         data.clientMutationId = this.snapshot.id;
       }
+      this.uploadDataJson();
       const result = await this.$apollo.mutate({
         mutation: gql`mutation updatesnapshot($data: SnapshotMutationInput!){
           snapshotmutation(input: $data) {
@@ -182,6 +194,51 @@ export default {
         this.snapshot.id = result.id;
         this.$emit('saved');
       }
+    },
+
+    selectFile(file) {
+      this.progress = 0;
+      this.currentFile = file;
+    },
+
+    httpupload(file, onUploadProgress) {
+      const formData = new FormData();
+
+      formData.append('onUploadProgress', file);
+
+      return this.$restApi.patch(`snapshots/${this.snapshot.pk}/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress
+      });
+    },
+
+    async uploadDataJson() {
+      if (!this.currentFile) {
+        this.message = 'Please select a file!';
+        return;
+      }
+
+      this.message = '';
+      this.httpupload(this.currentFile, (event) => {
+        this.progress = Math.round((100 * event.loaded) / event.total);
+      })
+        .then((response) => {
+          this.message = response.data.message;
+          console.log('response', response);
+          // return UploadService.getFiles();
+        })
+        .then((files) => {
+          // this.fileInfos = files.data;
+          console.log(files);
+        })
+        .catch(() => {
+          this.progress = 0;
+          this.message = 'Could not upload the file!';
+          this.currentFile = undefined;
+          console.log('upload failed');
+        });
     }
   },
   watch: {

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import Vue from 'vue';
 import 'whatwg-fetch'; // polyfill for IE11
 import { ApolloClient } from 'apollo-client';
@@ -32,6 +33,14 @@ const apolloClient = new ApolloClient({
   cache: new InMemoryCache()
   // connectToDevTools: true
 });
+
+const restApi = axios.create({
+  baseURL: `${process.env.VUE_APP_DJANGOBASEURL}/api/v1/`,
+  headers: {
+    'Content-type': 'application/json'
+  }
+});
+Vue.prototype.$restApi = restApi;
 
 Vue.use(VueApollo);
 
