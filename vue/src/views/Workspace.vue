@@ -72,6 +72,7 @@
         v-if="editing"
         :snapshot="snapshotEdit"
         v-on:cancel="abortEdit"
+        v-on:saved="closeEdit"
       />
      </v-overlay>
 
@@ -269,6 +270,10 @@ export default {
       this.editing = true;
     },
     abortEdit() {
+      this.editing = false;
+      this.snapshotEdit = {};
+    },
+    closeEdit() {
       this.editing = false;
       this.snapshotEdit = {};
     },

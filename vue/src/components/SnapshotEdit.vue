@@ -149,14 +149,44 @@ export default {
       return result;
     },
 
-    saveSnapshot() {
-      console.log('saveSnapshot');
+    async saveSnapshot() {
+      this.snapshot.municipality = this.select[0].node;
+      const data = {
+        title: this.snapshot.title,
+        topic: this.snapshot.topic,
+        bfsNumber: this.select[0].node.bfsNumber,
+        wshash: btoa(`WorkspaceNode:${this.$route.params.wshash}`)
+      };
+      if (this.snapshot.id) {
+        data.clientMutationId = this.snapshot.id;
+      }
+      const result = await this.$apollo.mutate({
+        mutation: gql`mutation updatesnapshot($data: SnapshotMutationInput!){
+          snapshotmutation(input: $data) {
+            snapshot {
+              id
+              title
+              topic
+              municipality {
+                bfsNumber
+              }
+              datafile
+            }
+          }
+        }`,
+        variables: {
+          data
+        }
+      });
+      if (result) {
+        this.snapshot.id = result.id;
+        this.$emit('saved');
+      }
     }
   },
   watch: {
     async search(val) {
       if (this.inidone) {
-        console.log(`search${val}`);
         const result = await this.queryMunicipalities(val);
         this.municipalities = result.data.municipalities.edges;
       }
