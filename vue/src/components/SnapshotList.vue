@@ -24,6 +24,10 @@
               v-if="snapshot.thumbnail"
               :src="djangobaseurl + '/media/' + snapshot.thumbnail">
             </v-img>
+            <object v-else
+              data="/mapani.svg" type="image/svg+xml">
+              <img src="@/assets/images/mapani.svg"/>
+            </object>
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title style="font-weight:700">{{ snapshot.title }}</v-list-item-title>
@@ -31,10 +35,10 @@
           <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
             <v-btn icon
               class="nobg"
-              v-if="snapshot.pk === snapshotHash"
               v-on:click.stop.prevent="$emit('editme', snapshot)">
                 <v-icon color="grey lighten-1" >mdi-pencil</v-icon>
             </v-btn>
+            <!-- v-if="snapshot.pk === snapshotHash" //if only current snapshot can be edited -->
           </v-list-item-action>
           <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
             <v-btn icon
