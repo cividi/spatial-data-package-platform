@@ -171,12 +171,12 @@ export default {
       if (this.snapshot.id) {
         data.clientMutationId = this.snapshot.id;
       }
-      this.uploadDataJson();
       const result = await this.$apollo.mutate({
         mutation: gql`mutation updatesnapshot($data: SnapshotMutationInput!){
           snapshotmutation(input: $data) {
             snapshot {
               id
+              pk
               title
               topic
               municipality {
@@ -191,7 +191,9 @@ export default {
         }
       });
       if (result) {
-        this.snapshot.id = result.id;
+        this.snapshot.id = result.data.snapshotmutation.snapshot.id;
+        this.snapshot.pk = result.data.snapshotmutation.snapshot.pk;
+        this.uploadDataJson();
         this.$emit('saved');
       }
     },
@@ -205,7 +207,7 @@ export default {
       const csrftoken = this.$cookies.get('csrftoken', '');
       const formData = new FormData();
 
-      formData.append('onUploadProgress', file);
+      formData.append('data_file', file);
 
       return this.$restApi.patch(`snapshots/${this.snapshot.pk}/`, formData, {
         headers: {
@@ -218,16 +220,13 @@ export default {
 
     async uploadDataJson() {
       if (!this.currentFile) {
-        this.message = 'Please select a file!';
         return;
       }
 
-      this.message = '';
       this.httpupload(this.currentFile, (event) => {
         this.progress = Math.round((100 * event.loaded) / event.total);
       })
         .then((response) => {
-          this.message = response.data.message;
           console.log('response', response);
           // return UploadService.getFiles();
         })
@@ -237,7 +236,6 @@ export default {
         })
         .catch(() => {
           this.progress = 0;
-          this.message = 'Could not upload the file!';
           this.currentFile = undefined;
           console.log('upload failed');
         });
