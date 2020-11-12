@@ -1,4 +1,5 @@
 aniso8601==7.0.0
+APScheduler==3.6.3
 asgiref==3.2.3
 astroid==2.3.3
 attrs==19.3.0
@@ -9,6 +10,7 @@ chardet==3.0.4
 Click==7.0
 curtsies==0.3.1
 Django==3.0.3
+django-apscheduler==0.5.1
 django-cors-headers==3.2.1
 django-filter==2.2.0
 django-json-widget==1.0.0
@@ -18,7 +20,6 @@ djangorestframework==3.12.2
 future==0.18.2
 graphene==2.1.8
 graphene-django==2.8.1
-graphene-file-upload==1.2.2
 graphql-core==2.2.1
 graphql-relay==2.0.1
 greenlet==0.4.15
@@ -52,6 +53,7 @@ singledispatch==3.4.0.3
 six==1.14.0
 sorl-thumbnail==12.6.3
 sqlparse==0.3.0
+tzlocal==2.1
 urllib3==1.25.8
 uvicorn==0.11.2
 uvloop==0.14.0
