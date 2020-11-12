@@ -22,7 +22,7 @@
     <div class="smaller">
       <h3 class="mr-4">{{ title }}</h3>
       <p >
-        <a class="legend--hash" :href="djangobaseurl + hash + '/'" target="_blank">
+        <a class="legend--hash" :href="djangobaseurl + '/' + hash + '/'" target="_blank">
         {{ djangobaseurlDisplay }}/{{ hash }}/
         </a>
       </p>
