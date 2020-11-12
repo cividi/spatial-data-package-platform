@@ -13,6 +13,7 @@
     "save": "speichern",
     "saveinfo": "Speichere Angaben",
     "savefile": "Sende Datei",
+    "processing": "Processiere Snapshot",
     "mandatory": "Dies ist ein Pflichtfeld",
     "predecessor": "Vorgänerversion"
   },
@@ -28,6 +29,7 @@
     "save": "speichern",
     "mandatory": "Dies ist ein Pflichtfeld",
     "saveinfo": "Speichere Angaben",
+    "processing": "Processiere Snapshot",
     "savefile": "Sende Datei",
     "predecessor": "version prédécesseuse"
   }
@@ -187,7 +189,7 @@ export default {
     },
     async saveSnapshot() {
       if (!this.$refs.snapshotform.validate()) {
-        console.log('not valid');
+        // console.log('not valid');
         return false;
       }
       this.saving = true;
@@ -202,8 +204,6 @@ export default {
       if (this.snapshot.id) {
         data.clientMutationId = this.snapshot.id;
       }
-      console.log('snapshot.pk', this.snapshot.pk);
-
       const result = await this.$apollo.mutate({
         mutation: gql`mutation updatesnapshot($data: SnapshotMutationInput!){
           snapshotmutation(input: $data) {
@@ -226,12 +226,11 @@ export default {
       if (result) {
         this.snapshot.id = result.data.snapshotmutation.snapshot.id;
         this.snapshot.pk = result.data.snapshotmutation.snapshot.pk;
-        console.log('snapshot.pk', this.snapshot.pk);
         this.status = this.$t('savefile');
         this.uploadDataJson();
         return true;
       }
-      console.log('error saving snapshot info');
+      // console.log('error saving snapshot info');
       return false;
     },
 
@@ -260,38 +259,40 @@ export default {
         this.saveDone();
         return;
       }
-
-      console.log('uploading file:');
       this.httpupload(this.currentFile, (event) => {
-        console.log(this.progress);
         this.progress = Math.round((100 * event.loaded) / event.total);
       })
-        .then((response) => {
-          console.log('response', response);
+        .then(() => {
+          // console.log('response', response);
           this.saveDone();
         })
         .catch(() => {
           this.progress = 0;
           this.currentFile = undefined;
           this.saving = false;
-          console.log('upload failed');
+          // console.log('upload failed');
         });
     },
     saveDone() {
-      this.saving = false;
-      this.$emit('saved');
       if (this.$route.params.hash === this.snapshot.pk) {
         this.$router.go();
+      } else if (this.isNew) {
+        // todo is never new at this point because of watch; change compute on mount
+        this.status = this.$t('processing');
+        window.setTimeout(this.goToEditedSnapshot, 2000);
       } else {
-        window.setTimeout(this.goToEditedSnapshot, 1000);
+        this.saving = false;
+        this.$emit('saved');
+        this.goToEditedSnapshot();
       }
     },
     goToEditedSnapshot() {
+      this.saving = false;
+      this.$emit('saved');
+
       const wHash = this.$route.params.wshash;
       const curpk = this.snapshot.pk;
-      // const ln = this.$i18n.locale;
-      // undefined !?!!
-      const ln = 'de';
+      const ln = this.$route.params.lang;
       this.$router.push(`/${ln}/${wHash}/${curpk}/`);
     }
   },
