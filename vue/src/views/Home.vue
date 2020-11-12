@@ -134,6 +134,7 @@ export default {
   async mounted() {
     const sessionid = this.$cookies.get('sessionid', '');
     if (sessionid) {
+      this.$store.commit('setIsLoggedIn');
       const workspaceid = this.$cookies.get('workspaceid', '');
       if (workspaceid) {
         const hashed = workspaceid.replace(/^"|"$/g, '').split('/');
@@ -141,6 +142,8 @@ export default {
         const hash = hashed[1];
         this.$router.push({ name: 'workspaceRedirect', params: { wshash, hash } });
       }
+    } else {
+      this.$store.commit('setIsLoggedOut');
     }
     await this.getSnapshotsExamples();
   },
