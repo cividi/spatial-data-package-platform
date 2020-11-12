@@ -265,7 +265,6 @@ export default {
       }
     },
     editSnapshot(snapshot) {
-      console.log('editSnapshot called');
       this.snapshotEdit = snapshot;
       this.editing = true;
     },
