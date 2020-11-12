@@ -22,8 +22,8 @@
     <div class="smaller">
       <h3 class="mr-4">{{ title }}</h3>
       <p >
-        <a class="legend--hash" :href="'https://gemeindescan.ch/' + hash + '/'" target="_blank">
-        gemeindescan.ch/{{ hash }}/
+        <a class="legend--hash" :href="djangobaseurl + hash + '/'" target="_blank">
+        {{ djangobaseurlDisplay }}/{{ hash }}/
         </a>
       </p>
       <p>
@@ -177,6 +177,7 @@ export default {
   name: 'SnapshotMeta',
   data() {
     return {
+      djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
       showWholeLegend: false,
       showSources: false,
       screenshotMode: this.$route.query.hasOwnProperty('screenshot')
@@ -195,6 +196,10 @@ export default {
   computed: {
     hasSecondaryLegend() {
       return this.legend.some(item => item.primary === false);
+    },
+
+    djangobaseurlDisplay() {
+      return this.djangobaseurl.replace('https://', '').replace('http://', '');
     }
   }
 };
