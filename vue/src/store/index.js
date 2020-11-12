@@ -9,6 +9,7 @@ export default new Vuex.Store({
     bfsnumber: '',
     bfsname: '',
     snapshotnav: false,
+    isUserLoggedIn: false,
     workspacesInfo: {}
   },
   mutations: {
@@ -26,6 +27,14 @@ export default new Vuex.Store({
 
     addWorkspaceInfo(state, hashNvalue) {
       state.workspacesInfo[hashNvalue.hash] = hashNvalue.value;
+    },
+
+    setIsLoggedIn(state) {
+      state.isUserLoggedIn = true;
+    },
+
+    setIsLoggedOut(state) {
+      state.isUserLoggedIn = false;
     }
   },
   getters: {

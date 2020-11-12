@@ -62,7 +62,7 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
     }
 
     list_display = ('id', 'thumbnail_list_image', 'title', 'municipality',
-                    'permission', 'is_showcase', 'created', 'modified', 'data_file')
+                    'permission', 'is_showcase', 'created', 'modified', 'user', 'data_file')
     list_filter = ('is_showcase', 'permission')
     search_fields = ['title', 'municipality__name', 'municipality__canton']
 
