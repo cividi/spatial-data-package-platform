@@ -137,8 +137,8 @@ class Snapshot(models.Model):
 
     def __str__(self):
         if self.municipality:
-            return f'{self.municipality.fullname}, {self.title}, ' \
-                f'{self.id} ({self.get_permission_display()})'
+            return f'{self.municipality.fullname}, {self.title},' \
+                f'{self.id}, {self.user}, ({self.get_permission_display()})'
         else:
             return self.title
 
