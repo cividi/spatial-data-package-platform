@@ -11,6 +11,9 @@
     "file": "Datei (JSON)",
     "cancel": "abbrechen",
     "save": "speichern",
+    "saveinfo": "Speichere Angaben",
+    "savefile": "Sende Datei",
+    "mandatory": "Dies ist ein Pflichtfeld",
     "predecessor": "Vorgänerversion"
   },
   "fr": {
@@ -23,6 +26,9 @@
     "file": "Fichier (JSON)",
     "cancel": "abbrechen",
     "save": "speichern",
+    "mandatory": "Dies ist ein Pflichtfeld",
+    "saveinfo": "Speichere Angaben",
+    "savefile": "Sende Datei",
     "predecessor": "version prédécesseuse"
   }
 }
@@ -34,7 +40,13 @@
   <v-card id="snapshotedit" light width="400" class="pa-4">
     <h3 v-if="isNew">{{ $t('newsnapshot') }}</h3>
     <h3 v-else>{{ $t('editsnapshot') }}</h3>
-    <v-form class="pt-4">
+    <v-form
+      v-if="!saving"
+      class="pt-4"
+      ref="snapshotform"
+      v-model="valid"
+      lazy-validation
+    >
       <!--
                    :rules="rules"
             counter="25"
@@ -43,10 +55,14 @@
         <v-text-field
             v-model="snapshot.title"
             :label="$t('title')"
+            :rules="[v => !!v || $t('mandatory')]"
+            required
           ></v-text-field>
           <v-text-field
             v-model="snapshot.topic"
             :label="$t('topic')"
+            :rules="[v => !!v || $t('mandatory')]"
+            required
           ></v-text-field>
 
           <v-autocomplete
@@ -61,29 +77,26 @@
             item-value="node.bfsNumber"
             hide-no-data
             return-object
+            required
             ></v-autocomplete>
-  <!--  hide-no-data -->
+  <!--
+             hide-no-data -->
 
 
-          <div v-if="!isNew">
-            <p class="small mb-0">
-              <strong>{{ $t('currentfile') }}:</strong> {{snapshot.datafile}}
-            </p>
-          </div>
-          <v-progress-linear
-            v-model="progress"
-            color="light-blue"
-            height="25"
-            reactive
-          >
-            <strong>{{ progress }} %</strong>
-          </v-progress-linear>
           <v-file-input
             accept=".json"
             :label="$t('file')"
             truncate-length="20"
             @change="selectFile"
+            :rules="[v => !!v || $t('mandatory')]"
+            :required="isNew"
           ></v-file-input>
+<!--   -->
+          <div v-if="!isNew">
+            <p class="small mb-0">
+              <strong>{{ $t('currentfile') }}:</strong> {{snapshot.datafile}}
+            </p>
+          </div>
           <div class="d-flex justify-space-between mt-4">
             <v-btn
             @click="$emit('cancel')">
@@ -97,6 +110,16 @@
             </v-btn>
           </div>
     </v-form>
+    <div v-else>
+        <p>{{status}}</p>
+       <v-progress-linear
+            v-model="progress"
+            color="primary"
+            reactive
+            v-if="progress"
+          >
+       </v-progress-linear>
+    </div>
   </v-card>
 </template>
 
@@ -110,11 +133,14 @@ export default {
   name: 'SnapshotEdit',
   data() {
     return {
-      select: null,
+      valid: true,
+      select: [],
       search: null,
       municipalities: [],
       inidone: false,
       currentFile: undefined,
+      saving: false,
+      status: '',
       progress: 0
     };
   },
@@ -159,18 +185,25 @@ export default {
       });
       return result;
     },
-
     async saveSnapshot() {
+      if (!this.$refs.snapshotform.validate()) {
+        console.log('not valid');
+        return false;
+      }
+      this.saving = true;
+      this.status = this.$t('saveinfo');
       this.snapshot.municipality = this.select[0].node;
       const data = {
         title: this.snapshot.title,
         topic: this.snapshot.topic,
-        bfsNumber: this.select[0].node.bfsNumber,
+        bfsNumber: this.snapshot.municipality.bfsNumber,
         wshash: btoa(`WorkspaceNode:${this.$route.params.wshash}`)
       };
       if (this.snapshot.id) {
         data.clientMutationId = this.snapshot.id;
       }
+      console.log('snapshot.pk', this.snapshot.pk);
+
       const result = await this.$apollo.mutate({
         mutation: gql`mutation updatesnapshot($data: SnapshotMutationInput!){
           snapshotmutation(input: $data) {
@@ -193,9 +226,13 @@ export default {
       if (result) {
         this.snapshot.id = result.data.snapshotmutation.snapshot.id;
         this.snapshot.pk = result.data.snapshotmutation.snapshot.pk;
+        console.log('snapshot.pk', this.snapshot.pk);
+        this.status = this.$t('savefile');
         this.uploadDataJson();
-        this.$emit('saved');
+        return true;
       }
+      console.log('error saving snapshot info');
+      return false;
     },
 
     selectFile(file) {
@@ -218,34 +255,53 @@ export default {
       });
     },
 
-    async uploadDataJson() {
+    uploadDataJson() {
       if (!this.currentFile) {
+        this.saveDone();
         return;
       }
 
+      console.log('uploading file:');
       this.httpupload(this.currentFile, (event) => {
+        console.log(this.progress);
         this.progress = Math.round((100 * event.loaded) / event.total);
       })
         .then((response) => {
           console.log('response', response);
-          // return UploadService.getFiles();
-        })
-        .then((files) => {
-          // this.fileInfos = files.data;
-          console.log(files);
+          this.saveDone();
         })
         .catch(() => {
           this.progress = 0;
           this.currentFile = undefined;
+          this.saving = false;
           console.log('upload failed');
         });
+    },
+    saveDone() {
+      this.saving = false;
+      this.$emit('saved');
+      if (this.$route.params.hash === this.snapshot.pk) {
+        this.$router.go();
+      } else {
+        window.setTimeout(this.goToEditedSnapshot, 1000);
+      }
+    },
+    goToEditedSnapshot() {
+      const wHash = this.$route.params.wshash;
+      const curpk = this.snapshot.pk;
+      // const ln = this.$i18n.locale;
+      // undefined !?!!
+      const ln = 'de';
+      this.$router.push(`/${ln}/${wHash}/${curpk}/`);
     }
   },
   watch: {
     async search(val) {
       if (this.inidone) {
-        const result = await this.queryMunicipalities(val);
-        this.municipalities = result.data.municipalities.edges;
+        if (val) {
+          const result = await this.queryMunicipalities(val);
+          this.municipalities = result.data.municipalities.edges;
+        }
       }
     }
   }
