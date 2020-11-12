@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'sortedm2m_filter_horizontal_widget',
     'django_json_widget',
     'rest_framework',
+    'django_apscheduler',
 
     # own
     'gsuser',
@@ -150,4 +151,5 @@ SESSION_COOKIE_HTTPONLY = False
 
 THUMBNAIL_BACKEND = 'main.utils.PermalinkThumbnailBackend'
 THUMBNAIL_PREFIX = 'cache/'
-SAVE_SCREENSHOT_ENABLED = True
+SCREENSHOT_SCHEDULER_CRON_MINUTES = os.environ.get('DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES', '*')
+ 

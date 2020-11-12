@@ -58,6 +58,8 @@ services:
       - DJANGO_ALLOWED_HOSTS=www,www.local,localhost,django
       - DJANGO_ADMIN_NAME=gemeindescan DEV
       - DJANGO_ADMIN_HEADER_COLOR=#ff0000
+      - DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES=* # * every minute, */5 every 5 minutes
+      - START_APSCHEDULER=YES
     working_dir: /opt/app
     volumes:
       - ./django:/opt/app
