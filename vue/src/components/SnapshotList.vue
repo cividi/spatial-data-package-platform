@@ -29,7 +29,7 @@
           <v-list-item-content>
             <v-list-item-title style="font-weight:700">{{ snapshot.title }}</v-list-item-title>
           </v-list-item-content>
-          <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
+          <v-list-item-action v-if="workspaceHash" style="margin:0 0 4px 0; align-self: center;">
             <v-btn icon
               class="nobg"
               v-on:click.stop.prevent="$emit('editme', snapshot)">
