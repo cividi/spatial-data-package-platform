@@ -9,7 +9,7 @@
       "Die Darstellungen dienen der Vorbereitung von Planungsaufgaben, der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren.",
     "img.1.alt":
       "Gemeindescan Schweiz",
-    "h2.2": "Fallbeispiele",
+    "h2.2": "Beispiele",
     "p.3": "«Als Gemeindepräsident ist es mir wichtig, der Bevölkerung und dem Gemeinderat die Komplexität des Ortsplanungsprozesses und der Standortentwicklung verständlich und einfach zu übermitteln. Mit Hilfe von Daten und Visualisierungen über den Gemeindescan fällt es mir leichter, Lösungen und wichtige Entscheide zu fällen!»",
     "p.4": "Gemeindepräsident Wittenbach",
     "networkerror": "Die Gemeindesuche ist zur Zeit nicht verfügbar."
@@ -34,16 +34,47 @@
 <template>
 <div>
   <v-container my-12 >
-      <div class="gmdscn">
+      <!-- <div class="gmdscn">
           <img :alt="$t('img.1.alt')" class="" width="100%"
             src="@/assets/images/gmdscn-ch-map.svg"/>
           <search :autofocus=true />
-      </div>
+      </div> -->
       <v-row justify="center" >
         <v-col class="introtxt text-center pt-12">
-          <h1>{{ $t('h1.1') }}</h1>
+          <h1>Smart City Lab Lenzburg Sandbox</h1>
+
+          <v-btn
+            color="primary"
+            elevation="2"
+            large
+            target="_blank"
+            href="https://sandbox.gemeindescan.ch/DWOQT/BTJHR3/"
+          >Grundlageanalysen</v-btn>
+
+          <br>
+          <br>
+
+          <v-btn
+            color="primary"
+            elevation="2"
+            large
+            target="_blank"
+            href="https://github.com/cividi/scl-lenzburg"
+          >Daten auf GitHub</v-btn>
+
+          <br>
+          <br>
+
+          <v-btn
+            color="primary"
+            elevation="2"
+            large
+            target="_blank"
+            href="https://hackmd.io/@n0rdlicht/Bk9gEqdYP"
+          >Anleitung</v-btn>
+          <!-- <h1>{{ $t('h1.1') }}</h1>
           <p>{{ $t('p.1') }}</p>
-          <p>{{ $t('p.2') }}</p>
+          <p>{{ $t('p.2') }}</p> -->
         </v-col>
       </v-row>
   </v-container>
