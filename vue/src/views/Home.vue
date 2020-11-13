@@ -48,7 +48,7 @@
             elevation="2"
             large
             target="_blank"
-            href="https://sandbox.gemeindescan.ch/DWOQT/BTJHR3/"
+            href="https://sandbox.gemeindescan.ch/BTJHR3/"
           >Grundlageanalysen</v-btn>
 
           <br>
