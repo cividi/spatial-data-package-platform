@@ -97,22 +97,22 @@ export default {
 
     submitMunicipality() {
       if (this.select.node.bfsNumber) {
-        // if (this.select.node.snapshots.length === 0) {
-        this.$router.push({
-          name: 'snapshotNew',
-          params: {
-            hash: null,
-            bfsNumber: this.select.node.bfsNumber
-          }
-        });
-        // } else {
-        //   this.$router.push({
-        //     name: 'snapshot',
-        //     params: {
-        //       hash: this.select.node.snapshots[0].pk
-        //     }
-        //   });
-        // }
+        if (this.select.node.snapshots.length === 0) {
+          this.$router.push({
+            name: 'snapshotNew',
+            params: {
+              hash: null,
+              bfsNumber: this.select.node.bfsNumber
+            }
+          });
+        } else {
+          this.$router.push({
+            name: 'snapshot',
+            params: {
+              hash: this.select.node.snapshots[0].pk
+            }
+          });
+        }
       }
     }
   },

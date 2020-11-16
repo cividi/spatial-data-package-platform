@@ -4,14 +4,14 @@
   "de": {
     "calltoactionText": "Angebot für Ihre Gemeinde einholen",
     "hasSnapshot.title": "Datenverfügbarkeit",
-    "hasSnapshot.p1": "Für {municipalityText} stehen erste Daten zur Verfügung.",
+    "hasSnapshot.p1": "Für {municipalityText} stehen erste Analysen zur Verfügung.",
     "hasSnapshot.p2": "Erkunden Sie unsere weiteren Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
     "noSnapshot.title": "Datenverfügbarkeit",
     "noSnapshot.municipalityText": "diese Gemeinde",
     "noSnapshot.p1": "Für {municipalityText} sind zur Zeit noch keine Analysen freigeschaltet.",
     "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
-    "noSnapshot.p3.1": "Gerne beraten wir sie via",
-    "noSnapshot.p3.2": "oder telefonisch unter",
+    "noSnapshot.p3.1": "Gerne beraten wir Sie telefonisch unter",
+    "noSnapshot.p3.2": " oder per email",
     "contactEmail": "info@gemeindescan.ch",
     "contactEmailSubject": "Anfrage Gemeindescan",
     "contactPhone": "+41 43 543 44 48",
@@ -25,10 +25,10 @@
     "hasSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
     "noSnapshot.title": "Disponibilité des données",
     "noSnapshot.municipalityText": "cette communauté",
-    "noSnapshot.p1": "En ce moment il n’éxiste pas encore de données pour {municipalityText}.",
+    "noSnapshot.p1": "Pour l'instant, aucune analyse n'est disponible pour {municipalityText}.",
     "noSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
-    "noSnapshot.p3.1": "Gerne beraten wir sie via",
-    "noSnapshot.p3.2": "oder telefonisch unter",
+    "noSnapshot.p3.1": "Nous vous conseillons volontiers par téléphone au",
+    "noSnapshot.p3.2": "ou par courriel",
     "contactEmail": "info@gemeindescan.ch",
     "contactEmailSubject": "Offre pour Gemeindescan",
     "contactPhone": "+41 43 543 44 48",
@@ -59,17 +59,28 @@
 
         <div v-if="!hash" class="nodata pb-8">
           <div class="smaller hint">
-            <!-- <h4>{{ $t('noSnapshot.title') }}</h4> -->
             <p>{{ $t('noSnapshot.p1', { municipalityText: municipalityText }) }}</p>
             <p>{{ $t('noSnapshot.p2') }}</p>
             <p>
               {{ $t('noSnapshot.p3.1') }}
-              <a @click="composeEmail">{{$t('contactEmail')}}</a>
+              <a @click="makeCall">{{$t('contactPhone')}}</a>
               {{ $t('noSnapshot.p3.2') }}
-              <a @click="makeCall">{{$t('contactPhone')}}</a>.
+              <a @click="composeEmail">{{$t('contactEmail')}}</a>.
             </p>
           </div>
         </div>
+
+        <div v-else class="nodata pb-8">
+          <div class="smaller hint">
+            <p>{{ $t('hasSnapshot.p1', { municipalityText: municipalityText }) }}</p>
+            <p>{{ $t('hasSnapshot.p2') }}</p>
+          </div>
+        </div>
+
+        <snapshot-list
+            v-if="hash"
+            :snapshots="snapshotsMunicipality" :withTopic="false"
+          />
 
         <div class="useractions">
           <v-btn small block outlined color="primary">
@@ -80,12 +91,7 @@
         </div>
 
         <snapshot-list
-            v-if="hash"
-            :snapshots="snapshotsMunicipality" :withTopic="false"
-          />
-
-        <snapshot-list
-          v-if="snapshotsStore"
+          v-if="snapshotsStore && !hash"
           :snapshots="snapshotsStore" :withTopic="true"
         />
 

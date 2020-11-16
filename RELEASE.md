@@ -2,6 +2,11 @@
 
 ## Releases
 
+### 0.6.2
+[Released *2020-11-16*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.6.2)
+
+- Added a mock snapshot store for improved onboarding
+
 ### 0.6.1
 [Released: *2020-09-03*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.6.1)
 
