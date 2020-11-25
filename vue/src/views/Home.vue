@@ -41,7 +41,49 @@
       </div> -->
       <v-row justify="center" >
         <v-col class="introtxt text-center pt-12">
-          <h1>Smart City Lab Lenzburg Sandbox</h1>
+
+          <a href="https://hack.opendata.ch/event/35#top" target="_blank">
+            <v-img
+              src="https://bucketeer-036aa605-c047-4623-8610-f1764b90cf98.s3.amazonaws.com/public/L7KGJ1NROQP4M3UNH5183L99.png"
+              height=100
+              contain=false
+              >
+            </v-img>
+          </a>
+
+          <h1>Shape My City Luzern Sandbox</h1>
+
+          <p>
+            Willkommen bei der öffentliche Sandbox für den<br>
+            OpenData Hackathon <a href="https://opendata.ch/projects/hslu_shape-my-city-2020/"
+            target="_blank">Shape My City Luzern</a>.
+            </p>
+            <p>
+            <small>
+            Diese Sandbox steht allen Teilnehmern zur freien Verfügung, um<br>kartenbasierte
+            Analysen zu publizieren.<br>Die API ist auf <a href="https://sandbox.gemeindescan.ch/graphql" target="_blank">
+            sandbox.gemeindescan.ch/graphql</a> erreichbar.</small>
+          <p>
+            Sandbox Login<br>
+            Benutzername: luzern, Passwort: shapemycity
+          </p>
+
+           <v-btn
+            color="primary"
+            elevation="2"
+            large
+            target="_blank"
+            href="https://hackmd.io/@n0rdlicht/Bk9gEqdYP"
+          >Anleitung</v-btn>
+
+          <p>
+            <small>
+              <a href="https://sandbox.gemeindescan.ch/de/RHAX8/QYRB6S/" target="_blank">Direktlink Sandbox (kein Upload)</a>
+            </small>
+          </p>
+
+          <br>
+          <br>
 
           <v-btn
             color="primary"
@@ -49,29 +91,13 @@
             large
             target="_blank"
             href="https://sandbox.gemeindescan.ch/BTJHR3/"
-          >Grundlageanalysen</v-btn>
+          >Beispielanalysen Lenzburg</v-btn>
 
-          <br>
-          <br>
-
-          <v-btn
-            color="primary"
-            elevation="2"
-            large
-            target="_blank"
-            href="https://github.com/cividi/scl-lenzburg"
-          >Daten auf GitHub</v-btn>
-
-          <br>
-          <br>
-
-          <v-btn
-            color="primary"
-            elevation="2"
-            large
-            target="_blank"
-            href="https://hackmd.io/@n0rdlicht/Bk9gEqdYP"
-          >Anleitung</v-btn>
+          <p>
+            <small>
+              <a target="_blank" href="https://github.com/cividi/scl-lenzburg">Lenzburg Daten auf GitHub</a>
+            </small>
+          </p>
           <!-- <h1>{{ $t('h1.1') }}</h1>
           <p>{{ $t('p.1') }}</p>
           <p>{{ $t('p.2') }}</p> -->
