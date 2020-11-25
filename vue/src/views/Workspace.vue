@@ -40,8 +40,10 @@
           v-on:editme="editSnapshot"
         />
 
-        <v-btn fab color="primary"
-        @click="newSnapshot" >
+        <v-btn
+          v-if="$store.state.isUserLoggedIn"
+          fab color="primary"
+          @click="newSnapshot" >
         <v-icon>mdi-plus</v-icon>
         </v-btn>
       </div>

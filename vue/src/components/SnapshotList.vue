@@ -32,6 +32,7 @@
           <v-list-item-action v-if="workspaceHash" style="margin:0 0 4px 0; align-self: center;">
             <v-btn icon
               class="nobg"
+              v-if="$store.state.isUserLoggedIn"
               v-on:click.stop.prevent="$emit('editme', snapshot)">
                 <v-icon color="grey lighten-1" >mdi-pencil</v-icon>
             </v-btn>

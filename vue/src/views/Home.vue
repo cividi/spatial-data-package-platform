@@ -64,7 +64,7 @@
             Analysen zu publizieren.<br>Die API ist auf <a href="https://sandbox.gemeindescan.ch/graphql" target="_blank">
             sandbox.gemeindescan.ch/graphql</a> erreichbar.</small>
           <p>
-            Sandbox Login<br>
+            <a href="/de/login">Sandbox Login</a><br>
             Benutzername: luzern, Passwort: shapemycity
           </p>
 
@@ -90,7 +90,7 @@
             elevation="2"
             large
             target="_blank"
-            href="https://sandbox.gemeindescan.ch/BTJHR3/"
+            href="https://sandbox.gemeindescan.ch/de/B9034C/"
           >Beispielanalysen Lenzburg</v-btn>
 
           <p>
