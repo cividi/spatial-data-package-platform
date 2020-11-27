@@ -20,11 +20,25 @@ import LayoutDefault from '@/layouts/LayoutDefault.vue';
 
 export default {
   data() {
-    return {};
+    return {
+      fathomSiteId: process.env.VUE_APP_FATHOM_SITEID
+    };
   },
 
   created() {
     this.setInitialSnapshotnav();
+  },
+
+  mounted() {
+    if (this.fathomSiteId !== '') {
+      const fathomScript = document.createElement('script');
+      fathomScript.setAttribute('src', 'https://cdn.usefathom.com/script.js');
+      fathomScript.setAttribute('spa', 'auto');
+      fathomScript.setAttribute('data-site', this.fathomSiteId);
+      fathomScript.setAttribute('exluded-domains', 'www,www.local,localhost');
+      fathomScript.setAttribute('defer', true);
+      document.head.appendChild(fathomScript);
+    }
   },
 
   computed: {
