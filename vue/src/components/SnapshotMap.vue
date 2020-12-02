@@ -247,8 +247,7 @@ export default {
                 transparent: layer.parameters.transparent,
                 layers: layer.parameters.layers
               });
-            this.layerContainer.addTo(this.map);
-            tileLayer.addTo(this.map);
+            this.layerContainer.addLayer(tileLayer);
           }
         });
       } else if (this.bfsNumber) { // empty municipality
