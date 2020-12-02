@@ -240,6 +240,9 @@ export default {
             this.layerContainer.addLayer(this.createFeatureLayer(
               layer.data.features, this.geojson.views[0].spec.attribution
             ));
+          } else if (layer.mediatype === 'application/vnd.wms') {
+            const tileLayer = L.tileLayer.wms(layer.path, layer.parameters);
+            this.layerContainer.addLayer(tileLayer);
           }
         });
       } else if (this.bfsNumber) { // empty municipality
