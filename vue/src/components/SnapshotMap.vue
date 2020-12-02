@@ -242,7 +242,7 @@ export default {
             ));
           } else if (layer.mediatype === 'application/vnd.wms') {
             const tileLayer = L.tileLayer.wms(layer.path, layer.parameters);
-            this.layerContainer.addTo(this.map);
+            this.layerContainer.addLayer(tileLayer);
           }
         });
       } else if (this.bfsNumber) { // empty municipality
