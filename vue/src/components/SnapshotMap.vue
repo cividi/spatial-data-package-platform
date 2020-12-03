@@ -445,16 +445,18 @@ export default {
 
     setMarker(markerGeoCoordinates) {
       if (this.markerSelection === 'thumbs-up') {
+        const thumbUp = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" fill="green"/></svg>';
         this.newMarker = L.marker(markerGeoCoordinates, {
           icon: L.icon({
-            iconUrl: 'https://hey.ichhabeeine.cloud/index.php/s/Tg7mnEiWi7JSoXJ/download',
+            iconUrl: encodeURI(`data:image/svg+xml,${thumbUp}`),
             iconSize: [30, 30]
           })
         });
       } else if (this.markerSelection === 'thumbs-down') {
+        const thumbDown = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M19,15H23V3H19M15,3H6C5.17,3 4.46,3.5 4.16,4.22L1.14,11.27C1.05,11.5 1,11.74 1,12V14A2,2 0 0,0 3,16H9.31L8.36,20.57C8.34,20.67 8.33,20.77 8.33,20.88C8.33,21.3 8.5,21.67 8.77,21.94L9.83,23L16.41,16.41C16.78,16.05 17,15.55 17,15V5C17,3.89 16.1,3 15,3Z" fill="red"/></svg>';
         this.newMarker = L.marker(markerGeoCoordinates, {
           icon: L.icon({
-            iconUrl: 'https://hey.ichhabeeine.cloud/index.php/s/e3XrQ5oT3JfbmJB/download',
+            iconUrl: encodeURI(`data:image/svg+xml,${thumbDown}`),
             iconSize: [30, 30]
           })
         });
