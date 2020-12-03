@@ -383,27 +383,21 @@ export default {
       }).addTo(this.map);
 
       for (let x = 0; x < this.markerLocalStorage.length; x += 1) {
-        console.log(this.markerLocalStorage[x].markerSelection);
         this.markerSelection = this.markerLocalStorage[x].markerSelection;
         this.setMarker(this.markerLocalStorage[x].markerGeoCoordinates);
       }
 
       this.map.on('click', (event) => {
-        if (event.originalEvent.explicitOriginalTarget.id !== 'InputMarkerName') {
-          if (!event.originalEvent.originalTarget.attributes.class.nodeValue.includes('icon')) {
-            if (this.addMarkerMode) {
-              console.log(this.markerSelection);
-              const markerGeoCoordinates = event.latlng;
-              const markerInfoToStore = {
-                markerSelection: this.markerSelection,
-                markerGeoCoordinates
-              };
-              this.markerLocalStorage.push(markerInfoToStore);
-              this.saveMarkerLocalStorage();
-              console.log(JSON.parse(localStorage.getItem('PostIts')));
-              console.log(this.markerLocalStorage.length);
-              this.setMarker(markerGeoCoordinates);
-            }
+        if (event.containerPoint.y >= 50) {
+          if (this.addMarkerMode) {
+            const markerGeoCoordinates = event.latlng;
+            const markerInfoToStore = {
+              markerSelection: this.markerSelection,
+              markerGeoCoordinates
+            };
+            this.markerLocalStorage.push(markerInfoToStore);
+            this.saveMarkerLocalStorage();
+            this.setMarker(markerGeoCoordinates);
           }
         }
       });
@@ -423,7 +417,6 @@ export default {
     },
 
     setMarker(markerGeoCoordinates) {
-      console.log(this.markerSelection);
       if (this.markerSelection === 'thumbs-up') {
         this.newMarker = L.marker(markerGeoCoordinates, {
           icon: L.icon({
