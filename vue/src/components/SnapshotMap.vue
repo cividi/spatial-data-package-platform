@@ -11,7 +11,76 @@
       </v-slide-x-reverse-transition>
 
       <v-container fluid class="pa-0" ref="mapbox">
-        <div id="map"></div>
+        <div id="map">
+          <div id="MarkerButtonsHolder" v-if="!markerSelection.includes('tooltip')">
+             <div class="row">
+                <div style="width: 150px;">
+                  <h6>Select a <br> marker or Post-it:</h6>
+                </div>
+                <div style="width: 50px;">
+                  <button
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                      markerSelection = 'thumbs-up'">
+                     <v-icon large color="green" > mdi-thumb-up </v-icon>
+                  </button>
+                </div>
+                <div style="width: 50px;">
+                  <button
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                      markerSelection = 'thumbs-down'">
+                    <v-icon large color="red" > mdi-thumb-down </v-icon>
+                  </button>
+                </div>
+                <div style="width: 50px;">
+                  <button
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                      markerSelection = 'tooltip-text-green'">
+                    <v-icon large color="green" > mdi-tooltip-text </v-icon>
+                  </button>
+                </div>
+                <div style="width: 50px;">
+                  <button
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                      markerSelection = 'tooltip-text-blue'" >
+                    <v-icon large color="blue" > mdi-tooltip-text </v-icon>
+                  </button>
+                </div>
+                <div style="width: 50px;">
+                  <button
+                     id="ButtonStartMarker"
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                     markerSelection = 'tooltip-text-yellow'">
+                    <v-icon large color="yellow" > mdi-tooltip-text </v-icon>
+                  </button>
+                </div>
+              </div>
+          </div>
+          <div id="PostitNaming" v-if="addMarkerMode
+                  && markerSelection.includes('tooltip')">
+            <div class="row">
+              <div class="column" style="width: 150px;">
+                <h6> Enter node & <br>click on the map.</h6>
+              </div>
+              <div v-if="markerSelection == 'tooltip-text-green'"
+              class="column" style="width: 50px;">
+                <v-icon large color="green" > mdi-tooltip-text </v-icon>
+              </div>
+              <div v-if="markerSelection == 'tooltip-text-blue'"
+              class="column" style="width: 50px;">
+                <v-icon large color="blue" > mdi-tooltip-text </v-icon>
+              </div>
+              <div v-if="markerSelection == 'tooltip-text-yellow'"
+              class="column" style="width: 50px;">
+                <v-icon large color="yellow" > mdi-tooltip-text </v-icon>
+              </div>
+              <div class="column" style="width: 150px; font-size: 1.4em">
+                <input id="InputMarkerName"  v-model="newPostItNode"
+                    placeholder="Enter your Post-it note here"
+                >
+              </div>
+            </div>
+          </div>
+        </div>
         <span id="mapstatus" :class="{ loaded: isMapLoaded, waiting: !isMapLoaded }"></span>
       </v-container>
 
@@ -107,6 +176,43 @@ body,
 .mapbox-improve-map {
   display: none;
 }
+
+#MarkerButtonsHolder {
+  position: relative;
+  margin: auto;
+  top: 5px;
+  width: 400px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: hsla(0, 0%, 100%, 0.356);
+  text-align: right;
+  z-index: 300;
+}
+#PostitNaming {
+  position: relative;
+  margin: auto;
+  top: 5px;
+  width: 400px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: hsla(0, 0%, 100%, 0.356);
+  text-align: right;
+  z-index: 300;
+}
+.leaflet-tooltip-yellow{
+  font-size: medium;
+  background-color: rgb(255, 230, 6);
+}
+.leaflet-tooltip-green{
+  font-size: small;
+  color: rgb(255, 255, 255);
+  background-color: rgb(25, 158, 21);
+}
+.leaflet-tooltip-blue{
+  font-size: small;
+  color: rgb(255, 255, 255);
+  background-color: rgb(37, 24, 230);
+}
 </style>
 
 <script>
@@ -138,7 +244,11 @@ export default {
       geobounds: [],
       screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
       screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail'),
-      isMapLoaded: false
+      isMapLoaded: false,
+      addMarkerMode: false,
+      newPostItNode: '',
+      markerSelection: '',
+      markers: []
     };
   },
 
@@ -261,6 +371,60 @@ export default {
         imperial: false
       }).addTo(this.map);
 
+      this.map.on('click', (event) => {
+        if (!event.originalEvent.originalTarget.attributes.class.nodeValue.includes('icon')) {
+          if (this.addMarkerMode) {
+            if (this.markerSelection === 'thumbs-up') {
+              this.newMarker = L.marker(event.latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://hey.ichhabeeine.cloud/index.php/s/Tg7mnEiWi7JSoXJ/download',
+                  iconSize: [30, 30]
+                })
+              });
+            } else if (this.markerSelection === 'thumbs-down') {
+              this.newMarker = L.marker(event.latlng, {
+                icon: L.icon({
+                  iconUrl: 'https://hey.ichhabeeine.cloud/index.php/s/e3XrQ5oT3JfbmJB/download',
+                  iconSize: [30, 30]
+                })
+              });
+            } else if (this.markerSelection.includes('tooltip')) {
+              this.newMarker = L.marker(event.latlng, {
+                icon: L.icon({
+                  iconUrl: 'my-icon.png',
+                  iconSize: [0, 0]
+                })
+              });
+              if (this.markerSelection === 'tooltip-text-green') {
+                this.newMarker.bindTooltip(this.newPostItNode, {
+                  permanent: true,
+                  interactive: true,
+                  className: 'leaflet-tooltip-green'
+                });
+              } else if (this.markerSelection === 'tooltip-text-yellow') {
+                this.newMarker.bindTooltip(this.newPostItNode, {
+                  permanent: true,
+                  interactive: true,
+                  className: 'leaflet-tooltip-yellow'
+                });
+              } else if (this.markerSelection === 'tooltip-text-blue') {
+                this.newMarker.bindTooltip(this.newPostItNode, {
+                  permanent: true,
+                  interactive: true,
+                  className: 'leaflet-tooltip-blue'
+                });
+              }
+            }
+            this.newMarker.on('contextmenu', this.deleteMarker, this);
+            this.newMarker.addTo(this.map);
+            this.markers.push(this.newMarker);
+            this.addMarkerMode = false;
+            this.newPostItNode = '';
+            this.markerSelection = '';
+          }
+        }
+      });
+
       if (this.screenshotMode) {
         // no zoom controls in screenshot mode
         document.querySelector('.leaflet-control-zoom').style.display = 'none';
@@ -273,6 +437,14 @@ export default {
       }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
+    },
+
+    deleteMarker(event) {
+      for (let x = 0; x < this.markers.length; x += 1) {
+        if (event.latlng === this.markers[x].getLatLng()) {
+          this.map.removeLayer(this.markers[x]);
+        }
+      }
     },
 
     async destroyMap() {
