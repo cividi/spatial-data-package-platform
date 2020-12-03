@@ -248,7 +248,8 @@ export default {
       addMarkerMode: false,
       newPostItNode: '',
       markerSelection: '',
-      markers: []
+      markers: [],
+      markerLocalStorage: []
     };
   },
 
@@ -281,6 +282,16 @@ export default {
       },
       set(val) {
         this.$store.commit('setSnapshotnav', val);
+      }
+    }
+  },
+
+  async mounted() {
+    if (localStorage.getItem('PostIts')) {
+      try {
+        this.markerLocalStorage = JSON.parse(localStorage.getItem('PostIts'));
+      } catch (err) {
+        localStorage.removeItem('PostIts');
       }
     }
   },
@@ -371,56 +382,28 @@ export default {
         imperial: false
       }).addTo(this.map);
 
+      for (let x = 0; x < this.markerLocalStorage.length; x += 1) {
+        console.log(this.markerLocalStorage[x].markerSelection);
+        this.markerSelection = this.markerLocalStorage[x].markerSelection;
+        this.setMarker(this.markerLocalStorage[x].markerGeoCoordinates);
+      }
+
       this.map.on('click', (event) => {
-        if (!event.originalEvent.originalTarget.attributes.class.nodeValue.includes('icon')) {
-          if (this.addMarkerMode) {
-            if (this.markerSelection === 'thumbs-up') {
-              this.newMarker = L.marker(event.latlng, {
-                icon: L.icon({
-                  iconUrl: 'https://hey.ichhabeeine.cloud/index.php/s/Tg7mnEiWi7JSoXJ/download',
-                  iconSize: [30, 30]
-                })
-              });
-            } else if (this.markerSelection === 'thumbs-down') {
-              this.newMarker = L.marker(event.latlng, {
-                icon: L.icon({
-                  iconUrl: 'https://hey.ichhabeeine.cloud/index.php/s/e3XrQ5oT3JfbmJB/download',
-                  iconSize: [30, 30]
-                })
-              });
-            } else if (this.markerSelection.includes('tooltip')) {
-              this.newMarker = L.marker(event.latlng, {
-                icon: L.icon({
-                  iconUrl: 'my-icon.png',
-                  iconSize: [0, 0]
-                })
-              });
-              if (this.markerSelection === 'tooltip-text-green') {
-                this.newMarker.bindTooltip(this.newPostItNode, {
-                  permanent: true,
-                  interactive: true,
-                  className: 'leaflet-tooltip-green'
-                });
-              } else if (this.markerSelection === 'tooltip-text-yellow') {
-                this.newMarker.bindTooltip(this.newPostItNode, {
-                  permanent: true,
-                  interactive: true,
-                  className: 'leaflet-tooltip-yellow'
-                });
-              } else if (this.markerSelection === 'tooltip-text-blue') {
-                this.newMarker.bindTooltip(this.newPostItNode, {
-                  permanent: true,
-                  interactive: true,
-                  className: 'leaflet-tooltip-blue'
-                });
-              }
+        if (event.originalEvent.explicitOriginalTarget.id !== 'InputMarkerName') {
+          if (!event.originalEvent.originalTarget.attributes.class.nodeValue.includes('icon')) {
+            if (this.addMarkerMode) {
+              console.log(this.markerSelection);
+              const markerGeoCoordinates = event.latlng;
+              const markerInfoToStore = {
+                markerSelection: this.markerSelection,
+                markerGeoCoordinates
+              };
+              this.markerLocalStorage.push(markerInfoToStore);
+              this.saveMarkerLocalStorage();
+              console.log(JSON.parse(localStorage.getItem('PostIts')));
+              console.log(this.markerLocalStorage.length);
+              this.setMarker(markerGeoCoordinates);
             }
-            this.newMarker.on('contextmenu', this.deleteMarker, this);
-            this.newMarker.addTo(this.map);
-            this.markers.push(this.newMarker);
-            this.addMarkerMode = false;
-            this.newPostItNode = '';
-            this.markerSelection = '';
           }
         }
       });
@@ -439,12 +422,68 @@ export default {
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     },
 
+    setMarker(markerGeoCoordinates) {
+      console.log(this.markerSelection);
+      if (this.markerSelection === 'thumbs-up') {
+        this.newMarker = L.marker(markerGeoCoordinates, {
+          icon: L.icon({
+            iconUrl: 'https://hey.ichhabeeine.cloud/index.php/s/Tg7mnEiWi7JSoXJ/download',
+            iconSize: [30, 30]
+          })
+        });
+      } else if (this.markerSelection === 'thumbs-down') {
+        this.newMarker = L.marker(markerGeoCoordinates, {
+          icon: L.icon({
+            iconUrl: 'https://hey.ichhabeeine.cloud/index.php/s/e3XrQ5oT3JfbmJB/download',
+            iconSize: [30, 30]
+          })
+        });
+      } else if (this.markerSelection.includes('tooltip')) {
+        this.newMarker = L.marker(markerGeoCoordinates, {
+          icon: L.icon({
+            iconUrl: 'my-icon.png',
+            iconSize: [0, 0]
+          })
+        });
+        if (this.markerSelection === 'tooltip-text-green') {
+          this.newMarker.bindTooltip(this.newPostItNode, {
+            permanent: true,
+            interactive: true,
+            className: 'leaflet-tooltip-green'
+          });
+        } else if (this.markerSelection === 'tooltip-text-yellow') {
+          this.newMarker.bindTooltip(this.newPostItNode, {
+            permanent: true,
+            interactive: true,
+            className: 'leaflet-tooltip-yellow'
+          });
+        } else if (this.markerSelection === 'tooltip-text-blue') {
+          this.newMarker.bindTooltip(this.newPostItNode, {
+            permanent: true,
+            interactive: true,
+            className: 'leaflet-tooltip-blue'
+          });
+        }
+      }
+      this.newMarker.on('contextmenu', this.deleteMarker, this);
+      this.newMarker.addTo(this.map);
+      this.markers.push(this.newMarker);
+      this.addMarkerMode = false;
+      this.newPostItNode = '';
+      this.markerSelection = '';
+    },
+
     deleteMarker(event) {
       for (let x = 0; x < this.markers.length; x += 1) {
         if (event.latlng === this.markers[x].getLatLng()) {
           this.map.removeLayer(this.markers[x]);
         }
       }
+    },
+
+    saveMarkerLocalStorage() {
+      const parsed = JSON.stringify(this.markerLocalStorage);
+      localStorage.setItem('PostIts', parsed);
     },
 
     async destroyMap() {
