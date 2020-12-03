@@ -15,42 +15,69 @@
           <div id="MarkerButtonsHolder" v-if="!markerSelection.includes('tooltip')">
              <div class="row">
                 <div style="width: 150px;">
-                  <h6>Select a <br> marker or Post-it:</h6>
+                  <h6 v-if ="!addMarkerMode">Select a <br> marker or Post-it:</h6>
+                  <h6 v-else>Click on the map <br> to set the marker</h6>
                 </div>
                 <div style="width: 50px;">
-                  <button
+                  <button v-if ="!addMarkerMode || markerSelection == 'thumbs-up'"
                      v-on:click="addMarkerMode = !addMarkerMode;
                       markerSelection = 'thumbs-up'">
                      <v-icon large color="green" > mdi-thumb-up </v-icon>
                   </button>
+                  <button v-else
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                      markerSelection = 'thumbs-up'">
+                     <v-icon large color="green" style='opacity:0.1'> mdi-thumb-up </v-icon>
+                  </button>
                 </div>
                 <div style="width: 50px;">
-                  <button
+                  <button v-if ="!addMarkerMode || markerSelection == 'thumbs-down'"
                      v-on:click="addMarkerMode = !addMarkerMode;
                       markerSelection = 'thumbs-down'">
                     <v-icon large color="red" > mdi-thumb-down </v-icon>
                   </button>
+                  <button v-else
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                      markerSelection = 'thumbs-down'">
+                    <v-icon large color="red" style='opacity:0.1'> mdi-thumb-down </v-icon>
+                  </button>
                 </div>
                 <div style="width: 50px;">
-                  <button
+                  <button v-if ="!addMarkerMode"
                      v-on:click="addMarkerMode = !addMarkerMode;
                       markerSelection = 'tooltip-text-green'">
                     <v-icon large color="green" > mdi-tooltip-text </v-icon>
                   </button>
+                  <button v-else
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                      markerSelection = 'tooltip-text-green'">
+                    <v-icon large color="green" style='opacity:0.1'> mdi-tooltip-text </v-icon>
+                  </button>
                 </div>
                 <div style="width: 50px;">
-                  <button
+                  <button v-if ="!addMarkerMode"
                      v-on:click="addMarkerMode = !addMarkerMode;
                       markerSelection = 'tooltip-text-blue'" >
                     <v-icon large color="blue" > mdi-tooltip-text </v-icon>
                   </button>
+                  <button v-else
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                      markerSelection = 'tooltip-text-blue'" >
+                    <v-icon large color="blue" style='opacity:0.1'> mdi-tooltip-text </v-icon>
+                  </button>
                 </div>
                 <div style="width: 50px;">
-                  <button
+                  <button v-if ="!addMarkerMode"
                      id="ButtonStartMarker"
                      v-on:click="addMarkerMode = !addMarkerMode;
                      markerSelection = 'tooltip-text-yellow'">
                     <v-icon large color="yellow" > mdi-tooltip-text </v-icon>
+                  </button>
+                  <button v-else
+                     id="ButtonStartMarker"
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                     markerSelection = 'tooltip-text-yellow'">
+                    <v-icon large color="yellow" style='opacity:0.1'> mdi-tooltip-text </v-icon>
                   </button>
                 </div>
               </div>
