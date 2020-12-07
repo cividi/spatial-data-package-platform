@@ -411,6 +411,7 @@ export default {
 
       for (let x = 0; x < this.markerLocalStorage.length; x += 1) {
         this.markerSelection = this.markerLocalStorage[x].markerSelection;
+        this.newPostItNode = this.markerLocalStorage[x].newPostItNode;
         this.setMarker(this.markerLocalStorage[x].markerGeoCoordinates);
       }
 
@@ -420,6 +421,7 @@ export default {
             const markerGeoCoordinates = event.latlng;
             const markerInfoToStore = {
               markerSelection: this.markerSelection,
+              newPostItNode: this.newPostItNode,
               markerGeoCoordinates
             };
             this.markerLocalStorage.push(markerInfoToStore);
