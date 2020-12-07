@@ -43,6 +43,18 @@
                   </button>
                 </div>
                 <div style="width: 50px;">
+                  <button v-if ="!addMarkerMode || markerSelection == 'brush'"
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                      markerSelection = 'brush'">
+                    <v-icon large color="blue" > mdi-brush </v-icon>
+                  </button>
+                  <button v-else
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                      markerSelection = 'brush'">
+                    <v-icon large color="blue" style='opacity:0.1'> mdi-brush </v-icon>
+                  </button>
+                </div>
+                <div style="width: 50px;">
                   <button v-if ="!addMarkerMode"
                      v-on:click="addMarkerMode = !addMarkerMode;
                       markerSelection = 'tooltip-text-green'">
@@ -208,7 +220,7 @@ body,
   position: relative;
   margin: auto;
   top: 5px;
-  width: 400px;
+  width: 450px;
   height: 40px;
   border-radius: 20px;
   background-color: hsla(0, 0%, 100%, 0.356);
@@ -415,19 +427,38 @@ export default {
         this.setMarker(this.markerLocalStorage[x].markerGeoCoordinates);
       }
 
+      let paintNow = false;
+      this.myPolyline = [];
+
       this.map.on('click', (event) => {
         if (event.containerPoint.y >= 50) {
           if (this.addMarkerMode) {
-            this.newPostItNode = this.formatLongPostItNotes(this.newPostItNode);
-            const markerGeoCoordinates = event.latlng;
-            const markerInfoToStore = {
-              markerSelection: this.markerSelection,
-              newPostItNode: this.newPostItNode,
-              markerGeoCoordinates
-            };
-            this.markerLocalStorage.push(markerInfoToStore);
-            this.saveMarkerLocalStorage();
-            this.setMarker(markerGeoCoordinates);
+            if (this.markerSelection !== 'brush') {
+              this.newPostItNode = this.formatLongPostItNotes(this.newPostItNode);
+              const markerGeoCoordinates = event.latlng;
+              const markerInfoToStore = {
+                markerSelection: this.markerSelection,
+                newPostItNode: this.newPostItNode,
+                markerGeoCoordinates
+              };
+              this.markerLocalStorage.push(markerInfoToStore);
+              this.saveMarkerLocalStorage();
+              this.setMarker(markerGeoCoordinates);
+            } else if (this.markerSelection === 'brush') {
+              paintNow = !paintNow;
+              this.myPolyline = L.polyline([]).addTo(this.map);
+              if (!paintNow) {
+                this.addMarkerMode = false;
+              }
+            }
+          }
+        }
+      });
+
+      this.map.on('mousemove', (event) => {
+        if (this.addMarkerMode && (this.markerSelection === 'brush')) {
+          if (paintNow) {
+            this.myPolyline.addLatLng(event.latlng);
           }
         }
       });
