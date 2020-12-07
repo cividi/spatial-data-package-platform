@@ -446,9 +446,17 @@ export default {
               this.setMarker(markerGeoCoordinates);
             } else if (this.markerSelection === 'brush') {
               paintNow = !paintNow;
-              this.myPolyline = L.polyline([]).addTo(this.map);
-              if (!paintNow) {
+              if (paintNow) {
+                this.myPolyline = L.polyline([]).addTo(this.map);
+              } else {
                 this.addMarkerMode = false;
+                const brushInfoToStore = {
+                  markerSelection: 'brush',
+                  newPostItNode: this.newPostItNode,
+                  markerGeoCoordinates: this.myPolyline.getLatLngs()
+                };
+                this.markerLocalStorage.push(brushInfoToStore);
+                this.saveMarkerLocalStorage();
               }
             }
           }
@@ -494,6 +502,8 @@ export default {
             iconSize: [30, 30]
           })
         });
+      } else if (this.markerSelection === 'brush') {
+        this.newMarker = L.polyline(markerGeoCoordinates);
       } else if (this.markerSelection.includes('tooltip')) {
         this.newMarker = L.marker(markerGeoCoordinates, {
           icon: L.icon({
