@@ -227,7 +227,7 @@ body,
   z-index: 300;
 }
 .leaflet-tooltip-yellow{
-  font-size: medium;
+  font-size: small;
   background-color: rgb(255, 230, 6);
 }
 .leaflet-tooltip-green{
@@ -418,6 +418,7 @@ export default {
       this.map.on('click', (event) => {
         if (event.containerPoint.y >= 50) {
           if (this.addMarkerMode) {
+            this.newPostItNode = this.formatLongPostItNotes(this.newPostItNode);
             const markerGeoCoordinates = event.latlng;
             const markerInfoToStore = {
               markerSelection: this.markerSelection,
@@ -508,6 +509,40 @@ export default {
     saveMarkerLocalStorage() {
       const parsed = JSON.stringify(this.markerLocalStorage);
       localStorage.setItem('PostIts', parsed);
+    },
+
+    formatLongPostItNotes(text) {
+      const words = text.split(' ');
+      let str = '';
+      let lettersSinceBR = 0;
+      for (let i = 0; i < words.length; i += 1) {
+        const nextWord = words[i];
+        if (nextWord.length >= 15) {
+          if (lettersSinceBR !== 0) {
+            str += '<br>';
+          }
+          let nextWordLeft = nextWord.length;
+          while (nextWordLeft > 0) {
+            str += nextWord.slice(nextWord.length - nextWordLeft,
+              nextWord.length - nextWordLeft + 15);
+            str += '<br>';
+            lettersSinceBR = 0;
+            nextWordLeft -= 15;
+          }
+        } else if (lettersSinceBR + nextWord.length <= 10) {
+          str += nextWord;
+          str += ' ';
+          lettersSinceBR += nextWord.length;
+        } else {
+          if (lettersSinceBR !== 0) {
+            str += '<br>';
+          }
+          lettersSinceBR = nextWord.length;
+          str += nextWord;
+        }
+      }
+
+      return str;
     },
 
     async destroyMap() {
