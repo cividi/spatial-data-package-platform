@@ -431,10 +431,12 @@ export default {
         imperial: false
       }).addTo(this.map);
 
-      for (let x = 0; x < this.markerLocalStorage.length; x += 1) {
-        this.markerSelection = this.markerLocalStorage[x].markerSelection;
-        this.newPostItNode = this.markerLocalStorage[x].newPostItNode;
-        this.setMarker(this.markerLocalStorage[x].markerGeoCoordinates);
+      if (!this.screenshotMode) {
+        for (let x = 0; x < this.markerLocalStorage.length; x += 1) {
+          this.markerSelection = this.markerLocalStorage[x].markerSelection;
+          this.newPostItNode = this.markerLocalStorage[x].newPostItNode;
+          this.setMarker(this.markerLocalStorage[x].markerGeoCoordinates);
+        }
       }
 
       let paintNow = false;
