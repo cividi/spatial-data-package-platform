@@ -608,7 +608,12 @@ export default {
       for (let x = 0; x < this.markers.length; x += 1) {
         this.markers[x].remove();
       }
-      this.markers.pop();
+      while (this.markers.length > 0) {
+        this.markers.pop();
+      }
+      while (this.markerLocalStorage.length > 0) {
+        this.markerLocalStorage.pop();
+      }
       localStorage.removeItem('PostIts');
     },
 
