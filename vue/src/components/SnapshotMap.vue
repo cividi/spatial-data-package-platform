@@ -80,17 +80,27 @@
                 </div>
                 <div style="width: 50px;">
                   <button v-if ="!addMarkerMode"
-                     id="ButtonStartMarker"
                      v-on:click="addMarkerMode = !addMarkerMode;
                      markerSelection = 'tooltip-text-yellow'">
                     <v-icon large color="yellow" > mdi-tooltip-text </v-icon>
                   </button>
                   <button v-else
-                     id="ButtonStartMarker"
                      v-on:click="addMarkerMode = !addMarkerMode;
                      markerSelection = 'tooltip-text-yellow'">
                     <v-icon large color="yellow" style='opacity:0.1'> mdi-tooltip-text </v-icon>
                   </button>
+                </div>
+                <div style="width: 50px;" v-if ="!addMarkerMode">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-icon large
+                      v-on="on"
+                      v-on:click="deleteAllMarkers();"
+                      > mdi-delete-forever
+                      </v-icon>
+                    </template>
+                    <span>Click to delete all markers</span>
+                  </v-tooltip>
                 </div>
               </div>
           </div>
@@ -220,7 +230,7 @@ body,
   position: relative;
   margin: auto;
   top: 5px;
-  width: 450px;
+  width: 500px;
   height: 40px;
   border-radius: 20px;
   background-color: hsla(0, 0%, 100%, 0.356);
@@ -448,6 +458,7 @@ export default {
               paintNow = !paintNow;
               if (paintNow) {
                 this.myPolyline = L.polyline([]).addTo(this.map);
+                this.markers.push(this.myPolyline);
               } else {
                 this.addMarkerMode = false;
                 const brushInfoToStore = {
@@ -541,8 +552,12 @@ export default {
 
     deleteMarker(event) {
       for (let x = 0; x < this.markers.length; x += 1) {
-        if (event.latlng === this.markers[x].getLatLng()) {
-          this.map.removeLayer(this.markers[x]);
+        try {
+          if (event.latlng === this.markers[x].getLatLng()) {
+            this.map.removeLayer(this.markers[x]);
+          }
+        } catch {
+          console.log('found brush');
         }
       }
     },
@@ -584,6 +599,15 @@ export default {
       }
 
       return str;
+    },
+
+    deleteAllMarkers() {
+      console.log('delete all');
+      for (let x = 0; x < this.markers.length; x += 1) {
+        this.markers[x].remove();
+      }
+      this.markers.pop();
+      localStorage.removeItem('PostIts');
     },
 
     async destroyMap() {
