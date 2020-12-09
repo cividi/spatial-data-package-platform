@@ -111,15 +111,21 @@
                 <h6> Enter node & <br>click on the map.</h6>
               </div>
               <div v-if="markerSelection == 'tooltip-text-green'"
-              class="column" style="width: 50px;">
+              class="column" style="width: 50px;"
+              v-on:click="addMarkerMode = !addMarkerMode;
+              markerSelection = ''">
                 <v-icon large color="green" > mdi-tooltip-text </v-icon>
               </div>
               <div v-if="markerSelection == 'tooltip-text-blue'"
-              class="column" style="width: 50px;">
+              class="column" style="width: 50px;"
+              v-on:click="addMarkerMode = !addMarkerMode;
+              markerSelection = ''">
                 <v-icon large color="blue" > mdi-tooltip-text </v-icon>
               </div>
               <div v-if="markerSelection == 'tooltip-text-yellow'"
-              class="column" style="width: 50px;">
+              class="column" style="width: 50px;"
+              v-on:click="addMarkerMode = !addMarkerMode;
+              markerSelection = ''">
                 <v-icon large color="yellow" > mdi-tooltip-text </v-icon>
               </div>
               <div class="column" style="width: 150px; font-size: 1.4em">
