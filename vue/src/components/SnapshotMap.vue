@@ -565,7 +565,7 @@ export default {
             this.map.removeLayer(this.markers[x]);
           }
         } catch {
-          console.log('found brush');
+          // continue regardless of error
         }
       }
     },
@@ -610,7 +610,6 @@ export default {
     },
 
     deleteAllMarkers() {
-      console.log('delete all');
       for (let x = 0; x < this.markers.length; x += 1) {
         this.markers[x].remove();
       }
