@@ -43,6 +43,18 @@
                   </button>
                 </div>
                 <div style="width: 50px;">
+                  <button v-if ="!addMarkerMode || markerSelection == 'brush'"
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                      markerSelection = 'brush'">
+                    <v-icon large color="blue" > mdi-brush </v-icon>
+                  </button>
+                  <button v-else
+                     v-on:click="addMarkerMode = !addMarkerMode;
+                      markerSelection = 'brush'">
+                    <v-icon large color="blue" style='opacity:0.1'> mdi-brush </v-icon>
+                  </button>
+                </div>
+                <div style="width: 50px;">
                   <button v-if ="!addMarkerMode"
                      v-on:click="addMarkerMode = !addMarkerMode;
                       markerSelection = 'tooltip-text-green'">
@@ -68,17 +80,27 @@
                 </div>
                 <div style="width: 50px;">
                   <button v-if ="!addMarkerMode"
-                     id="ButtonStartMarker"
                      v-on:click="addMarkerMode = !addMarkerMode;
                      markerSelection = 'tooltip-text-yellow'">
                     <v-icon large color="yellow" > mdi-tooltip-text </v-icon>
                   </button>
                   <button v-else
-                     id="ButtonStartMarker"
                      v-on:click="addMarkerMode = !addMarkerMode;
                      markerSelection = 'tooltip-text-yellow'">
                     <v-icon large color="yellow" style='opacity:0.1'> mdi-tooltip-text </v-icon>
                   </button>
+                </div>
+                <div style="width: 50px;" v-if ="!addMarkerMode">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-icon large
+                      v-on="on"
+                      v-on:click="deleteAllMarkers();"
+                      > mdi-delete-forever
+                      </v-icon>
+                    </template>
+                    <span>Click to delete all markers</span>
+                  </v-tooltip>
                 </div>
               </div>
           </div>
@@ -89,15 +111,21 @@
                 <h6> Enter node & <br>click on the map.</h6>
               </div>
               <div v-if="markerSelection == 'tooltip-text-green'"
-              class="column" style="width: 50px;">
+              class="column" style="width: 50px;"
+              v-on:click="addMarkerMode = !addMarkerMode;
+              markerSelection = ''">
                 <v-icon large color="green" > mdi-tooltip-text </v-icon>
               </div>
               <div v-if="markerSelection == 'tooltip-text-blue'"
-              class="column" style="width: 50px;">
+              class="column" style="width: 50px;"
+              v-on:click="addMarkerMode = !addMarkerMode;
+              markerSelection = ''">
                 <v-icon large color="blue" > mdi-tooltip-text </v-icon>
               </div>
               <div v-if="markerSelection == 'tooltip-text-yellow'"
-              class="column" style="width: 50px;">
+              class="column" style="width: 50px;"
+              v-on:click="addMarkerMode = !addMarkerMode;
+              markerSelection = ''">
                 <v-icon large color="yellow" > mdi-tooltip-text </v-icon>
               </div>
               <div class="column" style="width: 150px; font-size: 1.4em">
@@ -208,7 +236,7 @@ body,
   position: relative;
   margin: auto;
   top: 5px;
-  width: 400px;
+  width: 500px;
   height: 40px;
   border-radius: 20px;
   background-color: hsla(0, 0%, 100%, 0.356);
@@ -227,7 +255,7 @@ body,
   z-index: 300;
 }
 .leaflet-tooltip-yellow{
-  font-size: medium;
+  font-size: small;
   background-color: rgb(255, 230, 6);
 }
 .leaflet-tooltip-green{
@@ -409,22 +437,55 @@ export default {
         imperial: false
       }).addTo(this.map);
 
-      for (let x = 0; x < this.markerLocalStorage.length; x += 1) {
-        this.markerSelection = this.markerLocalStorage[x].markerSelection;
-        this.setMarker(this.markerLocalStorage[x].markerGeoCoordinates);
+      if (!this.screenshotMode) {
+        for (let x = 0; x < this.markerLocalStorage.length; x += 1) {
+          this.markerSelection = this.markerLocalStorage[x].markerSelection;
+          this.newPostItNode = this.markerLocalStorage[x].newPostItNode;
+          this.setMarker(this.markerLocalStorage[x].markerGeoCoordinates);
+        }
       }
+
+      let paintNow = false;
+      this.myPolyline = [];
 
       this.map.on('click', (event) => {
         if (event.containerPoint.y >= 50) {
           if (this.addMarkerMode) {
-            const markerGeoCoordinates = event.latlng;
-            const markerInfoToStore = {
-              markerSelection: this.markerSelection,
-              markerGeoCoordinates
-            };
-            this.markerLocalStorage.push(markerInfoToStore);
-            this.saveMarkerLocalStorage();
-            this.setMarker(markerGeoCoordinates);
+            if (this.markerSelection !== 'brush') {
+              this.newPostItNode = this.formatLongPostItNotes(this.newPostItNode);
+              const markerGeoCoordinates = event.latlng;
+              const markerInfoToStore = {
+                markerSelection: this.markerSelection,
+                newPostItNode: this.newPostItNode,
+                markerGeoCoordinates
+              };
+              this.markerLocalStorage.push(markerInfoToStore);
+              this.saveMarkerLocalStorage();
+              this.setMarker(markerGeoCoordinates);
+            } else if (this.markerSelection === 'brush') {
+              paintNow = !paintNow;
+              if (paintNow) {
+                this.myPolyline = L.polyline([]).addTo(this.map);
+                this.markers.push(this.myPolyline);
+              } else {
+                this.addMarkerMode = false;
+                const brushInfoToStore = {
+                  markerSelection: 'brush',
+                  newPostItNode: this.newPostItNode,
+                  markerGeoCoordinates: this.myPolyline.getLatLngs()
+                };
+                this.markerLocalStorage.push(brushInfoToStore);
+                this.saveMarkerLocalStorage();
+              }
+            }
+          }
+        }
+      });
+
+      this.map.on('mousemove', (event) => {
+        if (this.addMarkerMode && (this.markerSelection === 'brush')) {
+          if (paintNow) {
+            this.myPolyline.addLatLng(event.latlng);
           }
         }
       });
@@ -460,6 +521,8 @@ export default {
             iconSize: [30, 30]
           })
         });
+      } else if (this.markerSelection === 'brush') {
+        this.newMarker = L.polyline(markerGeoCoordinates);
       } else if (this.markerSelection.includes('tooltip')) {
         this.newMarker = L.marker(markerGeoCoordinates, {
           icon: L.icon({
@@ -497,8 +560,12 @@ export default {
 
     deleteMarker(event) {
       for (let x = 0; x < this.markers.length; x += 1) {
-        if (event.latlng === this.markers[x].getLatLng()) {
-          this.map.removeLayer(this.markers[x]);
+        try {
+          if (event.latlng === this.markers[x].getLatLng()) {
+            this.map.removeLayer(this.markers[x]);
+          }
+        } catch {
+          console.log('found brush');
         }
       }
     },
@@ -506,6 +573,54 @@ export default {
     saveMarkerLocalStorage() {
       const parsed = JSON.stringify(this.markerLocalStorage);
       localStorage.setItem('PostIts', parsed);
+    },
+
+    formatLongPostItNotes(text) {
+      const words = text.split(' ');
+      let str = '';
+      let lettersSinceBR = 0;
+      for (let i = 0; i < words.length; i += 1) {
+        const nextWord = words[i];
+        if (nextWord.length >= 15) {
+          if (lettersSinceBR !== 0) {
+            str += '<br>';
+          }
+          let nextWordLeft = nextWord.length;
+          while (nextWordLeft > 0) {
+            str += nextWord.slice(nextWord.length - nextWordLeft,
+              nextWord.length - nextWordLeft + 15);
+            str += '<br>';
+            lettersSinceBR = 0;
+            nextWordLeft -= 15;
+          }
+        } else if (lettersSinceBR + nextWord.length <= 10) {
+          str += nextWord;
+          str += ' ';
+          lettersSinceBR += nextWord.length;
+        } else {
+          if (lettersSinceBR !== 0) {
+            str += '<br>';
+          }
+          lettersSinceBR = nextWord.length;
+          str += nextWord;
+        }
+      }
+
+      return str;
+    },
+
+    deleteAllMarkers() {
+      console.log('delete all');
+      for (let x = 0; x < this.markers.length; x += 1) {
+        this.markers[x].remove();
+      }
+      while (this.markers.length > 0) {
+        this.markers.pop();
+      }
+      while (this.markerLocalStorage.length > 0) {
+        this.markerLocalStorage.pop();
+      }
+      localStorage.removeItem('PostIts');
     },
 
     async destroyMap() {
