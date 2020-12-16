@@ -38,24 +38,13 @@
 <template>
 <div>
   <v-container my-12 >
-      <div class="gmdscn">
+      <div v-if="searchEnabled" class="gmdscn">
           <img :alt="$t('img.1.alt')" class="" width="100%"
             src="@/assets/images/gmdscn-ch-map.svg"/>
           <search :autofocus=true />
       </div>
       <v-row justify="center" >
-        <v-col class="introtxt text-center pt-12">
-          <h1>{{ $t('h1.1') }}</h1>
-          <p>{{ $t('p.1') }}</p>
-          <p>{{ $t('p.2') }}</p>
-          <p><br></p>
-          <v-btn
-            color="primary"
-            elevation="2"
-            x-large
-            target="_blank"
-            :href="$t('btn.href')"
-          >{{ $t('btn') }}</v-btn>
+        <v-col class="introtxt text-center pt-12" v-html=homepageSnippet>
         </v-col>
       </v-row>
   </v-container>
@@ -137,7 +126,9 @@ export default {
       djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
       snapshotsExamples: [],
       networkError: false,
-      snackbar: false
+      snackbar: false,
+      searchEnabled: true,
+      homepageSnippet: ''
     };
   },
 
@@ -160,10 +151,36 @@ export default {
     } else {
       this.$store.commit('setIsLoggedOut');
     }
+    await this.getConfig();
     await this.getSnapshotsExamples();
   },
 
   methods: {
+    async getConfig() {
+      const configResult = await this.$apollo.query({
+        query: gql`{
+          config {
+            edges {
+              node {
+                id,
+                pk,
+                searchEnabled,
+                homepageSnippet
+              }
+            }
+          }
+        }`
+      }).catch(() => {
+        this.snackbar = true;
+        this.networkError = true;
+      });
+      if (configResult) {
+        const config = configResult.data.config.edges.pop();
+        this.searchEnabled = config.node.searchEnabled;
+        this.homepageSnippet = config.node.homepageSnippet;
+      }
+    },
+
     async getSnapshotsExamples() {
       const result = await this.$apollo.query({
         query: gql`{

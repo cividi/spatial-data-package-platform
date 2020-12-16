@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_json_widget',
     'rest_framework',
     'django_apscheduler',
+    'solo',
 
     # own
     'gsuser',

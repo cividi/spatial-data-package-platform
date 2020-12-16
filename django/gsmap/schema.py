@@ -9,7 +9,7 @@ from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
-from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace
+from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, SiteConfiguration
 from graphene_django.rest_framework.mutation import SerializerMutation
 
 
@@ -152,6 +152,16 @@ class SnapshotMutation(graphene.relay.ClientIDMutation):
         return SnapshotMutation(snapshot=snapshot)
 
 
+class SiteConfigurationNode(DjangoObjectType):
+    class Meta:
+        model = SiteConfiguration
+        filter_fields = ['id']
+        fields = ['id', 'pk', 'search_enabled', 'homepage_snippet']
+        interfaces = [graphene.relay.Node]
+    
+    pk = graphene.String(source='id')
+
+
 class Query(object):
     municipality = graphene.relay.Node.Field(MunicipalityNode)
     municipalities = DjangoFilterConnectionField(MunicipalityNode)
@@ -161,6 +171,7 @@ class Query(object):
         SnapshotNode, filterset_class=SnapshotOnlyPublicFilter)
 
     workspace = graphene.relay.Node.Field(WorkspaceNode)
+    config = DjangoFilterConnectionField(SiteConfigurationNode)
 
 
 class Mutation(graphene.ObjectType):

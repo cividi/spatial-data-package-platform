@@ -8,7 +8,8 @@ from django.forms.widgets import Textarea
 from django.conf import settings
 import requests
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
-from gsmap.models import Municipality, Snapshot, Workspace
+from solo.admin import SingletonModelAdmin
+from gsmap.models import Municipality, Snapshot, Workspace, SiteConfiguration
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
@@ -141,4 +142,5 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(Snapshot, SnapshotAdmin)
 admin.site.register(Workspace, WorkspaceAdmin)
+admin.site.register(SiteConfiguration, SingletonModelAdmin)
 admin.site.site_header = settings.ADMIN_NAME
