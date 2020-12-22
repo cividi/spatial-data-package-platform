@@ -14,10 +14,19 @@ enter:
 	$(DOCKER_EXEC) ash
 
 build_docker:
-	cd docker && DOCKER_BUILDKIT=1 docker build vue \
+	cd docker && DOCKER_BUILDKIT=1 docker buildx build vue \
 	--cache-from smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE_PREV) \
 	--build-arg BUILDKIT_INLINE_CACHE=1 \
+	--platform linux/amd64,linux/arm64 \
 	-t smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE)
+
+build_load_docker:
+	cd docker && DOCKER_BUILDKIT=1 docker buildx build vue \
+	--cache-from smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE_PREV) \
+	--build-arg BUILDKIT_INLINE_CACHE=1 \
+	--platform $(DOCKER_PLATFORM) \
+	-t smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE) \
+	--load
 
 push:
 	docker push smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE)
