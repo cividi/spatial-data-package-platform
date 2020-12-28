@@ -38,11 +38,11 @@
 <template>
 <div>
   <v-container my-12 >
-      <!-- <div class="gmdscn">
+      <div class="gmdscn">
           <img :alt="$t('img.1.alt')" class="" width="100%"
             src="@/assets/images/gmdscn-ch-map.svg"/>
           <search :autofocus=true />
-      </div> -->
+      </div>
       <v-row justify="center" >
         <v-col class="introtxt text-center pt-12">
           <h1>{{ $t('h1.1') }}</h1>
