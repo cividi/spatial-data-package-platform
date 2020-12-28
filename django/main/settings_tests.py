@@ -17,4 +17,3 @@ DATABASES = {
     }
 }
 
-SAVE_SCREENSHOT_ENABLED = False

@@ -2,6 +2,13 @@
 
 ## Releases
 
+### 0.7.0 dev
+
+- Added `snapshot.json` upload
+- Added `snapshot.json` download in snapshot list
+- Added user login via django
+- Added API for snapshot upload
+
 ### 0.6.1
 [Released: *2020-09-03*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.6.1)
 

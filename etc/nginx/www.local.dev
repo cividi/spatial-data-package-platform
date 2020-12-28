@@ -58,6 +58,11 @@ server {
         root /var/services/django;
     }
 
+    location ~ ^/downloads/data-files/(?<file_name>.*) {
+        add_header Content-Disposition 'attachment; filename="$file_name"';
+        root /var/services/django;
+    }
+
     location ~ "^/(de|fr)/(?<hash>[0-9A-Z]{6})/?$" {
         # dev proxy vue
         include "/etc/nginx/conf.d/proxy_conf.inc";

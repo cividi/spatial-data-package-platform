@@ -19,6 +19,9 @@ services:
       - DJANGO_ALLOWED_HOSTS=
       - DJANGO_EMAIL_HOST=XXX
       - DJANGO_SECRET_KEY=XXX
+      - DJANGO_ALLOWED_HOSTS=www,www.local,localhost,django
+      - DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES=* # * every minute, */5 every 5 minutes
+      - START_APSCHEDULER=YES
     volumes:
       - ./django:/opt/django
       - ./var/django:/var/services/django

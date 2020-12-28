@@ -52,6 +52,10 @@ RUN apk --no-cache add yajl build-base yajl-dev python3-dev \
 COPY ./requirements/02.txt /tmp/requirements.txt
 RUN cd /opt && pip3 install -r /tmp/requirements.txt
 
+# python requirements 03 layer, django DRF, django-apscheduler
+COPY ./requirements/03.txt /tmp/requirements.txt
+RUN cd /opt && pip3 install -r /tmp/requirements.txt
+
 COPY s6/etc/services.d /etc/services.d
 COPY s6/etc/cont-init.d /etc/cont-init.d
 ENTRYPOINT ["/init"]

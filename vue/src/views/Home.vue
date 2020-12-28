@@ -9,7 +9,7 @@
       "Die Darstellungen dienen der Vorbereitung von Planungsaufgaben, der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren.",
     "img.1.alt":
       "Gemeindescan Schweiz",
-    "h2.2": "Fallbeispiele",
+    "h2.2": "Beispiele",
     "p.3": "«Als Gemeindepräsident ist es mir wichtig, der Bevölkerung und dem Gemeinderat die Komplexität des Ortsplanungsprozesses und der Standortentwicklung verständlich und einfach zu übermitteln. Mit Hilfe von Daten und Visualisierungen über den Gemeindescan fällt es mir leichter, Lösungen und wichtige Entscheide zu fällen!»",
     "p.4": "Gemeindepräsident Wittenbach",
     "btn": "Mehr erfahren",
@@ -38,11 +38,11 @@
 <template>
 <div>
   <v-container my-12 >
-      <div class="gmdscn">
+      <!-- <div class="gmdscn">
           <img :alt="$t('img.1.alt')" class="" width="100%"
             src="@/assets/images/gmdscn-ch-map.svg"/>
           <search :autofocus=true />
-      </div>
+      </div> -->
       <v-row justify="center" >
         <v-col class="introtxt text-center pt-12">
           <h1>{{ $t('h1.1') }}</h1>
@@ -131,6 +131,7 @@ import gql from 'graphql-tag';
 
 export default {
   name: 'Home',
+
   data() {
     return {
       djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
@@ -139,13 +140,29 @@ export default {
       snackbar: false
     };
   },
+
   created() {
     this.$store.commit('setBfsnumber', '');
     this.$store.commit('setBfsname', '');
   },
+
   async mounted() {
+    const sessionid = this.$cookies.get('sessionid', '');
+    if (sessionid) {
+      this.$store.commit('setIsLoggedIn');
+      const workspaceid = this.$cookies.get('workspaceid', '');
+      if (workspaceid) {
+        const hashed = workspaceid.replace(/^"|"$/g, '').split('/');
+        const wshash = hashed[0];
+        const hash = hashed[1];
+        this.$router.push({ name: 'workspaceRedirect', params: { wshash, hash } });
+      }
+    } else {
+      this.$store.commit('setIsLoggedOut');
+    }
     await this.getSnapshotsExamples();
   },
+
   methods: {
     async getSnapshotsExamples() {
       const result = await this.$apollo.query({

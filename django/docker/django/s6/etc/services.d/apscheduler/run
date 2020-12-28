@@ -1,0 +1,14 @@
+#!/usr/bin/with-contenv sh
+
+pid=$$
+
+sigterm() {
+    kill -TERM $pid
+}
+
+trap sigterm TERM
+cd /opt/app
+export PYTHONPATH=.
+DJANGO_SETTINGS_MODULE=main.settings python3 -u manage.py runapscheduler >> "/var/services/django/runapscheduler.log" 2>&1 &
+pid=$!
+wait
