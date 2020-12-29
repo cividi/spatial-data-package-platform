@@ -176,8 +176,10 @@ export default {
       });
       if (configResult) {
         const config = configResult.data.config.edges.pop();
-        this.searchEnabled = config.node.searchEnabled;
-        this.homepageSnippet = config.node.homepageSnippet;
+        if (config) {
+          this.searchEnabled = config.node.searchEnabled;
+          this.homepageSnippet = config.node.homepageSnippet;
+        }
       }
     },
 
