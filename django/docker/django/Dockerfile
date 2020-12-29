@@ -41,10 +41,6 @@ RUN curl -Ls https://github.com/just-containers/s6-overlay/releases/download/$S6
 COPY ./requirements/00.txt /tmp/requirements.txt
 RUN cd /opt && pip3 install -r /tmp/requirements.txt
 
-# python requirements 03 layer, django DRF, django-apscheduler
-COPY ./requirements/03.txt /tmp/requirements.txt
-RUN cd /opt && pip3 install -r /tmp/requirements.txt
-
 COPY s6/etc/services.d /etc/services.d
 COPY s6/etc/cont-init.d /etc/cont-init.d
 ENTRYPOINT ["/init"]
