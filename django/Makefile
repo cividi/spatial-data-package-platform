@@ -1,5 +1,5 @@
-GEMEINDESCAN_WEBUI_DJANGO=0.3.7
-GEMEINDESCAN_WEBUI_DJANGO_PREV=0.3.6
+DJANGO_VERSION=3.1.4
+DJANGO_VERSION_PREV=0.3.4
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec django")
 all: dev run-tests run-tests-dev
 .PHONY: all
@@ -9,10 +9,10 @@ enter:
 	$(DOCKER_EXEC) ash
 
 build_docker:
-	cd docker && DOCKER_BUILDKIT=1 docker build django \
-	--cache-from smartuse/gemeindescan-webui-django:$(GEMEINDESCAN_WEBUI_DJANGO_PREV) \
-	--build-arg BUILDKIT_INLINE_CACHE=1 \
-	-t smartuse/gemeindescan-webui-django:$(GEMEINDESCAN_WEBUI_DJANGO)
+	cd docker && DOCKER_BUILDKIT=1 \
+	docker build django \
+		--cache-from smartuse/gemeindescan-webui-django:$(DJANGO_VERSION_PREV) \
+		--build-arg BUILDKIT_INLINE_CACHE=1 -t smartuse/gemeindescan-webui-django:$(DJANGO_VERSION)
 
 push:
 	docker push smartuse/gemeindescan-webui-django:$(GEMEINDESCAN_WEBUI_DJANGO)
