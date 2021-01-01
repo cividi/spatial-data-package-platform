@@ -48,7 +48,8 @@ INSTALLED_APPS = [
 
     # own
     'gsuser',
-    'gsmap'
+    'gsmap',
+    'main',
 ]
 
 MIDDLEWARE = [

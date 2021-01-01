@@ -22,7 +22,6 @@ from django.utils import timezone
 from django.utils.html import escape, format_html
 
 from gsuser.models import User
-from solo.models import SingletonModel
 
 
 class OverwriteStorage(FileSystemStorage):
@@ -356,14 +355,3 @@ class Workspace(models.Model):
 
     def __str__(self):
         return f'{self.id} {self.title}'
-
-
-class SiteConfiguration(SingletonModel):
-    search_enabled = models.BooleanField(default=True)
-    homepage_snippet = models.TextField(blank=True)
-
-    def __str__(self):
-        return "Site Configuration"
-
-    class Meta:
-        verbose_name = "Site Configuration"

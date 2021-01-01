@@ -5,11 +5,9 @@ from django_json_widget.widgets import JSONEditorWidget
 from django.utils.html import mark_safe
 from django.contrib import messages
 from django.forms.widgets import Textarea
-from django.conf import settings
 import requests
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
-from solo.admin import SingletonModelAdmin
-from gsmap.models import Municipality, Snapshot, Workspace, SiteConfiguration
+from gsmap.models import Municipality, Snapshot, Workspace
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
@@ -142,5 +140,3 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(Snapshot, SnapshotAdmin)
 admin.site.register(Workspace, WorkspaceAdmin)
-admin.site.register(SiteConfiguration, SingletonModelAdmin)
-admin.site.site_header = settings.ADMIN_NAME
