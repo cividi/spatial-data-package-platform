@@ -15,7 +15,7 @@ build_docker:
 		--build-arg BUILDKIT_INLINE_CACHE=1 -t smartuse/gemeindescan-webui-django:$(DJANGO_VERSION)
 
 push:
-	docker push smartuse/gemeindescan-webui-django:$(GEMEINDESCAN_WEBUI_DJANGO)
+	docker push smartuse/gemeindescan-webui-django:$(DJANGO_VERSION)
 
 dev:
 	$(DOCKER_EXEC) uvicorn main.asgi:application --port 8081 --host 0.0.0.0 --reload
