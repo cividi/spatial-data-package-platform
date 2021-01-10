@@ -157,28 +157,27 @@ export default {
 
   methods: {
     async getConfig() {
+      const language = this.$i18n.locale;
       const configResult = await this.$apollo.query({
-        query: gql`{
-          config {
-            edges {
-              node {
-                id,
-                pk,
-                searchEnabled,
-                homepageSnippet
-              }
-            }
+        query: gql`query getconfig($language: String) {
+          config(language: $language) {
+            searchEnabled,
+            homepageSnippet
           }
-        }`
+        }`,
+        variables: {
+          language
+        },
+        fetchPolicy: 'no-cache' // fixes empty homepage, apollo bug?
       }).catch(() => {
         this.snackbar = true;
         this.networkError = true;
       });
       if (configResult) {
-        const config = configResult.data.config.edges.pop();
+        const config = configResult.data.config;
         if (config) {
-          this.searchEnabled = config.node.searchEnabled;
-          this.homepageSnippet = config.node.homepageSnippet;
+          this.searchEnabled = config.searchEnabled;
+          this.homepageSnippet = config.homepageSnippet;
         }
       }
     },
