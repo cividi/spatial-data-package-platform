@@ -2,34 +2,16 @@
 <i18n>
 {
   "de": {
-    "h1.1": "Entdecke das Lebensraum-Potential deiner Gemeinde.",
-    "p.1":
-      "Der Gemeindescan ermöglicht Gemeindeverwaltungen auf einfache und kosteneffiziente Weise ein Bild von Nutzungen und Nutzern in Ihrer Gemeinde zu erhalten. Flächennutzung, Verkehr oder Struktur werden an einer Stelle evidenzbasiert zusammengeführt.",
-    "p.2":
-      "Die Darstellungen dienen der Vorbereitung von Planungsaufgaben, der Kommunikation mit Politik, Bürgern oder Entwicklern und Investoren.",
     "img.1.alt":
       "Gemeindescan Schweiz",
     "h2.2": "Beispiele",
-    "p.3": "«Als Gemeindepräsident ist es mir wichtig, der Bevölkerung und dem Gemeinderat die Komplexität des Ortsplanungsprozesses und der Standortentwicklung verständlich und einfach zu übermitteln. Mit Hilfe von Daten und Visualisierungen über den Gemeindescan fällt es mir leichter, Lösungen und wichtige Entscheide zu fällen!»",
-    "p.4": "Gemeindepräsident Wittenbach",
-    "btn": "Mehr erfahren",
-    "btn.href": "https:\/\/cividi.ch\/gemeindescan",
     "networkerror": "Die Gemeindesuche ist zur Zeit nicht verfügbar."
   },
   "fr": {
-    "h1.1": "Découvrez le potentiel en terme d'habitat de votre communauté.",
-    "p.1":
-      "Le Gemeindescan permet aux autorités locales de se faire une idée des utilisations et des utilisateurs de votre communauté de manière simple et économique. L'utilisation des sols, du trafic ou des structures est rassemblée sur un seul support basé sur des faits.",
-    "p.2":
-      "Les représentations servent à la préparation des tâches de planification, à la communication avec les politiciens, les citoyens ou les promoteurs et les investisseurs.",
     "img.1.alt":
       "Le Gemeindescan Suisse",
     "h2.2": "Examples",
-    "p.3": "«En tant que maire, il est important pour moi de communiquer la complexité du processus de planification locale et du développement urbain à la population et au conseil municipal de manière simple et compréhensible. Avec l'aide des données et des visualisations via les analyses de la communauté, il m'est plus facile de trouver des solutions et de prendre des décisions importantes!»",
-    "p.4": "Le maire de la municipalité Wittenbach",
-    "btn": "En savoir plus",
-    "btn.href": "https:\/\/cividi.ch\/gemeindescan-fr",
-    "networkerror": "La recherche de communauté n'est pas disponible actuellement."
+   "networkerror": "La recherche de communauté n'est pas disponible actuellement."
   }
 }
 </i18n>
