@@ -3,4 +3,5 @@ tmp
 env.hosts.prod
 server.yml
 docker-prod.yml
+docker-compose-prod.yml
 __pycache__/

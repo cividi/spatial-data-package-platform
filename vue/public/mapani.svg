@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="8" height="8"/>
+  </defs>
+  <style type="text/css">
+    <![CDATA[
+      @keyframes fadein {
+        from {
+          fill: #ddd;
+        }
+        to {
+          fill: rgb(115, 160, 102);
+        }
+      }
+      @keyframes draw {
+        from {
+          stroke-dashoffset: 1000;
+        }
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes pop {
+        from {
+          fill: #ddd;
+          transform: scale(0.2);
+        }
+        to {
+          fill: #AAA;
+          transform: scale(1);
+        }
+      }
+      #park {
+        fill: #DDD;
+      }
+      .playing #park{
+        animation: fadein 1s linear both;
+      }
+      #buidings polygon {
+        fill: #DDD;
+      }
+      .playing #buidings polygon{
+        animation: pop 1s ease-out both;
+      }
+
+      path, line {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+      }
+      .playing path,
+      .playing line {
+        animation: draw 5s linear both;
+      }
+    ]]>
+  </style>
+  <rect width="64" height="64" fill="#DDD"/>
+  <g id="animation" >
+    <polygon id="park" style="animation-delay: 0.4s;" points="24 0 24 48 64 8 64 0"/>
+    <path id="river" style="animation-delay: 0s" fill="none" stroke="rgb(150, 210, 255)" stroke-width="8" stroke-linecap="square" d="M 48 0 C 19.4 26.367 53.681 34.543 32 64"/>
+    <g id="streets" stroke="#fff" stroke-width="6">
+      <line style="animation-delay: 1s;" stroke-linecap="square" x1="8" y1="64" x2="64" y2="8"/>
+      <line style="animation-delay: 1.25s;" stroke-width="4" stroke-linecap="square" x1="64" y1="40" x2="48" y2="24"/>
+      <line style="animation-delay: 1.5s;" x1="24" y1="48" x2="24" y2="0"/>
+      <line style="animation-delay: 1.75s;" stroke-width="8" x1="0" y1="24" x2="24" y2="24"/>
+    </g>
+    <g id="buidings">
+      <polygon style="animation-delay: 1.5s; transform-origin: 8px 40px;" points="0 32 16 32 16 48 0 64"/>
+      <polygon style="animation-delay: 2s; transform-origin: 8px 4px;" points="0 0 16 0 16 8 8 16 0 16"/>
+      <polygon style="animation-delay: 2.5s; transform-origin: 56px 56px;" points="48 32 64 48 64 64 48 64"/>
+    </g>
+  </g>
+  <script type="text/javascript"><![CDATA[
+    const stopani = function(){
+      document.getElementById('animation').setAttribute('class', '');
+    }
+    const startani = function(){
+      document.getElementById('animation').setAttribute('class', 'playing');
+      window.setTimeout(stopani, 6000);
+      window.setTimeout(startani, 6200);
+    }
+    window.setTimeout(startani, 0);
+    
+  ]]></script>
+</svg>

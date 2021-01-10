@@ -91,10 +91,15 @@
     </v-navigation-drawer>
 
     <snapshot-map ref="map"
+      :snapshot="snapshot"
       :geojson="geojson"
       :geoboundsIn="geobounds"
       :predecessor="predecessor"
     />
+
+    <!-- <snapshot-change ref="change"
+      :title="snapshot.title"
+    /> -->
 
      <error-message
       :settings="errorsettings"
@@ -200,6 +205,9 @@ export default {
           snapshot(id: $hash) {
             id
             pk
+            title
+            topic
+            datafile
             predecessor {
               id
               pk
@@ -214,6 +222,7 @@ export default {
                 topic
                 thumbnail
                 screenshot
+                datafile
               }
             }
           }
@@ -227,6 +236,7 @@ export default {
                 topic
                 thumbnail
                 screenshot
+                datafile
               }
             }
           }
@@ -265,6 +275,8 @@ export default {
             id
             pk
             data
+            title
+            topic
           }
         }`,
         variables: {
@@ -298,6 +310,7 @@ export default {
               topic
               thumbnail
               screenshot
+              datafile
             }
           }
 
@@ -310,6 +323,7 @@ export default {
                 topic
                 thumbnail
                 screenshot
+                datafile
               }
             }
           }

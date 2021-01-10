@@ -16,4 +16,7 @@ class PermalinkThumbnailBackend(ThumbnailBackend):
         return '%s%s.%s' % (settings.THUMBNAIL_PREFIX, path, EXTENSIONS[options['format']])
 
 def context_processor(request):
-    return { 'ADMIN_HEADER_COLOR': settings.ADMIN_HEADER_COLOR }
+    return {
+        'ADMIN_HEADER_COLOR': settings.ADMIN_HEADER_COLOR,
+        'LOGIN_PAGE_TITLE': settings.LOGIN_PAGE_TITLE,
+    }
