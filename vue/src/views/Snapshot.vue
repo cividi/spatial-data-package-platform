@@ -91,7 +91,6 @@
     </v-navigation-drawer>
 
     <snapshot-map ref="map"
-      :snapshot="snapshot"
       :geojson="geojson"
       :geoboundsIn="geobounds"
       :predecessor="predecessor"
@@ -155,7 +154,6 @@ export default {
   async mounted() {
     if (this.hash) {
       await this.getSnapshotInfo(this.hash);
-
       await this.getSnapshotData(this.hash);
       if (this.geojson) {
         this.$refs.map.setupMeta();
@@ -275,8 +273,6 @@ export default {
             id
             pk
             data
-            title
-            topic
           }
         }`,
         variables: {
