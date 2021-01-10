@@ -5,3 +5,10 @@ START_DJANGO=${START_DJANGO:-NO}
 if [ "$START_DJANGO" = "YES" ]; then
     rm /etc/services.d/django/down
 fi
+
+START_APSCHEDULER=${START_APSCHEDULER:-NO}
+
+if [ "$START_APSCHEDULER" = "YES" ]; then
+    rm /etc/services.d/apscheduler/down
+fi
+

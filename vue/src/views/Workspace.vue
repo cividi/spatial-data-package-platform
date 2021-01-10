@@ -36,7 +36,16 @@
         <snapshot-list
           :snapshots="snapshotsWorkspace"
           :workspaceHash="wshash"
+          :snapshotHash="hash"
+          v-on:editme="editSnapshot"
         />
+
+        <v-btn
+          v-if="$store.state.isUserLoggedIn"
+          fab color="primary"
+          @click="newSnapshot" >
+        <v-icon>mdi-plus</v-icon>
+        </v-btn>
       </div>
 
       <v-toolbar
@@ -55,9 +64,24 @@
       :geojson="geojson"
       :geoboundsIn="geobounds"
     />
+    <v-overlay
+      absolute="absolute"
+      opacity="0.2"
+      z-index="1000"
+      :value="editing"
+      >
+      <snapshot-edit
+        v-if="editing"
+        :snapshot="snapshotEdit"
+        v-on:cancel="abortEdit"
+        v-on:saved="closeEdit"
+      />
+     </v-overlay>
+
      <error-message
       :settings="errorsettings"
     />
+
   </div>
 </template>
 
@@ -86,10 +110,12 @@ import Vue from 'vue';
 import gql from 'graphql-tag';
 import SnapshotList from '../components/SnapshotList.vue';
 import SnapshotMap from '../components/SnapshotMap.vue';
+import SnapshotEdit from '../components/SnapshotEdit.vue';
 import ErrorMessage from '../components/ErrorMessage.vue';
 
 Vue.component('snapshot-list', SnapshotList);
 Vue.component('snapshot-map', SnapshotMap);
+Vue.component('snapshot-edit', SnapshotEdit);
 Vue.component('error-message', ErrorMessage);
 
 export default {
@@ -103,7 +129,9 @@ export default {
       snapshotsWorkspace: [],
       title: '',
       description: '',
-      errorsettings: {}
+      errorsettings: {},
+      snapshotEdit: Object,
+      editing: false
     };
   },
 
@@ -154,6 +182,11 @@ export default {
                 topic
                 screenshot
                 thumbnail
+                datafile
+                municipality {
+                  bfsNumber
+                  fullname
+                }
               }
             }
 
@@ -170,6 +203,7 @@ export default {
                   topic
                   screenshot
                   thumbnail
+                  datafile
                 }
               }
             }
@@ -231,7 +265,26 @@ export default {
           this.$router.push({ name: 'home' });
         }
       }
+    },
+    editSnapshot(snapshot) {
+      this.snapshotEdit = snapshot;
+      this.editing = true;
+    },
+    abortEdit() {
+      this.editing = false;
+      this.snapshotEdit = {};
+    },
+    closeEdit() {
+      this.editing = false;
+      this.snapshotEdit = {};
+    },
+    newSnapshot() {
+      this.snapshotEdit = {
+        pk: '', title: '', topic: '', municipality: { bfsNumber: 0, fullname: '' }
+      };
+      this.editing = true;
     }
   }
+
 };
 </script>

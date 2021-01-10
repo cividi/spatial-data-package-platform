@@ -124,6 +124,10 @@
       :predecessor="predecessor"
     />
 
+    <!-- <snapshot-change ref="change"
+      :title="snapshot.title"
+    /> -->
+
      <error-message
       :settings="errorsettings"
     />
@@ -190,7 +194,6 @@ export default {
 
     if (this.hash) {
       await this.getSnapshotInfo(this.hash);
-
       await this.getSnapshotData(this.hash);
       if (this.geojson) {
         this.$refs.map.setupMeta();
@@ -240,6 +243,9 @@ export default {
           snapshot(id: $hash) {
             id
             pk
+            title
+            topic
+            datafile
             predecessor {
               id
               pk
@@ -254,6 +260,7 @@ export default {
                 topic
                 thumbnail
                 screenshot
+                datafile
               }
             }
           }
@@ -267,6 +274,7 @@ export default {
                 topic
                 thumbnail
                 screenshot
+                datafile
               }
             }
           }
@@ -338,6 +346,7 @@ export default {
               topic
               thumbnail
               screenshot
+              datafile
             }
           }
 
@@ -350,6 +359,7 @@ export default {
                 topic
                 thumbnail
                 screenshot
+                datafile
               }
             }
           }

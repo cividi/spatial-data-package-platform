@@ -143,6 +143,7 @@ export default {
   },
 
   props: {
+    snapshot: Object,
     geojson: Object,
     geoboundsIn: Array,
     predecessor: Object

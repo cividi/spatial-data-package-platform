@@ -30,6 +30,8 @@ services:
       - PUBLIC_URL=http://www:8000
       - VUE_APP_MAPBOX_ACCESSTOKEN=pk.eyJ1IjoiZ2VtZWluZGVzY2FuIiwiYSI6ImNrNXdrOXV2ZjEwdXcza28wcXNoYXE1ZGMifQ.P-nCvxNRK4AOs7YdRbHCLg
       - VUE_APP_MAPBOX_DEFAULT_STYLES=mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz
+      - VUE_APP_GRAPHQL_URI=http://www:8000/graphql/
+      - VUE_APP_DJANGOBASEURL=http://www:8000
     working_dir: /opt/vue
     volumes:
       - ./vue:/opt/vue:Z
@@ -58,6 +60,8 @@ services:
       - DJANGO_ALLOWED_HOSTS=www,www.local,localhost,django
       - DJANGO_ADMIN_NAME=gemeindescan DEV
       - DJANGO_ADMIN_HEADER_COLOR=#ff0000
+      - DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES=* # * every minute, */5 every 5 minutes
+      - START_APSCHEDULER=YES
     working_dir: /opt/app
     volumes:
       - ./django:/opt/app:Z
