@@ -10,6 +10,10 @@
 - Added API for snapshot upload
 - Added site config for homepage_snippet and search_enabled
 
+*Upgrade notes*:
+- Upgrading to 0.7.0 changes to how snapshots are stored and hence requires a snapshot data migration
+- For local development symlinking the current nginx configuration is recommended (see README.md for details)
+
 ### 0.6.1
 [Released: *2020-09-03*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.6.1)
 
