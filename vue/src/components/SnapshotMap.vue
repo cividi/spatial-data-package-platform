@@ -219,7 +219,7 @@ export default {
           );
         });
       } catch (error) {
-        console.log(error);
+        console.log(error); // eslint-disable-line no-console
         this.isMapLoaded = true;
       }
     },
@@ -275,7 +275,7 @@ export default {
           document.querySelector('#mapinfo').style.visibility = 'hidden';
         }
       } catch (error) {
-        console.log(error);
+        console.log(error); // eslint-disable-line no-console
         this.isMapLoaded = true;
       }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
