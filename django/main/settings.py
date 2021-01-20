@@ -17,6 +17,7 @@ ADMINS = list(zip(ADMINS, ADMINS))
 MANAGERS = ADMINS
 ADMIN_NAME = os.environ.get('DJANGO_ADMIN_NAME', 'gemeindescan DEV')
 ADMIN_HEADER_COLOR = os.environ.get('DJANGO_ADMIN_HEADER_COLOR', '#543076')
+LOGIN_PAGE_TITLE = os.environ.get('LOGIN_PAGE_TITLE', 'Gemeindescan')
 
 if os.environ.get('DJANGO_ALLOWED_HOSTS'):
     ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
@@ -41,10 +42,14 @@ INSTALLED_APPS = [
     'sortedm2m',
     'sortedm2m_filter_horizontal_widget',
     'django_json_widget',
+    'rest_framework',
+    'django_apscheduler',
+    'solo',
 
     # own
     'gsuser',
-    'gsmap'
+    'gsmap',
+    'main',
 ]
 
 MIDDLEWARE = [
@@ -126,6 +131,7 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_DIR', '/var/services/django/media')
 MEDIA_URL = '/media/'
 DATA_UPLOAD_MAX_MEMORY_SIZE = 15728640
+FILE_UPLOAD_MAX_MEMORY_SIZE = int(15 * 1024 * 1024)  # 15 MB
 
 GRAPHENE = {'SCHEMA': 'main.schema.schema'}
 
@@ -143,6 +149,9 @@ CACHES = {
         'LOCATION': 'django_cache',
     }
 }
+SESSION_COOKIE_HTTPONLY = False
+
 THUMBNAIL_BACKEND = 'main.utils.PermalinkThumbnailBackend'
 THUMBNAIL_PREFIX = 'cache/'
-SAVE_SCREENSHOT_ENABLED = True
+SCREENSHOT_SCHEDULER_CRON_MINUTES = os.environ.get('DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES', '*')
+ 

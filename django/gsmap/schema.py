@@ -4,11 +4,13 @@ import graphene
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models import Q
 from django_filters import FilterSet
+from graphql_relay import from_global_id
 from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
 from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace
+from graphene_django.rest_framework.mutation import SerializerMutation
 
 
 class GeoJSON(graphene.Scalar):
@@ -44,7 +46,7 @@ class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
         fields = [
-            'is_showcase', 'title', 'topic', 'data', 'municipality',
+            'is_showcase', 'title', 'topic', 'data', 'datafile', 'municipality',
             'predecessor'
         ]
         filter_fields = [
@@ -52,7 +54,8 @@ class SnapshotNode(DjangoObjectType):
         ]
         interfaces = [graphene.relay.Node]
 
-    data = generic.GenericScalar(source='data')
+    data = generic.GenericScalar(source='data_file_json')
+    datafile = graphene.String()
     pk = graphene.String(source='id')
     thumbnail = graphene.String()
     screenshot = graphene.String()
@@ -74,6 +77,9 @@ class SnapshotNode(DjangoObjectType):
 
     def resolve_screenshot_twitter(self, info):
         return self.image_twitter()
+
+    def resolve_datafile(self, info):
+        return self.data_file if self.data_file else None
 
 
 class MunicipalityNode(DjangoObjectType):
@@ -116,6 +122,36 @@ class WorkspaceNode(DjangoObjectType):
         return self.snapshots.all()
 
 
+class SnapshotMutation(graphene.relay.ClientIDMutation):
+    class Input:
+        title = graphene.String()
+        topic = graphene.String()
+        wshash = graphene.String()
+        bfsNumber = graphene.String()
+
+    snapshot = graphene.Field(SnapshotNode)
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, client_mutation_id=None, **data):
+        if not info.context.user.is_authenticated:
+            return SnapshotMutation(snapshot=None)
+        municipality = Municipality.objects.get(pk=int(data['bfsNumber']))
+        if client_mutation_id:
+            snapshot = Snapshot.objects.get(pk=from_global_id(client_mutation_id)[1])
+            snapshot.title = data['title']
+            snapshot.topic = data['topic']
+            snapshot.municipality = municipality
+            snapshot.save()
+        else:
+            workspace = Workspace.objects.get(pk=from_global_id(data['wshash'])[1])
+            snapshot = Snapshot(title=data['title'], topic=data['topic'])
+            snapshot.user = info.context.user
+            snapshot.municipality = municipality
+            snapshot.save()
+            workspace.snapshots.add(snapshot)
+        return SnapshotMutation(snapshot=snapshot)
+
+
 class Query(object):
     municipality = graphene.relay.Node.Field(MunicipalityNode)
     municipalities = DjangoFilterConnectionField(MunicipalityNode)
@@ -125,3 +161,7 @@ class Query(object):
         SnapshotNode, filterset_class=SnapshotOnlyPublicFilter)
 
     workspace = graphene.relay.Node.Field(WorkspaceNode)
+
+
+class Mutation(graphene.ObjectType):
+    snapshotmutation = SnapshotMutation.Field()

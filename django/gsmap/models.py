@@ -1,23 +1,26 @@
+import json
+import os
+import requests
 import secrets
 import string
 from enum import IntFlag
-import requests
-import os
-from django.utils import timezone
+
+from sortedm2m.fields import SortedManyToManyField
+from sorl.thumbnail import ImageField, get_thumbnail
+
+from django.db import transaction, DatabaseError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.gis.db import models
 from django.contrib.postgres import fields as pg_fields
 from django.contrib.sites.models import Site
-from django.utils.html import format_html
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
-from django.utils.html import escape
-from django.db import transaction, DatabaseError
-from sortedm2m.fields import SortedManyToManyField
-from sorl.thumbnail import ImageField, get_thumbnail
+from django.utils import timezone
+from django.utils.html import escape, format_html
+
 from gsuser.models import User
 
 
@@ -118,6 +121,7 @@ class Snapshot(models.Model):
     title = models.CharField(max_length=150, default='')
     topic = models.CharField(max_length=100, default='')
     data = pg_fields.JSONField(default=dict)
+    data_file = models.FileField(upload_to='data-files', null=True, blank=True)
     screenshot_generated = ImageField(upload_to='snapshot-screenshots', null=True, blank=True)
     thumbnail_generated = ImageField(upload_to='snapshot-thumbnails', null=True, blank=True)
     screenshot_manual = ImageField(upload_to='snapshot-screenshots', null=True, blank=True)
@@ -131,6 +135,13 @@ class Snapshot(models.Model):
         null=True, on_delete=models.SET_NULL
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        if self.municipality:
+            return f'{self.municipality.fullname}, {self.title},' \
+                f'{self.id}, {self.user}, ({self.get_permission_display()})'
+        else:
+            return self.title
 
     @classmethod
     def from_db(cls, db, field_names, values):
@@ -155,23 +166,37 @@ class Snapshot(models.Model):
 
     @property
     def screenshot(self):
-        return self.screenshot_manual or self.screenshot_generated
+        return self.screenshot_manual or self.screenshot_generated or None
 
     @property
     def thumbnail(self):
-        return self.thumbnail_manual or self.thumbnail_generated
+        return self.thumbnail_manual or self.thumbnail_generated or None
+
+    @property
+    def data_file_dict(self):
+        if self.data_file:
+            self.data_file.open()
+            data = self.data_file.read()
+            return data
+        return str(dict())
+
+    @property
+    def data_file_json(self):
+        return json.loads(self.data_file_dict)
 
     @property
     def title_data(self):
         try:
-            return self.data['views'][0]['spec']['title']
+            data = self.data_file_json
+            return data['views'][0]['spec']['title']
         except KeyError:
             return self.title
 
     @property
     def description_data(self):
         try:
-            return self.data['views'][0]['spec']['description']
+            data = self.data_file_json
+            return data['views'][0]['spec']['description']
         except KeyError:
             return ''
 
@@ -186,20 +211,6 @@ class Snapshot(models.Model):
 
     def get_absolute_url(self):
         return f'/{self.id}/'
-
-    def create_screenshot_file(self, is_thumbnail=False):
-        url = f'http://vue:8079/de/{self.pk}/?screenshot'
-        path = 'snapshot-screenshots'
-        if is_thumbnail:
-            url += '&thumbnail'
-            path = 'snapshot-thumbnails'
-        response = requests.get(url, timeout=(10, 300))
-        date_suffix = timezone.now().strftime("%Y-%m-%d_%H-%M-%SZ")
-        screenshot_file = SimpleUploadedFile(
-            f'{path}/{self.pk}_{date_suffix}.png',
-            response.content, content_type="image/png"
-        )
-        return screenshot_file
 
     def image_twitter(self):
         if bool(self.screenshot):
@@ -216,13 +227,6 @@ class Snapshot(models.Model):
                 crop='bottom', format='PNG'
             )
 
-    def __str__(self):
-        if self.municipality:
-            return f'{self.municipality.fullname}, {self.title}, ' \
-                f'{self.id} ({self.get_permission_display()})'
-        else:
-            return self.title
-
     def save(self, *args, **kwargs):
         def test_exists(pk):
             if list(self.__class__.objects.filter(pk=pk)):
@@ -235,20 +239,17 @@ class Snapshot(models.Model):
             self.id = create_slug_hash_6()
             self.id = test_exists(self.id)
 
-        if self.data:
-            storage = OverwriteStorage()
-            if self.permission is int(SnapshotPermission.PUBLIC):
-                self.create_meta(storage)
-            else:
-                storage.delete(f'snapshot-meta/{self.id}.html')
+        if not self._state.adding:
+            if bool(self.data_file):
+                storage = OverwriteStorage()
+                if self.permission is int(SnapshotPermission.PUBLIC):
+                    self.create_meta(storage)
+                else:
+                    storage.delete(f'snapshot-meta/{self.id}.html')
 
-        try:
-            super().save(*args, **kwargs)
-        except DatabaseError:
-            transaction.rollback()
-
-        if hasattr(settings, 'SAVE_SCREENSHOT_ENABLED') and settings.SAVE_SCREENSHOT_ENABLED is True:
-            self.create_screenshot()
+        if not self._state.adding and bool(self.data_file):
+            if self.data_changed(['data_file']):
+                self.clean_screenshot()
 
         try:
             super().save(*args, **kwargs)
@@ -256,18 +257,33 @@ class Snapshot(models.Model):
             transaction.rollback()
 
     def create_screenshot(self):
-        # only create snapshot if data changed
-        if self.data_changed([
-                'data', 'screenshot_generated', 'thumbnail_generated'
-        ]) or not bool(self.thumbnail_generated):
-            print('resources', 'resources' in self.data)
-            if not 'resources' in self.data:
-                raise ValueError('no resources key in data')
+        # TODO check for resources key in json file
+        # if not 'resources' in data:
+        #     raise ValueError('no resources key in data')
 
-            screenshot_file = self.create_screenshot_file()
-            thumbnail_file = self.create_screenshot_file(is_thumbnail=True)
-            self.screenshot_generated = screenshot_file
-            self.thumbnail_generated = thumbnail_file
+        self.screenshot_generated = self.create_screenshot_file()
+        self.thumbnail_generated = self.create_screenshot_file(is_thumbnail=True)
+        self.save()
+
+    def clean_screenshot(self):
+        if self.screenshot_generated:
+            self.screenshot_generated.delete()
+        if self.thumbnail_generated:
+            self.thumbnail_generated.delete()
+
+    def create_screenshot_file(self, is_thumbnail=False):
+        url = f'http://vue:8079/de/{self.pk}/?screenshot'
+        path = 'snapshot-screenshots'
+        if is_thumbnail:
+            url += '&thumbnail'
+            path = 'snapshot-thumbnails'
+        response = requests.get(url, timeout=(100, 300))
+        date_suffix = timezone.now().strftime("%Y-%m-%d_%H-%M-%SZ")
+        screenshot_file = SimpleUploadedFile(
+            f'{path}/{self.pk}_{date_suffix}.png',
+            response.content, content_type="image/png"
+        )
+        return screenshot_file
 
     def create_meta(self, storage):
         domain = Site.objects.get_current().domain
@@ -281,6 +297,16 @@ class Snapshot(models.Model):
 <meta name="twitter:image" content="{ proto }://{ domain }/{ self.image_twitter() }">
 '''
         storage.save(f'snapshot-meta/{self.id}.html', ContentFile(meta))
+
+
+@receiver(post_save, sender=Snapshot)
+def resave(sender, instance, created, **kwargs):
+    """
+    Triggers meta and image creations on an instance already
+    in the database.
+    """
+    if created:
+        transaction.on_commit(lambda: instance.save())
 
 
 class Workspace(models.Model):
@@ -311,6 +337,9 @@ class Workspace(models.Model):
     def get_absolute_url(self):
         first_id = self.snapshots.all().first().id
         return f'/{self.id}/{first_id}/'
+
+    def get_relative_url(self):
+        return self.get_absolute_url()[1:-1]
 
     def save(self, *args, **kwargs):
         def test_exists(pk):

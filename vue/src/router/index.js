@@ -34,6 +34,16 @@ const routes = [
         component: () => import('@/views/Login.vue'),
         meta: {
           layout: () => import('@/layouts/LayoutDefault.vue')
+        },
+        beforeEnter: () => {
+          window.location.href = '/account/login/?next=/';
+        }
+      },
+      {
+        path: 'logout/',
+        name: 'logout',
+        beforeEnter: () => {
+          window.location.href = '/account/logout/';
         }
       },
       {

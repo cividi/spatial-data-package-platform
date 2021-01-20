@@ -34,6 +34,8 @@ Add `www.local` and `django` to the 127.0.0.1 entry in `/etc/hosts` (for screens
 
 ```bash
 touch env.hosts.prod # required file, can be empty and edited later
+# for local development add a symlink to the nginx configuration file, for production use a dedicated copy
+ln -s etc/nginx/www.local.dev etc/nginx/www.local.conf # default www.local.conf is not under version control
 ```
 
 download containers and start them

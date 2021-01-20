@@ -2,6 +2,26 @@
 
 ## Releases
 
+### 0.7.0 dev
+
+- Added `snapshot.json` upload
+- Added `snapshot.json` download in snapshot list
+- Added user login via django
+- Added API for snapshot upload
+- Added site config for homepage_snippet and search_enabled
+- Added language for homepage snippet
+- Added fathom support
+- Added data migration for snapshot json field to file refactor
+- Added vue file upload for snapshot file
+- Added frontend login page
+- Added frontend snapshot editing
+- Added apscheduler for screenshot generation
+- Updated django image with new python package versions
+
+*Upgrade notes*:
+- Upgrading to 0.7.0 changes how snapshots are stored. The snapshot data is moved from a postgres json field to an external file. The migration is a normal django data migration and runs in the django database migration process (./manage.py migrate). The snapshot data json field will be removed in a future a release. 
+- For local development symlinking the current nginx configuration is recommended (see README.md for details)
+
 ### 0.6.2
 [Released *2020-11-16*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.6.2)
 
