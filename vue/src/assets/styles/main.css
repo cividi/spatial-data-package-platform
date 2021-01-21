@@ -9,6 +9,7 @@
 html {
     -webkit-text-size-adjust: none;
     touch-action: manipulation;
+    overflow-y: hidden;
 }
 
 body {
