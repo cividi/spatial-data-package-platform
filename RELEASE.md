@@ -2,7 +2,7 @@
 
 ## Releases
 
-### 0.7.0 dev
+### 0.7.0
 
 - Added `snapshot.json` upload
 - Added `snapshot.json` download in snapshot list
