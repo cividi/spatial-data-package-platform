@@ -2,6 +2,11 @@
 
 ## Releases
 
+### 0.7.1 dev
+
+- Fixed issue with upload from Vue frontend
+- Added docker-compose environment `DJANGO_MUNICIPALTIES_GEOJSON` variable for municipality import ([#50](https://github.com/cividi/spatial-data-package-platform/issues/50))
+
 ### 0.7.0
 
 - Added `snapshot.json` upload
