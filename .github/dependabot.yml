@@ -1,0 +1,20 @@
+version: 2
+updates:
+
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/vue/docker/package/01"
+    schedule:
+      interval: "daily"
+
+  # Maintain dependencies for npm in docker
+  - package-ecosystem: "pip"
+    directory: "/vue"
+    schedule:
+      interval: "daily"
+  
+  # Maintain dependencies for pip
+  - package-ecosystem: "pip"
+    directory: "/django/requirements"
+    schedule:
+      interval: "daily"
