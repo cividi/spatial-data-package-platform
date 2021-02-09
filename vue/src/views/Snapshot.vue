@@ -84,7 +84,7 @@
 
         <div class="useractions">
           <v-btn small block outlined color="primary">
-            <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
+            <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'" target="_blank">
               {{ $t('calltoactionText', { municipalityText: municipalityText }) }}
             </router-link>
           </v-btn>
