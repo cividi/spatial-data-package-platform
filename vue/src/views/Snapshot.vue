@@ -95,14 +95,11 @@
           :snapshots="snapshotsStore" :withTopic="true"
         />
 
-        <v-subheader
-          class="px-0 snapshot-list-title">{{ listtitleText }}
-        </v-subheader>
+        <template v-if="snapshotsExamples.length !== 0">
+          <v-subheader class="px-0 snapshot-list-title">{{ listtitleText }}</v-subheader>
 
-        <snapshot-list
-          v-if="snapshotsExamples"
-          :snapshots="snapshotsExamples" :withTopic="false"
-        />
+          <snapshot-list :snapshots="snapshotsExamples" :withTopic="false" />
+        </template>
 
       </div>
 
