@@ -80,7 +80,7 @@ a {
 
 #snapshotnav {
   height: calc(100vh - var(--vh-offset, 0px)) !important;
-  z-index: 100; /* must be above mapbox interface */
+  z-index: 1001; /* must be above leaflet interface */
 }
 
 #snapshotnavContent {
