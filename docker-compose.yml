@@ -62,6 +62,7 @@ services:
       - DJANGO_ADMIN_HEADER_COLOR=#ff0000
       - DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES=* # * every minute, */5 every 5 minutes
       - START_APSCHEDULER=YES
+      - DJANGO_MUNICIPALTIES_GEOJSON=https://datahub.io/cividi/ch-municipalities/r/2.geojson
     working_dir: /opt/app
     volumes:
       - ./django:/opt/app:Z

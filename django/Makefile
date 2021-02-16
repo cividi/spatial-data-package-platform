@@ -50,7 +50,7 @@ delete-gemeinden-django:
 
 import-gemeinden-json:
 	$(DOCKER_EXEC) mkdir -p $(dir ./tmp/)
-	$(DOCKER_EXEC) curl -o ./tmp/gemeinden.geojson -Ls https://datahub.io/n0rdlicht/ch-municipalities/r/2.geojson
+	$(DOCKER_EXEC) curl -o ./tmp/gemeinden.geojson -Ls $(DJANGO_MUNICIPALTIES_GEOJSON)
 	$(DOCKER_EXEC) python3 manage.py import-municipality ./tmp/gemeinden.geojson
 	$(DOCKER_EXEC) rm ./tmp/gemeinden.geojson
 
