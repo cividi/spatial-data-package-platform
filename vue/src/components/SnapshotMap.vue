@@ -111,8 +111,7 @@ body,
 
 <script>
 import Vue from 'vue';
-import L from 'leafletjs';
-import maplibre from 'maplibre-gl-js';
+import L from 'mapbox.js';
 import geoViewport from '@mapbox/geo-viewport';
 import SnapshotMeta from './SnapshotMeta.vue';
 
@@ -227,20 +226,20 @@ export default {
 
     displayMapbox() {
       try {
-        maplibre.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
+        L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
         const boxSize = 800;
         const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
-        this.map = maplibre.map('map').setView(bounds.center, bounds.zoom);
+        this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
         this.layerContainer = new L.LayerGroup();
-        // default test layer // this.layerContainer.addLayer(maplibre.styleLayer('mapbox://styles/mapbox/light-v10'));
+        // default test layer // this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/light-v10'));
         if (this.hash) { // full snapshot with hash
           this.layers.forEach((layer) => {
             if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
-              const tileLayer = maplibre.styleLayer(layer.path);
+              const tileLayer = L.mapbox.styleLayer(layer.path);
               tileLayer.on('load', () => { this.isMapLoaded = true; });
               this.layerContainer.addLayer(tileLayer);
             } else if (layer.mediatype === 'application/geo+json') {
-              this.layerContainer.addLayer(maplibre.featureLayer(layer.data, {
+              this.layerContainer.addLayer(L.mapbox.featureLayer(layer.data, {
                 attribution: this.geojson.views[0].spec.attribution
               }));
             } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
@@ -254,7 +253,7 @@ export default {
             this.layerContainer.addLayer(L.polygon(polygon, { color: '#543076' }));
           });
           if (process.env.VUE_APP_MAPBOX_DEFAULT_STYLES) {
-            this.layerContainer.addLayer(maplibre.styleLayer(
+            this.layerContainer.addLayer(L.mapbox.styleLayer(
               process.env.VUE_APP_MAPBOX_DEFAULT_STYLES
             ));
           }
