@@ -111,8 +111,8 @@ body,
 
 <script>
 import Vue from 'vue';
-import L from 'leafletjs';
-import maplibre from 'maplibre-gl-js';
+import L from 'leaflet';
+import maplibre from 'maplibre-gl';
 import geoViewport from '@mapbox/geo-viewport';
 import SnapshotMeta from './SnapshotMeta.vue';
 
