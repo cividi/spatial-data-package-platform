@@ -422,6 +422,9 @@ export default {
               this.layerContainer.addLayer(this.createFeatureLayer(
                 layer.data.features, this.geojson.views[0].spec.attribution
               ));
+            } else if (layer.mediatype === 'application/vnd.wms') {
+              const tileLayer = L.tileLayer.wms(layer.path, layer.parameters);
+              this.layerContainer.addLayer(tileLayer);
             }
           });
         } else if (this.bfsNumber) { // empty municipality
@@ -432,9 +435,6 @@ export default {
             this.layerContainer.addLayer(L.mapbox.styleLayer(
               process.env.VUE_APP_MAPBOX_DEFAULT_STYLES
             ));
-          } else if (layer.mediatype === 'application/vnd.wms') {
-            const tileLayer = L.tileLayer.wms(layer.path, layer.parameters);
-            this.layerContainer.addLayer(tileLayer);
           }
         }
         this.layerContainer.addTo(this.map);
