@@ -29,6 +29,15 @@ export default {
     this.setInitialSnapshotnav();
   },
 
+  computed: {
+    selectedLayout() {
+      if (this.$route && this.$route.hasOwnProperty('meta') && this.$route.meta.hasOwnProperty('layout')) {
+        return this.$route.meta.layout;
+      }
+      return LayoutDefault;
+    }
+  },
+
   mounted() {
     if (this.fathomSiteId !== '') {
       const fathomScript = document.createElement('script');
@@ -38,15 +47,6 @@ export default {
       fathomScript.setAttribute('exluded-domains', 'www,www.local,localhost');
       fathomScript.setAttribute('defer', true);
       document.head.appendChild(fathomScript);
-    }
-  },
-
-  computed: {
-    selectedLayout() {
-      if (this.$route && this.$route.hasOwnProperty('meta') && this.$route.meta.hasOwnProperty('layout')) {
-        return this.$route.meta.layout;
-      }
-      return LayoutDefault;
     }
   },
 

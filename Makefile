@@ -3,6 +3,10 @@ DOCKER_EXEC_DJANGO=$(shell command -v docker > /dev/null && echo "docker-compose
 DOCKER_EXEC_VUE=$(shell command -v docker > /dev/null && echo "docker-compose exec vue")
 DOCKER_EXEC_WWW=$(shell command -v docker > /dev/null && echo "docker-compose exec www")
 
+DOCKER_CRON_VUE=$(shell command -v docker > /dev/null && echo "docker-compose exec -T vue")
+DOCKER_CRON_DJANGO=$(shell command -v docker > /dev/null && echo "docker-compose exec -T django")
+
+
 .PHONY: tests
 
 init:
@@ -12,9 +16,16 @@ init:
 up:
 	docker-compose up -d
 
+down: stop
+
+stop:
+	docker-compose stop
+
 build_docker:
 	cd django && make build_docker
 	cd vue && make build_docker
+
+build: build_docker
 
 push:
 	cd django && make push
@@ -28,6 +39,11 @@ enter_vue:
 
 enter_www:
 	$(DOCKER_EXEC_WWW) ash
+
+start_all: up
+	$(DOCKER_CRON_VUE) make &
+	$(DOCKER_CRON_DJANGO) make &
+	$(DOCKER_CRON_VUE) make screenshotservice &
 
 start_vue:
 	$(DOCKER_EXEC_VUE) make

@@ -55,14 +55,6 @@ const routes = [
         }
       },
       {
-        path: 'about/',
-        name: 'about',
-        component: () => import('@/views/About.vue'),
-        meta: {
-          layout: () => import('@/layouts/LayoutDefault.vue')
-        }
-      },
-      {
         path: 'imprint/',
         name: 'imprint',
         component: () => import('@/views/Imprint.vue'),

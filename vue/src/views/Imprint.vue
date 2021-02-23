@@ -8,18 +8,17 @@
             Impressum
           </h1>
           <p>
-            cividi<br>
-            ℅ Smartuse GmbH<br>
+            cividi GmbH<br>
             Flüelastrasse 10<br>
             8048 Zürich<br>
-            <a href="mailto:legal@gemeindescan.ch" target="_blank">legal@gemeindescan.ch</a>
+            <a href="mailto:legal@cividi.ch" target="_blank">legal@cividi.ch</a>
           </p>
 
           <h2>
             Datenschutzerklärung
           </h2>
           <p>
-            Diese Webseite und ihr Inhalt wird durch Smartuse GmbH gestellt.
+            Diese Webseite und ihr Inhalt wird durch cividi GmbH gestellt.
             Der Schutz Ihrer persönlichen Daten ist uns wichtig und wir behandeln
             personenbezogenen Daten vertraulich und entsprechend der gesetzlichen
             Datenschutzvorschriften sowie dieser Datenschutzerklärung.
@@ -94,30 +93,6 @@
           </p>
 
           <h3>
-            Google Analytics
-          </h3>
-          <p>
-            Diese Website benutzt Google Analytics, einen Webanalysedienst der Google LLC,
-            1600 Amphitheatre Parkway, Mountain View, CA 94043 USA (nachfolgend: „Google”).
-            Google Analytics verwendet sog. „Cookies”, also Textdateien, die auf eurem
-            Computer gespeichert werden und die eine Analyse eurer Benutzung der Webseite
-            ermöglichen. Die durch das Cookie erzeugten Informationen über eure Benutzung
-            unserer Webseite werden in der Regel an einen Server von Google in den USA
-            übertragen und dort gespeichert. Aufgrund der Aktivierung der IP-Anonymisierung,
-            wird eure IP-Adresse von Google jedoch innerhalb von Mitgliedstaaten der
-            Europäischen Union oder in anderen Vertragsstaaten des Abkommens über den
-            Europäischen Wirtschaftsraum zuvor gekürzt. Nur in Ausnahmefällen wird die
-            volle IP-Adresse an einen Server von Google in den USA übertragen und dort
-            gekürzt. Im Auftrag des Betreibers dieser Website wird Google diese
-            Informationen benutzen, um eure Nutzung der Webseite auszuwerten,
-            um Reports über die Webseitenaktivitäten zusammenzustellen und um weitere
-            mit der Webseitenutzung und der Internetnutzung verbundene Dienstleistungen
-            gegenüber dem Webseitenbetreiber zu erbringen. Die im Rahmen von Google Analytics
-            von eurem Browser übermittelte IP-Adresse wird nicht mit anderen Daten von Google
-            zusammengeführt.
-          </p>
-
-          <h3>
             TLS-Verschlüsselung
           </h3>
           <p>
@@ -141,7 +116,7 @@
             <a href="mailto:legal@cividi.ch">legal@cividi.ch</a>
           </p>
           <p>
-            Zürich, 02.02.2020
+            Zürich, 09.11.2020
           </p>
         </v-flex>
     </v-layout>

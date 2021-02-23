@@ -4,12 +4,17 @@
   "de": {
     "calltoactionText": "Angebot für Ihre Gemeinde einholen",
     "hasSnapshot.title": "Datenverfügbarkeit",
-    "hasSnapshot.p1": "Für {municipalityText} stehen erste Daten zur Verfügung.",
+    "hasSnapshot.p1": "Für {municipalityText} stehen erste Analysen zur Verfügung.",
     "hasSnapshot.p2": "Erkunden Sie unsere weiteren Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
     "noSnapshot.title": "Datenverfügbarkeit",
     "noSnapshot.municipalityText": "diese Gemeinde",
-    "noSnapshot.p1": "Für {municipalityText} stehen zur Zeit noch keine Daten zur Verfügung.",
+    "noSnapshot.p1": "Für {municipalityText} sind zur Zeit noch keine Analysen freigeschaltet.",
     "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
+    "noSnapshot.p3.1": "Gerne beraten wir Sie telefonisch unter",
+    "noSnapshot.p3.2": " oder per email",
+    "contactEmail": "info@gemeindescan.ch",
+    "contactEmailSubject": "Anfrage Gemeindescan",
+    "contactPhone": "+41 43 543 44 48",
     "listtitle": "Fallbeispiele",
     "listtitleMore": "Weitere Fallbeispiele"
   },
@@ -20,8 +25,13 @@
     "hasSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
     "noSnapshot.title": "Disponibilité des données",
     "noSnapshot.municipalityText": "cette communauté",
-    "noSnapshot.p1": "En ce moment il n’éxiste pas encore de données pour {municipalityText}.",
+    "noSnapshot.p1": "Pour l'instant, aucune analyse n'est disponible pour {municipalityText}.",
     "noSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
+    "noSnapshot.p3.1": "Nous vous conseillons volontiers par téléphone au",
+    "noSnapshot.p3.2": "ou par courriel",
+    "contactEmail": "info@gemeindescan.ch",
+    "contactEmailSubject": "Offre pour Gemeindescan",
+    "contactPhone": "+41 43 543 44 48",
     "listtitle": "Examples",
     "listtitleMore": "D'autres examples"
   }
@@ -47,18 +57,43 @@
       <div id="snapshotnavContent" class="ma-4">
         <search :dense="true" :term="municipalityName"/>
 
-        <div class="nodata pb-8">
-          <div v-if="!hash" class="smaller hint">
-            <h4>{{ $t('noSnapshot.title') }}</h4>
+        <div v-if="!hash" class="nodata pb-8">
+          <div class="smaller hint">
             <p>{{ $t('noSnapshot.p1', { municipalityText: municipalityText }) }}</p>
             <p>{{ $t('noSnapshot.p2') }}</p>
+            <p>
+              {{ $t('noSnapshot.p3.1') }}
+              <a @click="makeCall">{{$t('contactPhone')}}</a>
+              {{ $t('noSnapshot.p3.2') }}
+              <a @click="composeEmail">{{$t('contactEmail')}}</a>.
+            </p>
           </div>
-
-          <snapshot-list
-            v-if="snapshotsMunicipality"
-            :snapshots="snapshotsMunicipality"
-          />
         </div>
+
+        <div v-else class="nodata pb-8">
+          <div class="smaller hint">
+            <p>{{ $t('hasSnapshot.p1', { municipalityText: municipalityText }) }}</p>
+            <p>{{ $t('hasSnapshot.p2') }}</p>
+          </div>
+        </div>
+
+        <snapshot-list
+            v-if="hash"
+            :snapshots="snapshotsMunicipality" :withTopic="false"
+          />
+
+        <div class="useractions">
+          <v-btn small block outlined color="primary">
+            <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
+              {{ $t('calltoactionText', { municipalityText: municipalityText }) }}
+            </router-link>
+          </v-btn>
+        </div>
+
+        <snapshot-list
+          v-if="snapshotsStore && !hash"
+          :snapshots="snapshotsStore" :withTopic="true"
+        />
 
         <v-subheader
           class="px-0 snapshot-list-title">{{ listtitleText }}
@@ -69,13 +104,6 @@
           :snapshots="snapshotsExamples" :withTopic="false"
         />
 
-        <div class="useractions">
-          <v-btn small block outlined color="primary">
-            <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
-              {{ $t('calltoactionText', { municipalityText: municipalityText }) }}
-            </router-link>
-          </v-btn>
-        </div>
       </div>
 
       <v-toolbar
@@ -91,7 +119,6 @@
     </v-navigation-drawer>
 
     <snapshot-map ref="map"
-      :snapshot="snapshot"
       :geojson="geojson"
       :geoboundsIn="geobounds"
       :predecessor="predecessor"
@@ -139,9 +166,11 @@ export default {
     return {
       hash: this.$route.params.hash,
       bfsNumber: this.$route.params.bfsNumber,
+      snapshotStoreUrl: process.env.VUE_APP_SNAPSHOTSTOREURL,
       geojson: null,
       geobounds: [],
       municipalityName: '',
+      snapshotsStore: [],
       snapshotsExamples: [],
       snapshotsIdExamplesExclude: [],
       snapshotsMunicipality: [],
@@ -153,9 +182,18 @@ export default {
   },
 
   async mounted() {
+    fetch(`${this.snapshotStoreUrl}/pipelines.${this.$i18n.locale}.json`)
+      .then(response => response.json())
+      .then((data) => {
+        data.forEach((el, i) => {
+          data[i].thumbnail = `${this.snapshotStoreUrl}/${el.thumbnail}`;
+        });
+
+        this.snapshotsStore = data;
+      });
+
     if (this.hash) {
       await this.getSnapshotInfo(this.hash);
-
       await this.getSnapshotData(this.hash);
       if (this.geojson) {
         this.$refs.map.setupMeta();
@@ -275,8 +313,6 @@ export default {
             id
             pk
             data
-            title
-            topic
           }
         }`,
         variables: {
@@ -342,6 +378,12 @@ export default {
         this.$store.commit('setBfsnumber', result.data.municipality.bfsNumber);
         this.$store.commit('setBfsname', result.data.municipality.fullname);
       }
+    },
+    composeEmail() {
+      window.location.href = `mailto:${this.$t('contactEmail')}?subject=${this.$t('contactEmailSubject')}&body=`;
+    },
+    makeCall() {
+      window.location.href = `tel:${this.$t('contactPhone')}`;
     }
   }
 };

@@ -378,127 +378,137 @@ export default {
     },
 
     setupMapbox() {
-      this.geobounds = [
-        geostring2array(this.geojson.views[0].spec.bounds[0]),
-        geostring2array(this.geojson.views[0].spec.bounds[1])
-      ];
+      try {
+        this.geobounds = [
+          geostring2array(this.geojson.views[0].spec.bounds[0]),
+          geostring2array(this.geojson.views[0].spec.bounds[1])
+        ];
 
-      const lookupResources = {}; // name -> index
-      this.geojson.resources.forEach((resource, index) => {
-        lookupResources[resource.name] = index;
-      });
+        const lookupResources = {}; // name -> index
+        this.geojson.resources.forEach((resource, index) => {
+          lookupResources[resource.name] = index;
+        });
 
-      this.geojson.views[0].resources.forEach((resourceName) => {
-        this.layers.push(
-          this.geojson.resources[lookupResources[resourceName]]
-        );
-      });
+        this.geojson.views[0].resources.forEach((resourceName) => {
+          this.layers.push(
+            this.geojson.resources[lookupResources[resourceName]]
+          );
+        });
+      } catch (error) {
+        console.log(error); // eslint-disable-line no-console
+        this.isMapLoaded = true;
+      }
     },
 
     displayMapbox() {
-      L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
-      const boxSize = 800;
-      const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
-      this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
-      this.layerContainer = new L.LayerGroup();
-      // default test layer // this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/light-v10'));
-      if (this.hash) { // full snapshot with hash
-        this.layers.forEach((layer) => {
-          if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
-            const tileLayer = L.mapbox.styleLayer(layer.path);
-            tileLayer.on('load', () => { this.isMapLoaded = true; });
-            this.layerContainer.addLayer(tileLayer);
-          } else if (layer.mediatype === 'application/geo+json') {
-            this.layerContainer.addLayer(L.mapbox.featureLayer(layer.data, {
-              attribution: this.geojson.views[0].spec.attribution
-            }));
-          } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
-            this.layerContainer.addLayer(this.createFeatureLayer(
-              layer.data.features, this.geojson.views[0].spec.attribution
+      try {
+        L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
+        const boxSize = 800;
+        const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
+        this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
+        this.layerContainer = new L.LayerGroup();
+        // default test layer // this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/light-v10'));
+        if (this.hash) { // full snapshot with hash
+          this.layers.forEach((layer) => {
+            if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
+              const tileLayer = L.mapbox.styleLayer(layer.path);
+              tileLayer.on('load', () => { this.isMapLoaded = true; });
+              this.layerContainer.addLayer(tileLayer);
+            } else if (layer.mediatype === 'application/geo+json') {
+              this.layerContainer.addLayer(L.mapbox.featureLayer(layer.data, {
+                attribution: this.geojson.views[0].spec.attribution
+              }));
+            } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
+              this.layerContainer.addLayer(this.createFeatureLayer(
+                layer.data.features, this.geojson.views[0].spec.attribution
+              ));
+            }
+          });
+        } else if (this.bfsNumber) { // empty municipality
+          this.geojson.coordinates.forEach((polygon) => {
+            this.layerContainer.addLayer(L.polygon(polygon, { color: '#543076' }));
+          });
+          if (process.env.VUE_APP_MAPBOX_DEFAULT_STYLES) {
+            this.layerContainer.addLayer(L.mapbox.styleLayer(
+              process.env.VUE_APP_MAPBOX_DEFAULT_STYLES
             ));
           } else if (layer.mediatype === 'application/vnd.wms') {
             const tileLayer = L.tileLayer.wms(layer.path, layer.parameters);
             this.layerContainer.addLayer(tileLayer);
           }
-        });
-      } else if (this.bfsNumber) { // empty municipality
-        this.geojson.coordinates.forEach((polygon) => {
-          this.layerContainer.addLayer(L.polygon(polygon, { color: '#543076' }));
-        });
-        if (process.env.VUE_APP_MAPBOX_DEFAULT_STYLES) {
-          this.layerContainer.addLayer(L.mapbox.styleLayer(
-            process.env.VUE_APP_MAPBOX_DEFAULT_STYLES
-          ));
         }
-      }
-      this.layerContainer.addTo(this.map);
-      L.control.scale({
-        metric: true,
-        imperial: false
-      }).addTo(this.map);
+        this.layerContainer.addTo(this.map);
+        L.control.scale({
+          metric: true,
+          imperial: false
+        }).addTo(this.map);
 
-      if (!this.screenshotMode) {
-        for (let x = 0; x < this.markerLocalStorage.length; x += 1) {
-          this.markerSelection = this.markerLocalStorage[x].markerSelection;
-          this.newPostItNode = this.markerLocalStorage[x].newPostItNode;
-          this.setMarker(this.markerLocalStorage[x].markerGeoCoordinates);
+        if (!this.screenshotMode) {
+          for (let x = 0; x < this.markerLocalStorage.length; x += 1) {
+            this.markerSelection = this.markerLocalStorage[x].markerSelection;
+            this.newPostItNode = this.markerLocalStorage[x].newPostItNode;
+            this.setMarker(this.markerLocalStorage[x].markerGeoCoordinates);
+          }
         }
-      }
 
-      let paintNow = false;
-      this.myPolyline = [];
+        let paintNow = false;
+        this.myPolyline = [];
 
-      this.map.on('click', (event) => {
-        if (event.containerPoint.y >= 50) {
-          if (this.addMarkerMode) {
-            if (this.markerSelection !== 'brush') {
-              this.newPostItNode = this.formatLongPostItNotes(this.newPostItNode);
-              const markerGeoCoordinates = event.latlng;
-              const markerInfoToStore = {
-                markerSelection: this.markerSelection,
-                newPostItNode: this.newPostItNode,
-                markerGeoCoordinates
-              };
-              this.markerLocalStorage.push(markerInfoToStore);
-              this.saveMarkerLocalStorage();
-              this.setMarker(markerGeoCoordinates);
-            } else if (this.markerSelection === 'brush') {
-              paintNow = !paintNow;
-              if (paintNow) {
-                this.myPolyline = L.polyline([]).addTo(this.map);
-                this.markers.push(this.myPolyline);
-              } else {
-                this.addMarkerMode = false;
-                const brushInfoToStore = {
-                  markerSelection: 'brush',
+        this.map.on('click', (event) => {
+          if (event.containerPoint.y >= 50) {
+            if (this.addMarkerMode) {
+              if (this.markerSelection !== 'brush') {
+                this.newPostItNode = this.formatLongPostItNotes(this.newPostItNode);
+                const markerGeoCoordinates = event.latlng;
+                const markerInfoToStore = {
+                  markerSelection: this.markerSelection,
                   newPostItNode: this.newPostItNode,
-                  markerGeoCoordinates: this.myPolyline.getLatLngs()
+                  markerGeoCoordinates
                 };
-                this.markerLocalStorage.push(brushInfoToStore);
+                this.markerLocalStorage.push(markerInfoToStore);
                 this.saveMarkerLocalStorage();
+                this.setMarker(markerGeoCoordinates);
+              } else if (this.markerSelection === 'brush') {
+                paintNow = !paintNow;
+                if (paintNow) {
+                  this.myPolyline = L.polyline([]).addTo(this.map);
+                  this.markers.push(this.myPolyline);
+                } else {
+                  this.addMarkerMode = false;
+                  const brushInfoToStore = {
+                    markerSelection: 'brush',
+                    newPostItNode: this.newPostItNode,
+                    markerGeoCoordinates: this.myPolyline.getLatLngs()
+                  };
+                  this.markerLocalStorage.push(brushInfoToStore);
+                  this.saveMarkerLocalStorage();
+                }
               }
             }
           }
-        }
-      });
+        });
 
-      this.map.on('mousemove', (event) => {
-        if (this.addMarkerMode && (this.markerSelection === 'brush')) {
-          if (paintNow) {
-            this.myPolyline.addLatLng(event.latlng);
+        this.map.on('mousemove', (event) => {
+          if (this.addMarkerMode && (this.markerSelection === 'brush')) {
+            if (paintNow) {
+              this.myPolyline.addLatLng(event.latlng);
+            }
           }
-        }
-      });
+        });
 
-      if (this.screenshotMode) {
-        // no zoom controls in screenshot mode
-        document.querySelector('.leaflet-control-zoom').style.display = 'none';
-      } else {
-        // no attribution in normal mode
-        document.querySelector('.leaflet-control-attribution').style.display = 'none';
-      }
-      if (this.screenshotIsThumbnail) {
-        document.querySelector('#mapinfo').style.visibility = 'hidden';
+        if (this.screenshotMode) {
+          // no zoom controls in screenshot mode
+          document.querySelector('.leaflet-control-zoom').style.display = 'none';
+        } else {
+          // no attribution in normal mode
+          document.querySelector('.leaflet-control-attribution').style.display = 'none';
+        }
+        if (this.screenshotIsThumbnail) {
+          document.querySelector('#mapinfo').style.visibility = 'hidden';
+        }
+      } catch (error) {
+        console.log(error); // eslint-disable-line no-console
+        this.isMapLoaded = true;
       }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));

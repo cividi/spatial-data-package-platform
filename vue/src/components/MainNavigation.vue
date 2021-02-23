@@ -2,12 +2,10 @@
 <i18n>
 {
   "de": {
-    "mainnav.about": "Hintergrund",
     "mainnav.imprint": "Impressum",
     "mainnav.contact": "Kontakt"
 },
   "fr": {
-    "mainnav.about": "Contexte",
     "mainnav.imprint": "Impressum",
     "mainnav.contact": "Contact"
   }
@@ -81,7 +79,6 @@ export default {
     return {
       mobnav: false,
       mainnav: [
-        { route: '/about', textKey: 'mainnav.about' },
         { route: '/imprint', textKey: 'mainnav.imprint' },
         { route: '/contact', textKey: 'mainnav.contact' }
       ]

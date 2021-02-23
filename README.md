@@ -1,8 +1,22 @@
-# Gemeindescan Web UI
+# Gemeindescan Web
 
-Web application under heavy development. For more information, please visit https://cividi.ch
+A web application for publishing and collaborating around urban planning projects. This project is part of the  [Cividi](https://cividi.ch) solution for holistic urban assessments, used as a tool for setting planning priorities.
 
-The current tech stack of this project is:
+For more information, please visit [Gemeindescan.ch](https://gemeindescan.ch) and read our [Whitepaper](https://bitbucket.org/cividi/whitepaper).
+
+# Additional documentation
+
+- [Release notes](./RELEASE.md)
+- [Architecture](./docs/architecture.md)
+- [Troubleshooting](./docs/troubleshooting.md)
+- [Test guide](./docs/testing.md)
+- [Django](./docs/django.md)
+- [GraphQL](./docs/graphql.md)
+- [Further links](./docs/links.md)
+
+# Developer guide
+
+:construction: The current tech stack of this project is:
 
 - Vuetify
 - Vue.js
@@ -12,15 +26,7 @@ The current tech stack of this project is:
 - Wagtail
 - Docker
 
-# Releases
-
-*See [RELEASE.md](/RELEASE.md)*
-
-# Developer guide
-
-:construction:
-
-For a tour of the app and a testing protocol see [`docs/testing.md`](/docs/testing.md).
+For a tour of the app and a testing protocol see [`docs/testing.md`](./docs/testing.md).
 
 ## setup project
 
@@ -28,7 +34,8 @@ Add `www.local` and `django` to the 127.0.0.1 entry in `/etc/hosts` (for screens
 
 ```bash
 touch env.hosts.prod # required file, can be empty and edited later
-cp etc/nginx/www.local.dev etc/nginx/www.local.conf # default www.local.conf is not under version control
+# for local development add a symlink to the nginx configuration file, for production use a dedicated copy
+ln -s etc/nginx/www.local.dev etc/nginx/www.local.conf # default www.local.conf is not under version control
 ```
 
 download containers and start them
@@ -77,6 +84,14 @@ GraphQLi: http://www:8000/graphql
 
 **start services**
 
+Start all the services at the same time using
+
+```bash
+make start_all
+```
+
+or individually using:
+
 ```bash
 # 1. shell
 make start_vue
@@ -87,6 +102,12 @@ make start_screenshotservice
 ```
 
 You can also start the vue / django service from the vscode shell (see editor).
+
+**stop services**
+
+```bash
+make stop
+```
 
 ### tests
 
@@ -127,11 +148,3 @@ Type `make` in the vscode terminal, that creates the django dev server on your m
 ## deploy
 
 Type `make deploy_prod` in the project root. The file `env.hosts.prod` needs to have the right settings.
-
-## additional docs
-
-- [architecture](/docs/architecture.md)
-- [django](/docs/django.md)
-- [links](/docs/links.md)
-- [grahpql](/docs/graphql.md)
-- [troubleshooting](/docs/troubleshooting.md)

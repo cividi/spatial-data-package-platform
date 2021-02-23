@@ -16,9 +16,10 @@
        <v-subheader
         v-if="showTopic(index) && withTopic"
         class="px-0">{{ snapshot.topic }}</v-subheader>
-      <v-list-item class="px-0 mb-4" dense
-
-        :to="createRouteLink(snapshot.pk)">
+      <v-list-item class="px-0 mb-4"
+        v-if="!snapshot.requestable"
+        :to="createRouteLink(snapshot.pk)" dense
+        >
           <v-list-item-avatar tile size="64" class="my-0">
             <v-img
               v-if="snapshot.thumbnail"
@@ -57,6 +58,32 @@
             </v-btn>
           </v-list-item-action>
       </v-list-item>
+      <v-list-item class="px-0 mb-4 requestable"
+        v-if="snapshot.requestable"
+        :inactive="true" dense
+        >
+          <v-list-item-avatar tile size="64" class="my-0">
+            <v-img
+              v-if="snapshot.thumbnail"
+              :src="snapshot.thumbnail"
+              class="requestable-filter"
+              >
+            </v-img>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title style="font-weight:700">{{ snapshot.title }}</v-list-item-title>
+          </v-list-item-content>
+          <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
+            <v-btn icon
+              class="nobg"
+              v-on:click.stop="function(){}"
+              :href="djangobaseurl + '/' + $i18n.locale +'/signup/'"
+              target="_blank"
+              >
+                <v-icon color="grey lighten-1" >mdi-arrow-right-bold-circle-outline</v-icon>
+            </v-btn>
+          </v-list-item-action>
+      </v-list-item>
       </div>
   </v-list>
 </template>
@@ -88,6 +115,13 @@
 }
 .v-image__image {
   background-color: rgba(0, 0, 0, 0.1);
+}
+.requestable.v-list-item {
+  border: 1px dashed #9b9b9b73;
+}
+.requestable-filter {
+  filter: grayscale(100%) brightness(110%);
+  opacity: 0.35;
 }
 </style>
 

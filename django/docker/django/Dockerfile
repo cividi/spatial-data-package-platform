@@ -1,6 +1,5 @@
-FROM alpine:3.11
+FROM alpine:3.12.3
 MAINTAINER Yves Serrano <ys@taywa.ch>
-ARG S6_OVERLAY_VERSION=v1.22.1.0
 # https://github.com/just-containers/s6-overlay
 
 ENV LANG C.UTF-8
@@ -21,39 +20,25 @@ RUN apk add --no-cache \
         autoconf \
         automake \
         libstdc++ \
-    && pip3 install --upgrade pip \
-    && mkdir -p /tmp/requirements
-RUN curl -Ls https://github.com/just-containers/s6-overlay/releases/download/$S6_OVERLAY_VERSION/s6-overlay-amd64.tar.gz | tar xz -C /
-
-# dev libs
-RUN apk add --no-cache \
+        bash \
+        build-base \
+        python3-dev \
+        gdal \
+        geos \
+        proj \
+        yajl \
+        proj-datumgrid \
         zlib-dev \
         sqlite-dev \
         yaml-dev \
-        libressl-dev
+        libressl-dev \
+        yajl-dev \
+    && curl -s https://bootstrap.pypa.io/get-pip.py | python3
+ARG S6_OVERLAY_VERSION=v2.1.0.2
+RUN curl -Ls https://github.com/just-containers/s6-overlay/releases/download/$S6_OVERLAY_VERSION/s6-overlay-amd64.tar.gz | tar xz -C /
 
 # python requirements 00 layer
 COPY ./requirements/00.txt /tmp/requirements.txt
-RUN apk add --no-cache build-base python3-dev \
-    && pip3 install -r /tmp/requirements.txt \
-    && apk del build-base python3-dev
-
-# geodjango layer
-RUN apk --no-cache add gdal geos proj proj-datumgrid
-
-# python requirements 01 layer
-COPY ./requirements/01.txt /tmp/requirements.txt
-RUN apk --no-cache add yajl build-base yajl-dev python3-dev \
-    && curl -s https://bootstrap.pypa.io/get-pip.py | python3 \
-    && pip3 install -r /tmp/requirements.txt \
-    && apk del build-base yajl-dev python3-dev
-
-# python requirements 02 layer
-COPY ./requirements/02.txt /tmp/requirements.txt
-RUN cd /opt && pip3 install -r /tmp/requirements.txt
-
-# python requirements 03 layer, django DRF, django-apscheduler
-COPY ./requirements/03.txt /tmp/requirements.txt
 RUN cd /opt && pip3 install -r /tmp/requirements.txt
 
 COPY s6/etc/services.d /etc/services.d
