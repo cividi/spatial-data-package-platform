@@ -76,7 +76,7 @@ deploy_dev:
 	source env.hosts.prod && ssh $$DJANGO_DEV_HOST -t "cd $$DJANGO_DEV_PATH && COMPOSE_FILE=$$COMPOSE_DEV docker-compose exec django killall -TERM gunicorn"
 
 deploy_local:
-	APP_VERSION=$(APP_VERSION) && docker-compose up -d
+	APP_VERSION=$(APP_VERSION) docker-compose up -d
 	make -f vue/Makefile build-cron
 	docker-compose exec -T vue rsync -av --delete dist/ /var/services/django/static/dist/
 	docker-compose exec -T django make migrate
