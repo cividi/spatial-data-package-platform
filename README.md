@@ -1,8 +1,8 @@
-# Gemeindescan Web
+# Spatial Data Package Platform
 
-A web application for publishing and collaborating around urban planning projects. This project is part of the  [Cividi](https://cividi.ch) solution for holistic urban assessments, used as a tool for setting planning priorities.
+A web application for publishing and collaborating around urban planning projects. This project is used to run [Gemeindescan.ch](https://gemeindescan.ch), a portal for holistic urban assessments and tool for setting planning priorities ("Gemeinden" are municipalities in German). This project is being developed by [cividi GmbH](https://cividi.ch), and supported as an [Engagement Migros](https://www.engagement-migros.ch/en/pioneers/cividi) pioneer initiative.
 
-For more information, please visit [Gemeindescan.ch](https://gemeindescan.ch) and read our [Whitepaper](https://bitbucket.org/cividi/whitepaper).
+For more information, please visit [Gemeindescan.ch](https://gemeindescan.ch) and read our [Whitepaper](https://github.com/cividi/whitepaper).
 
 # Additional documentation
 
@@ -28,17 +28,24 @@ For more information, please visit [Gemeindescan.ch](https://gemeindescan.ch) an
 
 For a tour of the app and a testing protocol see [`docs/testing.md`](./docs/testing.md).
 
-## setup project
+## Setup project
 
-Add `www.local` and `django` to the 127.0.0.1 entry in `/etc/hosts` (for screenshot service).
+(1) Prepare local configuration
 
+- Add `www.local` and `django` to the 127.0.0.1 entry in `/etc/hosts` (for screenshot service).
+- For local development add a symlink to the nginx configuration file, for production use a dedicated copy:
 ```bash
-touch env.hosts.prod # required file, can be empty and edited later
-# for local development add a symlink to the nginx configuration file, for production use a dedicated copy
-ln -s etc/nginx/www.local.dev etc/nginx/www.local.conf # default www.local.conf is not under version control
+ln -s etc/nginx/www.local.dev etc/nginx/www.local.conf
 ```
+- Create an `env.hosts.prod` file with the following environment variables:
+```bash
+DJANGO_SECRET=some.R4nd0m_k3y
+MAPBOX_TOKEN=a.mapbox.api.token
+MAPBOX_STYLE=mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz
+```
+..which will be sourced by the Makefile scripts. Or use some other way to configure your environment.
 
-download containers and start them
+(2) Download containers and start them
 
 ```bash
 docker-compose pull
@@ -46,7 +53,7 @@ make up
 make init
 ```
 
-if `make init` doesn't work you can execute the commands one by one.
+(3) If `make init` doesn't work you can execute the commands one by one.
 
 ```bash
 # go into django container
@@ -68,7 +75,7 @@ For production under linux a bind mount is used, for easier backups and no accid
 
 Database files and static generated files are stored in `var` folder.
 
-### start docker containers
+### Start containers
 
 ```bash
 make up
@@ -109,7 +116,7 @@ You can also start the vue / django service from the vscode shell (see editor).
 make stop
 ```
 
-### tests
+### Unit testing
 
 ```bash
 make tests
@@ -120,9 +127,12 @@ This command runs first the backend tests and afterwards the frontend test.
 For the backend tests a new test database is generated and the fixtures are loaded.
 
 
-### editor
+### IDE notes
 
-The project is setup to work with visual studio code as editor. Any other editor is also fine.
+We use Visual Studio Code (vscode) as editor. Any other editor is also fine. Here are some notes to tweak your IDE.
+
+#### vsvode
+
 With vscode the plugins are automatically installed and linting and autocomplete works out of the box,
 with the data from inside the container.
 
@@ -139,12 +149,18 @@ Type `make` in the vscode terminal, that creates the node dev server on your mas
 
 Type `make` in the vscode terminal, that creates the django dev server on your maschine on the url [http://www:8000/gmanage](http://www:8000/gmanage).
 
-## push to docker hub
+## Push images to docker hub
 
 - update the version number in the Makefiles in the docker folders and `docker-compose.yml`
 - `make build` for all images in the root, or in the django or vue subfolders, this builds the docker images
 - `make push` for all images in the root, or in the django or vue subfolders, this uploads the docker images to docker hub
 
-## deploy
+## Deploy to production
 
 Type `make deploy_prod` in the project root. The file `env.hosts.prod` needs to have the right settings.
+
+You may also wish to copy `docker-compose.yml` and tweak to other hosting needs, and start your containers by specifying the alternative configuration:
+
+```bash
+docker-compose -f docker-compose.prod.yml up
+```
