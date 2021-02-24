@@ -2,6 +2,11 @@
 
 ## Releases
 
+### 0.7.1 beta
+
+- Fixed layout issues in map view on narrow viewports
+- Improved language switching
+
 ### 0.7.0
 
 - Added `snapshot.json` upload

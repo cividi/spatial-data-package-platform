@@ -1,7 +1,7 @@
 <template>
 <div v-if="expanded">
     <v-btn
-      v-for="lang in languages"
+      v-for="lang in $i18n.availableLocales"
       :key="lang"
       fab
       small
@@ -25,7 +25,7 @@
       </v-btn>
     </template>
     <v-btn
-      v-for="lang in languages"
+      v-for="lang in $i18n.availableLocales.filter(language => language !== $i18n.locale)"
       :key="lang"
       fab
       small
@@ -40,13 +40,7 @@
 <script>
 export default {
   name: 'LanguageSwitch',
-  data() {
-    return {
-      languages: ['de', 'fr']
-    };
-  },
   props: ['expanded'],
-
   methods: {
     changeLanguage(lang) {
       this.$i18n.locale = lang;
