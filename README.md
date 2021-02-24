@@ -37,7 +37,7 @@ For a tour of the app and a testing protocol see [`docs/testing.md`](./docs/test
 ```bash
 ln -s etc/nginx/www.local.dev etc/nginx/www.local.conf
 ```
-- Create an `env.hosts.prod` file with the following environment variables:
+- Create an `.env` file with the following environment variables:
 ```bash
 DJANGO_SECRET=some.R4nd0m_k3y
 MAPBOX_TOKEN=a.mapbox.api.token
