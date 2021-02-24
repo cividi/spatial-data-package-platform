@@ -6,6 +6,7 @@
 
 - Adds version number based on git tag
 - Small text adjustments in french version
+- moved mapbox token, standard style and django secret to .env variable
 
 ### 0.7.1 beta
 
