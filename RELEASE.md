@@ -2,6 +2,12 @@
 
 ## Releases
 
+### 0.7.1 beta 2
+
+- Adds version number based on git tag
+- Small text adjustments in french version
+- moved mapbox token, standard style and django secret to .env variable
+
 ### 0.7.1 beta
 
 - Fixed layout issues in map view on narrow viewports

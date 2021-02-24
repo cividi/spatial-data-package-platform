@@ -1,6 +1,6 @@
 {
   "git.ignoreLimitWarning": true,
-  "terminal.integrated.shell.linux": "/bin/bash",
+  "terminal.integrated.shell.linux": "/bin/ash",
   "editor.renderWhitespace": "all",
   "files.insertFinalNewline": true,
   "editor.formatOnSave": true,

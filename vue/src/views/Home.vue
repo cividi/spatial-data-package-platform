@@ -10,7 +10,7 @@
   "fr": {
     "img.1.alt":
       "Le Gemeindescan Suisse",
-    "h2.2": "Examples",
+    "h2.2": "Exemples",
    "networkerror": "La recherche de communauté n'est pas disponible actuellement."
   }
 }
@@ -63,8 +63,17 @@
         </v-col>
       </v-row>
   </v-container>
+  <v-container>
+    <v-row justify="center" >
+        <v-col class="introtxt text-center pt-5">
+          <p>
+            <small style="opacity: 0.4">{{ appVersion }}</small>
+          </p>
+        </v-col>
+      </v-row>
+  </v-container>
 
-  <v-snackbar color="primary" v-model="snackbar" :timeout="9000">
+  <v-snackbar color="primary" v-model="snackbar">
     {{ $t('networkerror') }}
     <v-btn icon @click="snackbar=false" >
       <v-icon>mdi-close-circle-outline</v-icon>
@@ -112,6 +121,12 @@ export default {
       searchEnabled: true,
       homepageSnippet: ''
     };
+  },
+
+  computed: {
+    appVersion() {
+      return process.env.VUE_APP_VERSION || '';
+    }
   },
 
   created() {

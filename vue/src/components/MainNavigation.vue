@@ -6,7 +6,7 @@
     "mainnav.contact": "Kontakt"
 },
   "fr": {
-    "mainnav.imprint": "Impressum",
+    "mainnav.imprint": "Mentions légales",
     "mainnav.contact": "Contact"
   }
 }
