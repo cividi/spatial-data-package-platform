@@ -23,7 +23,7 @@
     "p.1":
       "Prenez contact directement avec l'équipe du Gemeindescan.<br><a href=\"mailto:contact@gemeindescan.ch\">contact@gemeindescan.ch</a><br><a href=\"tel:+41 43 543 44 45\">+41 43 543 44 45</a><br>Flüelastrasse 10<br>8048 Zürich",
     "p.2":
-      "La plate-forme du Gemeindescan est un logiciel Open Source & Development. Contribuer au Gemeindescan:  <a href=\"https://bitbucket.org/cividi/gemeindescan-webui\" target=\"_blank\">Projet sur Bitbucket</a>",
+      "La plate-forme du Gemeindescan est un logiciel Open Source & Development. Contribuer au Gemeindescan:  <a href=\"https://github.com/cividi/spatial-data-package-platform\" target=\"_blank\">Projet sur GitHub</a>",
     "p.3":
       "cividi - Des outils numériques pour la ville analogique",
     "p.4":
