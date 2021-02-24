@@ -3,6 +3,7 @@ GEMEINDESCAN_WEBUI_VUE_PREV=0.3.6
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec vue")
 DOCKER_EXEC_CRON=$(shell command -v docker > /dev/null && echo "docker-compose exec -T vue")
 
+APP_VERSION=$(shell git describe --tags)
 
 .PHONY: all
 default: dev
@@ -35,7 +36,7 @@ build:
 	$(DOCKER_EXEC) yarn build --mode production
 
 build-cron:
-	$(DOCKER_EXEC_CRON) yarn build --mode production
+	APP_VERSION=$(APP_VERSION) $(DOCKER_EXEC_CRON) yarn build --mode production
 
 build-dev-watch:
 	$(DOCKER_EXEC) yarn build --mode development --watch
