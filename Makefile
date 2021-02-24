@@ -6,6 +6,7 @@ DOCKER_EXEC_WWW=$(shell command -v docker > /dev/null && echo "docker-compose ex
 DOCKER_CRON_VUE=$(shell command -v docker > /dev/null && echo "docker-compose exec -T vue")
 DOCKER_CRON_DJANGO=$(shell command -v docker > /dev/null && echo "docker-compose exec -T django")
 
+APP_VERSION=$(shell git describe --tags)
 
 .PHONY: tests
 
@@ -14,7 +15,7 @@ init:
 	cd vue && make init
 
 up:
-	docker-compose up -d
+	export APP_VERSION=$(APP_VERSION) && docker-compose up -d
 
 down: stop
 

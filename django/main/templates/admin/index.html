@@ -1,0 +1,11 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block footer %}
+    {{block.super}}
+    {% if APP_VERSION is not '' %}
+        <div class="app-version">
+            Version: {{ APP_VERSION }}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -32,6 +32,7 @@ services:
       - VUE_APP_MAPBOX_DEFAULT_STYLES=mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz
       - VUE_APP_GRAPHQL_URI=http://www:8000/graphql/
       - VUE_APP_DJANGOBASEURL=http://www:8000
+      - VUE_APP_VERSION=${APP_VERSION}
     working_dir: /opt/vue
     volumes:
       - ./vue:/opt/vue:Z
@@ -62,6 +63,7 @@ services:
       - DJANGO_ADMIN_HEADER_COLOR=#ff0000
       - DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES=* # * every minute, */5 every 5 minutes
       - START_APSCHEDULER=YES
+      - DJANGO_APP_VERSION=${APP_VERSION}
     working_dir: /opt/app
     volumes:
       - ./django:/opt/app:Z

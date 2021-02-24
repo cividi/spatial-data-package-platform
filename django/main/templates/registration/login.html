@@ -8,6 +8,14 @@
         background: #543076;;
         color: #fff;
     }
+
+    #footer {
+      clear: both;
+      padding: 1em 0 0 9.4em;
+      margin: 0;
+      font-size: 12px;
+      text-align: left;
+    }
 </style>
 {{ form.media }}
 {% endblock %}
@@ -19,7 +27,7 @@
 {% block title %}{{ LOGIN_PAGE_TITLE }}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name">{% trans 'Log in' %}</h1>
+<h1 id="site-name">{% trans 'Gemeindescan' %}</h1>
 {% endblock %}
 
 {% block nav-global %}{% endblock %}
@@ -74,6 +82,12 @@
     <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}">
   </div>
 </form>
+
+{% if APP_VERSION is not '' %}
+<p id="footer">
+  {{ APP_VERSION }}
+</p>
+{% endif %}
 
 </div>
 {% endblock %}
