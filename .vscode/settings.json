@@ -1,0 +1,3 @@
+{
+    "githubIssues.issueBranchTitle": "fix-${sanitizedIssueTitle}"
+}
