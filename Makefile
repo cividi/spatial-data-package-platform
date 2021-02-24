@@ -78,10 +78,10 @@ deploy_dev:
 deploy_local:
 	APP_VERSION=$(APP_VERSION) docker-compose up -d
 	make -f vue/Makefile build-cron
-	docker-compose exec -T vue rsync -av --delete dist/ /var/services/django/static/dist/
-	docker-compose exec -T django make migrate
-	docker-compose exec -T django killall -TERM gunicorn
-	docker-compose exec -T vue killall -TERM node
+	APP_VERSION=$(APP_VERSION) docker-compose exec -T vue rsync -av --delete dist/ /var/services/django/static/dist/
+	APP_VERSION=$(APP_VERSION) docker-compose exec -T django make migrate
+	APP_VERSION=$(APP_VERSION) docker-compose exec -T django killall -TERM gunicorn
+	APP_VERSION=$(APP_VERSION) docker-compose exec -T vue killall -TERM node
 
 slack-push:
 	source env.hosts.prod && test -v SLACK_APP_HOOK && curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"$$SLACK_APP_TEXT\"}" "https://hooks.slack.com/services/$$SLACK_APP_HOOK"
