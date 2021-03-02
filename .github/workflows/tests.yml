@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup
-        run: touch env.hosts.prod && docker-compose pull && make up && make init
+        run: docker-compose pull && make up && DOCKER_NOTTY=YES make init-test
 
       # Runs a single command using the runners shell
       - name: Run tests
