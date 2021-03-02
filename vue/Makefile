@@ -1,14 +1,11 @@
-GEMEINDESCAN_WEBUI_VUE=0.3.7
-GEMEINDESCAN_WEBUI_VUE_PREV=0.3.6
+GEMEINDESCAN_WEBUI_VUE=0.3.8
+GEMEINDESCAN_WEBUI_VUE_PREV=0.3.7
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec vue")
 DOCKER_EXEC_CRON=$(shell command -v docker > /dev/null && echo "docker-compose exec -T vue")
 
 
 .PHONY: all
 default: dev
-
-init:
-	$(DOCKER_EXEC) ln -sf /node_modules ./
 
 enter:
 	$(DOCKER_EXEC) ash

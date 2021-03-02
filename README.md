@@ -61,10 +61,6 @@ python3 manage.py createsuperuser
 make import-gemeinden-json
 # exit django container
 exit
-# enter vue container
-maker enter_vue
-ln -s /node_modules ./
-```
 
 For development we use a named docker volume for the `var` folder inside the container, this named
 volume will be created automatically. This makes setup under windows easier.
