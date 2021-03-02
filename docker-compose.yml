@@ -80,4 +80,7 @@ services:
       - var-gemeindescan-webui:/var/services
     ports:
       - 8000:8000
+    command: >
+      sh -c '[ ! -e /etc/nginx/conf.d/www.local.conf ] && ln -s /etc/nginx/conf.d/www.local.dev /etc/nginx/conf.d/www.local.conf;
+      /usr/local/openresty/bin/openresty -g "daemon off;"'
     # command: tail -f /dev/null
