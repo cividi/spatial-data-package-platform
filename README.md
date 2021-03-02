@@ -33,10 +33,7 @@ For a tour of the app and a testing protocol see [`docs/testing.md`](./docs/test
 (1) Prepare local configuration
 
 - Add `www.local` and `django` to the 127.0.0.1 entry in `/etc/hosts` (for screenshot service).
-- For local development add a symlink to the nginx configuration file, for production use a dedicated copy:
-```bash
-ln -s etc/nginx/www.local.dev etc/nginx/www.local.conf
-```
+- A symlink to the nginx configuration file in the www container will be created automatically (`/etc/nginx/conf.d/www.local.conf`) for production use a dedicated copy
 - Create an `.env` file with the following environment variables:
 ```bash
 DJANGO_SECRET=some.R4nd0m_k3y
