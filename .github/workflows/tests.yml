@@ -31,4 +31,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run tests
-        run: make tests
+        run: DOCKER_NOTTY=YES make tests
