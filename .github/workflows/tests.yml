@@ -29,6 +29,8 @@ jobs:
       - name: Setup
         run: docker-compose pull && make up && DOCKER_NOTTY=YES make init-test
 
-      # Runs a single command using the runners shell
-      - name: Run tests
-        run: DOCKER_NOTTY=YES make tests
+      - name: Run django tests
+        run: cd django && DOCKER_NOTTY=YES make tests
+
+      - name: Run vue tests
+        run: cd vue && DOCKER_NOTTY=YES make tests
