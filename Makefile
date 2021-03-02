@@ -13,6 +13,7 @@ init:
 	cd django && make init
 
 init-test:
+	timeout 10 # wait for db setup
 	cd django && make init-test
 
 up:
