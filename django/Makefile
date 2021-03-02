@@ -1,6 +1,8 @@
 DJANGO_VERSION=3.1.4
 DJANGO_VERSION_PREV=0.3.4
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec django")
+SHELL := /bin/bash
+
 all: dev run-tests run-tests-dev
 .PHONY: all
 default: dev
@@ -26,11 +28,14 @@ runprod:
 adminuser:
 	$(DOCKER_EXEC) python3 manage.py createsuperuser
 
+adminuser-noinput:
+	$(DOCKER_EXEC) python3 manage.py createsuperuser --noinput --username admin --email admin@localhost.local
+
 collectstatic:
 	$(DOCKER_EXEC) python3 manage.py collectstatic --noinput
 
 symlinks:
-	$(DOCKER_EXEC) sh -c "cd /var/services/django; ln -s media downloads"
+	$(DOCKER_EXEC) bash -c "mkdir -p /var/services/django/media && cd /var/services/django; [ ! -e /var/services/django/downloads ] && ln -s media downloads" || true
 
 migrate:
 	$(DOCKER_EXEC) python3 manage.py migrate
@@ -59,4 +64,11 @@ init:
 	make migrate
 	make createcachetable
 	make adminuser
+	make import-gemeinden-json
+
+init-test:
+	make symlinks
+	make migrate
+	make createcachetable
+	make adminuser-noinput
 	make import-gemeinden-json

@@ -13,6 +13,10 @@ init:
 	cd django && make init
 	cd vue && make init
 
+init-test:
+	cd django && make init-test
+	cd vue && make init
+
 up:
 	docker-compose up -d
 
