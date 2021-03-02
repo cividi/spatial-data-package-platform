@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import i18n from '../trans';
 import Home from '@/views/Home.vue';
+import i18n from '../trans';
 
 Vue.use(VueRouter);
 
