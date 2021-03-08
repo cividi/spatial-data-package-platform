@@ -59,13 +59,13 @@
             :label="$t('title')"
             :rules="[v => !!v || $t('mandatory')]"
             required
-          ></v-text-field>
+          />
           <v-text-field
             v-model="snapshot.topic"
             :label="$t('topic')"
             :rules="[v => !!v || $t('mandatory')]"
             required
-          ></v-text-field>
+          />
 
           <v-autocomplete
             class="gemeindesuche"
@@ -80,7 +80,7 @@
             hide-no-data
             return-object
             required
-            ></v-autocomplete>
+          />
   <!--
              hide-no-data -->
 
@@ -92,7 +92,17 @@
             @change="selectFile"
             :rules="[v => !!v || $t('mandatory')]"
             :required="isNew"
-          ></v-file-input>
+          >
+            <v-icon
+              slot="append-outer"
+              tag="a"
+              href="https://github.com/cividi/spatial-data-package-spec"
+              target="_blank"
+              rel="noreferrer"
+            >
+              mdi-help-circle-outline
+            </v-icon>
+          </v-file-input>
 <!--   -->
           <div v-if="!isNew">
             <p class="small mb-0">
