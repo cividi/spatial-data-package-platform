@@ -15,7 +15,9 @@
     "savefile": "Sende Datei",
     "processing": "Processiere Snapshot",
     "mandatory": "Dies ist ein Pflichtfeld",
-    "predecessor": "Vorgänerversion"
+    "predecessor": "Vorgänerversion",
+    "municipalityMandatory": "Bitte wählen Sie eine Gemeinde aus",
+    "noMatches": "Keine Ergebnisse"
   },
   "fr": {
     "editsnapshot": "Snapshot bearbeiten",
@@ -31,7 +33,9 @@
     "saveinfo": "Speichere Angaben",
     "processing": "Processiere Snapshot",
     "savefile": "Sende Datei",
-    "predecessor": "version prédécesseuse"
+    "predecessor": "version prédécesseuse",
+    "municipalityMandatory": "Veuillez sélectionner une municipalité",
+    "noMatches": "Aucun résultat"
   }
 }
 </i18n>
@@ -61,20 +65,26 @@
         required
       />
 
-      <v-autocomplete
+      <v-combobox
         class="gemeindesuche"
         :placeholder="$t('municipality')"
         append-icon="mdi-magnify"
-        v-model="select[0]"
+        v-model="selectedMunicipality"
         :items="municipalities"
-        :search-input.sync="search"
-        :menu-props="menuProps"
         item-text="node.fullname"
         item-value="node.bfsNumber"
-        hide-no-data
         return-object
         required
-      />
+        @update:search-input="queryAndSetMunicipalities"
+        :rules="[(value) => value && value.node ? true : $t('municipalityMandatory')]"
+      >
+        <v-list-item slot="no-data">
+          <v-list-item-content>
+            <v-list-item-title>{{ $t('noMatches') }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-combobox>
+
       <v-file-input
         accept=".json"
         :label="$t('file')"
@@ -134,14 +144,13 @@ export default {
   data() {
     return {
       valid: true,
-      select: [],
       search: null,
       municipalities: [],
-      inidone: false,
       currentFile: undefined,
       saving: false,
       status: '',
-      progress: 0
+      progress: 0,
+      selectedMunicipality: undefined
     };
   },
 
@@ -155,16 +164,7 @@ export default {
         return false;
       }
       return true;
-    },
-    menuProps() {
-      return !this.search ? { value: false } : {};
     }
-  },
-  mounted() {
-    this.municipalities.push({ node: this.snapshot.municipality });
-    this.select = [{ node: this.snapshot.municipality }];
-
-    setTimeout(() => { this.inidone = true; }, 500);
   },
   methods: {
     async queryMunicipalities(val) { // event
@@ -192,7 +192,7 @@ export default {
       }
       this.saving = true;
       this.status = this.$t('saveinfo');
-      this.snapshot.municipality = this.select[0].node;
+      this.snapshot.municipality = this.selectedMunicipality.node;
       const data = {
         title: this.snapshot.title,
         topic: this.snapshot.topic,
@@ -292,15 +292,11 @@ export default {
       const curpk = this.snapshot.pk;
       const ln = this.$route.params.lang;
       this.$router.push(`/${ln}/${wHash}/${curpk}/`);
-    }
-  },
-  watch: {
-    async search(val) {
-      if (this.inidone) {
-        if (val) {
-          const result = await this.queryMunicipalities(val);
-          this.municipalities = result.data.municipalities.edges;
-        }
+    },
+    async queryAndSetMunicipalities(searchInput) {
+      if (searchInput) {
+        const result = await this.queryMunicipalities(searchInput);
+        this.municipalities = result.data.municipalities.edges;
       }
     }
   }
