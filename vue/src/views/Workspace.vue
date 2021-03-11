@@ -75,7 +75,7 @@
         :isNew="editing.isNew"
         :snapshot="editing.snapshot"
         v-on:cancel="abortEdit"
-        v-on:saved="closeEdit"
+        v-on:saved="onSnapshotSaved"
       />
      </v-overlay>
 
@@ -254,6 +254,9 @@ export default {
         variables: {
           wshash: btoa(`WorkspaceNode:${this.wshash}`),
           hash: btoa(`SnapshotNode:${this.hash}`)
+        },
+        options: {
+          cachePolicy: 'no-cache'
         }
       }).catch((error) => {
         this.errorsettings = { type: 'netwokerror', open: true, error };
@@ -272,7 +275,39 @@ export default {
     abortEdit() {
       this.editing = undefined;
     },
-    closeEdit() {
+    async onSnapshotSaved(data) {
+      if (data.isNew) {
+        const { data } = await this.$apollo.query({
+          query: gql`query getworkspace($wshash: ID!) {
+            workspace(id: $wshash) {
+              snapshots {
+                id
+                pk
+                title
+                topic
+                screenshot
+                thumbnail
+                datafile
+                municipality {
+                  bfsNumber
+                  fullname
+                }
+              }
+            }
+          }
+        `,
+          variables: {
+            wshash: btoa(`WorkspaceNode:${this.wshash}`)
+          },
+          fetchPolicy: 'no-cache'
+        });
+        // abusing vue's watching of Array.prototype.splice because it just wouldn't react otherwise
+        this.snapshotsWorkspace.splice(
+          0,
+          this.snapshotsWorkspace.length,
+          ...data.workspace.snapshots
+        );
+      }
       this.editing = undefined;
     },
     newSnapshot() {

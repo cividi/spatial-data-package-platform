@@ -274,6 +274,8 @@ export default {
         });
     },
     saveDone() {
+      this.saving = false;
+      this.$emit('saved', { isNew: this.isNew, snapshot: this.snapshot });
       if (this.$route.params.hash === this.snapshot.pk) {
         this.$router.go();
       } else if (this.isNew) {
@@ -281,15 +283,10 @@ export default {
         this.status = this.$t('processing');
         window.setTimeout(this.goToEditedSnapshot, 2000);
       } else {
-        this.saving = false;
-        this.$emit('saved');
         this.goToEditedSnapshot();
       }
     },
     goToEditedSnapshot() {
-      this.saving = false;
-      this.$emit('saved');
-
       const wHash = this.$route.params.wshash;
       const curpk = this.snapshot.pk;
       const ln = this.$route.params.lang;
