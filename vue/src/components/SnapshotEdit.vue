@@ -71,12 +71,12 @@
         append-icon="mdi-magnify"
         v-model="selectedMunicipality"
         :items="municipalities"
-        item-text="node.fullname"
-        item-value="node.bfsNumber"
+        item-text="fullname"
+        item-value="bfsNumber"
         return-object
         required
         @update:search-input="queryAndSetMunicipalities"
-        :rules="[(value) => value && value.node ? true : $t('municipalityMandatory')]"
+        :rules="[(value) => value && value.bfsNumber ? true : $t('municipalityMandatory')]"
       >
         <v-list-item slot="no-data">
           <v-list-item-content>
@@ -150,7 +150,7 @@ export default {
       saving: false,
       status: '',
       progress: 0,
-      selectedMunicipality: undefined
+      selectedMunicipality: this.snapshot.municipality
     };
   },
 
@@ -171,7 +171,7 @@ export default {
   },
   methods: {
     async queryMunicipalities(val) { // event
-      const result = await this.$apollo.query({
+      const { data } = await this.$apollo.query({
         query: gql`query getmunicipalities($q: String!){
           municipalities(name_Icontains: $q) {
             edges {
@@ -186,7 +186,7 @@ export default {
           q: val
         }
       });
-      return result;
+      return data.municipalities.edges.map(({ node }) => node);
     },
     async saveSnapshot() {
       if (!this.$refs.snapshotform.validate()) {
@@ -298,8 +298,8 @@ export default {
     },
     async queryAndSetMunicipalities(searchInput) {
       if (searchInput) {
-        const result = await this.queryMunicipalities(searchInput);
-        this.municipalities = result.data.municipalities.edges;
+        const municipalities = await this.queryMunicipalities(searchInput);
+        this.municipalities = municipalities;
       }
     }
   }
