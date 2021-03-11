@@ -22,6 +22,9 @@
       "savingInfo": "Speichere Angaben",
       "sendingFile": "Sende Datei",
       "done": "Fertig"
+    },
+    "error": {
+      "unspecified": "Etwas ist schiefgelaufen. Stellen Sie sicher, dass Sie eingeloggt sind und alle Daten korrekt eingegeben haben."
     }
   },
   "fr": {
@@ -40,7 +43,15 @@
     "savefile": "Sende Datei",
     "predecessor": "version prédécesseuse",
     "municipalityMandatory": "Veuillez sélectionner une municipalité",
-    "noMatches": "Aucun résultat"
+    "noMatches": "Aucun résultat",
+    "status": {
+      "savingInfo": "Enregistrer les détails",
+      "sendingFile": "Envoyer le fichier",
+      "done": "Prêt"
+    },
+    "error": {
+      "unspecified": "Quelque chose a mal tourné. Assurez-vous que vous êtes connecté et que vous avez saisi toutes les données correctement."
+    }
   }
 }
 </i18n>
@@ -50,6 +61,14 @@
   <v-card id="snapshotedit" light width="400" class="pa-4">
     <h3 v-if="isNew">{{ $t('newsnapshot') }}</h3>
     <h3 v-else>{{ $t('editsnapshot') }}</h3>
+    <v-alert
+      v-for="(error, errorIndex) in errors"
+      :key="errorIndex"
+      type="error"
+      class="mt-2 mb-0"
+    >
+      {{ $t(`error.${error.code || 'unspecified'}`) }}
+    </v-alert>
     <v-form
       v-if="!saving"
       class="pt-4"
@@ -83,7 +102,9 @@
         required
         @update:search-input="queryAndSetMunicipalities"
         :rules="[
-          (municipality) => municipality && municipality.bfsNumber || $t('municipalityMandatory')
+          (municipality) =>
+            !!(municipality && municipality.bfsNumber) ||
+            $t('municipalityMandatory')
         ]"
         :hide-no-data="!municipalities.length"
       >
@@ -99,7 +120,7 @@
         :label="$t('file')"
         truncate-length="20"
         :rules="[
-          file => !!snapshot.datafile ||
+          file => !!datafile ||
             !!(file && file.name && file.type === 'application/json') ||
             $t('mandatory')
         ]"
@@ -166,7 +187,9 @@ export default {
         municipality: this.municipality,
         file: undefined
       },
-      wshash: btoa(`WorkspaceNode:${this.$route.params.wshash}`)
+      wshash: btoa(`WorkspaceNode:${this.$route.params.wshash}`),
+      selectedMunicipality: undefined,
+      errors: []
     };
   },
 
@@ -225,6 +248,7 @@ export default {
         return;
       }
 
+      this.errors = [];
       this.saving = true;
       this.status = this.$t('status.savingInfo');
 
@@ -264,7 +288,12 @@ export default {
         this.$emit('saved', { isNew: this.isNew, snapshot: data.snapshotmutation.snapshot });
         this.status = this.$t('status.done');
       } catch (error) {
-        // TODO: show error
+        // apollo's errors are a bit strange
+        if (error.graphQLErrors && error.networkError) {
+          this.showErrors(...error.graphQLErrors, ...error.networkError.result.errors);
+        } else {
+          this.showErrors(error);
+        }
         this.progress = 0;
         this.selected.file = undefined;
       } finally {
@@ -297,6 +326,9 @@ export default {
         const municipalities = await this.queryMunicipalities(searchInput);
         this.municipalities = municipalities;
       }
+    },
+    showErrors(...errors) {
+      this.errors = [...this.errors, ...errors];
     }
   }
 };
