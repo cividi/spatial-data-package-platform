@@ -195,11 +195,10 @@ export default {
       }
       this.saving = true;
       this.status = this.$t('saveinfo');
-      this.snapshot.municipality = this.selectedMunicipality.node;
       const data = {
         title: this.snapshot.title,
         topic: this.snapshot.topic,
-        bfsNumber: this.snapshot.municipality.bfsNumber,
+        bfsNumber: this.selectedMunicipality.bfsNumber,
         wshash: btoa(`WorkspaceNode:${this.$route.params.wshash}`)
       };
       if (this.snapshot.id) {
