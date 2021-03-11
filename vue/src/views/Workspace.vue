@@ -72,7 +72,8 @@
       >
       <snapshot-edit
         v-if="editing"
-        :snapshot="snapshotEdit"
+        :isNew="editing.isNew"
+        :snapshot="editing.snapshot"
         v-on:cancel="abortEdit"
         v-on:saved="closeEdit"
       />
@@ -130,8 +131,7 @@ export default {
       title: '',
       description: '',
       errorsettings: {},
-      snapshotEdit: Object,
-      editing: false
+      editing: undefined
     };
   },
 
@@ -267,22 +267,16 @@ export default {
       }
     },
     editSnapshot(snapshot) {
-      this.snapshotEdit = snapshot;
-      this.editing = true;
+      this.editing = { snapshot };
     },
     abortEdit() {
-      this.editing = false;
-      this.snapshotEdit = {};
+      this.editing = undefined;
     },
     closeEdit() {
-      this.editing = false;
-      this.snapshotEdit = {};
+      this.editing = undefined;
     },
     newSnapshot() {
-      this.snapshotEdit = {
-        pk: '', title: '', topic: '', municipality: { bfsNumber: 0, fullname: '' }
-      };
-      this.editing = true;
+      this.editing = { isNew: true };
     }
   }
 

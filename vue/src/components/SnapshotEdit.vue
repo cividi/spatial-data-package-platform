@@ -155,15 +155,18 @@ export default {
   },
 
   props: {
-    snapshot: Object
+    snapshot: {
+      type: Object,
+      default: () => ({})
+    },
+    isNew: {
+      type: Boolean,
+      default: false
+    }
   },
-
   computed: {
-    isNew() {
-      if (this.snapshot.pk) {
-        return false;
-      }
-      return true;
+    menuProps() {
+      return !this.search ? { value: false } : {};
     }
   },
   methods: {
