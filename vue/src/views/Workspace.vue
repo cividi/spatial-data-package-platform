@@ -270,7 +270,7 @@ export default {
       }
     },
     editSnapshot(snapshot) {
-      this.editing = { snapshot };
+      this.editing = { isNew: false, snapshot };
     },
     abortEdit() {
       this.editing = undefined;
@@ -311,7 +311,7 @@ export default {
       this.editing = undefined;
     },
     newSnapshot() {
-      this.editing = { isNew: true };
+      this.editing = { isNew: true, snapshot: {} };
     }
   }
 
