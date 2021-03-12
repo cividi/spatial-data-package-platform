@@ -99,7 +99,9 @@
         :label="$t('file')"
         truncate-length="20"
         :rules="[
-          file => !!(file && file.name && file.type === 'application/json') || $t('mandatory')
+          file => !!snapshot.datafile ||
+            !!(file && file.name && file.type === 'application/json') ||
+            $t('mandatory')
         ]"
         :required="isNew"
         @change="selectFile"
