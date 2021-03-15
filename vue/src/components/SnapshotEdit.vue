@@ -17,7 +17,12 @@
     "mandatory": "Dies ist ein Pflichtfeld",
     "predecessor": "Vorgänerversion",
     "municipalityMandatory": "Bitte wählen Sie eine Gemeinde aus",
-    "noMatches": "Keine Ergebnisse"
+    "noMatches": "Keine Ergebnisse",
+    "status": {
+      "savingInfo": "Speichere Angaben",
+      "sendingFile": "Sende Datei",
+      "done": "Fertig"
+    }
   },
   "fr": {
     "editsnapshot": "Snapshot bearbeiten",
@@ -53,13 +58,13 @@
       lazy-validation
     >
       <v-text-field
-        v-model="snapshot.title"
+        v-model="selected.title"
         :label="$t('title')"
         :rules="[v => !!v || $t('mandatory')]"
         required
       />
       <v-text-field
-        v-model="snapshot.topic"
+        v-model="selected.topic"
         :label="$t('topic')"
         :rules="[v => !!v || $t('mandatory')]"
         required
@@ -69,14 +74,15 @@
         class="gemeindesuche"
         :placeholder="$t('municipality')"
         append-icon="mdi-magnify"
-        v-model="selectedMunicipality"
+        v-model="selected.municipality"
         :items="municipalities"
-        item-text="node.fullname"
-        item-value="node.bfsNumber"
+        item-text="fullname"
+        item-value="bfsNumber"
         return-object
         required
         @update:search-input="queryAndSetMunicipalities"
-        :rules="[(value) => value && value.node ? true : $t('municipalityMandatory')]"
+        :rules="[(value) => value && value.bfsNumber ? true : $t('municipalityMandatory')]"
+        :hide-no-data="!municipalities.length"
       >
         <v-list-item slot="no-data">
           <v-list-item-content>
@@ -89,9 +95,9 @@
         accept=".json"
         :label="$t('file')"
         truncate-length="20"
-        @change="selectFile"
         :rules="[v => !!v || $t('mandatory')]"
         :required="isNew"
+        @change="selectFile"
       >
         <v-icon
           slot="append-outer"
@@ -103,11 +109,10 @@
           mdi-help-circle-outline
         </v-icon>
       </v-file-input>
-      <div v-if="!isNew">
-        <p class="small mb-0">
-          <strong>{{ $t('currentfile') }}:</strong> {{snapshot.datafile}}
-        </p>
-      </div>
+      <p class="small mb-0" v-if="datafile">
+        <strong>{{ $t('currentfile') }}:</strong>
+        {{ datafile }}
+      </p>
       <div class="d-flex justify-space-between mt-4">
         <v-btn
         @click="$emit('cancel')">
@@ -144,31 +149,53 @@ export default {
   data() {
     return {
       valid: true,
-      search: null,
       municipalities: [],
-      currentFile: undefined,
       saving: false,
       status: '',
       progress: 0,
-      selectedMunicipality: undefined
+      selected: {
+        title: this.title,
+        topic: this.topic,
+        municipality: this.municipality,
+        file: undefined
+      },
+      wshash: btoa(`WorkspaceNode:${this.$route.params.wshash}`)
     };
   },
 
   props: {
-    snapshot: Object
-  },
-
-  computed: {
-    isNew() {
-      if (this.snapshot.pk) {
-        return false;
-      }
-      return true;
+    isNew: {
+      type: Boolean,
+      default: false
+    },
+    title: {
+      type: String,
+      default: undefined
+    },
+    topic: {
+      type: String,
+      default: undefined
+    },
+    municipality: {
+      type: Object,
+      default: () => undefined
+    },
+    datafile: {
+      type: String,
+      default: undefined
+    },
+    id: {
+      type: String,
+      default: undefined
+    },
+    pk: {
+      type: String,
+      default: undefined
     }
   },
   methods: {
     async queryMunicipalities(val) { // event
-      const result = await this.$apollo.query({
+      const { data } = await this.$apollo.query({
         query: gql`query getmunicipalities($q: String!){
           municipalities(name_Icontains: $q) {
             edges {
@@ -183,120 +210,84 @@ export default {
           q: val
         }
       });
-      return result;
+      return data.municipalities.edges.map(({ node }) => node);
     },
     async saveSnapshot() {
       if (!this.$refs.snapshotform.validate()) {
-        // console.log('not valid');
-        return false;
+        return;
       }
+
       this.saving = true;
-      this.status = this.$t('saveinfo');
-      this.snapshot.municipality = this.selectedMunicipality.node;
-      const data = {
-        title: this.snapshot.title,
-        topic: this.snapshot.topic,
-        bfsNumber: this.snapshot.municipality.bfsNumber,
-        wshash: btoa(`WorkspaceNode:${this.$route.params.wshash}`)
-      };
-      if (this.snapshot.id) {
-        data.clientMutationId = this.snapshot.id;
-      }
-      const result = await this.$apollo.mutate({
-        mutation: gql`mutation updatesnapshot($data: SnapshotMutationInput!){
-          snapshotmutation(input: $data) {
-            snapshot {
-              id
-              pk
-              title
-              topic
-              municipality {
-                bfsNumber
+      this.status = this.$t('status.savingInfo');
+
+      try {
+        const { data } = await this.$apollo.mutate({
+          mutation: gql`mutation updatesnapshot($data: SnapshotMutationInput!){
+            snapshotmutation(input: $data) {
+              snapshot {
+                id
+                pk
+                title
+                topic
+                municipality {
+                  bfsNumber
+                }
+                datafile
               }
-              datafile
+            }
+          }`,
+          variables: {
+            data: {
+              title: this.selected.title,
+              topic: this.selected.topic,
+              bfsNumber: this.selected.municipality.bfsNumber,
+              wshash: this.wshash,
+              clientMutationId: this.id
             }
           }
-        }`,
-        variables: {
-          data
-        }
-      });
-      if (result) {
-        this.snapshot.id = result.data.snapshotmutation.snapshot.id;
-        this.snapshot.pk = result.data.snapshotmutation.snapshot.pk;
-        this.status = this.$t('savefile');
-        this.uploadDataJson();
-        return true;
-      }
-      // console.log('error saving snapshot info');
-      return false;
-    },
+        });
 
+        if (this.selected.file && this.selected.file.name) {
+          // a file is selected an actual file, upload it
+          this.status = this.$t('status.sendingFile');
+          await this.httpupload(this.selected.file, data.snapshotmutation.snapshot.pk);
+        }
+
+        this.$emit('saved', { isNew: this.isNew, snapshot: data.snapshotmutation.snapshot });
+        this.status = this.$t('status.done');
+      } catch (error) {
+        // TODO: show error
+        this.progress = 0;
+        this.selected.file = undefined;
+      } finally {
+        this.saving = false;
+        this.status = undefined;
+      }
+    },
     selectFile(file) {
       this.progress = 0;
-      this.currentFile = file;
+      this.selected.file = file;
     },
-
-    httpupload(file, onUploadProgress) {
+    async httpupload(file, snapshotPk) {
       const csrftoken = this.$cookies.get('csrftoken', '');
       const formData = new FormData();
 
       formData.append('data_file', file);
 
-      return this.$restApi.patch(`snapshots/${this.snapshot.pk}/`, formData, {
+      await this.$restApi.patch(`snapshots/${snapshotPk}/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'X-CSRFToken': csrftoken
         },
-        onUploadProgress
+        onUploadProgress: (event) => {
+          this.progress = Math.floor(100 * event.loaded / event.total);
+        }
       });
-    },
-
-    uploadDataJson() {
-      if (!this.currentFile) {
-        this.saveDone();
-        return;
-      }
-      this.httpupload(this.currentFile, (event) => {
-        this.progress = Math.round((100 * event.loaded) / event.total);
-      })
-        .then(() => {
-          // console.log('response', response);
-          this.saveDone();
-        })
-        .catch(() => {
-          this.progress = 0;
-          this.currentFile = undefined;
-          this.saving = false;
-          // console.log('upload failed');
-        });
-    },
-    saveDone() {
-      if (this.$route.params.hash === this.snapshot.pk) {
-        this.$router.go();
-      } else if (this.isNew) {
-        // todo is never new at this point because of watch; change compute on mount
-        this.status = this.$t('processing');
-        window.setTimeout(this.goToEditedSnapshot, 2000);
-      } else {
-        this.saving = false;
-        this.$emit('saved');
-        this.goToEditedSnapshot();
-      }
-    },
-    goToEditedSnapshot() {
-      this.saving = false;
-      this.$emit('saved');
-
-      const wHash = this.$route.params.wshash;
-      const curpk = this.snapshot.pk;
-      const ln = this.$route.params.lang;
-      this.$router.push(`/${ln}/${wHash}/${curpk}/`);
     },
     async queryAndSetMunicipalities(searchInput) {
       if (searchInput) {
-        const result = await this.queryMunicipalities(searchInput);
-        this.municipalities = result.data.municipalities.edges;
+        const municipalities = await this.queryMunicipalities(searchInput);
+        this.municipalities = municipalities;
       }
     }
   }
