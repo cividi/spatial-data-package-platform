@@ -56,6 +56,7 @@
       ref="snapshotform"
       v-model="valid"
       lazy-validation
+      @submit="saveSnapshot"
     >
       <v-text-field
         v-model="selected.title"
@@ -81,7 +82,9 @@
         return-object
         required
         @update:search-input="queryAndSetMunicipalities"
-        :rules="[(value) => value && value.bfsNumber ? true : $t('municipalityMandatory')]"
+        :rules="[
+          (municipality) => municipality && municipality.bfsNumber || $t('municipalityMandatory')
+        ]"
         :hide-no-data="!municipalities.length"
       >
         <v-list-item slot="no-data">
@@ -95,7 +98,11 @@
         accept=".json"
         :label="$t('file')"
         truncate-length="20"
-        :rules="[v => !!v || $t('mandatory')]"
+        :rules="[
+          file => !!snapshot.datafile ||
+            !!(file && file.name && file.type === 'application/json') ||
+            $t('mandatory')
+        ]"
         :required="isNew"
         @change="selectFile"
       >
@@ -119,8 +126,8 @@
           {{ $t('cancel') }}
         </v-btn>
         <v-btn
-        color="primary"
-        @click="saveSnapshot"
+          type="submit"
+          color="primary"
         >
           {{ $t('save') }}
         </v-btn>
@@ -212,7 +219,8 @@ export default {
       });
       return data.municipalities.edges.map(({ node }) => node);
     },
-    async saveSnapshot() {
+    async saveSnapshot(event) {
+      event.preventDefault();
       if (!this.$refs.snapshotform.validate()) {
         return;
       }
