@@ -46,7 +46,7 @@ createcachetable:
 	$(DOCKER_EXEC) python3 manage.py createcachetable
 
 tests:
-	$(DOCKER_EXEC) pytest --create-db
+	$(DOCKER_EXEC) pytest --create-db -vvv
 
 tests-dev:
 	$(DOCKER_EXEC) pytest --reuse-db -vvv --nomigrations

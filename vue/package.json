@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "ava --verbose --timeout=30s test/**/*.spec.js"
+    "test": "/opt/vue/node_modules/.bin/ava --verbose --timeout=30s test/**/*.spec.js"
   },
   "dependencies": {
     "@intlify/vue-i18n-loader": "^0.6.1",
