@@ -40,7 +40,7 @@ enter_vue:
 	$(DOCKER_EXEC_VUE) ash
 
 enter_www:
-	$(DOCKER_EXEC_WWW) ash
+	$(DOCKER_EXEC_WWW) bash
 
 start_all: up
 	$(DOCKER_CRON_VUE) make &
