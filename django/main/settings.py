@@ -1,7 +1,7 @@
 import os
 
 # use your own secret_key, default for testing and dev
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or 'some.R4nd0m_k3y'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
 DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
 USE_HTTPS = os.getenv('DJANGO_HTTPS') == 'True'
 
