@@ -73,8 +73,9 @@ services:
     # command: -f /dev/null
 
   www:
-    image: openresty/openresty:1.15.8.3-alpine
-    hostname: www
+    extends:
+      file: docker-images.yml
+      service: www
     volumes:
       - ./etc/nginx:/etc/nginx/conf.d:Z
       - var-gemeindescan-webui:/var/services
