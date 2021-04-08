@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup
-        run: docker-compose pull && make up && DOCKER_NOTTY=YES make init-test
+        run: ln -s docker-compose.dev.yml docker-compose.yml && docker-compose pull && make up && DOCKER_NOTTY=YES make init-test
 
       - name: Run django tests
         run: cd django && DOCKER_NOTTY=YES make tests
