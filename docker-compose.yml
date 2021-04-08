@@ -73,7 +73,7 @@ services:
     # command: -f /dev/null
 
   www:
-    image: openresty/openresty:1.15.8.3-alpine
+    image: openresty/openresty:1.19.3.1-2-alpine
     hostname: www
     volumes:
       - ./etc/nginx:/etc/nginx/conf.d:Z

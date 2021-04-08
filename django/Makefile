@@ -10,9 +10,18 @@ enter:
 
 build_docker:
 	cd docker && DOCKER_BUILDKIT=1 \
-	docker build django \
+	docker buildx build django \
 		--cache-from smartuse/gemeindescan-webui-django:$(DJANGO_VERSION_PREV) \
-		--build-arg BUILDKIT_INLINE_CACHE=1 -t smartuse/gemeindescan-webui-django:$(DJANGO_VERSION)
+		--build-arg BUILDKIT_INLINE_CACHE=1 -t smartuse/gemeindescan-webui-django:$(DJANGO_VERSION) \
+		--platform linux/amd64,linux/arm64
+
+build_load_docker:
+	cd docker && DOCKER_BUILDKIT=1 \
+	docker buildx build django \
+		--cache-from smartuse/gemeindescan-webui-django:$(DJANGO_VERSION_PREV) \
+		--build-arg BUILDKIT_INLINE_CACHE=1 -t smartuse/gemeindescan-webui-django:$(DJANGO_VERSION) \
+		--platform $(DOCKER_PLATFORM) \
+		--load
 
 push:
 	docker push smartuse/gemeindescan-webui-django:$(DJANGO_VERSION)

@@ -25,6 +25,10 @@ build_docker:
 	cd django && make build_docker
 	cd vue && make build_docker
 
+build_load_docker:
+	cd django && make build_load_docker
+	cd vue && make vue
+
 build: build_docker
 
 push:
