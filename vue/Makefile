@@ -1,14 +1,11 @@
-GEMEINDESCAN_WEBUI_VUE=0.3.7
-GEMEINDESCAN_WEBUI_VUE_PREV=0.3.6
-DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec vue")
-DOCKER_EXEC_CRON=$(shell command -v docker > /dev/null && echo "docker-compose exec -T vue")
+GEMEINDESCAN_WEBUI_VUE=0.3.8
+GEMEINDESCAN_WEBUI_VUE_PREV=0.3.7
+NOTTY=$(shell command [ "$$DOCKER_NOTTY" = YES ] && echo "-T")
+DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec $(NOTTY) vue")
 
 
 .PHONY: all
 default: dev
-
-init:
-	$(DOCKER_EXEC) ln -sf /node_modules ./
 
 enter:
 	$(DOCKER_EXEC) ash
@@ -33,9 +30,6 @@ tests:
 
 build:
 	$(DOCKER_EXEC) yarn build --mode production
-
-build-cron:
-	$(DOCKER_EXEC_CRON) yarn build --mode production
 
 build-dev-watch:
 	$(DOCKER_EXEC) yarn build --mode development --watch
