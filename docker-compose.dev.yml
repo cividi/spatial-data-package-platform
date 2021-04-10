@@ -33,6 +33,8 @@ services:
       - VUE_APP_MAPBOX_DEFAULT_STYLES_DEV=mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz
       - VUE_APP_GRAPHQL_URI=http://www:8000/graphql/
       - VUE_APP_DJANGOBASEURL=http://www:8000
+      - VUE_APP_FATHOM_SITEID=${FATHOM_SITEID}
+      - VUE_APP_SNAPSHOTSTOREURL=https://gemeindescan.eu-central-1.linodeobjects.com/public/
       - PUBLIC_URL=http://www:8000
     working_dir: /opt/vue
     volumes:
