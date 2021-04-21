@@ -21,7 +21,7 @@ up:
 down: stop
 
 stop:
-	docker-compose stop
+	docker-compose -f docker-compose.dev.yml stop
 
 build_docker:
 	cd django && make build_docker
