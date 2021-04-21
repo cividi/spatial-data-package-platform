@@ -67,7 +67,7 @@
     <v-overlay
       absolute="absolute"
       opacity="0.2"
-      z-index="1000"
+      z-index="1002"
       :value="!!editing"
       >
       <snapshot-edit
