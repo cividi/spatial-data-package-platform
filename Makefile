@@ -16,7 +16,7 @@ init-test:
 	cd django && make init-test
 
 up:
-	docker-compose up -d
+	docker-compose -f docker-compose.dev.yml up -d
 
 down: stop
 
