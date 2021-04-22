@@ -2,12 +2,17 @@
 
 ## Releases
 
-### 0.7.1 beta
+### 0.7.1
+[Released: *2021-04-30*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.1)
 
-- Fixed layout issues in map view on narrow viewports
+- Improved snapshot upload
+- Added help link for snapshot file format
 - Improved language switching
+- Fixed layering issues on narrow viewports
+- Fixed unit tests and updated depedencies
 
 ### 0.7.0
+[Released: *2021-01-21*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.0)
 
 - Added `snapshot.json` upload
 - Added `snapshot.json` download in snapshot list
