@@ -7,6 +7,7 @@
 
 - Improved snapshot upload
 - Added help link for snapshot file format
+- Added backend configuration option for example gallery visibility
 - Improved language switching
 - Fixed layering issues on narrow viewports
 - Fixed unit tests and updated depedencies
