@@ -33,28 +33,28 @@
 - For local development symlinking the current nginx configuration is recommended (see README.md for details)
 
 ### 0.6.2
-[Released *2020-11-16*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.6.2)
+[Released *2020-11-16*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.6.2)
 
 - Added a mock snapshot store for improved onboarding
 
 ### 0.6.1
-[Released: *2020-09-03*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.6.1)
+[Released: *2020-09-03*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.6.1)
 
 - Improved snapshot loading and switching
 
 ### 0.6.0
-[Released: *2020-08-04*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.6.0)
+[Released: *2020-08-04*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.6.0)
 
 - Added snapshot sections in workspaces and municipalities based on topic
 
 ### 0.5.1
-[Released: *2020-05-27*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.5.1)
+[Released: *2020-05-27*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.5.1)
 
 - Improved OpenGraph Support
 - Improved screenshot server
 
 ### 0.5.0
-[Released: *2020-05-20*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.5.0)
+[Released: *2020-05-20*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.5.0)
 
 - Added OpenGraph support for public snapshots (rich social media links)
 - Improved error messages in frontend
@@ -62,20 +62,20 @@
 - Improved django backend
 
 ### 0.4.0
-[Released: *2020-05-11*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.4.0)
+[Released: *2020-05-11*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.4.0)
 
 - Added PNG downloads
 - Added screenshot server
 - Added Django and Vue tests
 
 ### 0.3.1
-[Released: *2020-04-09*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.3.1)
+[Released: *2020-04-09*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.3.1)
 [Sprint: 4 "Out of the Box"](https://bitbucket.org/cividi/gemeindescan-webui/issues?milestone=SP+4%3A+Out+of+the+box)
 
 - Small fixes
 
 ### 0.3.0 "Out of the Box"
-[Released: *2020-04-09*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.3.0)
+[Released: *2020-04-09*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.3.0)
 [Sprint: 4 "Out of the Box"](https://bitbucket.org/cividi/gemeindescan-webui/issues?milestone=SP+4%3A+Out+of+the+box)
 
 - Workspace support
@@ -85,14 +85,14 @@
 - Experimental branch: automatic screenshot generator
 
 ### 0.2.1
-[Released: *2020-03-16*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.2.1)
+[Released: *2020-03-16*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.2.1)
 [Sprint: 3 "Hello World"](https://bitbucket.org/cividi/gemeindescan-webui/issues?milestone=SP+3%3A+Hello+world)
 
 - Legend is now using SVG rendering
 - Small fixes
 
 ### 0.2.0 "Hello World"
-[Released: *2020-03-11*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.2.0)
+[Released: *2020-03-11*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.2.0)
 [Sprint: 3 "Hello World"](https://bitbucket.org/cividi/gemeindescan-webui/issues?milestone=SP+3%3A+Hello+world)
 
 - SnapshotView support according to [Gemeindescan Datapackage Specification](https://bitbucket.org/cividi/gemeindescan-sample/)
@@ -102,7 +102,7 @@
 - GeoDjango added
 
 ### 0.1.2
-[Released: *2020-02-20*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.1.2)
+[Released: *2020-02-20*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.1.2)
 [Sprint: 2 "Map Space"](https://bitbucket.org/cividi/gemeindescan-webui/issues?milestone=SP+2%3A+Map+space)
 
 - Multilanguage support via [`vue-i18n`](https://github.com/kazupon/vue-i18n)
@@ -110,13 +110,13 @@
 - Experimental: snapshot view
 
 ### 0.1.1
-[Released: *2020-02-13*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.1.1)
+[Released: *2020-02-13*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.1.1)
 [Sprint: 2 "Map Space"](https://bitbucket.org/cividi/gemeindescan-webui/issues?milestone=SP+2%3A+Map+space)
 
 - Static content updates
 
 ### 0.1.0
-[Released: *2020-02-06*](https://bitbucket.org/cividi/gemeindescan-webui/commits/tag/0.1.0)
+[Released: *2020-02-06*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.1.0)
 [Sprint: 0 "Project Setup" + Sprint 1 "Splash Down"](https://bitbucket.org/cividi/gemeindescan-webui/issues?milestone=SP+1%3A+Splash+down&milestone=SP+0%3A+Project+setup)
 
 - Initial version
