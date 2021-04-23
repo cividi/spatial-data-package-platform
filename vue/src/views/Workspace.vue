@@ -43,8 +43,14 @@
         <v-btn
           v-if="$store.state.isUserLoggedIn"
           fab color="primary"
-          @click="newSnapshot" >
+          @click="newSnapshot">
         <v-icon>mdi-plus</v-icon>
+        </v-btn>
+
+        <v-btn
+          fab color="primary"
+          @click="newOrder">
+        <v-icon>mdi-basket</v-icon>
         </v-btn>
       </div>
 
@@ -83,6 +89,18 @@
       :settings="errorsettings"
     />
 
+    <v-overlay
+      absolute="absolute"
+      opacity="0.2"
+      z-index="1000"
+      :value="!!ordering"
+      >
+      <snapshot-order
+        v-if="ordering"
+        v-on:cancel="abortOrder"
+      />
+     </v-overlay>
+
   </div>
 </template>
 
@@ -112,11 +130,13 @@ import gql from 'graphql-tag';
 import SnapshotList from '../components/SnapshotList.vue';
 import SnapshotMap from '../components/SnapshotMap.vue';
 import SnapshotEdit from '../components/SnapshotEdit.vue';
+import SnapshotOrder from '../components/SnapshotOrder.vue';
 import ErrorMessage from '../components/ErrorMessage.vue';
 
 Vue.component('snapshot-list', SnapshotList);
 Vue.component('snapshot-map', SnapshotMap);
 Vue.component('snapshot-edit', SnapshotEdit);
+Vue.component('snapshot-order', SnapshotOrder);
 Vue.component('error-message', ErrorMessage);
 
 export default {
@@ -131,7 +151,8 @@ export default {
       title: '',
       description: '',
       errorsettings: {},
-      editing: undefined
+      editing: undefined,
+      ordering: undefined
     };
   },
 
@@ -324,6 +345,12 @@ export default {
     },
     newSnapshot() {
       this.editing = { isNew: true, snapshot: {} };
+    },
+    newOrder() {
+      this.ordering = true;
+    },
+    abortOrder() {
+      this.ordering = undefined;
     }
   }
 };
