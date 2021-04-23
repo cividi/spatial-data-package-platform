@@ -18,7 +18,7 @@ server {
     # root /var/services/django/static/dist/; # for production build
 
     location = / {
-        set $lang_sup "de,fr";
+        set $lang_sup "de,fr,en";
         set_by_lua_file $lang_accept /etc/nginx/conf.d/lang.lua $lang_sup;
         return $scheme://$host:8000/$lang_accept;
     }
@@ -38,7 +38,7 @@ server {
     }
 
     location ~* "^/([0-9a-z]{6})/?$" {
-        set $lang_sup "de,fr";
+        set $lang_sup "de,fr,en";
         set_by_lua_file $lang_accept /etc/nginx/conf.d/lang.lua $lang_sup;
         rewrite_by_lua_block {
             return ngx.redirect("/" .. ngx.var.lang_accept .. ngx.var.request_uri, 302)
@@ -46,7 +46,7 @@ server {
     }
 
     location ~* "^/([0-9a-z]{5})/([0-9a-z]{6})/?$" {
-        set $lang_sup "de,fr";
+        set $lang_sup "de,fr,en";
         set_by_lua_file $lang_accept /etc/nginx/conf.d/lang.lua $lang_sup;
         rewrite_by_lua_block {
             return ngx.redirect("/" .. ngx.var.lang_accept .. ngx.var.request_uri, 302)
@@ -63,7 +63,7 @@ server {
         root /var/services/django;
     }
 
-    location ~ "^/(de|fr)/(?<hash>[0-9A-Z]{6})/?$" {
+    location ~ "^/(de|fr|en)/(?<hash>[0-9A-Z]{6})/?$" {
         # dev proxy vue
         include "/etc/nginx/conf.d/proxy_conf.inc";
         include "/etc/nginx/conf.d/proxy_meta.inc";
@@ -73,7 +73,7 @@ server {
         #content_by_lua_file "/etc/nginx/conf.d/meta_dist.lua";
     }
 
-    location ~ "^/(de|fr)/([0-9A-Z]{5})/(?<hash>[0-9A-Z]{6})/?$" {
+    location ~ "^/(de|fr|en)/([0-9A-Z]{5})/(?<hash>[0-9A-Z]{6})/?$" {
         # dev proxy vue
         include "/etc/nginx/conf.d/proxy_conf.inc";
         include "/etc/nginx/conf.d/proxy_meta.inc";

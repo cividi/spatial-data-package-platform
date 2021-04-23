@@ -20,6 +20,16 @@
     "button.retry": "Recharger la page",
     "button.back": "Vers la page d'accueil",
     "button.contact": "Signaler un problème"
+  },
+  "en": {
+    "title": "Error",
+    "text": "Something went wrong...",
+    "netwokerror.title": "Connection failure",
+    "netwokerror.text": "Data could not be loaded.",
+    "button.ok": "OK",
+    "button.retry": "Reload page",
+    "button.back": "Open main page",
+    "button.contact": "Report a problem"
   }
 }
 </i18n>

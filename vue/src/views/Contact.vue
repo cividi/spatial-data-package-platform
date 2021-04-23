@@ -34,6 +34,23 @@
       "https://cividi.ch/societe",
     "em.link":
       "https://www.engagement-migros.ch/fr"
+  },
+  "en": {
+    "h1.1": "Contact",
+    "p.1":
+      "Get in contact with the Gemeindescan team:<br><a href=\"mailto:kontakt@gemeindescan.ch\">kontakt@gemeindescan.ch</a><br><a href=\"tel:+41 43 543 44 45\">+41 43 543 44 45</a><br>Flüelastrasse 10<br>8048 Zürich",
+    "p.2":
+      "Gemeindescan is an open source and open development project. To contribute: <a href=\"https://github.com/cividi/spatial-data-package-platform\" target=\"_blank\">Join us on GitHub</a>",
+    "p.3":
+      "cividi - digital tools for the analogue city.",
+    "p.4":
+      "<small>cividi is supported by <a href=\"https://www.engagement-migros.ch/en\" target=\"_blank\">Engagement Migros</a>,<br>the innovation fund of the Migros group.</small>",
+    "p.5": 
+      "Gemeindescan is a <a href=\"https://cividi.ch\" target=\"_blank\">cividi</a> application, developed in cooperation with <a href=\"https://taywa.ch\" target=\"_blank\">Taywa</a>.",
+    "cividi.link":
+      "https://cividi.ch/en",
+    "em.link":
+      "https://www.engagement-migros.ch/en"
   }
 }
 </i18n>

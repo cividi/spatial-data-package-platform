@@ -9,7 +9,7 @@ const routes = [
   {
     beforeEnter(to, from, next) {
       const lang = to.params.lang;
-      if (!['de', 'fr'].includes(lang)) return next('de');
+      if (!['de', 'fr', 'en'].includes(lang)) return next('de');
       if (i18n.locale !== lang) {
         i18n.locale = lang;
       }

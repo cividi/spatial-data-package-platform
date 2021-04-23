@@ -11,7 +11,13 @@
     "img.1.alt":
       "Le Gemeindescan Suisse",
     "h2.2": "Examples",
-   "networkerror": "La recherche de communauté n'est pas disponible actuellement."
+    "networkerror": "La recherche de communauté n'est pas disponible actuellement."
+  },
+  "en": {
+    "img.1.alt":
+      "Swiss Gemeindescan",
+    "h2.2": "Examples",
+    "networkerror": "The service is experiencing issues, please try again."
   }
 }
 </i18n>

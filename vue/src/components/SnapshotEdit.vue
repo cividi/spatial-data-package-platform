@@ -52,6 +52,32 @@
     "error": {
       "unspecified": "Quelque chose a mal tourné. Assurez-vous que vous êtes connecté et que vous avez saisi toutes les données correctement."
     }
+  },
+  "en": {
+    "editsnapshot": "Edit Snapshot",
+    "newsnapshot": "Create New Snapshot",
+    "title": "Title",
+    "topic": "Topic",
+    "municipality": "Municipality",
+    "currentfile": "Current File",
+    "file": "File (JSON)",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saveinfo": "Save Angaben",
+    "savefile": "Uploading File",
+    "processing": "Processing Snapshot",
+    "mandatory": "This is a mandatory field",
+    "predecessor": "Previous Version",
+    "municipalityMandatory": "Please select a municipality",
+    "noMatches": "No matches",
+    "status": {
+      "savingInfo": "Save Angaben",
+      "sendingFile": "Uploading File",
+      "done": "Done"
+    },
+    "error": {
+      "unspecified": "Something went wrong. Please make sure that you are logged in and all data is entered correctly."
+    }
   }
 }
 </i18n>

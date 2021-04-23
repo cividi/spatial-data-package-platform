@@ -8,6 +8,10 @@
   "fr": {
     "mainnav.imprint": "Impressum",
     "mainnav.contact": "Contact"
+  },
+  "en": {
+    "mainnav.imprint": "Imprint",
+    "mainnav.contact": "Contact"
   }
 }
 </i18n>

@@ -12,6 +12,12 @@
     "expandlegend": "plus",
     "collapslegend": "moin",
     "predecessor": "version prédécesseuse"
+  },
+  "en": {
+    "sources": "Sources",
+    "expandlegend": "more",
+    "collapslegend": "less",
+    "predecessor": "previous version"
   }
 }
 </i18n>

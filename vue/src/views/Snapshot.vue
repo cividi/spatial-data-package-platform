@@ -34,6 +34,23 @@
     "contactPhone": "+41 43 543 44 48",
     "listtitle": "Examples",
     "listtitleMore": "D'autres examples"
+  },
+  "en": {
+    "calltoactionText": "Request an offer for your municipality",
+    "hasSnapshot.title": "Data availibility",
+    "hasSnapshot.p1": "{municipalityText} has initial analysis available.",
+    "hasSnapshot.p2": "Discover what Gemeindescan can offer for your municipality browsing the available examples.",
+    "noSnapshot.title": "Data availibility",
+    "noSnapshot.municipalityText": "this municipality",
+    "noSnapshot.p1": "{municipalityText} has no public analysis available yet.",
+    "noSnapshot.p2": "Discover what Gemeindescan can offer for your municipality by browsing the available examples.",
+    "noSnapshot.p3.1": "For a personal demo contact us via ",
+    "noSnapshot.p3.2": " or e-mail",
+    "contactEmail": "info@gemeindescan.ch",
+    "contactEmailSubject": "Gemeindescan request",
+    "contactPhone": "+41 43 543 44 48",
+    "listtitle": "Examples",
+    "listtitleMore": "More examples"
   }
 }
 </i18n>

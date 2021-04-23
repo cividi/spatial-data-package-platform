@@ -10,6 +10,11 @@
     "loginText": "Login",
     "logoutText": "Logout",
     "signupText": "Demande sans engagement"
+  },
+  "en": {
+    "loginText": "Login",
+    "logoutText": "Logout",
+    "signupText": "Request an offer"
   }
 }
 </i18n>
