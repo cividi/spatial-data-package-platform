@@ -14,30 +14,25 @@
 <!-- eslint-enable -->
 
 <template>
-  <v-card id="snapshotorder" light class="pa-4">
-    <h3>{{ $t('newstore') }}</h3>
+  <!-- <v-card id="snapshotorder" light class="pa-4"> -->
+  <div id="snapshotstore">
+    <h3>
+      <v-icon
+          class="pa-2"
+          @click="$emit('back')">mdi-chevron-left
+        </v-icon>
+        {{ $t('newstore') }}
+      </h3>
 
     <iframe src="https://stage.store.cividi.ch" id="snapshotstore"></iframe>
 
-    <div class="d-flex justify-space-between mt-4">
-      <v-btn
-      @click="$emit('cancel')">
-        {{ $t('cancel') }}
-      </v-btn>
-    </div>
-  </v-card>
+  </div>
 </template>
 
 <style>
-#snapshotorder {
-  width: 95vw;
-  height: 80vh;
-  max-width: 1100px;
-}
 #snapshotstore {
   width: 100%;
-  height: 85%;
-  margin-top: 30px;
+  height: 95%;
 }
 </style>
 

@@ -2,8 +2,22 @@
 <i18n>
 {
   "de": {
+    "cancel": "abbrechen",
+    "mySnapshots": "Meine Datenlayer",
+    "workspace.intro": "Willkommen bei Dufour. Dies ist dein persönlicher Workspace. Einführungs-video anschauen.",
+    "addSnapshot": "Daten hinzufügen",
+    "addSnapshot.order": "Daten bestellen",
+    "addSnapshot.upload": "Daten hochladen",
+    "snapshotEdit.warning": "Bearbeiten des Workspaces ist nur eingeloggt möglich."
   },
   "fr": {
+    "cancel": "Annuler",
+    "mySnapshots": "Mes couche de données",
+    "workspace.intro": "Einführungsvideo: youtube.com/XYZ",
+    "addSnapshot": "Ajouter des données",
+    "addSnapshot.order": "Données de la commande",
+    "addSnapshot.upload": "Télécharger les données",
+    "snapshotEdit.warning": "La modification des workspace n'est possible qu'en étant connecté."
   }
 }
 </i18n>
@@ -26,10 +40,29 @@
 
       <div id="snapshotnavContent" class="ma-4">
 
-        <div class="nodata pb-8">
+        <div class="nodata">
           <div class="smaller hint">
             <h4>{{ title }}</h4>
+          </div>
+        </div>
+        <v-alert
+          v-if="$store.state.isUserLoggedIn"
+          icon="mdi-lightbulb-outline"
+          outlined dense dismissible
+          class="body-2"
+          color="primary"
+        >
+          {{ $t('workspace.intro') }}
+        </v-alert>
+        <div class="nodata pb-8">
+          <div class="smaller hint">
             <p class="show-linebreaks">{{ description }}</p>
+          </div>
+        </div>
+
+        <div class="px-0">
+          <div class="smaller hint">
+            <h4>{{ $t('mySnapshots') }}</h4>
           </div>
         </div>
 
@@ -40,19 +73,30 @@
           v-on:editme="editSnapshot"
         />
 
-        <v-btn
-          v-if="$store.state.isUserLoggedIn"
-          fab color="primary"
-          @click="newSnapshot">
-        <v-icon>mdi-plus</v-icon>
-        </v-btn>
+        <v-list class="snapshotlist"
+          three-line
+          v-if="$store.state.isUserLoggedIn">
+          <v-list-item class="px-0 mb-4 requestable"
+            dense @click="addSnapshot">
+            <v-list-item-avatar tile size="64" class="my-0">
+              <v-icon>mdi-layers-plus</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title style="font-weight:700">{{ $t('addSnapshot') }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
 
-        <v-btn
-          v-if="$store.state.isUserLoggedIn"
-          fab color="primary"
-          @click="newOrder">
-        <v-icon>mdi-basket</v-icon>
-        </v-btn>
+        <v-alert
+          v-if="!$store.state.isUserLoggedIn"
+          icon="mdi-shield-lock-outline"
+          text outlined dense
+          class="body-2"
+          color="grey"
+        >
+          {{ $t('snapshotEdit.warning') }}
+        </v-alert>
+
       </div>
 
       <v-toolbar
@@ -73,39 +117,93 @@
     />
     <v-overlay
       absolute="absolute"
-      opacity="0.2"
+      opacity="0.9"
       z-index="1002"
-      :value="!!editing"
+      :value="!!overlayVisible"
       >
-      <snapshot-edit
-        v-if="editing"
-        :isNew="editing.isNew"
-        v-bind="editing.snapshot"
-        v-on:cancel="abortEdit"
-        v-on:saved="onSnapshotSaved"
-      />
+
+
+      <v-card
+        id="snapshotadd" light class="pa-4"
+        :class="{ snapshotordering: ordering, snapshotediting: editing }">
+        <v-tooltip right>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+              v-show="!screenshotMode"
+              v-bind="attrs" v-on="on"
+              style="position: absolute; top:10px; right:5px;"
+              class="pa-2"
+              @click="abortAddSnapshot" >mdi-close-circle-outline
+            </v-icon>
+          </template>
+          <span>{{ $t('cancel') }}</span>
+        </v-tooltip>
+
+        <div v-if="!ordering && !editing">
+          <h3>{{ $t('addSnapshot') }}</h3>
+
+          <v-btn
+            color="primary"
+            icon
+            fab
+            tile
+            text
+            class="addSnapshotButton"
+            @click="newOrder">
+            <div class="choice-btn__content">
+              <v-icon class="choice">
+                mdi-store
+              </v-icon>
+              <p>
+                {{ $t('addSnapshot.order') }}
+              </p>
+            </div>
+          </v-btn>
+
+          <v-btn
+            color="primary"
+            icon
+            fab
+            tile
+            class="addSnapshotButton"
+            @click="newSnapshot">
+            <div class="choice-btn__content">
+              <v-icon class="choice">
+                mdi-progress-upload
+              </v-icon>
+              <p>
+                {{ $t('addSnapshot.upload') }}
+              </p>
+            </div>
+          </v-btn>
+
+        </div>
+
+        <snapshot-order
+          v-if="ordering"
+          v-on:back="goBack"
+        />
+
+        <snapshot-edit
+          v-if="editing"
+          :isNew="editing.isNew"
+          v-bind="editing.snapshot"
+          v-on:back="goBack"
+          v-on:saved="onSnapshotSaved"
+        />
+
+      </v-card>
+
      </v-overlay>
 
      <error-message
       :settings="errorsettings"
     />
-
-    <v-overlay
-      absolute="absolute"
-      opacity="0.2"
-      z-index="1002"
-      :value="!!ordering"
-      >
-      <snapshot-order
-        v-if="ordering"
-        v-on:cancel="abortOrder"
-      />
-     </v-overlay>
-
   </div>
 </template>
 
 <style>
+
 #snapshotview .v-text-field--outlined fieldset {
   border-color: rgba(0, 0, 0, 0.12);
 }
@@ -116,6 +214,23 @@
   font-weight: 900;
 }
 
+#snapshotadd {
+  width: 90vw;
+  min-width: 300px;
+  max-width: 500px;
+}
+
+.snapshotordering {
+  width: 95vw !important;
+  height: 80vh;
+  max-width: 1100px !important;
+}
+
+.snapshotediting {
+  max-width: 400px !important;
+  width: 95vw !important;
+}
+
 .show-linebreaks {
   white-space: pre-wrap;
 }
@@ -123,6 +238,32 @@
 h4 {
   margin-bottom: 0.8em;
 }
+
+.addSnapshotButton {
+  width: 50% !important;
+  min-height: 200px;
+  margin-top: 20px;
+  border-radius: 5px;
+  text-transform: none;
+}
+
+.choice-btn__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.choice-btn__content i.choice {
+  width: 80px !important;
+  height: 80px !important;
+  font-size: 70px !important;
+}
+
+.choice-btn__content p {
+  padding-top: 5px;
+  font-size: 1em;
+}
+
 </style>
 
 <script>
@@ -152,6 +293,7 @@ export default {
       title: '',
       description: '',
       errorsettings: {},
+      addsnapshot: undefined,
       editing: undefined,
       ordering: undefined
     };
@@ -173,6 +315,13 @@ export default {
         return this.$route.params.municipality;
       }
       return null;
+    },
+
+    overlayVisible() {
+      if (!!this.addsnapshot || !!this.ordering || !!this.editing) {
+        return true;
+      }
+      return false;
     },
 
     snapshotnav: {
@@ -294,8 +443,9 @@ export default {
     editSnapshot(snapshot) {
       this.editing = { isNew: false, snapshot };
     },
-    abortEdit() {
+    goBack() {
       this.editing = undefined;
+      this.ordering = undefined;
     },
     async onSnapshotSaved({ snapshot }) {
       const { data } = await this.$apollo.query({
@@ -344,14 +494,25 @@ export default {
         }/`);
       }
     },
+    addSnapshot() {
+      this.addsnapshot = true;
+    },
+    abortAddSnapshot() {
+      this.addsnapshot = undefined;
+      this.ordering = undefined;
+      this.editing = undefined;
+    },
     newSnapshot() {
       this.editing = { isNew: true, snapshot: {} };
+      this.ordering = undefined;
     },
     newOrder() {
       this.ordering = true;
+      this.editing = undefined;
     },
     abortOrder() {
       this.ordering = undefined;
+      this.addsnapshot = undefined;
     }
   }
 };
