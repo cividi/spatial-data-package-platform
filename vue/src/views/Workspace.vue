@@ -48,6 +48,7 @@
         </v-btn>
 
         <v-btn
+          v-if="$store.state.isUserLoggedIn"
           fab color="primary"
           @click="newOrder">
         <v-icon>mdi-basket</v-icon>
@@ -92,7 +93,7 @@
     <v-overlay
       absolute="absolute"
       opacity="0.2"
-      z-index="1000"
+      z-index="1002"
       :value="!!ordering"
       >
       <snapshot-order
