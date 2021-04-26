@@ -2,8 +2,9 @@
 <i18n>
 {
   "de": {
-    "editsnapshot": "Datenlayer bearbeiten",
-    "newsnapshot": "Daten hochladen",
+    "editsnapshot": "Kartenlayer bearbeiten",
+    "newsnapshot": "Kartenlayer hochladen",
+    "newsnapshot.info": "Um einen Kartenlayer hochzuladen, muss dieser als Data Package im JSON Format gemäss der Spatial Data Package Spezifikation exportiert werden. Zum Beispiel mittels des QGIS Plugins.",
     "title": "Titel",
     "topic": "Thema",
     "municipality": "Gemeinde",
@@ -31,6 +32,7 @@
   "fr": {
     "editsnapshot": "Editer l'couche de données",
     "newsnapshot": "Télécharger l'couche de données",
+    "newsnapshot.info": "Um einen Kartenlayer hochzuladen, muss dieser als Data Package im JSON Format gemäss der Spatial Data Package Spezifikation exportiert werden. Zum Beispiel mittels des QGIS Plugins.",
     "title": "Titre",
     "topic": "Sujet",
     "municipality": "Municipalité",
@@ -86,6 +88,12 @@
       lazy-validation
       @submit="saveSnapshot"
     >
+      <v-alert v-if="isNew"
+        icon="mdi-lightbulb-outline"
+        type="info" dense outlined dismissible
+        class="body-2" color="primary">
+        {{ $t('newsnapshot.info') }}
+      </v-alert>
       <v-text-field
         v-model="selected.title"
         :label="$t('title')"

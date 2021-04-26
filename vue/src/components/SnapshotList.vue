@@ -2,8 +2,8 @@
 <i18n>
 {
   "de": {
-    "btn.snapshotEdit": "Datenlayer bearbeiten",
-    "btn.snapshotDownload": "Daten herunterladen",
+    "btn.snapshotEdit": "Kartenlayer bearbeiten",
+    "btn.snapshotDownload": "Kartenlayer herunterladen",
     "btn.pngDownload": "PNG herunterladen"
   },
   "fr": {

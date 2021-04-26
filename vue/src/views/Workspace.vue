@@ -3,20 +3,16 @@
 {
   "de": {
     "cancel": "abbrechen",
-    "mySnapshots": "Meine Datenlayer",
-    "workspace.intro": "Willkommen bei Dufour. Dies ist dein persönlicher Workspace. Einführungs-video anschauen.",
-    "addSnapshot": "Daten hinzufügen",
-    "addSnapshot.order": "Daten bestellen",
-    "addSnapshot.upload": "Daten hochladen",
+    "mySnapshots": "Meine Kartenlayer",
+    "addSnapshot": "Kartenlayer hinzufügen",
+    "workspace.intro": "Willkommen bei {platformName}. Dies ist dein persönlicher Workspace. Einführungs-video anschauen.",
     "snapshotEdit.warning": "Bearbeiten des Workspaces ist nur eingeloggt möglich."
   },
   "fr": {
     "cancel": "Annuler",
     "mySnapshots": "Mes couche de données",
-    "workspace.intro": "Einführungsvideo: youtube.com/XYZ",
     "addSnapshot": "Ajouter des données",
-    "addSnapshot.order": "Données de la commande",
-    "addSnapshot.upload": "Télécharger les données",
+    "workspace.intro": "Einführungsvideo: youtube.com/XYZ",
     "snapshotEdit.warning": "La modification des workspace n'est possible qu'en étant connecté."
   }
 }
@@ -45,14 +41,17 @@
             <h4>{{ title }}</h4>
           </div>
         </div>
+
+        <!-- TODO: save/load dismissed state of welcome dialogue -->
         <v-alert
-          v-if="$store.state.isUserLoggedIn"
+          v-if="$store.state.isUserLoggedIn && onboardingTipsWorkspace"
           icon="mdi-lightbulb-outline"
           outlined dense dismissible
           class="body-2"
           color="primary"
+          v-on:click="dismissTip('workspace')"
         >
-          {{ $t('workspace.intro') }}
+          {{ $t('workspace.intro', { platformName: "Dufour" }) }}
         </v-alert>
         <div class="nodata pb-8">
           <div class="smaller hint">
@@ -60,7 +59,7 @@
           </div>
         </div>
 
-        <div class="px-0">
+        <div class="px-0" v-if="$store.state.isUserLoggedIn">
           <div class="smaller hint">
             <h4>{{ $t('mySnapshots') }}</h4>
           </div>
@@ -129,7 +128,6 @@
         <v-tooltip right>
           <template v-slot:activator="{ on, attrs }">
             <v-icon
-              v-show="!screenshotMode"
               v-bind="attrs" v-on="on"
               style="position: absolute; top:10px; right:5px;"
               class="pa-2"
@@ -139,45 +137,11 @@
           <span>{{ $t('cancel') }}</span>
         </v-tooltip>
 
-        <div v-if="!ordering && !editing">
-          <h3>{{ $t('addSnapshot') }}</h3>
-
-          <v-btn
-            color="primary"
-            icon
-            fab
-            tile
-            text
-            class="addSnapshotButton"
-            @click="newOrder">
-            <div class="choice-btn__content">
-              <v-icon class="choice">
-                mdi-store
-              </v-icon>
-              <p>
-                {{ $t('addSnapshot.order') }}
-              </p>
-            </div>
-          </v-btn>
-
-          <v-btn
-            color="primary"
-            icon
-            fab
-            tile
-            class="addSnapshotButton"
-            @click="newSnapshot">
-            <div class="choice-btn__content">
-              <v-icon class="choice">
-                mdi-progress-upload
-              </v-icon>
-              <p>
-                {{ $t('addSnapshot.upload') }}
-              </p>
-            </div>
-          </v-btn>
-
-        </div>
+        <snapshot-add
+          v-if="!ordering && !editing"
+          v-on:order="newOrder"
+          v-on:new="newSnapshot"
+        />
 
         <snapshot-order
           v-if="ordering"
@@ -220,11 +184,11 @@
   max-width: 500px;
 }
 
-.snapshotordering {
+/* .snapshotordering {
   width: 95vw !important;
   height: 80vh;
   max-width: 1100px !important;
-}
+} */
 
 .snapshotediting {
   max-width: 400px !important;
@@ -274,6 +238,7 @@ import SnapshotMap from '../components/SnapshotMap.vue';
 import SnapshotEdit from '../components/SnapshotEdit.vue';
 import SnapshotOrder from '../components/SnapshotOrder.vue';
 import ErrorMessage from '../components/ErrorMessage.vue';
+import SnapshotAdd from '../components/SnapshotAdd.vue';
 
 Vue.component('snapshot-list', SnapshotList);
 Vue.component('snapshot-map', SnapshotMap);
@@ -282,6 +247,7 @@ Vue.component('snapshot-order', SnapshotOrder);
 Vue.component('error-message', ErrorMessage);
 
 export default {
+  components: { SnapshotAdd },
   data() {
     return {
       hash: this.$route.params.hash,
@@ -295,11 +261,19 @@ export default {
       errorsettings: {},
       addsnapshot: undefined,
       editing: undefined,
-      ordering: undefined
+      ordering: undefined,
+      onboardingTipsWorkspace: true
     };
   },
 
   async mounted() {
+    if (localStorage.onboardingTipsWorkspace) {
+      if (localStorage.onboardingTipsWorkspace === 'true') {
+        this.onboardingTipsWorkspace = true;
+      } else {
+        this.onboardingTipsWorkspace = false;
+      }
+    }
     await this.getWorkspaceInfo();
     await this.getWorkspaceData();
     if (this.geojson) {
@@ -513,6 +487,10 @@ export default {
     abortOrder() {
       this.ordering = undefined;
       this.addsnapshot = undefined;
+    },
+    dismissTip() {
+      this.onboardingTipsWorkspace = false;
+      localStorage.onboardingTipsWorkspace = this.onboardingTipsWorkspace;
     }
   }
 };
