@@ -2,8 +2,14 @@
 <i18n>
 {
   "de": {
+    "btn.snapshotEdit": "Kartenlayer bearbeiten",
+    "btn.snapshotDownload": "Kartenlayer herunterladen",
+    "btn.pngDownload": "PNG herunterladen"
   },
   "fr": {
+    "btn.snapshotEdit": "Modifier la couche de données",
+    "btn.snapshotDownload": "Télécharger",
+    "btn.pngDownload": "Téléchargement de PNG"
   }
 }
 </i18n>
@@ -30,32 +36,51 @@
           <v-list-item-content>
             <v-list-item-title style="font-weight:700">{{ snapshot.title }}</v-list-item-title>
           </v-list-item-content>
-          <v-list-item-action v-if="workspaceHash" style="margin:0 0 4px 0; align-self: center;">
-            <v-btn icon
-              class="nobg"
-              v-if="$store.state.isUserLoggedIn"
-              v-on:click.stop.prevent="$emit('editme', snapshot)">
-                <v-icon color="grey lighten-1" >mdi-pencil</v-icon>
-            </v-btn>
+          <v-list-item-action v-if="workspaceHash"
+            style="margin:0 0 4px 0; align-self: center;">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon
+                  class="nobg"
+                  v-bind="attrs" v-on="on"
+                  v-if="$store.state.isUserLoggedIn"
+                  v-on:click.stop.prevent="$emit('editme', snapshot)">
+                    <v-icon color="grey lighten-1" >mdi-pencil</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ $t('btn.snapshotEdit') }}</span>
+            </v-tooltip>
+          </v-list-item-action>
             <!-- v-if="snapshot.pk === snapshotHash" //if only current snapshot can be edited -->
+          <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon
+                  class="nobg"
+                  v-bind="attrs" v-on="on"
+                  v-if="snapshot.datafile"
+                  v-on:click.stop="function(){}"
+                  :href="djangobaseurl + '/downloads/' + snapshot.datafile">
+                    <v-icon color="grey lighten-1" >mdi-download</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ $t('btn.snapshotDownload') }}</span>
+            </v-tooltip>
           </v-list-item-action>
           <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
-            <v-btn icon
-              class="nobg"
-              v-if="snapshot.datafile"
-              v-on:click.stop="function(){}"
-              :href="djangobaseurl + '/downloads/' + snapshot.datafile">
-                <v-icon color="grey lighten-1" >mdi-download</v-icon>
-            </v-btn>
-          </v-list-item-action>
-          <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
-            <v-btn icon
-              class="nobg"
-              v-if="snapshot.screenshot"
-              v-on:click.stop="function(){}"
-              :href="djangobaseurl + '/downloads/' + snapshot.screenshot">
-                <v-icon color="grey lighten-1" >mdi-image</v-icon>
-            </v-btn>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon
+                  class="nobg"
+                  v-bind="attrs" v-on="on"
+                  v-if="snapshot.screenshot"
+                  v-on:click.stop="function(){}"
+                  :href="djangobaseurl + '/downloads/' + snapshot.screenshot">
+                    <v-icon color="grey lighten-1" >mdi-image</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ $t('btn.pngDownload') }}</span>
+            </v-tooltip>
           </v-list-item-action>
       </v-list-item>
       <v-list-item class="px-0 mb-4 requestable"

@@ -2,18 +2,20 @@
 <i18n>
 {
   "de": {
-    "editsnapshot": "Snapshot bearbeiten",
-    "newsnapshot": "Neuen Snapshot anlegen",
+    "editsnapshot": "Kartenlayer bearbeiten",
+    "newsnapshot": "Kartenlayer hochladen",
+    "newsnapshot.info": "Um einen Kartenlayer hochzuladen, muss dieser als Data Package im JSON Format gemäss der Spatial Data Package Spezifikation exportiert werden. Zum Beispiel mittels des QGIS Plugins.",
     "title": "Titel",
     "topic": "Thema",
     "municipality": "Gemeinde",
     "currentfile": "Aktuelle Datei",
     "file": "Datei (JSON)",
+    "help": "Hilfe",
     "cancel": "abbrechen",
     "save": "speichern",
     "saveinfo": "Speichere Angaben",
     "savefile": "Sende Datei",
-    "processing": "Processiere Snapshot",
+    "processing": "Daten werden verarbeitet",
     "mandatory": "Dies ist ein Pflichtfeld",
     "predecessor": "Vorgänerversion",
     "municipalityMandatory": "Bitte wählen Sie eine Gemeinde aus",
@@ -28,25 +30,27 @@
     }
   },
   "fr": {
-    "editsnapshot": "Snapshot bearbeiten",
-    "newsnapshot": "Neuen Snapshot anlegen",
+    "editsnapshot": "Editer l'couche de données",
+    "newsnapshot": "Télécharger l'couche de données",
+    "newsnapshot.info": "Um einen Kartenlayer hochzuladen, muss dieser als Data Package im JSON Format gemäss der Spatial Data Package Spezifikation exportiert werden. Zum Beispiel mittels des QGIS Plugins.",
     "title": "Titre",
     "topic": "Sujet",
     "municipality": "Municipalité",
-    "currentfile": "Aktuelle Datei",
+    "currentfile": "Fichier actuel",
     "file": "Fichier (JSON)",
-    "cancel": "abbrechen",
-    "save": "speichern",
-    "mandatory": "Dies ist ein Pflichtfeld",
-    "saveinfo": "Speichere Angaben",
-    "processing": "Processiere Snapshot",
-    "savefile": "Sende Datei",
+    "help": "Aide",
+    "cancel": "annuler",
+    "save": "magasin",
+    "mandatory": "Ce champ est obligatoire",
+    "saveinfo": "Enregistrer les détails",
+    "processing": "La couche de données est traitée",
+    "savefile": "Télécharger le fichier",
     "predecessor": "version prédécesseuse",
     "municipalityMandatory": "Veuillez sélectionner une municipalité",
     "noMatches": "Aucun résultat",
     "status": {
       "savingInfo": "Enregistrer les détails",
-      "sendingFile": "Envoyer le fichier",
+      "sendingFile": "Télécharger le fichier",
       "done": "Prêt"
     },
     "error": {
@@ -58,8 +62,15 @@
 <!-- eslint-enable -->
 
 <template>
-  <v-card id="snapshotedit" light width="400" class="pa-4">
-    <h3 v-if="isNew">{{ $t('newsnapshot') }}</h3>
+  <!-- <v-card id="snapshotedit" light width="400" class="pa-4"> -->
+  <div>
+    <h3 v-if="isNew">
+      <v-icon
+        class="pa-2"
+        @click="$emit('back')">mdi-chevron-left
+      </v-icon>
+      {{ $t('newsnapshot') }}
+    </h3>
     <h3 v-else>{{ $t('editsnapshot') }}</h3>
     <v-alert
       v-for="(error, errorIndex) in errors"
@@ -77,6 +88,12 @@
       lazy-validation
       @submit="saveSnapshot"
     >
+      <v-alert v-if="isNew"
+        icon="mdi-lightbulb-outline"
+        type="info" dense outlined dismissible
+        class="body-2" color="primary">
+        {{ $t('newsnapshot.info') }}
+      </v-alert>
       <v-text-field
         v-model="selected.title"
         :label="$t('title')"
@@ -114,38 +131,39 @@
           </v-list-item-content>
         </v-list-item>
       </v-combobox>
-
-      <v-file-input
-        accept=".json"
-        :label="$t('file')"
-        truncate-length="20"
-        :rules="[
-          file => !!datafile ||
-            !!(file && file.name && file.type === 'application/json') ||
-            $t('mandatory')
-        ]"
-        :required="isNew"
-        @change="selectFile"
-      >
-        <v-icon
-          slot="append-outer"
-          tag="a"
-          href="https://github.com/cividi/spatial-data-package-spec"
-          target="_blank"
-          rel="noreferrer"
-        >
-          mdi-help-circle-outline
-        </v-icon>
-      </v-file-input>
+      <v-tooltip right>
+        <template v-slot:activator="{ on, attrs }">
+          <v-file-input
+            accept=".json"
+            :label="$t('file')"
+            truncate-length="20"
+            :rules="[
+              file => !!datafile ||
+                !!(file && file.name && file.type === 'application/json') ||
+                $t('mandatory')
+            ]"
+            :required="isNew"
+            @change="selectFile"
+          >
+            <v-icon
+              slot="append-outer"
+              tag="a"
+              v-bind="attrs" v-on="on"
+              href="https://github.com/cividi/spatial-data-package-spec"
+              target="_blank"
+              rel="noreferrer"
+            >
+              mdi-help-circle-outline
+            </v-icon>
+          </v-file-input>
+        </template>
+        <span>{{ $t('help') }}</span>
+      </v-tooltip>
       <p class="small mb-0" v-if="datafile">
         <strong>{{ $t('currentfile') }}:</strong>
         {{ datafile }}
       </p>
       <div class="d-flex justify-space-between mt-4">
-        <v-btn
-        @click="$emit('cancel')">
-          {{ $t('cancel') }}
-        </v-btn>
         <v-btn
           type="submit"
           color="primary"
@@ -163,7 +181,7 @@
         v-if="progress"
       />
     </div>
-  </v-card>
+  </div>
 </template>
 
 <style>
