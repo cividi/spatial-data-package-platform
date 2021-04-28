@@ -258,7 +258,7 @@ export default {
             this.ordered = true;
           }
         }).catch((err) => {
-          console.log(err);
+          console.log(err); // eslint-disable-line no-console
         });
     },
 
