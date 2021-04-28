@@ -42,6 +42,14 @@ const restApi = axios.create({
 });
 Vue.prototype.$restApi = restApi;
 
+const storeApi = axios.create({
+  baseURL: `${process.env.VUE_APP_SNAPSHOTSTOREURL}`,
+  headers: {
+    'Content-Type': 'application/json;charset=UTF-8'
+  }
+});
+Vue.prototype.$storeApi = storeApi;
+
 Vue.use(VueApollo);
 
 const apolloProvider = new VueApollo({

@@ -21,7 +21,7 @@
     <h3>
       <v-icon
           class="pa-2"
-          @click="$emit('back')">mdi-chevron-left
+          @click="cancelOrder">mdi-chevron-left
         </v-icon>
         {{ $t('addSnapshot.order') }}
       </h3>
@@ -31,11 +31,11 @@
       <v-stepper
         v-model="cart"
         vertical
+        v-if="!ordered"
       >
 
         <v-stepper-step
           :complete="cart > 1"
-          editable
           step="1"
         >
           {{ municipalityText }}
@@ -67,7 +67,6 @@
 
         <v-stepper-step
           :complete="cart > 2"
-          editable
           step="2"
         >
           Daten
@@ -75,7 +74,19 @@
         </v-stepper-step>
 
         <v-stepper-content step="2">
-          <snapshot-order-item />
+          <v-list class="snapshotlist shop"
+            three-line>
+            <div v-for="(snapshot, index) in groupedsnapshots" :key="snapshot.id">
+              <v-subheader
+                v-if="showTopic(index)"
+                class="px-0">{{ snapshot.topic }}</v-subheader>
+              <snapshot-order-item
+                :data="snapshot"
+                v-on:toggle="toggleItemOrder"
+                />
+              </div>
+          </v-list>
+          <p>&nbsp;</p>
           <v-btn
             color="primary"
             @click="cart = 3"
@@ -88,91 +99,56 @@
           :complete="cart > 3"
           step="3"
         >
-          Rechnungsdaten
+          Zusatz
           <small></small>
         </v-stepper-step>
 
         <v-stepper-content step="3">
-          <v-container fluid>
-            <v-row>
-              <v-col>
-                <v-text-field
-                    v-model="form.first"
-                    color="primary"
-                    label="Vorname"
-                    required
-                  ></v-text-field>
-              </v-col>
-              <v-col>
-                <v-text-field
-                    v-model="form.last"
-                    color="primary"
-                    label="Nachname"
-                    required
-                  ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-text-field
-                  v-model="form.email"
-                  color="primary"
-                  label="E-Mail"
-                  required
-                ></v-text-field>
-            </v-row>
-            <v-row>
-              <v-text-field
-                  v-model="form.company"
-                  color="primary"
-                  label="Organization"
-                  required
-                ></v-text-field>
-            </v-row>
-            <v-row>
-              <v-text-field
-                  v-model="form.phone"
-                  color="primary"
-                  label="Telefon"
-                  required
-                ></v-text-field>
-            </v-row>
-            <v-row>
-              <v-text-field
-                  v-model="form.address"
-                  color="primary"
-                  label="Rechnungsadresse"
-                  required
-                ></v-text-field>
-            </v-row>
-            <v-row>
-              <v-textarea
-                  v-model="form.comment"
-                  color="primary"
-                  label="Kommentar"
-                  required
-                ></v-textarea>
-            </v-row>
-          </v-container>
+            <v-textarea
+              placeholder="Ich benötige zusätzlich folgende Grundlagen oder Analysen..."
+              v-on:keyup="updateCommentData">
+            </v-textarea>
           <v-btn
             color="primary"
-            @click="cart = 4"
+            @click="submitRequest"
           >
-            Bestellen
+            Anfragen
           </v-btn>
         </v-stepper-content>
 
       </v-stepper>
+      <div class="successMessage" v-else>
+        <h1 class="text-xl uppercase">Vielen Dank.</h1>
+        <p>Die Bestellung wurde erfolgreich erfasst 🎉<br>
+        Wir melden uns baldmöglichst bei Ihnen.</p>
+        <v-btn color="primary" @click="resetForm">Neu starten</v-btn>
+      </div>
 
   </div>
 </template>
 
 <style>
+.shop {
+  height: 40vh;
+  overflow-y: scroll;
+}
+.successMessage {
+  height: 20vh;
+  align-content: center;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 </style>
 
 <script>
 import Vue from 'vue';
 import gql from 'graphql-tag';
 import _ from 'lodash';
+import { mapActions, mapGetters } from 'vuex';
 import SnapshotOrderItem from './SnapshotOrderItem.vue';
 
 Vue.component('snapshot-order-item', SnapshotOrderItem);
@@ -200,7 +176,7 @@ export default {
       perimeterSearch: null,
       municipalities: [],
       municipality: null,
-      isLoading: false
+      ordered: false
     };
   },
 
@@ -228,7 +204,7 @@ export default {
       if (this.select.node.bfsNumber) {
         this.municipality = this.select.node;
         this.cart = 2;
-        console.log('hurray', this.select.node);
+        this.setPerimeter(this.municipality);
       }
     },
     debouncedQuery: _.debounce(async (val, self) => {
@@ -242,17 +218,66 @@ export default {
       //     item.node.fullnameWithSnapshots = `${item.node.fullname} •`;
       //   }
       // });
-    }, 500)
+    }, 500),
+
+    showTopic(curindex) {
+      if (curindex > 0) {
+        if (this.groupedsnapshots[curindex - 1].topic !== this.groupedsnapshots[curindex].topic) {
+          return true;
+        }
+        return false;
+      }
+      return true;
+    },
+
+    ...mapActions('snapshotStore', [
+      'updateComment', 'toggleItem', 'setPerimeter', 'resetCart', 'saveCart', 'updateStoreUrl'
+    ]),
+
+    updateCommentData(e) {
+      if (e.srcElement) {
+        this.updateComment(e.srcElement.value);
+      }
+    },
+
+    toggleItemOrder(snapshot) {
+      this.toggleItem(snapshot);
+    },
+
+    async submitRequest() {
+      this.cart = 4;
+      // commit('SET_LOADING', true);
+
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+
+      await this.$storeApi.post('', JSON.stringify(this.getCart), { headers })
+        .then((res) => {
+          if (res.data.status === 'success') {
+            this.ordered = true;
+          }
+        }).catch((err) => {
+          console.log(err);
+        });
+    },
+
+    cancelOrder() {
+      this.resetForm();
+      this.$emit('back');
+    },
+
+    resetForm() {
+      this.cart = 1;
+      this.resetCart();
+      this.ordered = false;
+    }
   },
 
   async mounted() {
-    fetch(`${this.snapshotStoreUrl}/pipelines.${this.$i18n.locale}.json`)
+    fetch(`${this.snapshotStoreUrl}?lang=${this.$i18n.locale}`)
       .then(response => response.json())
       .then((data) => {
-        data.forEach((el, i) => {
-          data[i].thumbnail = `${this.snapshotStoreUrl}/${el.thumbnail}`;
-        });
-
         this.snapshotsStore = data;
       });
   },
@@ -266,7 +291,21 @@ export default {
     },
     municipalityText() {
       return this.municipality ? this.municipality.fullname : 'Perimeter';
-    }
+    },
+    groupedsnapshots() {
+      const topicgroups = {};
+      this.snapshotsStore.forEach((snapshot) => {
+        if (typeof (topicgroups[snapshot.topic]) === 'undefined') {
+          topicgroups[snapshot.topic] = [];
+        }
+        topicgroups[snapshot.topic].push(snapshot);
+      });
+
+      return Object.values(topicgroups).flat();
+    },
+    ...mapGetters('snapshotStore', [
+      'getCart'
+    ])
   },
 
   watch: {

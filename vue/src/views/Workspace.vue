@@ -184,6 +184,14 @@
   max-width: 500px;
 }
 
+@media only screen and (max-width: 600px) {
+  #snapshotadd {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+}
+
 /* .snapshotordering {
   width: 95vw !important;
   height: 80vh;
@@ -262,7 +270,9 @@ export default {
       addsnapshot: undefined,
       editing: undefined,
       ordering: undefined,
-      onboardingTipsWorkspace: true
+      onboardingTipsWorkspace: true,
+      snapshotsStore: [],
+      snapshotStoreUrl: process.env.VUE_APP_SNAPSHOTSTOREURL
     };
   },
 
@@ -281,6 +291,16 @@ export default {
       this.$refs.map.setupMapbox();
       this.$refs.map.displayMapbox();
     }
+
+    fetch(`${this.snapshotStoreUrl}?lang=${this.$i18n.locale}`)
+      .then(response => response.json())
+      .then((data) => {
+        data.forEach((el, i) => {
+          data[i].thumbnail = `${this.snapshotStoreUrl}/${el.thumbnail}`;
+        });
+
+        this.snapshotsStore = data;
+      });
   },
 
   computed: {
