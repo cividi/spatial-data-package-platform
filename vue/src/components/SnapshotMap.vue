@@ -179,58 +179,58 @@ html,
 body,
 #app .v-application--wrap,
 #map {
-  min-height: calc(100vh - var(--vh-offset, 0px));
-  height: calc(100vh - var(--vh-offset, 0px));
+    min-height: calc(100vh - var(--vh-offset, 0px));
+    height: calc(100vh - var(--vh-offset, 0px));
 }
 
 #map {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  background: #dedede
-    linear-gradient(90deg, #dedede 0%, #f2f2f2 17%, #dedede 23%) repeat-y;
-  background-size: 125% 10%;
-  animation: BGani 2s ease infinite;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #dedede
+        linear-gradient(90deg, #dedede 0%, #f2f2f2 17%, #dedede 23%) repeat-y;
+    background-size: 125% 10%;
+    animation: BGani 2s ease infinite;
 }
 
 @keyframes BGani {
-  0% {
-    background-position: 110% 0%;
-  }
-  66% {
-    background-position: -410% 0%;
-  }
-  100% {
-    background-position: -410% 0%;
-  }
+    0% {
+        background-position: 110% 0%;
+    }
+    66% {
+        background-position: -410% 0%;
+    }
+    100% {
+        background-position: -410% 0%;
+    }
 }
 #map.leaflet-container {
-  background: #dedede;
-  animation: none;
+    background: #dedede;
+    animation: none;
 }
 
 #map .mapbox-improve-map {
-  display: none;
+    display: none;
 }
 
 #mapinfo {
-  position: absolute;
-  bottom: 2em;
-  right: 2em;
-  min-width: 240px;
-  clip-path: circle(0% at 95% 90%);
-  transition: clip-path 0.3s ease-out;
-  pointer-events: none;
-  z-index: 500; /* must be above mapbox icons */
+    position: absolute;
+    bottom: 2em;
+    right: 2em;
+    min-width: 240px;
+    clip-path: circle(0% at 95% 90%);
+    transition: clip-path 0.3s ease-out;
+    pointer-events: none;
+    z-index: 500; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
-  pointer-events: auto;
-  clip-path: circle(100% at center);
+    pointer-events: auto;
+    clip-path: circle(100% at center);
 }
 
 .mapbox-improve-map {
-  display: none;
+    display: none;
 }
 
 #MarkerButtonsHolder {
@@ -403,7 +403,8 @@ export default {
 
     displayMapbox() {
       try {
-        L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN;
+        L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN
+          || process.env.VUE_APP_MAPBOX_ACCESSTOKEN_DEV;
         const boxSize = 800;
         const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
         this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
@@ -432,10 +433,10 @@ export default {
           this.geojson.coordinates.forEach((polygon) => {
             this.layerContainer.addLayer(L.polygon(polygon, { color: '#543076' }));
           });
-          if (process.env.VUE_APP_MAPBOX_DEFAULT_STYLES) {
-            this.layerContainer.addLayer(L.mapbox.styleLayer(
-              process.env.VUE_APP_MAPBOX_DEFAULT_STYLES
-            ));
+          const DEFAULT_STYLES = process.env.VUE_APP_MAPBOX_DEFAULT_STYLES
+            || process.env.VUE_APP_MAPBOX_DEFAULT_STYLES_DEV;
+          if (DEFAULT_STYLES) {
+            this.layerContainer.addLayer(L.mapbox.styleLayer(DEFAULT_STYLES));
           }
         }
         this.layerContainer.addTo(this.map);

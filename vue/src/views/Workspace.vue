@@ -67,14 +67,15 @@
     <v-overlay
       absolute="absolute"
       opacity="0.2"
-      z-index="1000"
-      :value="editing"
+      z-index="1002"
+      :value="!!editing"
       >
       <snapshot-edit
         v-if="editing"
-        :snapshot="snapshotEdit"
+        :isNew="editing.isNew"
+        v-bind="editing.snapshot"
         v-on:cancel="abortEdit"
-        v-on:saved="closeEdit"
+        v-on:saved="onSnapshotSaved"
       />
      </v-overlay>
 
@@ -130,8 +131,7 @@ export default {
       title: '',
       description: '',
       errorsettings: {},
-      snapshotEdit: Object,
-      editing: false
+      editing: undefined
     };
   },
 
@@ -254,6 +254,9 @@ export default {
         variables: {
           wshash: btoa(`WorkspaceNode:${this.wshash}`),
           hash: btoa(`SnapshotNode:${this.hash}`)
+        },
+        options: {
+          cachePolicy: 'no-cache'
         }
       }).catch((error) => {
         this.errorsettings = { type: 'netwokerror', open: true, error };
@@ -267,24 +270,61 @@ export default {
       }
     },
     editSnapshot(snapshot) {
-      this.snapshotEdit = snapshot;
-      this.editing = true;
+      this.editing = { isNew: false, snapshot };
     },
     abortEdit() {
-      this.editing = false;
-      this.snapshotEdit = {};
+      this.editing = undefined;
     },
-    closeEdit() {
-      this.editing = false;
-      this.snapshotEdit = {};
+    async onSnapshotSaved({ snapshot }) {
+      const { data } = await this.$apollo.query({
+        query: gql`query getworkspace($wshash: ID!) {
+            workspace(id: $wshash) {
+              snapshots {
+                id
+                pk
+                title
+                topic
+                screenshot
+                thumbnail
+                datafile
+                municipality {
+                  bfsNumber
+                  fullname
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          wshash: btoa(`WorkspaceNode:${this.wshash}`)
+        },
+        fetchPolicy: 'no-cache'
+      });
+        // abusing vue's watching of Array.prototype.splice because it just wouldn't react otherwise
+      this.snapshotsWorkspace.splice(
+        0,
+        this.snapshotsWorkspace.length,
+        ...data.workspace.snapshots
+      );
+      this.editing = undefined;
+
+      if (this.$route.params.hash === snapshot.pk) {
+        // current snapshot was updated, reload window
+        this.$router.go();
+      } else {
+        // co to edited snapshot
+        this.$router.push(`/${
+          this.$route.params.lang
+        }/${
+          this.$route.params.wshash
+        }/${
+          snapshot.pk
+        }/`);
+      }
     },
     newSnapshot() {
-      this.snapshotEdit = {
-        pk: '', title: '', topic: '', municipality: { bfsNumber: 0, fullname: '' }
-      };
-      this.editing = true;
+      this.editing = { isNew: true, snapshot: {} };
     }
   }
-
 };
 </script>

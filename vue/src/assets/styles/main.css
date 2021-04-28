@@ -98,3 +98,8 @@ a {
 }
 
 /* SNAPSHOTS END */
+
+/* fixes input overlapping appended elements on safari */
+.v-file-input input {
+  overflow: hidden;
+}

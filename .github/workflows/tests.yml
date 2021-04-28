@@ -27,8 +27,10 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup
-        run: touch env.hosts.prod && docker-compose pull && make up && make init
+        run: ln -s docker-compose.dev.yml docker-compose.yml && docker-compose pull && make up && DOCKER_NOTTY=YES make init-test
 
-      # Runs a single command using the runners shell
-      - name: Run tests
-        run: make tests
+      - name: Run django tests
+        run: cd django && DOCKER_NOTTY=YES make tests
+
+      - name: Run vue tests
+        run: cd vue && DOCKER_NOTTY=YES make tests

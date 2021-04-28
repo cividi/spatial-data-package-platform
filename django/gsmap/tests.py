@@ -127,7 +127,7 @@ query {
                         'pk': 'R4RPGC',
                         'title': 'test snapshot',
                         'topic': 'test topic',
-                        'screenshot': ''
+                        'screenshot': None
                     }
                 }]
             }

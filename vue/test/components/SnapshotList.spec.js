@@ -2,6 +2,7 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 import test from 'ava';
 import VueRouter from 'vue-router';
 import Vuetify from 'vuetify';
+import store from '../../src/store';
 import i18n from '../../src/trans';
 import SnapshotList from '../../src/components/SnapshotList.vue';
 
@@ -20,6 +21,7 @@ test('SnapshotList.vue', (t) => {
     router,
     i18n,
     vuetify,
+    store,
     propsData: {
       workspaceHash: 'test',
       snapshots

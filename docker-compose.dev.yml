@@ -28,10 +28,13 @@ services:
       - TERM=xterm-256color
       - START_SCREENSHOTSERVICE=NO
       - VUE_APP_MAPBOX_ACCESSTOKEN=${MAPBOX_TOKEN}
+      - VUE_APP_MAPBOX_ACCESSTOKEN_DEV=pk.eyJ1IjoiZ2VtZWluZGVzY2FuIiwiYSI6ImNrNXdrOXV2ZjEwdXcza28wcXNoYXE1ZGMifQ.P-nCvxNRK4AOs7YdRbHCLg
       - VUE_APP_MAPBOX_DEFAULT_STYLES=${MAPBOX_STYLE}
+      - VUE_APP_MAPBOX_DEFAULT_STYLES_DEV=mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz
       - VUE_APP_GRAPHQL_URI=http://www:8000/graphql/
       - VUE_APP_DJANGOBASEURL=http://www:8000
-      - VUE_APP_VERSION=${APP_VERSION}
+      - VUE_APP_FATHOM_SITEID=${FATHOM_SITEID}
+      - VUE_APP_SNAPSHOTSTOREURL=https://gemeindescan.eu-central-1.linodeobjects.com/public/
       - PUBLIC_URL=http://www:8000
     working_dir: /opt/vue
     volumes:
@@ -51,6 +54,7 @@ services:
       - TERM=linux
       - START_DJANGO=NO
       - DJANGO_SECRET_KEY=${DJANGO_SECRET}
+      - DJANGO_SECRET_KEY_DEV=adddxxccxx4rt0ioywg3yf5kjq64-t5
       - DJANGO_DB_NAME=webui
       - DJANGO_DB_USER=webui
       - DJANGO_DB_PASSWORD=pgpass
@@ -63,7 +67,6 @@ services:
       - DJANGO_ADMIN_HEADER_COLOR=#ff0000
       - DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES=* # * every minute, */5 every 5 minutes
       - START_APSCHEDULER=YES
-      - DJANGO_APP_VERSION=${APP_VERSION}
     working_dir: /opt/app
     volumes:
       - ./django:/opt/app:Z
@@ -75,11 +78,15 @@ services:
     # command: -f /dev/null
 
   www:
-    image: openresty/openresty:1.15.8.3-alpine
-    hostname: www
+    extends:
+      file: docker-images.yml
+      service: www
     volumes:
       - ./etc/nginx:/etc/nginx/conf.d:Z
       - var-gemeindescan-webui:/var/services
     ports:
       - 8000:8000
+    command: >
+      sh -c '[ ! -e /etc/nginx/conf.d/www.local.conf ] && ln -s /etc/nginx/conf.d/www.local.dev /etc/nginx/conf.d/www.local.conf;
+      /usr/local/openresty/bin/openresty -g "daemon off;"'
     # command: tail -f /dev/null

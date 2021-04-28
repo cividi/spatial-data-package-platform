@@ -33,11 +33,8 @@ For a tour of the app and a testing protocol see [`docs/testing.md`](./docs/test
 (1) Prepare local configuration
 
 - Add `www.local` and `django` to the 127.0.0.1 entry in `/etc/hosts` (for screenshot service).
-- For local development add a symlink to the nginx configuration file, for production use a dedicated copy:
-```bash
-ln -s etc/nginx/www.local.dev etc/nginx/www.local.conf
-```
-- Create an `.env` file with the following environment variables:
+- A symlink to the nginx configuration file in the www container will be created automatically (`/etc/nginx/conf.d/www.local.conf`) for production use a dedicated copy
+- for production or custom settings add an `.env` file with the following environment variables:
 ```bash
 DJANGO_SECRET=some.R4nd0m_k3y
 MAPBOX_TOKEN=a.mapbox.api.token
@@ -64,10 +61,6 @@ python3 manage.py createsuperuser
 make import-gemeinden-json
 # exit django container
 exit
-# enter vue container
-maker enter_vue
-ln -s /node_modules ./
-```
 
 For development we use a named docker volume for the `var` folder inside the container, this named
 volume will be created automatically. This makes setup under windows easier.
