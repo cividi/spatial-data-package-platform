@@ -3,7 +3,7 @@
 ## Releases
 
 ### 0.7.1
-
+[Released *2021-05-07*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.1)
 
 - Added example gallery toogle to siteconfiguration #99
 - Fixed snapshot edit modal z-index, now on top
@@ -20,14 +20,18 @@
 - Fixed Safari v-file-input #79
 - Fixed update list with new snapshot #81
 - Improved Snapshot upload municipality field behaviour and help button #76, #75
-- Fixede empty snapshot list #72
-- Fixed layout issues in map view on narrow viewports
-- Improved language switching
+- Fixed empty snapshot list #72
 
 *Upgrade notes*:
 - **Breaking change**: you now need a symlink `ln -s docker-compose.dev.yml docker-compose.yml` for the local dev mode, but no other setup steps are needed anymore (see README.md)
 
+### 0.7.1 Beta 1
+
+- Fixed layout issues in map view on narrow viewports
+- Improved language switching
+
 ### 0.7.0
+[Released *2021-01-21*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.0)
 
 - Added `snapshot.json` upload
 - Added `snapshot.json` download in snapshot list
