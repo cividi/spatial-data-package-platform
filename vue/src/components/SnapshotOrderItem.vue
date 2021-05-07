@@ -10,40 +10,51 @@
 <!-- eslint-enable -->
 
 <template>
-  <v-list-item class="px-0 mb-4"
-    :class="{requestable: !selected, selected: selected}"
-    v-on:click="toggleOrderItem"
-    dense>
-      <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
-        <v-btn icon
-          class="nobg"
-          target="_blank"
-          >
-            <v-icon color="grey lighten-1" v-if="!selected">mdi-checkbox-blank-outline</v-icon>
-            <v-icon color="primary" v-if="selected">mdi-checkbox-marked</v-icon>
-        </v-btn>
-      </v-list-item-action>
-      <v-list-item-content>
-        <v-list-item-title style="font-weight:700">{{ data.title }}</v-list-item-title>
+  <div>
+    <v-list-item class="px-0 mb-4 mr-2"
+      :class="{requestable: !selected, selected: selected}"
+      v-on:click="toggleOrderItem"
+      dense>
+        <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
+          <v-btn icon
+            class="nobg"
+            target="_blank"
+            >
+              <v-icon color="grey lighten-1" v-if="!selected">mdi-checkbox-blank-outline</v-icon>
+              <v-icon color="primary" v-if="selected">mdi-checkbox-marked</v-icon>
+          </v-btn>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title style="font-weight:700">{{ data.title }}</v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
+          <v-btn icon
+            class="nobg"
+            v-on:click.stop="expanded = !expanded"
+            target="_blank"
+            >
+              <v-icon color="grey lighten-1">mdi-information-outline</v-icon>
+          </v-btn>
+        </v-list-item-action>
+        <v-list-item-avatar
+        tile size="64" class="my-0">
+          <v-img
+            :class="{'requestable-filter': !selected}"
+            :src="data.thumbnail"
+            >
+          </v-img>
+        </v-list-item-avatar>
+    </v-list-item>
+    <v-list-item v-if="expanded"
+      class="expanded px-0 mb-4 mr-2"
+      >
+      <v-img :src="data.image" height="150" width="400">
+      </v-img>
+      <v-list-item-content class="px-4">
+        {{ data.description }}
       </v-list-item-content>
-      <v-list-item-action style="margin:0 0 4px 0; align-self: center;">
-        <v-btn icon
-          class="nobg"
-          v-on:click.stop="function(){}"
-          target="_blank"
-          >
-            <!-- <v-icon color="grey lighten-1">mdi-information-outline</v-icon> -->
-        </v-btn>
-      </v-list-item-action>
-      <v-list-item-avatar
-       tile size="64" class="my-0">
-        <v-img
-          :class="{'requestable-filter': !selected}"
-          :src="data.thumbnail"
-          >
-        </v-img>
-      </v-list-item-avatar>
-  </v-list-item>
+    </v-list-item>
+  </div>
 </template>
 
 <style>
@@ -61,6 +72,11 @@
 .snapshotlist .v-list-item,
 .snapshotlist .v-list-item__content {
   min-height: 64px;
+  transition: height 1s ease;
+}
+
+.snapshotlist .v-list-item__content::after {
+  content: none;
 }
 
 .snapshotlist .v-list-item--active::before {
@@ -87,6 +103,9 @@
   border: 1px solid #543076;
   background-color:  #54307622;
 }
+.expanded.v-list-item {
+  flex-direction: column;
+}
 .requestable-filter {
   filter: grayscale(100%) brightness(110%);
   opacity: 0.35;
@@ -101,7 +120,8 @@ export default {
   ],
   data() {
     return {
-      selected: false
+      selected: false,
+      expanded: false
     };
   },
   methods: {
