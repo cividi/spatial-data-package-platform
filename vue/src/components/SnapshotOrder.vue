@@ -55,6 +55,7 @@
           step="1"
         >
           {{ municipalityText }}
+          <span v-if="cart > 1">{{ perimeter.bfsname }}</span>
         </v-stepper-step>
 
         <v-stepper-content step="1">
@@ -96,6 +97,7 @@
           step="2"
         >
           Daten
+          <span v-if="cart > 2">{{ noPackages }}</span>
           <small></small>
         </v-stepper-step>
 
@@ -115,6 +117,7 @@
           <p>&nbsp;</p>
           <v-btn
             color="primary"
+            :disabled="!form.packages.length"
             @click="cart = 3"
           >
             Auswählen
@@ -130,9 +133,9 @@
         </v-stepper-step>
 
         <v-stepper-content step="3">
+            {{ $t('comment') }}
             <v-textarea
-              v-model="form.comment"
-              :label="$t('comment')">
+              v-model="form.comment">
             </v-textarea>
           <v-btn
             color="primary"
@@ -152,12 +155,14 @@
 
         <v-stepper-content step="4">
           <v-text-field
+            ref="formName"
             v-model="form.name"
             :label="$t('name')"
             :rules="[validate.required, validate.name]"
             required
           />
           <v-text-field
+            ref="formEmail"
             v-model="form.email"
             :label="$t('email')"
             :rules="[validate.required, validate.email]"
@@ -170,6 +175,7 @@
           />
           <v-btn
             color="primary"
+            :disabled="$refs.formEmail ? $refs.formEmail.hasError || $refs.formName.hasError : true"
             @click="submitRequest"
           >
             Anfragen
@@ -330,12 +336,12 @@ export default {
       });
 
       return Object.values(topicgroups).flat();
-    }
-  },
-
-  watch: {
-    async perimeterSearch(val) {
-      this.debouncedQuery(val, this);
+    },
+    noPackages() {
+      if (!this.form.packages.length) {
+        return '';
+      }
+      return `${this.form.packages.length} / ${this.groupedsnapshots.length}`;
     }
   }
 };
