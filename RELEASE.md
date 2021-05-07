@@ -2,6 +2,8 @@
 
 ## Releases
 
+### 0.7.2 DEV
+
 ### 0.7.1
 [Released *2021-05-07*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.1)
 

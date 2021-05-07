@@ -61,7 +61,7 @@ reload_www:
 
 deploy_local:
 	docker-compose up -d
-	make -f vue/Makefile build-cron
+	NOTTY=YES make -f vue/Makefile build
 	docker-compose exec -T vue rsync -av --delete dist/ /var/services/django/static/dist/
 	docker-compose exec -T django make migrate
 	docker-compose exec -T django killall -TERM gunicorn
