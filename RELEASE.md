@@ -2,10 +2,30 @@
 
 ## Releases
 
-### 0.7.1 beta
+### 0.7.1
 
+
+- Added example gallery toogle to siteconfiguration #99
+- Fixed snapshot edit modal z-index, now on top
+- Added debounce municipality search #92
+- Added env VUE_APP_FATHOM_SITEID and VUE_APP_SNAPSHOTSTOREURL
+- Changed docker setup #74
+  - updated docker images
+  - removed need to symlink www.local.conf
+  - removed need to symlink node_modules
+  - cleanup of old makefile deploy commands
+  - Added DJANGO_SECRET, MAPBOX_TOKEN, MAPBOX_STYLE overwrites via .env file, see README.md
+- Backend errors are now shown to the user, no longer crash the script #80
+- Snapshot form validation: rule for municipality input, rule for file input #77
+- Fixed Safari v-file-input #79
+- Fixed update list with new snapshot #81
+- Improved Snapshot upload municipality field behaviour and help button #76, #75
+- Fixede empty snapshot list #72
 - Fixed layout issues in map view on narrow viewports
 - Improved language switching
+
+*Upgrade notes*:
+- **Breaking change**: you now need a symlink `ln -s docker-compose.dev.yml docker-compose.yml` for the local dev mode, but no other setup steps are needed anymore (see README.md)
 
 ### 0.7.0
 
