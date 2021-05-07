@@ -3,13 +3,29 @@
 {
   "de": {
     "addSnapshot.order": "Kartenlayer bestellen",
-    "placeholder": "Suche",
-    "label": "Gemeinde"
+    "placeholder": "Gemeindename",
+    "label": "Gemeinde",
+    "name": "Vor- und Nachname",
+    "name.invalid": "Bitte Vor- und Nachname eingeben",
+    "email": "E-Mail Adresse",
+    "email.invalid": "Ungültige E-Mail Adresse",
+    "phone": "Telefon",
+    "phone.invalid": "Ungültige Telefonnummer Adresse",
+    "mandatory": "Dies ist ein Pflichtfeld",
+    "comment": "Brauchen Sie zusätzliche Kartenlayer oder Analysen oder Perimeter?"
   },
   "fr": {
     "addSnapshot.order": "Données de la commande",
     "placeholder": "Recherche",
-    "label": "Communauté"
+    "label": "Communauté",
+    "name": "Vor- und Nachname",
+    "name.invalid": "Bitte Vor- und Nachname eingeben",
+    "email": "E-Mail Adresse",
+    "email.invalid": "Ungültige E-Mail Adresse",
+    "phone": "Telefon",
+    "phone.invalid": "Ungültige Telefonnummer Adresse",
+    "mandatory": "Ce champ est obligatoire",
+    "comment": "Brauchen Sie zusätzliche Kartenlayer oder Analysen oder Perimeter?"
   }
 }
 </i18n>
@@ -42,7 +58,17 @@
         </v-stepper-step>
 
         <v-stepper-content step="1">
-          <template>
+          <p class="body">Kartenlayer werden jeweils für die gesamte Gemeinde
+              <b>{{ perimeter.bfsname }}</b>
+              aufbereitet. Bitte fügen Sie eine Bemerkung hinzu, falls Sie einen anderen
+              Perimeter oder gemeindeübergreifende Karten benötigen.</p>
+          <v-btn
+            color="primary"
+            @click="cart = 2"
+          >
+            Weiter
+          </v-btn>
+          <!-- <template>
             <v-autocomplete
               ref="perimeterSearch"
               class="gemeindesuche"
@@ -61,7 +87,7 @@
               v-on:change="submitMunicipality()"
               dense
               ></v-autocomplete>
-            </template>
+            </template> -->
 
         </v-stepper-content>
 
@@ -99,15 +125,49 @@
           :complete="cart > 3"
           step="3"
         >
-          Zusatz
+          Bermerkungen
           <small></small>
         </v-stepper-step>
 
         <v-stepper-content step="3">
             <v-textarea
-              placeholder="Ich benötige zusätzlich folgende Grundlagen oder Analysen..."
-              v-on:keyup="updateCommentData">
+              v-model="form.comment"
+              :label="$t('comment')">
             </v-textarea>
+          <v-btn
+            color="primary"
+            @click="cart = 4"
+          >
+            Weiter
+          </v-btn>
+        </v-stepper-content>
+
+        <v-stepper-step
+          :complete="cart > 4"
+          step="4"
+        >
+          Kontakt
+          <small></small>
+        </v-stepper-step>
+
+        <v-stepper-content step="4">
+          <v-text-field
+            v-model="form.name"
+            :label="$t('name')"
+            :rules="[validate.required, validate.name]"
+            required
+          />
+          <v-text-field
+            v-model="form.email"
+            :label="$t('email')"
+            :rules="[validate.required, validate.email]"
+            required
+          />
+          <v-text-field
+            v-model="form.phone"
+            :rules="[validate.phone]"
+            :label="$t('phone')"
+          />
           <v-btn
             color="primary"
             @click="submitRequest"
@@ -146,25 +206,25 @@
 
 <script>
 import Vue from 'vue';
-import gql from 'graphql-tag';
-import _ from 'lodash';
-import { mapActions, mapGetters } from 'vuex';
 import SnapshotOrderItem from './SnapshotOrderItem.vue';
 
 Vue.component('snapshot-order-item', SnapshotOrderItem);
 
 export default {
   name: 'SnapshotOrder',
+
+  props: [
+    'perimeter'
+  ],
+
   data() {
     const defaultForm = Object.freeze({
-      gender: 'Frau',
-      first: '',
-      last: '',
-      email: '',
-      company: '',
-      phone: '',
-      address: '',
-      comment: ''
+      name: null,
+      email: null,
+      phone: null,
+      perimeter: this.perimeter,
+      comment: '',
+      packages: []
     });
 
     return {
@@ -172,53 +232,26 @@ export default {
       form: Object.assign({}, defaultForm),
       snapshotStoreUrl: process.env.VUE_APP_SNAPSHOTSTOREURL,
       snapshotsStore: [],
-      select: null,
-      perimeterSearch: null,
-      municipalities: [],
-      municipality: null,
-      ordered: false
+      ordered: false,
+      validate: {
+        required: value => !!value || this.$t('mandatory'),
+        email: (value) => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          return pattern.test(value) || this.$t('email.invalid');
+        },
+        phone: (value) => {
+          const pattern = /^\+?(?:[0-9]\s?){6,14}[0-9]$/;
+          if (value.length > 0) {
+            return pattern.test(value) || this.$t('phone.invalid');
+          }
+          return true;
+        },
+        name: value => value.indexOf(' ') >= 0 || this.$t('name.invalid')
+      }
     };
   },
 
   methods: {
-    async queryMunicipalities(val) { // event
-      const result = await this.$apollo.query({
-        query: gql`query getmunicipalities($q: String!){
-          municipalities(name_Icontains: $q) {
-            edges {
-              node {
-                bfsNumber
-                fullname
-              }
-            }
-          }
-        }`,
-        variables: {
-          q: val
-        }
-      });
-      return result;
-    },
-
-    submitMunicipality() {
-      if (this.select.node.bfsNumber) {
-        this.municipality = this.select.node;
-        this.cart = 2;
-        this.setPerimeter(this.municipality);
-      }
-    },
-    debouncedQuery: _.debounce(async (val, self) => {
-      const result = await self.queryMunicipalities(val);
-      self.municipalities = result.data.municipalities.edges;
-      // self.municipalities.forEach((item) => {
-      //   const nrScans = item.node.snapshots.length;
-      //   if (nrScans === 0) {
-      //     item.node.fullnameWithSnapshots = `${item.node.fullname}`;
-      //   } else {
-      //     item.node.fullnameWithSnapshots = `${item.node.fullname} •`;
-      //   }
-      // });
-    }, 500),
 
     showTopic(curindex) {
       if (curindex > 0) {
@@ -230,29 +263,24 @@ export default {
       return true;
     },
 
-    ...mapActions('snapshotStore', [
-      'updateComment', 'toggleItem', 'setPerimeter', 'resetCart', 'saveCart', 'updateStoreUrl'
-    ]),
-
-    updateCommentData(e) {
-      if (e.srcElement) {
-        this.updateComment(e.srcElement.value);
-      }
-    },
-
-    toggleItemOrder(snapshot) {
-      this.toggleItem(snapshot);
+    toggleItemOrder(item) {
+      this.form.packages = this.form.packages.includes(item)
+        ? this.form.packages.filter(i => i !== item) : [...this.form.packages, item];
     },
 
     async submitRequest() {
       this.cart = 4;
-      // commit('SET_LOADING', true);
 
       const headers = {
         'Content-Type': 'application/json'
       };
 
-      await this.$storeApi.post('', JSON.stringify(this.getCart), { headers })
+      const submitData = this.form;
+      submitData.perimeter = submitData.perimeter.bfsnumber;
+      submitData.firstname = submitData.name.split(' ')[0];
+      submitData.lastname = submitData.name.split(' ')[1];
+
+      await this.$storeApi.post('', JSON.stringify(submitData), { headers })
         .then((res) => {
           if (res.data.status === 'success') {
             this.ordered = true;
@@ -302,10 +330,7 @@ export default {
       });
 
       return Object.values(topicgroups).flat();
-    },
-    ...mapGetters('snapshotStore', [
-      'getCart'
-    ])
+    }
   },
 
   watch: {
