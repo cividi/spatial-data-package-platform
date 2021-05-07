@@ -32,7 +32,7 @@
           v-on:click.stop="function(){}"
           target="_blank"
           >
-            <v-icon color="grey lighten-1">mdi-information-outline</v-icon>
+            <!-- <v-icon color="grey lighten-1">mdi-information-outline</v-icon> -->
         </v-btn>
       </v-list-item-action>
       <v-list-item-avatar

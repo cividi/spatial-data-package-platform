@@ -36,13 +36,6 @@
 
       <div id="snapshotnavContent" class="ma-4">
 
-        <div class="nodata">
-          <div class="smaller hint">
-            <h4>{{ title }}</h4>
-          </div>
-        </div>
-
-        <!-- TODO: save/load dismissed state of welcome dialogue -->
         <v-alert
           v-if="$store.state.isUserLoggedIn && onboardingTipsWorkspace"
           icon="mdi-lightbulb-outline"
@@ -53,6 +46,13 @@
         >
           {{ $t('workspace.intro', { platformName: "Dufour" }) }}
         </v-alert>
+
+        <div class="nodata">
+          <div class="smaller hint">
+            <h4>{{ title }}</h4>
+          </div>
+        </div>
+
         <div class="nodata pb-8">
           <div class="smaller hint">
             <p class="show-linebreaks">{{ description }}</p>
@@ -145,6 +145,7 @@
 
         <snapshot-order
           v-if="ordering"
+          :perimeter="perimeter"
           v-on:back="goBack"
         />
 
@@ -316,6 +317,13 @@ export default {
         return true;
       }
       return false;
+    },
+
+    perimeter() {
+      return {
+        bfsname: this.$store.state.bfsname,
+        bfsnumber: this.$store.state.bfsnumber
+      };
     },
 
     snapshotnav: {
