@@ -31,8 +31,8 @@
       </v-row>
   </v-container>
 
-  <v-container v-if="!networkError" class="center" fluid mb-12>
-      <v-row justify="center" >
+  <v-container v-if="!networkError && exampleGalleryEnabled" class="center" fluid mb-12>
+      <v-row justify="center">
         <v-col class="introtxt text-center">
           <h2>{{ $t('h2.2') }}</h2>
         </v-col>
@@ -110,6 +110,7 @@ export default {
       networkError: false,
       snackbar: false,
       searchEnabled: true,
+      exampleGalleryEnabled: true,
       homepageSnippet: ''
     };
   },
@@ -144,6 +145,7 @@ export default {
         query: gql`query getconfig($language: String) {
           config(language: $language) {
             searchEnabled,
+            exampleGalleryEnabled,
             homepageSnippet
           }
         }`,
@@ -159,6 +161,7 @@ export default {
         const config = configResult.data.config;
         if (config) {
           this.searchEnabled = config.searchEnabled;
+          this.exampleGalleryEnabled = config.exampleGalleryEnabled;
           this.homepageSnippet = config.homepageSnippet;
         }
       }
