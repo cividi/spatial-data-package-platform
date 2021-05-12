@@ -31,10 +31,6 @@ const routes = [
       {
         path: 'login/',
         name: 'login',
-        component: () => import('@/views/Login.vue'),
-        meta: {
-          layout: () => import('@/layouts/LayoutDefault.vue')
-        },
         beforeEnter: () => {
           window.location.href = '/account/login/?next=/';
         }
