@@ -1,9 +1,8 @@
 SHELL = /bin/bash
-DOCKER_EXEC_DJANGO=$(shell command -v docker > /dev/null && echo "docker-compose exec django")
-DOCKER_EXEC_VUE=$(shell command -v docker > /dev/null && echo "docker-compose exec vue")
-DOCKER_EXEC_WWW=$(shell command -v docker > /dev/null && echo "docker-compose exec www")
-DOCKER_CRON_VUE=$(shell command -v docker > /dev/null && echo "docker-compose exec -T vue")
-DOCKER_CRON_DJANGO=$(shell command -v docker > /dev/null && echo "docker-compose exec -T django")
+NOTTY=$(shell command [ "$$DOCKER_NOTTY" = YES ] && echo "-T")
+DOCKER_EXEC_DJANGO=$(shell command -v docker > /dev/null && echo "docker-compose exec $(NOTTY) django")
+DOCKER_EXEC_VUE=$(shell command -v docker > /dev/null && echo "docker-compose exec $(NOTTY) vue")
+DOCKER_EXEC_WWW=$(shell command -v docker > /dev/null && echo "docker-compose exec $(NOTTY) www")
 
 
 .PHONY: tests
@@ -43,9 +42,9 @@ enter_www:
 	$(DOCKER_EXEC_WWW) bash
 
 start_all: up
-	$(DOCKER_CRON_VUE) make &
-	$(DOCKER_CRON_DJANGO) make &
-	$(DOCKER_CRON_VUE) make screenshotservice &
+	$(DOCKER_VUE) $(NOTTY) make &
+	$(DOCKER_DJANGO) $(NOTTY) make &
+	$(DOCKER_VUE) make screenshotservice &
 
 start_vue:
 	$(DOCKER_EXEC_VUE) make
@@ -61,7 +60,7 @@ reload_www:
 
 deploy_local:
 	docker-compose up -d
-	make -f vue/Makefile build-cron
+	DOCKER_NOTTY=YES make -f vue/Makefile build
 	docker-compose exec -T vue rsync -av --delete dist/ /var/services/django/static/dist/
 	docker-compose exec -T django make migrate
 	docker-compose exec -T django killall -TERM gunicorn
