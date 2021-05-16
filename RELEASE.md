@@ -2,7 +2,13 @@
 
 ## Releases
 
-### 0.7.2 DEV
+### 0.7.2
+
+[Released *2021-05-16*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.2)
+
+- Fixed notty run of 'make update'
+- Fixed login, redirect to django login
+- Fixed make deploy_local
 
 ### 0.7.1
 [Released *2021-05-07*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.1)
