@@ -46,7 +46,7 @@
           </v-dialog>
           <v-card outlined width="400" class="mx-auto">
             <v-card-title class="headline">
-              Login sss
+              Login
             </v-card-title>
             <v-card-text>
               <v-form v-model="valid" ref="form">
