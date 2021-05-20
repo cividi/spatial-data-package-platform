@@ -98,7 +98,7 @@
         <v-icon small color="primary">mdi-chevron-right</v-icon>
         {{ $t('sources') }}
     </v-btn>
-    <a href="https://gemeindescan.ch" target="_blank"><img alt="gemeindescan logo" height="35"
+    <a href="https://www.dfour.space" target="_blank"><img alt="dufour logo" height="35"
       style="float:right; opacity:0.55;"
       src="@/assets/images/logo-dufour.svg"></a>
   </div>

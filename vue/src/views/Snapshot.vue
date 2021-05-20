@@ -49,7 +49,7 @@
       width="320"
       v-model="snapshotnav">
       <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
-        <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
+        <img alt="dufour logo" height="50" src="@/assets/images/logo-dufour.svg">
       </router-link>
 
       <v-divider />
