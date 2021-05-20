@@ -17,7 +17,7 @@
   <div>
     <v-app-bar app flat id="topbar">
       <router-link id="logo" :to="'/' + $i18n.locale + '/'">
-        <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
+        <img alt="gemeindescan logo" height="50" src="@/assets/images/logo-dufour.svg">
       </router-link>
       <v-spacer></v-spacer>
       <nav id="mainnav" class="d-none d-md-block">

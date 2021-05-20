@@ -100,7 +100,7 @@
     </v-btn>
     <a href="https://gemeindescan.ch" target="_blank"><img alt="gemeindescan logo" height="35"
       style="float:right; opacity:0.55;"
-      src="@/assets/images/gemeindescan-logo.svg"></a>
+      src="@/assets/images/logo-dufour.svg"></a>
   </div>
 </template>
 
