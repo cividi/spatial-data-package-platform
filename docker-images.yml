@@ -6,9 +6,13 @@ services:
     hostname: pdb
 
   vue:
-    image: smartuse/gemeindescan-webui-vue:0.3.7
+    image: smartuse/gemeindescan-webui-vue:0.3.8
     hostname: vue
 
   django:
     image: smartuse/gemeindescan-webui-django:3.1.4
     hostname: django
+
+  www:
+    image: openresty/openresty:1.19.3.1-alpine-fat
+    hostname: www

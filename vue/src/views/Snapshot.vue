@@ -84,7 +84,7 @@
 
         <div class="useractions">
           <v-btn small block outlined color="primary">
-            <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'">
+            <router-link key="signup" :to="'/' + $i18n.locale + '/signup/'" target="_blank">
               {{ $t('calltoactionText', { municipalityText: municipalityText }) }}
             </router-link>
           </v-btn>
@@ -95,14 +95,11 @@
           :snapshots="snapshotsStore" :withTopic="true"
         />
 
-        <v-subheader
-          class="px-0 snapshot-list-title">{{ listtitleText }}
-        </v-subheader>
+        <template v-if="snapshotsExamples.length !== 0">
+          <v-subheader class="px-0 snapshot-list-title">{{ listtitleText }}</v-subheader>
 
-        <snapshot-list
-          v-if="snapshotsExamples"
-          :snapshots="snapshotsExamples" :withTopic="false"
-        />
+          <snapshot-list :snapshots="snapshotsExamples" :withTopic="false" />
+        </template>
 
       </div>
 

@@ -131,8 +131,7 @@ export default {
   name: 'SnapshotList',
   data() {
     return {
-      djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
-      groupedsnapshots: []
+      djangobaseurl: process.env.VUE_APP_DJANGOBASEURL
     };
   },
 
@@ -169,21 +168,17 @@ export default {
       return true;
     }
   },
-  watch: {
-    snapshots(newsnaps) {
+  computed: {
+    groupedsnapshots() {
       const topicgroups = {};
-      newsnaps.forEach((snapshot) => {
+      this.snapshots.forEach((snapshot) => {
         if (typeof (topicgroups[snapshot.topic]) === 'undefined') {
           topicgroups[snapshot.topic] = [];
         }
         topicgroups[snapshot.topic].push(snapshot);
       });
 
-      Object.keys(topicgroups).forEach((group) => {
-        topicgroups[group].forEach((snapshot) => {
-          this.groupedsnapshots.push(snapshot);
-        });
-      });
+      return Object.values(topicgroups).flat();
     }
   }
 };

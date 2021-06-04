@@ -48,6 +48,7 @@
 
 <script>
 import gql from 'graphql-tag';
+import _ from 'lodash';
 
 export default {
   name: 'Search',
@@ -114,7 +115,19 @@ export default {
           });
         }
       }
-    }
+    },
+    debouncedQuery: _.debounce(async (val, self) => {
+      const result = await self.queryMunicipalities(val);
+      self.municipalities = result.data.municipalities.edges;
+      self.municipalities.forEach((item) => {
+        const nrScans = item.node.snapshots.length;
+        if (nrScans === 0) {
+          item.node.fullnameWithSnapshots = `${item.node.fullname}`;
+        } else {
+          item.node.fullnameWithSnapshots = `${item.node.fullname} •`;
+        }
+      });
+    }, 500)
   },
 
   computed: {
@@ -128,16 +141,7 @@ export default {
 
   watch: {
     async search(val) {
-      const result = await this.queryMunicipalities(val);
-      this.municipalities = result.data.municipalities.edges;
-      this.municipalities.forEach((item) => {
-        const nrScans = item.node.snapshots.length;
-        if (nrScans === 0) {
-          item.node.fullnameWithSnapshots = `${item.node.fullname}`;
-        } else {
-          item.node.fullnameWithSnapshots = `${item.node.fullname} •`;
-        }
-      });
+      this.debouncedQuery(val, this);
     }
   }
 };

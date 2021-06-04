@@ -16,7 +16,7 @@ import UserActions from './components/UserActions.vue';
 import MainNavigation from './components/MainNavigation.vue';
 import Search from './components/Search.vue';
 import App from './App.vue';
-import 'maplibre-gl/dist/mapbox-gl.css';
+import 'mapbox.js/dist/mapbox.css';
 
 require('@/assets/styles/main.css');
 

@@ -54,65 +54,65 @@ html,
 body,
 #app .v-application--wrap,
 #map {
-  min-height: calc(100vh - var(--vh-offset, 0px));
-  height: calc(100vh - var(--vh-offset, 0px));
+    min-height: calc(100vh - var(--vh-offset, 0px));
+    height: calc(100vh - var(--vh-offset, 0px));
 }
 
 #map {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  background: #dedede
-    linear-gradient(90deg, #dedede 0%, #f2f2f2 17%, #dedede 23%) repeat-y;
-  background-size: 125% 10%;
-  animation: BGani 2s ease infinite;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #dedede
+        linear-gradient(90deg, #dedede 0%, #f2f2f2 17%, #dedede 23%) repeat-y;
+    background-size: 125% 10%;
+    animation: BGani 2s ease infinite;
 }
 
 @keyframes BGani {
-  0% {
-    background-position: 110% 0%;
-  }
-  66% {
-    background-position: -410% 0%;
-  }
-  100% {
-    background-position: -410% 0%;
-  }
+    0% {
+        background-position: 110% 0%;
+    }
+    66% {
+        background-position: -410% 0%;
+    }
+    100% {
+        background-position: -410% 0%;
+    }
 }
 #map.leaflet-container {
-  background: #dedede;
-  animation: none;
+    background: #dedede;
+    animation: none;
 }
 
 #map .mapbox-improve-map {
-  display: none;
+    display: none;
 }
 
 #mapinfo {
-  position: absolute;
-  bottom: 2em;
-  right: 2em;
-  min-width: 240px;
-  clip-path: circle(0% at 95% 90%);
-  transition: clip-path 0.3s ease-out;
-  pointer-events: none;
-  z-index: 500; /* must be above mapbox icons */
+    position: absolute;
+    bottom: 2em;
+    right: 2em;
+    min-width: 240px;
+    clip-path: circle(0% at 95% 90%);
+    transition: clip-path 0.3s ease-out;
+    pointer-events: none;
+    z-index: 500; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
-  pointer-events: auto;
-  clip-path: circle(100% at center);
+    pointer-events: auto;
+    clip-path: circle(100% at center);
 }
 
 .mapbox-improve-map {
-  display: none;
+    display: none;
 }
 </style>
 
 <script>
 import Vue from 'vue';
-import L from 'leaflet';
-import maplibre from 'maplibre-gl';
+import L from 'leafletjs';
+import maplibre from 'maplibre-gl-js';
 import geoViewport from '@mapbox/geo-viewport';
 import SnapshotMeta from './SnapshotMeta.vue';
 

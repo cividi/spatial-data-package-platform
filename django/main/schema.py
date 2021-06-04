@@ -8,7 +8,10 @@ from main.models import SiteConfiguration
 class SiteConfigurationNode(DjangoObjectType):
     class Meta:
         model = SiteConfiguration
-        fields = ['id', 'search_enabled', 'homepage_snippet']
+        fields = [
+            'id', 'search_enabled', 'example_gallery_enabled',
+            'homepage_snippet'
+        ]
 
     def resolve_homepage_snippet(self, info):
         language = self.language

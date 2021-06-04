@@ -1,7 +1,9 @@
 var
 tmp
+.env
 env.hosts.prod
 server.yml
 docker-prod.yml
 docker-compose-prod.yml
 __pycache__/
+docker-compose.yml
