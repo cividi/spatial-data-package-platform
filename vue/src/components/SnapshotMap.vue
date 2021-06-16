@@ -9,7 +9,36 @@
           <v-icon>mdi-menu</v-icon>
         </v-btn>
       </v-slide-x-reverse-transition>
-
+      <v-container fluid class="pa-0" ref="mapbox">
+      <div
+        id="MarkerButtons"
+        style="position: absolute; top: 6em; right: 1.8em; z-index: 500"
+      >
+        <button
+          style="background-color: #543076; border-radius: 50px"
+          v-on:click="markerTools = !markerTools"
+        >
+          <v-icon large color="white"> mdi-brush </v-icon>
+        </button>
+        <v-card v-if="markerTools" style="position:relative: ;width: 36px">
+          <button v-on:click="markerTools = !markerTools">
+            <v-icon large color="black"> mdi-map-marker </v-icon>
+          </button>
+          <button v-on:click="markerTools = !markerTools">
+            <v-icon large color="black"> mdi-vector-polygon </v-icon>
+          </button>
+          <button v-on:click="markerTools = !markerTools">
+            <v-icon large color="black"> mdi-note-outline </v-icon>
+          </button>
+          <button v-on:click="markerTools = !markerTools" v-if="!hideMarker">
+            <v-icon large color="black"> mdi-eye-off </v-icon>
+          </button>
+          <button v-on:click="markerTools = !markerTools" v-if="hideMarker">
+            <v-icon large color="black"> mdi-eye </v-icon>
+          </button>
+        </v-card>
+      </div>
+    </v-container>
       <v-container fluid class="pa-0" ref="mapbox">
         <div id="map">
           <div id="MarkerButtonsHolder"
@@ -179,58 +208,58 @@ html,
 body,
 #app .v-application--wrap,
 #map {
-    min-height: calc(100vh - var(--vh-offset, 0px));
-    height: calc(100vh - var(--vh-offset, 0px));
+  min-height: calc(100vh - var(--vh-offset, 0px));
+  height: calc(100vh - var(--vh-offset, 0px));
 }
 
 #map {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    background: #dedede
-        linear-gradient(90deg, #dedede 0%, #f2f2f2 17%, #dedede 23%) repeat-y;
-    background-size: 125% 10%;
-    animation: BGani 2s ease infinite;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #dedede
+    linear-gradient(90deg, #dedede 0%, #f2f2f2 17%, #dedede 23%) repeat-y;
+  background-size: 125% 10%;
+  animation: BGani 2s ease infinite;
 }
 
 @keyframes BGani {
-    0% {
-        background-position: 110% 0%;
-    }
-    66% {
-        background-position: -410% 0%;
-    }
-    100% {
-        background-position: -410% 0%;
-    }
+  0% {
+    background-position: 110% 0%;
+  }
+  66% {
+    background-position: -410% 0%;
+  }
+  100% {
+    background-position: -410% 0%;
+  }
 }
 #map.leaflet-container {
-    background: #dedede;
-    animation: none;
+  background: #dedede;
+  animation: none;
 }
 
 #map .mapbox-improve-map {
-    display: none;
+  display: none;
 }
 
 #mapinfo {
-    position: absolute;
-    bottom: 2em;
-    right: 2em;
-    min-width: 240px;
-    clip-path: circle(0% at 95% 90%);
-    transition: clip-path 0.3s ease-out;
-    pointer-events: none;
-    z-index: 500; /* must be above mapbox icons */
+  position: absolute;
+  bottom: 2em;
+  right: 2em;
+  min-width: 240px;
+  clip-path: circle(0% at 95% 90%);
+  transition: clip-path 0.3s ease-out;
+  pointer-events: none;
+  z-index: 500; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
-    pointer-events: auto;
-    clip-path: circle(100% at center);
+  pointer-events: auto;
+  clip-path: circle(100% at center);
 }
 
 .mapbox-improve-map {
-    display: none;
+  display: none;
 }
 
 #MarkerButtonsHolder {
@@ -255,16 +284,16 @@ body,
   text-align: right;
   z-index: 300;
 }
-.leaflet-tooltip-yellow{
+.leaflet-tooltip-yellow {
   font-size: small;
   background-color: rgb(255, 230, 6);
 }
-.leaflet-tooltip-green{
+.leaflet-tooltip-green {
   font-size: small;
   color: rgb(255, 255, 255);
   background-color: rgb(25, 158, 21);
 }
-.leaflet-tooltip-blue{
+.leaflet-tooltip-blue {
   font-size: small;
   color: rgb(255, 255, 255);
   background-color: rgb(37, 24, 230);
@@ -305,7 +334,8 @@ export default {
       newPostItNode: '',
       markerSelection: '',
       markers: [],
-      markerLocalStorage: []
+      markerLocalStorage: [],
+      markerTools: false
     };
   },
 
