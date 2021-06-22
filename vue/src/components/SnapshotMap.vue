@@ -9,40 +9,54 @@
           <v-icon>mdi-menu</v-icon>
         </v-btn>
       </v-slide-x-reverse-transition>
-      <v-container fluid class="pa-0" ref="mapbox">
+      <v-container class="pa-0" ref="mapbox">
       <div
         id="MarkerButtons"
         style="position: absolute; top: 6em; right: 1.8em; z-index: 500"
       >
         <button
           style="background-color: #543076; border-radius: 50px"
-          v-on:click="markerTools = !markerTools"
+          v-on:click="markerTools=!markerTools"
         >
           <v-icon large color="white"> mdi-brush </v-icon>
         </button>
-        <v-card v-if="markerTools" style="position:relative: ;width: 36px">
-          <button v-on:click="markerTools = !markerTools">
+        <v-card v-if="markerTools" style="position:absolute: ;width: 36px">
+          <button v-on:click="toggelMarkerSelection('marker')">
             <v-icon large color="black"> mdi-map-marker </v-icon>
           </button>
-          <button v-on:click="markerTools = !markerTools">
+          <button v-on:click="toggelMarkerSelection('polygon')">
             <v-icon large color="black"> mdi-vector-polygon </v-icon>
           </button>
-          <button v-on:click="markerTools = !markerTools">
+          <button v-on:click="toggelMarkerSelection('note')">
             <v-icon large color="black"> mdi-note-outline </v-icon>
           </button>
-          <button v-on:click="markerTools = !markerTools" v-if="!hideMarker">
+          <button v-on:click="toggelMarkerSelection('');
+          markerTools = !markerTools" v-if="!hideMarker">
             <v-icon large color="black"> mdi-eye-off </v-icon>
           </button>
-          <button v-on:click="markerTools = !markerTools" v-if="hideMarker">
+          <button v-on:click="toggelMarkerSelection('');
+          markerTools = !markerTools" v-if="hideMarker">
             <v-icon large color="black"> mdi-eye </v-icon>
           </button>
         </v-card>
+        <v-card v-if="markerSelection == 'marker'"
+        style="position:absolute; top:3.8em; right:3.7em; min-width:16em"
+        color="rgba(255, 255, 255, 0.5)"
+        >Klicken Sie auf die Karte, um eine Markierung zu platzieren </v-card>
+        <v-card v-if="markerSelection == 'polygon'"
+        style="position:absolute; top:7.5em; right:3.7em; min-width:16em"
+        color="rgba(255, 255, 255, 0.5)"
+        >Klicken Sie auf die Karte, um ein Polygon zu beginnen </v-card>
+        <v-card v-if="markerSelection == 'note'"
+        style="position:absolute; top:11.3em; right:3.7em; min-width:16em"
+        color="rgba(255, 255, 255, 0.5)"
+        >Klicken Sie auf die Karte, um die Post-it zu setzten </v-card>
       </div>
     </v-container>
       <v-container fluid class="pa-0" ref="mapbox">
-        <div id="map">
+        <div id="map" v-bind:style="{ cursor: computedCursor }">
           <div id="MarkerButtonsHolder"
-            v-if="!markerSelection.includes('tooltip') && !screenshotMode">
+            v-if="!markerSelection.includes('tooltip') && !screenshotMode && false">
              <div class="row">
                 <div style="width: 150px;">
                   <h6 v-if ="!addMarkerMode">Select a <br> marker or Post-it:</h6>
@@ -335,7 +349,10 @@ export default {
       markerSelection: '',
       markers: [],
       markerLocalStorage: [],
-      markerTools: false
+      markerTools: false,
+      hideMarker: false,
+      editMode: false,
+      cursorType: 'copy'
     };
   },
 
@@ -355,6 +372,9 @@ export default {
   },
 
   computed: {
+    computedCursor() {
+      return this.cursorType;
+    },
     legendWidth() {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return '280px';
@@ -383,6 +403,21 @@ export default {
   },
 
   methods: {
+    changeCursor() {
+      if (this.markerSelection === 'marker') {
+        this.cursorType = 'url("data:image/svg+xml,<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z\' /></svg>"), pointer';
+      } else if (this.markerSelection === 'polygon') {
+        this.cursorType = 'url("data:image/svg+xml,<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M2,2V8H4.28L5.57,16H4V22H10V20.06L15,20.05V22H21V16H19.17L20,9H22V3H16V6.53L14.8,8H9.59L8,5.82V2M4,4H6V6H4M18,5H20V7H18M6.31,8H7.11L9,10.59V14H15V10.91L16.57,9H18L17.16,16H15V18.06H10V16H7.6M11,10H13V12H11M6,18H8V20H6M17,18H19V20H17\' /></svg>"), pointer';
+      } else if (this.markerSelection === 'note') {
+        this.cursorType = 'url("data:image/svg+xml,<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M14,10H19.5L14,4.5V10M5,3H15L21,9V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5C3,3.89 3.89,3 5,3M5,5V19H19V12H12V5H5Z\' /></svg>"), pointer';
+      } else { this.cursorType = 'auto'; }
+    },
+    toggelMarkerSelection(newMode) {
+      if (this.markerSelection !== newMode) {
+        this.markerSelection = newMode;
+      } else { this.markerSelection = ''; }
+      this.changeCursor();
+    },
     createFeatureLayer(geojson, attribution) {
       const geoJsonExtended = L.geoJson(geojson, {
         attribution,
@@ -483,11 +518,13 @@ export default {
           }
         }
 
-        let paintNow = false;
+        const paintNow = false;
         this.myPolyline = [];
 
         this.map.on('click', (event) => {
-          if (event.containerPoint.y >= 50) {
+          console.log(event);
+          this.cursorType = 'zoom-in';
+          /*           if (event.containerPoint.y >= 50) {
             if (this.addMarkerMode) {
               if (this.markerSelection !== 'brush') {
                 this.newPostItNode = this.formatLongPostItNotes(this.newPostItNode);
@@ -518,7 +555,7 @@ export default {
               }
             }
           }
-        });
+ */ });
 
         this.map.on('mousemove', (event) => {
           if (this.addMarkerMode && (this.markerSelection === 'brush')) {
