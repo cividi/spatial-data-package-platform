@@ -1,5 +1,5 @@
 <template>
-    <v-content>
+    <v-main>
       <v-slide-x-reverse-transition>
         <v-btn fab absolute small
           style="top:1.2em; right:1.3em;"
@@ -9,7 +9,7 @@
           <v-icon>mdi-menu</v-icon>
         </v-btn>
       </v-slide-x-reverse-transition>
-      <v-container class="pa-0" ref="mapbox">
+      <v-main class="pa-0" ref="mapbox">
       <div
         id="MarkerButtons"
         style="position: absolute; top: 6em; right: 1.8em; z-index: 500"
@@ -39,21 +39,23 @@
             <v-icon large color="black"> mdi-eye </v-icon>
           </button>
         </v-card>
-        <v-card v-if="markerSelection == 'marker'"
-        style="position:absolute; top:3.8em; right:3.7em; min-width:16em"
-        color="rgba(255, 255, 255, 0.5)"
-        >Klicken Sie auf die Karte, um eine Markierung zu platzieren </v-card>
-        <v-card v-if="markerSelection == 'polygon'"
-        style="position:absolute; top:7.5em; right:3.7em; min-width:16em"
-        color="rgba(255, 255, 255, 0.5)"
-        >Klicken Sie auf die Karte, um ein Polygon zu beginnen </v-card>
-        <v-card v-if="markerSelection == 'note'"
-        style="position:absolute; top:11.3em; right:3.7em; min-width:16em"
-        color="rgba(255, 255, 255, 0.5)"
-        >Klicken Sie auf die Karte, um die Post-it zu setzten </v-card>
+        <div v-if="markerTools" >
+          <v-card v-if="markerSelection == 'marker'"
+          style="position:absolute; top:3.8em; right:3.7em; min-width:16em"
+          color="rgba(255, 255, 255, 0.5)"
+          >Klicken Sie auf die Karte, um eine Markierung zu platzieren </v-card>
+          <v-card v-if="markerSelection == 'polygon'"
+          style="position:absolute; top:7.5em; right:3.7em; min-width:16em"
+          color="rgba(255, 255, 255, 0.5)"
+          >Klicken Sie auf die Karte, um ein Polygon zu beginnen </v-card>
+          <v-card v-if="markerSelection == 'note'"
+          style="position:absolute; top:11.3em; right:3.7em; min-width:16em"
+          color="rgba(255, 255, 255, 0.5)"
+          >Klicken Sie auf die Karte, um die Post-it zu setzten </v-card>
+        </div>
       </div>
-    </v-container>
-      <v-container fluid class="pa-0" ref="mapbox">
+    </v-main>
+      <v-main fluid class="pa-0" ref="mapbox">
         <div id="map" v-bind:style="{ cursor: computedCursor }">
           <div id="MarkerButtonsHolder"
             v-if="!markerSelection.includes('tooltip') && !screenshotMode && false">
@@ -181,7 +183,7 @@
           </div>
         </div>
         <span id="mapstatus" :class="{ loaded: isMapLoaded, waiting: !isMapLoaded }"></span>
-      </v-container>
+      </v-main>
 
       <v-btn
         v-if="hash && !screenshotIsThumbnail"
@@ -214,7 +216,7 @@
           :sources="sources"
         />
       </v-card>
-    </v-content>
+    </v-main>
 </template>
 
 <style>
@@ -298,6 +300,10 @@ body,
   text-align: right;
   z-index: 300;
 }
+.leaflet-tooltip {
+  font-size: small;
+  background-color: rgb(255, 230, 6);
+}
 .leaflet-tooltip-yellow {
   font-size: small;
   background-color: rgb(255, 230, 6);
@@ -352,7 +358,8 @@ export default {
       markerTools: false,
       hideMarker: false,
       editMode: false,
-      cursorType: 'copy'
+      cursorType: '',
+      popupForm: ''
     };
   },
 
@@ -406,10 +413,10 @@ export default {
     changeCursor() {
       if (this.markerSelection === 'marker') {
         this.cursorType = 'url("data:image/svg+xml,<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z\' /></svg>"), pointer';
-      } else if (this.markerSelection === 'polygon') {
-        this.cursorType = 'url("data:image/svg+xml,<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M2,2V8H4.28L5.57,16H4V22H10V20.06L15,20.05V22H21V16H19.17L20,9H22V3H16V6.53L14.8,8H9.59L8,5.82V2M4,4H6V6H4M18,5H20V7H18M6.31,8H7.11L9,10.59V14H15V10.91L16.57,9H18L17.16,16H15V18.06H10V16H7.6M11,10H13V12H11M6,18H8V20H6M17,18H19V20H17\' /></svg>"), pointer';
       } else if (this.markerSelection === 'note') {
         this.cursorType = 'url("data:image/svg+xml,<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M14,10H19.5L14,4.5V10M5,3H15L21,9V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5C3,3.89 3.89,3 5,3M5,5V19H19V12H12V5H5Z\' /></svg>"), pointer';
+      } else if (this.markerSelection === 'polygon') {
+        this.cursorType = 'url("data:image/svg+xml,<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M2,2V8H4.28L5.57,16H4V22H10V20.06L15,20.05V22H21V16H19.17L20,9H22V3H16V6.53L14.8,8H9.59L8,5.82V2M4,4H6V6H4M18,5H20V7H18M6.31,8H7.11L9,10.59V14H15V10.91L16.57,9H18L17.16,16H15V18.06H10V16H7.6M11,10H13V12H11M6,18H8V20H6M17,18H19V20H17\' /></svg>"), pointer';
       } else { this.cursorType = 'auto'; }
     },
     toggelMarkerSelection(newMode) {
@@ -522,8 +529,69 @@ export default {
         this.myPolyline = [];
 
         this.map.on('click', (event) => {
-          console.log(event);
-          this.cursorType = 'zoom-in';
+          console.log(this.markerTools);
+          if (this.markerTools) {
+            this.markerTools = false;
+            if (this.markerSelection === 'marker') {
+              console.log('markerTools = false');
+              this.toggelMarkerSelection('');
+              const markerGeoCoordinates = event.latlng;
+              const markerInfoToStore = {
+                markerSelection: this.markerSelection,
+                newPostItNode: this.newPostItNode,
+                markerGeoCoordinates
+              };
+              console.log(markerInfoToStore);
+              // this.markerLocalStorage.push(markerInfoToStore);
+              // this.saveMarkerLocalStorage();
+              // this.setMarker(markerGeoCoordinates);
+              const thumbUp = '<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z\' /></svg>';
+              this.newMarker = L.marker(markerGeoCoordinates, {
+                icon: L.icon({
+                  iconUrl: encodeURI(`data:image/svg+xml,${thumbUp}`),
+                  iconSize: [30, 30]
+                })
+              });
+              this.newMarker.on('contextmenu', this.deleteMarker, this);
+              this.newMarker.on('click', this.editMarker, this);
+              this.newMarker.addTo(this.map);
+              this.markers.push(this.newMarker);
+            }
+            if (this.markerSelection === 'note') {
+              console.log('markerTools = false');
+              this.toggelMarkerSelection('');
+              this.newMarker = L.marker(event.latlng, {
+                icon: L.icon({
+                  iconUrl: 'my-icon.png',
+                  iconSize: [0, 0]
+                })
+              });
+              this.newMarker.bindTooltip('', {
+                permanent: true,
+                interactive: true,
+                className: 'leaflet-tooltip'
+              });
+              this.newMarker.on('click', this.editPostIt, this.newMarker);
+              this.newMarker.addTo(this.map);
+              this.newMarker.fire('click');
+              this.markers.push(this.newMarker);
+            }
+            if (this.markerSelection === 'polygon') {
+              console.log('markerTools = false');
+              this.toggelMarkerSelection('');
+              const markerGeoCoordinates = event.latlng;
+              const markerInfoToStore = {
+                markerSelection: this.markerSelection,
+                newPostItNode: this.newPostItNode,
+                markerGeoCoordinates
+              };
+              console.log(markerInfoToStore);
+
+              // this.markerLocalStorage.push(markerInfoToStore);
+              // this.saveMarkerLocalStorage();
+              // this.setMarker(markerGeoCoordinates);
+            }
+          }
           /*           if (event.containerPoint.y >= 50) {
             if (this.addMarkerMode) {
               if (this.markerSelection !== 'brush') {
@@ -554,8 +622,8 @@ export default {
                 }
               }
             }
-          }
- */ });
+          } */
+        });
 
         this.map.on('mousemove', (event) => {
           if (this.addMarkerMode && (this.markerSelection === 'brush')) {
@@ -581,6 +649,97 @@ export default {
       }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
+    },
+    makeNewPostIt(event) {
+      const markerGeoCoordinates = event.latlng;
+      this.editPostIt(event);
+      console.log(markerGeoCoordinates);
+    },
+
+    editMarker(e) {
+      console.log(e);
+      // eslint-disable-next-line no-multi-str
+      const popupForm = '<form id="popup-form">\
+            <label for="input-speed">New speed:</label>\
+            <input id="input-speed" class="popup-input" type="number" />\
+            <table class="popup-table">\
+              <tr class="popup-table-row">\
+                <th class="popup-table-header">Arc numer:</th>\
+                <td id="value-arc" class="popup-table-data"></td>\
+              </tr>\
+              <tr class="popup-table-row">\
+                <th class="popup-table-header">Current speed:</th>\
+                <td id="value-speed" class="popup-table-data"></td>\
+              </tr>\
+            </table>\
+            <button id="button-submit" type="button">Save Changes</button>\
+          </form>';
+      const marker = e.target;
+      const properties = {
+        arc: 321,
+        speed: 123
+      };
+
+      if (marker.hasOwnProperty('_popup')) {
+        marker.unbindPopup();
+      }
+
+      marker.bindPopup(popupForm);
+      marker.openPopup();
+
+      L.DomUtil.get('value-arc').textContent = '123456SB';// properties.arc;
+      L.DomUtil.get('value-speed').textContent = 'value-speed';// properties.speed;
+
+      const inputSpeed = L.DomUtil.get('input-speed');
+      inputSpeed.value = 'inputSpeed.value';// properties.speed;
+      L.DomEvent.addListener(inputSpeed, 'change', (e) => {
+        properties.speed = e.target.value;
+      });
+
+      const buttonSubmit = L.DomUtil.get('button-submit');
+      L.DomEvent.addListener(buttonSubmit, 'click', () => {
+        marker.closePopup();
+      });
+    },
+
+    editPostIt(e) {
+      const marker = e.target;
+      const oldPostItText = marker.getTooltip().getContent();
+      console.log(oldPostItText);
+      // eslint-disable-next-line no-multi-str
+      const popupForm = '<form id="popup-form" onkeypress="return event.keyCode != 13;">\
+            <label for="PostItText">Enter your Post-it note here:</label><br>\
+            <input style="margin:5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" \
+                type="text" id="PostItText" name="PostItText" value=""><br>\
+            <button id="button-save" \
+                style="padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" type="button">Save </button>\
+            <input type="color" id="backgroundColor" name="backgroundColor" value="#FFFF00"\
+              size="40" >\
+            <button id="button-delete" \
+                style="float: right; padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" \
+                type="button">Delete </button>\
+          </form>';
+      if (marker.hasOwnProperty('_popup')) {
+        marker.unbindPopup();
+      }
+      marker.closeTooltip();
+      marker.bindPopup(popupForm);
+      marker.openPopup();
+
+      L.DomUtil.get('PostItText').value = oldPostItText;
+
+      const temp = document.querySelector('.leaflet-tooltip');
+      const buttonSave = L.DomUtil.get('button-save');
+      L.DomEvent.addListener(buttonSave, 'click', () => {
+        marker.setTooltipContent(L.DomUtil.get('PostItText').value);
+        temp.setAttribute('style', `background:${L.DomUtil.get('backgroundColor').value}`);
+        marker.closePopup();
+        marker.openTooltip();
+      });
+      const buttonDelete = L.DomUtil.get('button-delete');
+      L.DomEvent.addListener(buttonDelete, 'click', () => {
+        marker.closePopup();
+      });
     },
 
     setMarker(markerGeoCoordinates) {
