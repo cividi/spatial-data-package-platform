@@ -42,15 +42,19 @@
         <div v-if="markerTools" >
           <v-card v-if="markerSelection == 'marker'"
           style="position:absolute; top:3.8em; right:3.7em; min-width:16em"
-          color="rgba(255, 255, 255, 0.5)"
+          color="rgba(255, 255, 255, 0.7)"
           >Klicken Sie auf die Karte, um eine Markierung zu platzieren </v-card>
-          <v-card v-if="markerSelection == 'polygon'"
+          <v-card v-if="markerSelection == 'polygon' && !paintNow"
           style="position:absolute; top:7.5em; right:3.7em; min-width:16em"
-          color="rgba(255, 255, 255, 0.5)"
+          color="rgba(255, 255, 255, 0.7)"
           >Klicken Sie auf die Karte, um ein Polygon zu beginnen </v-card>
+          <v-card v-if="markerSelection == 'polygon' && paintNow"
+          style="position:absolute; top:7.5em; right:3.7em; min-width:16em"
+          color="rgba(255, 255, 255, 0.7)"
+          >Klicken Sie erneut, um das Polygon zu beenden </v-card>
           <v-card v-if="markerSelection == 'note'"
           style="position:absolute; top:11.3em; right:3.7em; min-width:16em"
-          color="rgba(255, 255, 255, 0.5)"
+          color="rgba(255, 255, 255, 0.7)"
           >Klicken Sie auf die Karte, um die Post-it zu setzten </v-card>
         </div>
       </div>
@@ -359,7 +363,8 @@ export default {
       hideMarker: false,
       editMode: false,
       cursorType: '',
-      popupForm: ''
+      popupForm: '',
+      paintNow: false
     };
   },
 
@@ -411,6 +416,9 @@ export default {
 
   methods: {
     changeCursor() {
+      if (this.paintNow) {
+        this.cursorType = 'pointer';
+      }
       if (this.markerSelection === 'marker') {
         this.cursorType = 'url("data:image/svg+xml,<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z\' /></svg>"), pointer';
       } else if (this.markerSelection === 'note') {
@@ -525,15 +533,11 @@ export default {
           }
         }
 
-        const paintNow = false;
         this.myPolyline = [];
-
         this.map.on('click', (event) => {
-          console.log(this.markerTools);
           if (this.markerTools) {
-            this.markerTools = false;
             if (this.markerSelection === 'marker') {
-              console.log('markerTools = false');
+              this.markerTools = false;
               this.toggelMarkerSelection('');
               const markerGeoCoordinates = event.latlng;
               const markerSVG = '<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z\' /></svg>';
@@ -549,7 +553,7 @@ export default {
               this.markers.push(this.newMarker);
             }
             if (this.markerSelection === 'note') {
-              console.log('markerTools = false');
+              this.markerTools = false;
               this.toggelMarkerSelection('');
               this.newMarker = L.marker(event.latlng, {
                 icon: L.icon({
@@ -568,21 +572,22 @@ export default {
               this.markers.push(this.newMarker);
             }
             if (this.markerSelection === 'polygon') {
-              console.log('markerTools = false');
-              this.toggelMarkerSelection('');
-              const markerGeoCoordinates = event.latlng;
-              const markerInfoToStore = {
-                markerSelection: this.markerSelection,
-                newPostItNode: this.newPostItNode,
-                markerGeoCoordinates
-              };
-              console.log(markerInfoToStore);
-
-              // this.markerLocalStorage.push(markerInfoToStore);
-              // this.saveMarkerLocalStorage();
-              // this.setMarker(markerGeoCoordinates);
+              // eslint-disable-next-line no-const-assign
+              this.paintNow = !this.paintNow;
+              if (this.paintNow) {
+                this.myPolyline = L.polyline([], { color: '#008000', weight: 10, opacity: 0.5 },).addTo(this.map);
+              } else {
+                this.markerTools = false;
+                this.toggelMarkerSelection('');
+                this.myPolyline.on('click', this.editPolyline, this.myPolyline);
+                this.markers.push(this.myPolyline);
+              }
             }
+            // this.markerLocalStorage.push(markerInfoToStore);
+            // this.saveMarkerLocalStorage();
+            // this.setMarker(markerGeoCoordinates);
           }
+
           /*           if (event.containerPoint.y >= 50) {
             if (this.addMarkerMode) {
               if (this.markerSelection !== 'brush') {
@@ -616,11 +621,16 @@ export default {
           } */
         });
 
-        this.map.on('mousemove', (event) => {
+        /* this.map.on('mousemove', (event) => {
           if (this.addMarkerMode && (this.markerSelection === 'brush')) {
             if (paintNow) {
               this.myPolyline.addLatLng(event.latlng);
             }
+          }
+        }); */
+        this.map.on('mousemove', (event) => {
+          if (this.paintNow) {
+            this.myPolyline.addLatLng(event.latlng);
           }
         });
 
@@ -647,6 +657,36 @@ export default {
       console.log(markerGeoCoordinates);
     },
 
+    editPolyline(e) {
+      const marker = e.target;
+      // eslint-disable-next-line no-multi-str
+      const popupForm = '<form id="popup-form" onkeypress="return event.keyCode != 13;" style="width: 150px;">\
+            <button id="button-save" \
+                style="padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" type="button">Save </button>\
+            <input type="color" id="pathFillColor" name="pathFillColor" value="#008000"\
+              style="float: center;width: 30px; height: 30px;">\
+            <button id="button-delete" \
+                style="float: right; padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" \
+                type="button">Delete </button>\
+          </form>';
+      if (marker.hasOwnProperty('_popup')) {
+        marker.unbindPopup();
+      }
+      marker.closeTooltip();
+      marker.bindPopup(popupForm);
+      marker.openPopup();
+      const buttonSave = L.DomUtil.get('button-save');
+      L.DomEvent.addListener(buttonSave, 'click', () => {
+        const pathFillColor = this.hexToRgb(L.DomUtil.get('pathFillColor').value);
+        marker.setStyle({ color: pathFillColor, weight: 10, opacity: 0.5 });
+        marker.closePopup();
+      });
+      const buttonDelete = L.DomUtil.get('button-delete');
+      L.DomEvent.addListener(buttonDelete, 'click', () => {
+        marker.setStyle({ color: '#000000', weight: 0, opacity: 0.0 });
+        marker.closePopup();
+      });
+    },
     editMarker(e) {
       const marker = e.target;
       // eslint-disable-next-line no-multi-str
@@ -665,8 +705,8 @@ export default {
       marker.closeTooltip();
       marker.bindPopup(popupForm);
       marker.openPopup();
-      const buttonSave = L.DomUtil.get('button-save');
-      L.DomEvent.addListener(buttonSave, 'click', () => {
+
+      L.DomEvent.addListener(L.DomUtil.get('button-save'), 'click', () => {
         const pathFillColor = this.hexToRgb(L.DomUtil.get('pathFillColor').value);
         const newMarkerSVG = `<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' width='60' height='60' viewBox='0 0 24 24'><path fill="${pathFillColor}" d='M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z' /></svg>`;
         marker.setIcon(L.icon({
@@ -675,8 +715,8 @@ export default {
         }));
         marker.closePopup();
       });
-      const buttonDelete = L.DomUtil.get('button-delete');
-      L.DomEvent.addListener(buttonDelete, 'click', () => {
+
+      L.DomEvent.addListener(L.DomUtil.get('button-delete'), 'click', () => {
         marker.setIcon(L.icon({
           iconUrl: 'my-icon.png',
           iconSize: [0, 0]
@@ -719,15 +759,13 @@ export default {
       L.DomUtil.get('PostItText').value = oldPostItText;
 
       const temp = document.querySelector('.leaflet-tooltip');
-      const buttonSave = L.DomUtil.get('button-save');
-      L.DomEvent.addListener(buttonSave, 'click', () => {
-        marker.setTooltipContent(L.DomUtil.get('PostItText').value);
+      L.DomEvent.addListener(L.DomUtil.get('button-save'), 'click', () => {
+        marker.setTooltipContent(this.formatLongPostItNotes(L.DomUtil.get('PostItText').value));
         temp.setAttribute('style', `background:${L.DomUtil.get('backgroundColor').value}`);
         marker.closePopup();
         marker.openTooltip();
       });
-      const buttonDelete = L.DomUtil.get('button-delete');
-      L.DomEvent.addListener(buttonDelete, 'click', () => {
+      L.DomEvent.addListener(L.DomUtil.get('button-delete'), 'click', () => {
         marker.closePopup();
       });
     },
