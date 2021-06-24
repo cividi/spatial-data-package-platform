@@ -59,136 +59,10 @@
         </div>
       </div>
     </v-main>
-      <v-main fluid class="pa-0" ref="mapbox">
-        <div id="map" v-bind:style="{ cursor: computedCursor }">
-          <div id="MarkerButtonsHolder"
-            v-if="!markerSelection.includes('tooltip') && !screenshotMode && false">
-             <div class="row">
-                <div style="width: 150px;">
-                  <h6 v-if ="!addMarkerMode">Select a <br> marker or Post-it:</h6>
-                  <h6 v-else>Click on the map <br> to set the marker</h6>
-                </div>
-                <div style="width: 50px;">
-                  <button v-if ="!addMarkerMode || markerSelection == 'thumbs-up'"
-                     v-on:click="addMarkerMode = !addMarkerMode;
-                      markerSelection = 'thumbs-up'">
-                     <v-icon large color="green" > mdi-thumb-up </v-icon>
-                  </button>
-                  <button v-else
-                     v-on:click="addMarkerMode = !addMarkerMode;
-                      markerSelection = 'thumbs-up'">
-                     <v-icon large color="green" style='opacity:0.1'> mdi-thumb-up </v-icon>
-                  </button>
-                </div>
-                <div style="width: 50px;">
-                  <button v-if ="!addMarkerMode || markerSelection == 'thumbs-down'"
-                     v-on:click="addMarkerMode = !addMarkerMode;
-                      markerSelection = 'thumbs-down'">
-                    <v-icon large color="red" > mdi-thumb-down </v-icon>
-                  </button>
-                  <button v-else
-                     v-on:click="addMarkerMode = !addMarkerMode;
-                      markerSelection = 'thumbs-down'">
-                    <v-icon large color="red" style='opacity:0.1'> mdi-thumb-down </v-icon>
-                  </button>
-                </div>
-                <div style="width: 50px;">
-                  <button v-if ="!addMarkerMode || markerSelection == 'brush'"
-                     v-on:click="addMarkerMode = !addMarkerMode;
-                      markerSelection = 'brush'">
-                    <v-icon large color="blue" > mdi-brush </v-icon>
-                  </button>
-                  <button v-else
-                     v-on:click="addMarkerMode = !addMarkerMode;
-                      markerSelection = 'brush'">
-                    <v-icon large color="blue" style='opacity:0.1'> mdi-brush </v-icon>
-                  </button>
-                </div>
-                <div style="width: 50px;">
-                  <button v-if ="!addMarkerMode"
-                     v-on:click="addMarkerMode = !addMarkerMode;
-                      markerSelection = 'tooltip-text-green'">
-                    <v-icon large color="green" > mdi-tooltip-text </v-icon>
-                  </button>
-                  <button v-else
-                     v-on:click="addMarkerMode = !addMarkerMode;
-                      markerSelection = 'tooltip-text-green'">
-                    <v-icon large color="green" style='opacity:0.1'> mdi-tooltip-text </v-icon>
-                  </button>
-                </div>
-                <div style="width: 50px;">
-                  <button v-if ="!addMarkerMode"
-                     v-on:click="addMarkerMode = !addMarkerMode;
-                      markerSelection = 'tooltip-text-blue'" >
-                    <v-icon large color="blue" > mdi-tooltip-text </v-icon>
-                  </button>
-                  <button v-else
-                     v-on:click="addMarkerMode = !addMarkerMode;
-                      markerSelection = 'tooltip-text-blue'" >
-                    <v-icon large color="blue" style='opacity:0.1'> mdi-tooltip-text </v-icon>
-                  </button>
-                </div>
-                <div style="width: 50px;">
-                  <button v-if ="!addMarkerMode"
-                     v-on:click="addMarkerMode = !addMarkerMode;
-                     markerSelection = 'tooltip-text-yellow'">
-                    <v-icon large color="yellow" > mdi-tooltip-text </v-icon>
-                  </button>
-                  <button v-else
-                     v-on:click="addMarkerMode = !addMarkerMode;
-                     markerSelection = 'tooltip-text-yellow'">
-                    <v-icon large color="yellow" style='opacity:0.1'> mdi-tooltip-text </v-icon>
-                  </button>
-                </div>
-                <div style="width: 50px;" v-if ="!addMarkerMode">
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-icon large
-                      v-on="on"
-                      v-on:click="deleteAllMarkers();"
-                      > mdi-delete-forever
-                      </v-icon>
-                    </template>
-                    <span>Click to delete all markers</span>
-                  </v-tooltip>
-                </div>
-              </div>
-          </div>
-          <div id="PostitNaming" v-if="addMarkerMode
-                  && markerSelection.includes('tooltip')">
-            <div class="row">
-              <div class="column" style="width: 150px;">
-                <h6> Enter node & <br>click on the map.</h6>
-              </div>
-              <div v-if="markerSelection == 'tooltip-text-green'"
-              class="column" style="width: 50px;"
-              v-on:click="addMarkerMode = !addMarkerMode;
-              markerSelection = ''">
-                <v-icon large color="green" > mdi-tooltip-text </v-icon>
-              </div>
-              <div v-if="markerSelection == 'tooltip-text-blue'"
-              class="column" style="width: 50px;"
-              v-on:click="addMarkerMode = !addMarkerMode;
-              markerSelection = ''">
-                <v-icon large color="blue" > mdi-tooltip-text </v-icon>
-              </div>
-              <div v-if="markerSelection == 'tooltip-text-yellow'"
-              class="column" style="width: 50px;"
-              v-on:click="addMarkerMode = !addMarkerMode;
-              markerSelection = ''">
-                <v-icon large color="yellow" > mdi-tooltip-text </v-icon>
-              </div>
-              <div class="column" style="width: 150px; font-size: 1.4em">
-                <input id="InputMarkerName"  v-model="newPostItNode"
-                    placeholder="Enter your Post-it note here"
-                >
-              </div>
-            </div>
-          </div>
-        </div>
+    <v-main fluid class="pa-0" ref="mapbox">
+        <div id="map" v-bind:style="{ cursor: computedCursor }"></div>
         <span id="mapstatus" :class="{ loaded: isMapLoaded, waiting: !isMapLoaded }"></span>
       </v-main>
-
       <v-btn
         v-if="hash && !screenshotIsThumbnail"
         fab absolute small
@@ -282,45 +156,9 @@ body,
   display: none;
 }
 
-#MarkerButtonsHolder {
-  position: relative;
-  margin: auto;
-  top: 5px;
-  width: 500px;
-  height: 40px;
-  border-radius: 20px;
-  background-color: hsla(0, 0%, 100%, 0.356);
-  text-align: right;
-  z-index: 300;
-}
-#PostitNaming {
-  position: relative;
-  margin: auto;
-  top: 5px;
-  width: 400px;
-  height: 40px;
-  border-radius: 20px;
-  background-color: hsla(0, 0%, 100%, 0.356);
-  text-align: right;
-  z-index: 300;
-}
 .leaflet-tooltip {
   font-size: small;
   background-color: rgb(255, 230, 6);
-}
-.leaflet-tooltip-yellow {
-  font-size: small;
-  background-color: rgb(255, 230, 6);
-}
-.leaflet-tooltip-green {
-  font-size: small;
-  color: rgb(255, 255, 255);
-  background-color: rgb(25, 158, 21);
-}
-.leaflet-tooltip-blue {
-  font-size: small;
-  color: rgb(255, 255, 255);
-  background-color: rgb(37, 24, 230);
 }
 </style>
 
@@ -354,11 +192,7 @@ export default {
       screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
       screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail'),
       isMapLoaded: false,
-      addMarkerMode: false,
-      newPostItNode: '',
       markerSelection: '',
-      markers: [],
-      markerLocalStorage: [],
       markerTools: false,
       hideMarker: false,
       editMode: false,
@@ -400,16 +234,6 @@ export default {
       },
       set(val) {
         this.$store.commit('setSnapshotnav', val);
-      }
-    }
-  },
-
-  async mounted() {
-    if (localStorage.getItem('PostIts')) {
-      try {
-        this.markerLocalStorage = JSON.parse(localStorage.getItem('PostIts'));
-      } catch (err) {
-        localStorage.removeItem('PostIts');
       }
     }
   },
@@ -525,23 +349,14 @@ export default {
           imperial: false
         }).addTo(this.map);
 
-        if (!this.screenshotMode) {
-          for (let x = 0; x < this.markerLocalStorage.length; x += 1) {
-            this.markerSelection = this.markerLocalStorage[x].markerSelection;
-            this.newPostItNode = this.markerLocalStorage[x].newPostItNode;
-            this.setMarker(this.markerLocalStorage[x].markerGeoCoordinates);
-          }
-        }
-
         this.myPolyline = [];
         this.map.on('click', (event) => {
           if (this.markerTools) {
             if (this.markerSelection === 'marker') {
               this.markerTools = false;
               this.toggelMarkerSelection('');
-              const markerGeoCoordinates = event.latlng;
               const markerSVG = '<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z\' /></svg>';
-              this.newMarker = L.marker(markerGeoCoordinates, {
+              this.newMarker = L.marker(event.latlng, {
                 icon: L.icon({
                   iconUrl: encodeURI(`data:image/svg+xml,${markerSVG}`),
                   iconSize: [30, 30]
@@ -550,7 +365,6 @@ export default {
               this.newMarker.on('contextmenu', this.deleteMarker, this);
               this.newMarker.on('click', this.editMarker, this);
               this.newMarker.addTo(this.map);
-              this.markers.push(this.newMarker);
             }
             if (this.markerSelection === 'note') {
               this.markerTools = false;
@@ -569,7 +383,6 @@ export default {
               this.newMarker.on('click', this.editPostIt, this.newMarker);
               this.newMarker.addTo(this.map);
               this.newMarker.fire('click');
-              this.markers.push(this.newMarker);
             }
             if (this.markerSelection === 'polygon') {
               // eslint-disable-next-line no-const-assign
@@ -580,54 +393,11 @@ export default {
                 this.markerTools = false;
                 this.toggelMarkerSelection('');
                 this.myPolyline.on('click', this.editPolyline, this.myPolyline);
-                this.markers.push(this.myPolyline);
+                this.newMarker.addTo(this.map);
               }
             }
-            // this.markerLocalStorage.push(markerInfoToStore);
-            // this.saveMarkerLocalStorage();
-            // this.setMarker(markerGeoCoordinates);
           }
-
-          /*           if (event.containerPoint.y >= 50) {
-            if (this.addMarkerMode) {
-              if (this.markerSelection !== 'brush') {
-                this.newPostItNode = this.formatLongPostItNotes(this.newPostItNode);
-                const markerGeoCoordinates = event.latlng;
-                const markerInfoToStore = {
-                  markerSelection: this.markerSelection,
-                  newPostItNode: this.newPostItNode,
-                  markerGeoCoordinates
-                };
-                this.markerLocalStorage.push(markerInfoToStore);
-                this.saveMarkerLocalStorage();
-                this.setMarker(markerGeoCoordinates);
-              } else if (this.markerSelection === 'brush') {
-                paintNow = !paintNow;
-                if (paintNow) {
-                  this.myPolyline = L.polyline([]).addTo(this.map);
-                  this.markers.push(this.myPolyline);
-                } else {
-                  this.addMarkerMode = false;
-                  const brushInfoToStore = {
-                    markerSelection: 'brush',
-                    newPostItNode: this.newPostItNode,
-                    markerGeoCoordinates: this.myPolyline.getLatLngs()
-                  };
-                  this.markerLocalStorage.push(brushInfoToStore);
-                  this.saveMarkerLocalStorage();
-                }
-              }
-            }
-          } */
         });
-
-        /* this.map.on('mousemove', (event) => {
-          if (this.addMarkerMode && (this.markerSelection === 'brush')) {
-            if (paintNow) {
-              this.myPolyline.addLatLng(event.latlng);
-            }
-          }
-        }); */
         this.map.on('mousemove', (event) => {
           if (this.paintNow) {
             this.myPolyline.addLatLng(event.latlng);
@@ -651,42 +421,7 @@ export default {
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     },
-    makeNewPostIt(event) {
-      const markerGeoCoordinates = event.latlng;
-      this.editPostIt(event);
-      console.log(markerGeoCoordinates);
-    },
 
-    editPolyline(e) {
-      const marker = e.target;
-      // eslint-disable-next-line no-multi-str
-      const popupForm = '<form id="popup-form" onkeypress="return event.keyCode != 13;" style="width: 150px;">\
-            <button id="button-save" \
-                style="padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" type="button">Save </button>\
-            <input type="color" id="pathFillColor" name="pathFillColor" value="#008000"\
-              style="float: center;width: 30px; height: 30px;">\
-            <button id="button-delete" \
-                style="float: right; padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" \
-                type="button">Delete </button>\
-          </form>';
-      if (marker.hasOwnProperty('_popup')) {
-        marker.unbindPopup();
-      }
-      marker.closeTooltip();
-      marker.bindPopup(popupForm);
-      marker.openPopup();
-      const buttonSave = L.DomUtil.get('button-save');
-      L.DomEvent.addListener(buttonSave, 'click', () => {
-        const pathFillColor = this.hexToRgb(L.DomUtil.get('pathFillColor').value);
-        marker.setStyle({ color: pathFillColor, weight: 10, opacity: 0.5 });
-        marker.closePopup();
-      });
-      const buttonDelete = L.DomUtil.get('button-delete');
-      L.DomEvent.addListener(buttonDelete, 'click', () => {
-        marker.setStyle({ color: '#000000', weight: 0, opacity: 0.0 });
-        marker.closePopup();
-      });
-    },
     editMarker(e) {
       const marker = e.target;
       // eslint-disable-next-line no-multi-str
@@ -715,7 +450,6 @@ export default {
         }));
         marker.closePopup();
       });
-
       L.DomEvent.addListener(L.DomUtil.get('button-delete'), 'click', () => {
         marker.setIcon(L.icon({
           iconUrl: 'my-icon.png',
@@ -724,6 +458,37 @@ export default {
         marker.closePopup();
       });
     },
+
+    editPolyline(e) {
+      const marker = e.target;
+      // eslint-disable-next-line no-multi-str
+      const popupForm = '<form id="popup-form" onkeypress="return event.keyCode != 13;" style="width: 150px;">\
+            <button id="button-save" \
+                style="padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" type="button">Save </button>\
+            <input type="color" id="pathFillColor" name="pathFillColor" value="#008000"\
+              style="float: center;width: 30px; height: 30px;">\
+            <button id="button-delete" \
+                style="float: right; padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" \
+                type="button">Delete </button>\
+          </form>';
+      if (marker.hasOwnProperty('_popup')) {
+        marker.unbindPopup();
+      }
+      marker.closeTooltip();
+      marker.bindPopup(popupForm);
+      marker.openPopup();
+
+      L.DomEvent.addListener(L.DomUtil.get('button-save'), 'click', () => {
+        const pathFillColor = this.hexToRgb(L.DomUtil.get('pathFillColor').value);
+        marker.setStyle({ color: pathFillColor, weight: 10, opacity: 0.5 });
+        marker.closePopup();
+      });
+      L.DomEvent.addListener(L.DomUtil.get('button-delete'), 'click', () => {
+        marker.setStyle({ color: '#000000', weight: 0, opacity: 0.0 });
+        marker.closePopup();
+      });
+    },
+
     hexToRgb(hex) {
       const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
       hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
@@ -735,7 +500,6 @@ export default {
 
     editPostIt(e) {
       const marker = e.target;
-      const oldPostItText = marker.getTooltip().getContent();
       // eslint-disable-next-line no-multi-str
       const popupForm = '<form id="popup-form" onkeypress="return event.keyCode != 13;">\
             <label for="PostItText">Enter your Post-it note here:</label><br>\
@@ -756,7 +520,8 @@ export default {
       marker.bindPopup(popupForm);
       marker.openPopup();
 
-      L.DomUtil.get('PostItText').value = oldPostItText;
+      const oldPostItText = marker.getTooltip().getContent();
+      L.DomUtil.get('PostItText').value = oldPostItText.replaceAll('<br>', ' ');
 
       const temp = document.querySelector('.leaflet-tooltip');
       L.DomEvent.addListener(L.DomUtil.get('button-save'), 'click', () => {
@@ -768,77 +533,6 @@ export default {
       L.DomEvent.addListener(L.DomUtil.get('button-delete'), 'click', () => {
         marker.closePopup();
       });
-    },
-
-    setMarker(markerGeoCoordinates) {
-      if (this.markerSelection === 'thumbs-up') {
-        const thumbUp = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" fill="green"/></svg>';
-        this.newMarker = L.marker(markerGeoCoordinates, {
-          icon: L.icon({
-            iconUrl: encodeURI(`data:image/svg+xml,${thumbUp}`),
-            iconSize: [30, 30]
-          })
-        });
-      } else if (this.markerSelection === 'thumbs-down') {
-        const thumbDown = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M19,15H23V3H19M15,3H6C5.17,3 4.46,3.5 4.16,4.22L1.14,11.27C1.05,11.5 1,11.74 1,12V14A2,2 0 0,0 3,16H9.31L8.36,20.57C8.34,20.67 8.33,20.77 8.33,20.88C8.33,21.3 8.5,21.67 8.77,21.94L9.83,23L16.41,16.41C16.78,16.05 17,15.55 17,15V5C17,3.89 16.1,3 15,3Z" fill="red"/></svg>';
-        this.newMarker = L.marker(markerGeoCoordinates, {
-          icon: L.icon({
-            iconUrl: encodeURI(`data:image/svg+xml,${thumbDown}`),
-            iconSize: [30, 30]
-          })
-        });
-      } else if (this.markerSelection === 'brush') {
-        this.newMarker = L.polyline(markerGeoCoordinates);
-      } else if (this.markerSelection.includes('tooltip')) {
-        this.newMarker = L.marker(markerGeoCoordinates, {
-          icon: L.icon({
-            iconUrl: 'my-icon.png',
-            iconSize: [0, 0]
-          })
-        });
-        if (this.markerSelection === 'tooltip-text-green') {
-          this.newMarker.bindTooltip(this.newPostItNode, {
-            permanent: true,
-            interactive: true,
-            className: 'leaflet-tooltip-green'
-          });
-        } else if (this.markerSelection === 'tooltip-text-yellow') {
-          this.newMarker.bindTooltip(this.newPostItNode, {
-            permanent: true,
-            interactive: true,
-            className: 'leaflet-tooltip-yellow'
-          });
-        } else if (this.markerSelection === 'tooltip-text-blue') {
-          this.newMarker.bindTooltip(this.newPostItNode, {
-            permanent: true,
-            interactive: true,
-            className: 'leaflet-tooltip-blue'
-          });
-        }
-      }
-      this.newMarker.on('contextmenu', this.deleteMarker, this);
-      this.newMarker.addTo(this.map);
-      this.markers.push(this.newMarker);
-      this.addMarkerMode = false;
-      this.newPostItNode = '';
-      this.markerSelection = '';
-    },
-
-    deleteMarker(event) {
-      for (let x = 0; x < this.markers.length; x += 1) {
-        try {
-          if (event.latlng === this.markers[x].getLatLng()) {
-            this.map.removeLayer(this.markers[x]);
-          }
-        } catch {
-          // continue regardless of error
-        }
-      }
-    },
-
-    saveMarkerLocalStorage() {
-      const parsed = JSON.stringify(this.markerLocalStorage);
-      localStorage.setItem('PostIts', parsed);
     },
 
     formatLongPostItNotes(text) {
@@ -875,18 +569,6 @@ export default {
       return str;
     },
 
-    deleteAllMarkers() {
-      for (let x = 0; x < this.markers.length; x += 1) {
-        this.markers[x].remove();
-      }
-      while (this.markers.length > 0) {
-        this.markers.pop();
-      }
-      while (this.markerLocalStorage.length > 0) {
-        this.markerLocalStorage.pop();
-      }
-      localStorage.removeItem('PostIts');
-    },
 
     async destroyMap() {
       this.layerContainer.clearLayers();
