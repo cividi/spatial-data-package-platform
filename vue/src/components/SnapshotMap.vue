@@ -16,7 +16,7 @@
       >
         <button
           style="background-color: #543076; border-radius: 50px"
-          v-on:click="markerTools=!markerTools"
+          v-on:click="markerTools=!markerTools; showAnnotations();"
         >
           <v-icon large color="white"> mdi-brush </v-icon>
         </button>
@@ -30,13 +30,9 @@
           <button v-on:click="toggelMarkerSelection('note')">
             <v-icon large color="black"> mdi-note-outline </v-icon>
           </button>
-          <button v-on:click="toggelMarkerSelection('');
-          markerTools = !markerTools" v-if="!hideMarker">
+          <button v-on:click="toggelMarkerSelection(''); hideAnnotations();
+          markerTools=!markerTools;">
             <v-icon large color="black"> mdi-eye-off </v-icon>
-          </button>
-          <button v-on:click="toggelMarkerSelection('');
-          markerTools = !markerTools" v-if="hideMarker">
-            <v-icon large color="black"> mdi-eye </v-icon>
           </button>
         </v-card>
         <div v-if="markerTools" >
@@ -194,7 +190,6 @@ export default {
       isMapLoaded: false,
       markerSelection: '',
       markerTools: false,
-      hideMarker: false,
       editMode: false,
       cursorType: '',
       popupForm: '',
@@ -350,6 +345,9 @@ export default {
         }).addTo(this.map);
 
         this.myPolyline = [];
+        this.annotationMarkers = new L.FeatureGroup();
+        this.map.addLayer(this.annotationMarkers);
+
         this.map.on('click', (event) => {
           if (this.markerTools) {
             if (this.markerSelection === 'marker') {
@@ -364,7 +362,7 @@ export default {
               });
               this.newMarker.on('contextmenu', this.deleteMarker, this);
               this.newMarker.on('click', this.editMarker, this);
-              this.newMarker.addTo(this.map);
+              this.annotationMarkers.addLayer(this.newMarker);
             }
             if (this.markerSelection === 'note') {
               this.markerTools = false;
@@ -381,19 +379,19 @@ export default {
                 className: 'leaflet-tooltip'
               });
               this.newMarker.on('click', this.editPostIt, this.newMarker);
-              this.newMarker.addTo(this.map);
+              this.annotationMarkers.addLayer(this.newMarker);
               this.newMarker.fire('click');
             }
             if (this.markerSelection === 'polygon') {
               // eslint-disable-next-line no-const-assign
               this.paintNow = !this.paintNow;
               if (this.paintNow) {
-                this.myPolyline = L.polyline([], { color: '#008000', weight: 10, opacity: 0.5 },).addTo(this.map);
+                this.myPolyline = L.polyline([], { color: '#008000', weight: 10, opacity: 0.5 },).addTo(this.annotationMarkers);
               } else {
                 this.markerTools = false;
                 this.toggelMarkerSelection('');
                 this.myPolyline.on('click', this.editPolyline, this.myPolyline);
-                this.newMarker.addTo(this.map);
+                this.annotationMarkers.addLayer(this.newMarker);
               }
             }
           }
@@ -420,6 +418,13 @@ export default {
       }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
+    },
+
+    hideAnnotations() {
+      this.map.removeLayer(this.annotationMarkers);
+    },
+    showAnnotations() {
+      this.map.addLayer(this.annotationMarkers);
     },
 
     editMarker(e) {
