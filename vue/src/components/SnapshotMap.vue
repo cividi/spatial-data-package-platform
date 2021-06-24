@@ -536,19 +536,10 @@ export default {
               console.log('markerTools = false');
               this.toggelMarkerSelection('');
               const markerGeoCoordinates = event.latlng;
-              const markerInfoToStore = {
-                markerSelection: this.markerSelection,
-                newPostItNode: this.newPostItNode,
-                markerGeoCoordinates
-              };
-              console.log(markerInfoToStore);
-              // this.markerLocalStorage.push(markerInfoToStore);
-              // this.saveMarkerLocalStorage();
-              // this.setMarker(markerGeoCoordinates);
-              const thumbUp = '<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z\' /></svg>';
+              const markerSVG = '<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z\' /></svg>';
               this.newMarker = L.marker(markerGeoCoordinates, {
                 icon: L.icon({
-                  iconUrl: encodeURI(`data:image/svg+xml,${thumbUp}`),
+                  iconUrl: encodeURI(`data:image/svg+xml,${markerSVG}`),
                   iconSize: [30, 30]
                 })
               });
@@ -657,55 +648,54 @@ export default {
     },
 
     editMarker(e) {
-      console.log(e);
-      // eslint-disable-next-line no-multi-str
-      const popupForm = '<form id="popup-form">\
-            <label for="input-speed">New speed:</label>\
-            <input id="input-speed" class="popup-input" type="number" />\
-            <table class="popup-table">\
-              <tr class="popup-table-row">\
-                <th class="popup-table-header">Arc numer:</th>\
-                <td id="value-arc" class="popup-table-data"></td>\
-              </tr>\
-              <tr class="popup-table-row">\
-                <th class="popup-table-header">Current speed:</th>\
-                <td id="value-speed" class="popup-table-data"></td>\
-              </tr>\
-            </table>\
-            <button id="button-submit" type="button">Save Changes</button>\
-          </form>';
       const marker = e.target;
-      const properties = {
-        arc: 321,
-        speed: 123
-      };
-
+      // eslint-disable-next-line no-multi-str
+      const popupForm = '<form id="popup-form" onkeypress="return event.keyCode != 13;" style="width: 150px;">\
+            <button id="button-save" \
+                style="padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" type="button">Save </button>\
+            <input type="color" id="pathFillColor" name="pathFillColor" value="#00000"\
+              style="float: center;width: 30px; height: 30px; ">\
+            <button id="button-delete" \
+                style="float: right; padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" \
+                type="button">Delete </button>\
+          </form>';
       if (marker.hasOwnProperty('_popup')) {
         marker.unbindPopup();
       }
-
+      marker.closeTooltip();
       marker.bindPopup(popupForm);
       marker.openPopup();
-
-      L.DomUtil.get('value-arc').textContent = '123456SB';// properties.arc;
-      L.DomUtil.get('value-speed').textContent = 'value-speed';// properties.speed;
-
-      const inputSpeed = L.DomUtil.get('input-speed');
-      inputSpeed.value = 'inputSpeed.value';// properties.speed;
-      L.DomEvent.addListener(inputSpeed, 'change', (e) => {
-        properties.speed = e.target.value;
-      });
-
-      const buttonSubmit = L.DomUtil.get('button-submit');
-      L.DomEvent.addListener(buttonSubmit, 'click', () => {
+      const buttonSave = L.DomUtil.get('button-save');
+      L.DomEvent.addListener(buttonSave, 'click', () => {
+        const pathFillColor = this.hexToRgb(L.DomUtil.get('pathFillColor').value);
+        const newMarkerSVG = `<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' width='60' height='60' viewBox='0 0 24 24'><path fill="${pathFillColor}" d='M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z' /></svg>`;
+        marker.setIcon(L.icon({
+          iconUrl: encodeURI(`data:image/svg+xml,${newMarkerSVG}`),
+          iconSize: [30, 30]
+        }));
         marker.closePopup();
       });
+      const buttonDelete = L.DomUtil.get('button-delete');
+      L.DomEvent.addListener(buttonDelete, 'click', () => {
+        marker.setIcon(L.icon({
+          iconUrl: 'my-icon.png',
+          iconSize: [0, 0]
+        }));
+        marker.closePopup();
+      });
+    },
+    hexToRgb(hex) {
+      const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+      hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})`
+        : null;
     },
 
     editPostIt(e) {
       const marker = e.target;
       const oldPostItText = marker.getTooltip().getContent();
-      console.log(oldPostItText);
       // eslint-disable-next-line no-multi-str
       const popupForm = '<form id="popup-form" onkeypress="return event.keyCode != 13;">\
             <label for="PostItText">Enter your Post-it note here:</label><br>\
@@ -714,7 +704,7 @@ export default {
             <button id="button-save" \
                 style="padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" type="button">Save </button>\
             <input type="color" id="backgroundColor" name="backgroundColor" value="#FFFF00"\
-              size="40" >\
+              style="width: 30px; height: 30px; " >\
             <button id="button-delete" \
                 style="float: right; padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" \
                 type="button">Delete </button>\
