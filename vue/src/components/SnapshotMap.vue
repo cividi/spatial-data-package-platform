@@ -16,7 +16,7 @@
       >
         <button
           style="background-color: #543076; border-radius: 50px"
-          v-on:click="markerTools=!markerTools; showAnnotations();"
+          v-on:click="markerTools=!markerTools; showAnnotations(); map.closePopup();"
         >
           <v-icon large color="white"> mdi-brush </v-icon>
         </button>
@@ -152,9 +152,26 @@ body,
   display: none;
 }
 
+.leaflet-tooltip-left:before {
+  right: 0;
+  margin-right: -12px;
+  border-left-color: rgba(0, 0, 0, 0.4);
+}
+
+.leaflet-tooltip-right:before {
+  left: 0;
+  margin-left: -12px;
+  border-right-color: rgba(0, 0, 0, 0.4);
+}
+
 .leaflet-tooltip {
-  font-size: small;
-  background-color: rgb(255, 230, 6);
+  position: absolute;
+  padding: 4px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 0px solid #000;
+  color: #000;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 </style>
 
@@ -364,35 +381,34 @@ export default {
               this.newMarker.on('click', this.editMarker, this);
               this.annotationMarkers.addLayer(this.newMarker);
             }
+            if (this.markerSelection === 'polygon') {
+              // eslint-disable-next-line no-const-assign
+              this.paintNow = !this.paintNow;
+              if (this.paintNow) {
+                this.myPolyline = L.polyline([], { color: '#008000', weight: 15, opacity: 0.5 },).addTo(this.annotationMarkers);
+              } else {
+                this.markerTools = false;
+                this.toggelMarkerSelection('');
+                this.myPolyline.on('click', this.editPolyline, this.myPolyline);
+              }
+            }
             if (this.markerSelection === 'note') {
               this.markerTools = false;
               this.toggelMarkerSelection('');
-              this.newMarker = L.marker(event.latlng, {
+              const newMarker = L.marker(event.latlng, {
                 icon: L.icon({
                   iconUrl: 'my-icon.png',
                   iconSize: [0, 0]
                 })
               });
-              this.newMarker.bindTooltip('', {
+              newMarker.bindTooltip('', {
                 permanent: true,
                 interactive: true,
                 className: 'leaflet-tooltip'
               });
-              this.newMarker.on('click', this.editPostIt, this.newMarker);
-              this.annotationMarkers.addLayer(this.newMarker);
-              this.newMarker.fire('click');
-            }
-            if (this.markerSelection === 'polygon') {
-              // eslint-disable-next-line no-const-assign
-              this.paintNow = !this.paintNow;
-              if (this.paintNow) {
-                this.myPolyline = L.polyline([], { color: '#008000', weight: 10, opacity: 0.5 },).addTo(this.annotationMarkers);
-              } else {
-                this.markerTools = false;
-                this.toggelMarkerSelection('');
-                this.myPolyline.on('click', this.editPolyline, this.myPolyline);
-                this.annotationMarkers.addLayer(this.newMarker);
-              }
+              this.annotationMarkers.addLayer(newMarker);
+              newMarker.on('click', this.editPostIt, newMarker);
+              newMarker.fire('click');
             }
           }
         });
@@ -456,10 +472,7 @@ export default {
         marker.closePopup();
       });
       L.DomEvent.addListener(L.DomUtil.get('button-delete'), 'click', () => {
-        marker.setIcon(L.icon({
-          iconUrl: 'my-icon.png',
-          iconSize: [0, 0]
-        }));
+        this.annotationMarkers.removeLayer(marker);
         marker.closePopup();
       });
     },
@@ -485,12 +498,11 @@ export default {
 
       L.DomEvent.addListener(L.DomUtil.get('button-save'), 'click', () => {
         const pathFillColor = this.hexToRgb(L.DomUtil.get('pathFillColor').value);
-        marker.setStyle({ color: pathFillColor, weight: 10, opacity: 0.5 });
+        marker.setStyle({ color: pathFillColor, weight: 15, opacity: 0.4 });
         marker.closePopup();
       });
       L.DomEvent.addListener(L.DomUtil.get('button-delete'), 'click', () => {
-        marker.setStyle({ color: '#000000', weight: 0, opacity: 0.0 });
-        marker.closePopup();
+        this.annotationMarkers.removeLayer(marker);
       });
     },
 
@@ -525,18 +537,26 @@ export default {
       marker.bindPopup(popupForm);
       marker.openPopup();
 
-      const oldPostItText = marker.getTooltip().getContent();
-      L.DomUtil.get('PostItText').value = oldPostItText.replaceAll('<br>', ' ');
+      const TooltipSnippet = marker.getTooltip().getContent();
+      const oldPostItText = TooltipSnippet.slice(60, -10);
+      const oldPostItColor = TooltipSnippet.slice(23, 30);
 
-      const temp = document.querySelector('.leaflet-tooltip');
+      L.DomUtil.get('PostItText').value = oldPostItText.replaceAll('<br>', ' ');
+      if (oldPostItColor.length === 0) {
+        L.DomUtil.get('backgroundColor').value = '#ffff00';
+      } else {
+        L.DomUtil.get('backgroundColor').value = oldPostItColor;
+      }
       L.DomEvent.addListener(L.DomUtil.get('button-save'), 'click', () => {
-        marker.setTooltipContent(this.formatLongPostItNotes(L.DomUtil.get('PostItText').value));
-        temp.setAttribute('style', `background:${L.DomUtil.get('backgroundColor').value}`);
+        const postItText = this.formatLongPostItNotes(L.DomUtil.get('PostItText').value);
+        const postItColor = L.DomUtil.get('backgroundColor').value;
+        const TooltipSnippet = `<div style='background:${postItColor}; padding:1px 3px 1px 3px'><b>${postItText}</b></div>`;
+        marker.setTooltipContent(TooltipSnippet);
         marker.closePopup();
         marker.openTooltip();
       });
       L.DomEvent.addListener(L.DomUtil.get('button-delete'), 'click', () => {
-        marker.closePopup();
+        this.annotationMarkers.removeLayer(marker);
       });
     },
 
