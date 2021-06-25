@@ -7,6 +7,8 @@
           <slot/>
         </v-slide-y-transition>
       </v-content>
+
+      <version />
     </main>
 </template>
 
