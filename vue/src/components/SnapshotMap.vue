@@ -1,3 +1,26 @@
+<!-- eslint-disable -->
+<i18n>
+{
+  "de": {
+    "tooltip.marker": "Klicken Sie auf die Karte, um eine Markierung zu platzieren",
+    "tooltip.polygonStart": "Klicken Sie auf die Karte, um ein Polygon zu beginnen",
+    "tooltip.polygonEnd": "Klicken Sie erneut, um das Polygon zu beenden",
+    "tooltip.postIt": "Klicken Sie auf die Karte, um ein Post-it zu setzten",
+    "tooltip.postItEditorTextInput": "Geben Sie hier Ihre Post-it-Notiz ein:",
+    "tooltip.markerEditorSave": "Speichern",
+    "tooltip.markerEditorDelete": "Löschen"
+  },
+  "fr": {
+    "tooltip.marker": "FRENCH VERSION",
+    "tooltip.polygonStart": "FRENCH VERSION",
+    "tooltip.polygonEnd": "FRENCH VERSION",
+    "tooltip.postIt": "FRENCH VERSION",
+    "tooltip.markerEditorSave": "FRENCH VERSION",
+    "tooltip.markerEditorDelete": "FRENCH VERSION"
+  }
+}
+</i18n>
+<!-- eslint-enable -->
 <template>
     <v-main>
       <v-slide-x-reverse-transition>
@@ -39,19 +62,19 @@
           <v-card v-if="markerSelection == 'marker'"
           style="position:absolute; top:3.8em; right:3.7em; min-width:16em"
           color="rgba(255, 255, 255, 0.7)"
-          >Klicken Sie auf die Karte, um eine Markierung zu platzieren </v-card>
+          >{{ $t("tooltip.marker")}}</v-card>
           <v-card v-if="markerSelection == 'polygon' && !paintNow"
           style="position:absolute; top:7.5em; right:3.7em; min-width:16em"
           color="rgba(255, 255, 255, 0.7)"
-          >Klicken Sie auf die Karte, um ein Polygon zu beginnen </v-card>
+          >{{ $t("tooltip.polygonStart")}}</v-card>
           <v-card v-if="markerSelection == 'polygon' && paintNow"
           style="position:absolute; top:7.5em; right:3.7em; min-width:16em"
           color="rgba(255, 255, 255, 0.7)"
-          >Klicken Sie erneut, um das Polygon zu beenden </v-card>
+          >{{ $t("tooltip.polygonEnd")}}</v-card>
           <v-card v-if="markerSelection == 'note'"
           style="position:absolute; top:11.3em; right:3.7em; min-width:16em"
           color="rgba(255, 255, 255, 0.7)"
-          >Klicken Sie auf die Karte, um die Post-it zu setzten </v-card>
+          >{{ $t("tooltip.postIt")}}</v-card>
         </div>
       </div>
     </v-main>
@@ -364,13 +387,13 @@ export default {
         this.myPolyline = [];
         this.annotationMarkers = new L.FeatureGroup();
         this.map.addLayer(this.annotationMarkers);
-
         this.map.on('click', (event) => {
           if (this.markerTools) {
             if (this.markerSelection === 'marker') {
               this.markerTools = false;
               this.toggelMarkerSelection('');
-              const markerSVG = '<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z\' /></svg>';
+              const pathFillColor = this.hexToRgb('#0000ff');
+              const markerSVG = `<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' width='60' height='60' viewBox='0 0 24 24'><path fill="${pathFillColor}" d='M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z' /></svg>`;
               this.newMarker = L.marker(event.latlng, {
                 icon: L.icon({
                   iconUrl: encodeURI(`data:image/svg+xml,${markerSVG}`),
@@ -445,22 +468,26 @@ export default {
 
     editMarker(e) {
       const marker = e.target;
-      // eslint-disable-next-line no-multi-str
-      const popupForm = '<form id="popup-form" onkeypress="return event.keyCode != 13;" style="width: 150px;">\
-            <button id="button-save" \
-                style="padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" type="button">Save </button>\
-            <input type="color" id="pathFillColor" name="pathFillColor" value="#00000"\
-              style="float: center;width: 30px; height: 30px; ">\
-            <button id="button-delete" \
-                style="float: right; padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" \
-                type="button">Delete </button>\
-          </form>';
+      const popupForm = ` 
+        <div style="width: 15em; text-align: center">
+          <button id="button-save" style="padding: 0px 4px 0px 4px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px"></button>
+          <div style=" display: inline-block; margin: 0px 6px 0px 6px; width: 15px; height: 15px; border-radius: 15px; overflow: hidden">
+            <input id="pathFillColor" type="color" value="#0000ff" 
+            style="width: 200%; height: 200%; transform: translate(-25%, -25%);
+            cursor: url(data:image/x-icon;base64,AAABAAEAEBAAAAAAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAAD///8BAAAAfwAAAIH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8BAAAAcQAAAN8AAADTAAAArwAAAE8AAAAJ////Af///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAJEAAADLAAAAEwAAAHsAAADDAAAA3wAAADP///8B////Af///wH///8B////Af///wH///8B////Af///wH///8BAAAAuQAAAHX///8B////AQAAAF0AAADtAAAAOf///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAFMAAAC/////Af///wH///8BAAAAUQAAAO0AAAA5////Af///wH///8B////Af///wH///8B////Af///wEAAAANAAAA5wAAAFH///8B////Af///wEAAABRAAAA7QAAADn///8B////Af///wH///8B////Af///wH///8B////AQAAAD0AAADtAAAARf///wH///8B////AQAAAFEAAADtAAAAOQAAACP///8B////Af///wH///8B////Af///wH///8BAAAARQAAAO0AAABF////Af///wH///8BAAAAUQAAAO0AAADvAAAAmf///wH///8B////Af///wH///8B////Af///wEAAABFAAAA7QAAAEX///8B////AQAAADUAAADxAAAA/wAAAPcAAAAr////Af///wH///8B////Af///wH///8B////AQAAAEUAAADtAAAARQAAADUAAADvAAAA/wAAAPcAAABFAAAALf///wH///8B////Af///wH///8B////Af///wH///8BAAAARQAAAO0AAADvAAAA/wAAAPcAAABFAAAAgwAAAPsAAABX////Af///wH///8B////Af///wH///8B////AQAAACUAAADvAAAA/wAAAPcAAABFAAAAgwAAAP8AAAD/AAAA+wAAAE////8B////Af///wH///8B////Af///wEAAAADAAAAoQAAAPcAAABFAAAAgwAAAP8AAAD/AAAA/wAAAP8AAADf////Af///wH///8B////Af///wH///8B////AQAAAAMAAAAvAAAALQAAAPsAAAD/AAAA/wAAAP8AAAD/AAAA+////wH///8B////Af///wH///8B////Af///wH///8B////Af///wEAAABXAAAA+wAAAP8AAAD/AAAA/wAAALX///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAE8AAADfAAAA+wAAALUAAAAXAAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//w==), default;">
+          </div>
+          <button id="button-delete" style="padding: 0px 4px 0px 4px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px"></button>
+        </div> `;
+
       if (marker.hasOwnProperty('_popup')) {
         marker.unbindPopup();
       }
       marker.closeTooltip();
       marker.bindPopup(popupForm);
       marker.openPopup();
+
+      L.DomUtil.get('button-save').innerText = this.$i18n.t('tooltip.markerEditorSave');
+      L.DomUtil.get('button-delete').innerText = this.$i18n.t('tooltip.markerEditorDelete');
 
       L.DomEvent.addListener(L.DomUtil.get('button-save'), 'click', () => {
         const pathFillColor = this.hexToRgb(L.DomUtil.get('pathFillColor').value);
@@ -479,22 +506,26 @@ export default {
 
     editPolyline(e) {
       const marker = e.target;
-      // eslint-disable-next-line no-multi-str
-      const popupForm = '<form id="popup-form" onkeypress="return event.keyCode != 13;" style="width: 150px;">\
-            <button id="button-save" \
-                style="padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" type="button">Save </button>\
-            <input type="color" id="pathFillColor" name="pathFillColor" value="#008000"\
-              style="float: center;width: 30px; height: 30px;">\
-            <button id="button-delete" \
-                style="float: right; padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" \
-                type="button">Delete </button>\
-          </form>';
+      const popupForm = ` 
+        <div style="width: 15em; text-align: center">
+          <button id="button-save" style="padding: 0px 4px 0px 4px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px"></button>
+          <div style=" display: inline-block; margin: 0px 6px 0px 6px; width: 15px; height: 15px; border-radius: 15px; overflow: hidden">
+            <input id="pathFillColor" type="color" value="#008000" 
+            style="width: 200%; height: 200%; transform: translate(-25%, -25%);
+            cursor: url(data:image/x-icon;base64,AAABAAEAEBAAAAAAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAAD///8BAAAAfwAAAIH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8BAAAAcQAAAN8AAADTAAAArwAAAE8AAAAJ////Af///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAJEAAADLAAAAEwAAAHsAAADDAAAA3wAAADP///8B////Af///wH///8B////Af///wH///8B////Af///wH///8BAAAAuQAAAHX///8B////AQAAAF0AAADtAAAAOf///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAFMAAAC/////Af///wH///8BAAAAUQAAAO0AAAA5////Af///wH///8B////Af///wH///8B////Af///wEAAAANAAAA5wAAAFH///8B////Af///wEAAABRAAAA7QAAADn///8B////Af///wH///8B////Af///wH///8B////AQAAAD0AAADtAAAARf///wH///8B////AQAAAFEAAADtAAAAOQAAACP///8B////Af///wH///8B////Af///wH///8BAAAARQAAAO0AAABF////Af///wH///8BAAAAUQAAAO0AAADvAAAAmf///wH///8B////Af///wH///8B////Af///wEAAABFAAAA7QAAAEX///8B////AQAAADUAAADxAAAA/wAAAPcAAAAr////Af///wH///8B////Af///wH///8B////AQAAAEUAAADtAAAARQAAADUAAADvAAAA/wAAAPcAAABFAAAALf///wH///8B////Af///wH///8B////Af///wH///8BAAAARQAAAO0AAADvAAAA/wAAAPcAAABFAAAAgwAAAPsAAABX////Af///wH///8B////Af///wH///8B////AQAAACUAAADvAAAA/wAAAPcAAABFAAAAgwAAAP8AAAD/AAAA+wAAAE////8B////Af///wH///8B////Af///wEAAAADAAAAoQAAAPcAAABFAAAAgwAAAP8AAAD/AAAA/wAAAP8AAADf////Af///wH///8B////Af///wH///8B////AQAAAAMAAAAvAAAALQAAAPsAAAD/AAAA/wAAAP8AAAD/AAAA+////wH///8B////Af///wH///8B////Af///wH///8B////Af///wEAAABXAAAA+wAAAP8AAAD/AAAA/wAAALX///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAE8AAADfAAAA+wAAALUAAAAXAAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//w==), default;">
+          </div>
+          <button id="button-delete" style="padding: 0px 4px 0px 4px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px"></button>
+        </div> `;
+
       if (marker.hasOwnProperty('_popup')) {
         marker.unbindPopup();
       }
       marker.closeTooltip();
       marker.bindPopup(popupForm);
       marker.openPopup();
+
+      L.DomUtil.get('button-save').innerText = this.$i18n.t('tooltip.markerEditorSave');
+      L.DomUtil.get('button-delete').innerText = this.$i18n.t('tooltip.markerEditorDelete');
 
       L.DomEvent.addListener(L.DomUtil.get('button-save'), 'click', () => {
         const pathFillColor = this.hexToRgb(L.DomUtil.get('pathFillColor').value);
@@ -517,19 +548,20 @@ export default {
 
     editPostIt(e) {
       const marker = e.target;
-      // eslint-disable-next-line no-multi-str
-      const popupForm = '<form id="popup-form" onkeypress="return event.keyCode != 13;">\
-            <label for="PostItText">Enter your Post-it note here:</label><br>\
-            <input style="margin:5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" \
-                type="text" id="PostItText" name="PostItText" value=""><br>\
-            <button id="button-save" \
-                style="padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" type="button">Save </button>\
-            <input type="color" id="backgroundColor" name="backgroundColor" value="#FFFF00"\
-              style="width: 30px; height: 30px; " >\
-            <button id="button-delete" \
-                style="float: right; padding: 5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" \
-                type="button">Delete </button>\
-          </form>';
+      const popupForm = ` 
+        <div style="width: 18em; text-align: center">
+        <label id="PostItTextHeader" for="PostItText"></label><br>
+        <input style="margin:5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" 
+                type="text" id="PostItText" name="PostItText" value=""><br>
+          <button id="button-save" style="padding: 0px 4px 0px 4px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px"></button>
+          <div style=" display: inline-block; margin: 0px 6px 0px 6px; width: 15px; height: 15px; border-radius: 15px; overflow: hidden">
+            <input id="backgroundColor" type="color" value="#0000ff" 
+            style="width: 200%; height: 200%; transform: translate(-25%, -25%);
+            cursor: url(data:image/x-icon;base64,AAABAAEAEBAAAAAAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAAD///8BAAAAfwAAAIH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8BAAAAcQAAAN8AAADTAAAArwAAAE8AAAAJ////Af///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAJEAAADLAAAAEwAAAHsAAADDAAAA3wAAADP///8B////Af///wH///8B////Af///wH///8B////Af///wH///8BAAAAuQAAAHX///8B////AQAAAF0AAADtAAAAOf///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAFMAAAC/////Af///wH///8BAAAAUQAAAO0AAAA5////Af///wH///8B////Af///wH///8B////Af///wEAAAANAAAA5wAAAFH///8B////Af///wEAAABRAAAA7QAAADn///8B////Af///wH///8B////Af///wH///8B////AQAAAD0AAADtAAAARf///wH///8B////AQAAAFEAAADtAAAAOQAAACP///8B////Af///wH///8B////Af///wH///8BAAAARQAAAO0AAABF////Af///wH///8BAAAAUQAAAO0AAADvAAAAmf///wH///8B////Af///wH///8B////Af///wEAAABFAAAA7QAAAEX///8B////AQAAADUAAADxAAAA/wAAAPcAAAAr////Af///wH///8B////Af///wH///8B////AQAAAEUAAADtAAAARQAAADUAAADvAAAA/wAAAPcAAABFAAAALf///wH///8B////Af///wH///8B////Af///wH///8BAAAARQAAAO0AAADvAAAA/wAAAPcAAABFAAAAgwAAAPsAAABX////Af///wH///8B////Af///wH///8B////AQAAACUAAADvAAAA/wAAAPcAAABFAAAAgwAAAP8AAAD/AAAA+wAAAE////8B////Af///wH///8B////Af///wEAAAADAAAAoQAAAPcAAABFAAAAgwAAAP8AAAD/AAAA/wAAAP8AAADf////Af///wH///8B////Af///wH///8B////AQAAAAMAAAAvAAAALQAAAPsAAAD/AAAA/wAAAP8AAAD/AAAA+////wH///8B////Af///wH///8B////Af///wH///8B////Af///wEAAABXAAAA+wAAAP8AAAD/AAAA/wAAALX///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAE8AAADfAAAA+wAAALUAAAAXAAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//w==), default;">
+          </div>
+          <button id="button-delete" style="padding: 0px 4px 0px 4px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px"></button>
+        </div> `;
+
       if (marker.hasOwnProperty('_popup')) {
         marker.unbindPopup();
       }
@@ -540,6 +572,9 @@ export default {
       const TooltipSnippet = marker.getTooltip().getContent();
       const oldPostItText = TooltipSnippet.slice(60, -10);
       const oldPostItColor = TooltipSnippet.slice(23, 30);
+      L.DomUtil.get('button-save').innerText = this.$i18n.t('tooltip.markerEditorSave');
+      L.DomUtil.get('button-delete').innerText = this.$i18n.t('tooltip.markerEditorDelete');
+      L.DomUtil.get('PostItTextHeader').innerText = this.$i18n.t('tooltip.postItEditorTextInput');
 
       L.DomUtil.get('PostItText').value = oldPostItText.replaceAll('<br>', ' ');
       if (oldPostItColor.length === 0) {
