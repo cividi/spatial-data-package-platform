@@ -6,6 +6,7 @@
     "tooltip.polygonStart": "Klicken Sie auf die Karte, um ein Polygon zu beginnen",
     "tooltip.polygonEnd": "Klicken Sie erneut, um das Polygon zu beenden",
     "tooltip.postIt": "Klicken Sie auf die Karte, um ein Post-it zu setzten",
+    "tooltip.deactivateAnnotation": "Klicken Sie hier, um alle Anmerkung zu verbergen",
     "tooltip.postItEditorTextInput": "Geben Sie hier Ihre Post-it-Notiz ein:",
     "tooltip.markerEditorSave": "Speichern",
     "tooltip.markerEditorDelete": "Löschen"
@@ -15,6 +16,8 @@
     "tooltip.polygonStart": "FRENCH VERSION",
     "tooltip.polygonEnd": "FRENCH VERSION",
     "tooltip.postIt": "FRENCH VERSION",
+    "tooltip.deactivateAnnotation": "FRENCH VERSION",
+    "tooltip.postItEditorTextInput": "FRENCH VERSION",
     "tooltip.markerEditorSave": "FRENCH VERSION",
     "tooltip.markerEditorDelete": "FRENCH VERSION"
   }
@@ -39,43 +42,56 @@
       >
         <button
           style="background-color: #543076; border-radius: 50px"
-          v-on:click="markerTools=!markerTools; showAnnotations(); map.closePopup();"
-        >
+          v-on:click="markerTools=!markerTools; showAnnotations(); map.closePopup();">
           <v-icon large color="white"> mdi-brush </v-icon>
         </button>
-        <v-card v-if="markerTools" style="position:absolute: ;width: 36px">
-          <button v-on:click="toggelMarkerSelection('marker')">
-            <v-icon large color="black"> mdi-map-marker </v-icon>
-          </button>
-          <button v-on:click="toggelMarkerSelection('polygon')">
-            <v-icon large color="black"> mdi-vector-polygon </v-icon>
-          </button>
-          <button v-on:click="toggelMarkerSelection('note')">
-            <v-icon large color="black"> mdi-note-outline </v-icon>
-          </button>
-          <button v-on:click="toggelMarkerSelection(''); hideAnnotations();
-          markerTools=!markerTools;">
-            <v-icon large color="black"> mdi-eye-off </v-icon>
-          </button>
+        <v-card v-if="markerTools" style="position: absolute; width: 36px">
+            <v-row>
+              <v-col >
+                <v-tooltip v-model="this.markerSelectionMarker" left>
+                  <template v-slot:activator="{}">
+                    <v-btn icon @click="toggelMarkerSelection('marker')">
+                      <v-icon large color="black"> mdi-map-marker </v-icon>
+                    </v-btn>
+                  </template>
+                  {{ $t("tooltip.marker")}}
+                </v-tooltip>
+              </v-col>
+              <v-col >
+                <v-tooltip v-model="this.markerSelectionPolygon" left>
+                  <template v-slot:activator="{}">
+                    <v-btn icon @click="toggelMarkerSelection('polygon')">
+                      <v-icon large color="black"> mdi-vector-polygon </v-icon>
+                    </v-btn>
+                  </template>
+                  <span v-if="!paintNow">{{ $t("tooltip.polygonStart")}}</span>
+                  <span v-else>{{ $t("tooltip.polygonEnd")}}</span>
+                </v-tooltip>
+              </v-col>
+              <v-col >
+                <v-tooltip v-model="this.markerSelectionNote" left>
+                  <template v-slot:activator="{}">
+                    <v-btn icon @click="toggelMarkerSelection('note')">
+                      <v-icon large color="black"> mdi-note-outline </v-icon>
+                    </v-btn>
+                  </template>
+                  {{ $t("tooltip.postIt")}}
+                </v-tooltip>
+              </v-col>
+              <v-col >
+                <v-tooltip left>
+                  <template v-slot:activator="{on}">
+                    <v-btn icon v-bind="attrs" v-on="on"
+                       @click="toggelMarkerSelection(''); hideAnnotations();
+                      markerTools=!markerTools;">
+                      <v-icon large color="black"> mdi-eye-off </v-icon>
+                    </v-btn>
+                  </template>
+                  {{ $t("tooltip.deactivateAnnotation")}}
+                </v-tooltip>
+              </v-col>
+            </v-row>
         </v-card>
-        <div v-if="markerTools" >
-          <v-card v-if="markerSelection == 'marker'"
-          style="position:absolute; top:3.8em; right:3.7em; min-width:16em"
-          color="rgba(255, 255, 255, 0.7)"
-          >{{ $t("tooltip.marker")}}</v-card>
-          <v-card v-if="markerSelection == 'polygon' && !paintNow"
-          style="position:absolute; top:7.5em; right:3.7em; min-width:16em"
-          color="rgba(255, 255, 255, 0.7)"
-          >{{ $t("tooltip.polygonStart")}}</v-card>
-          <v-card v-if="markerSelection == 'polygon' && paintNow"
-          style="position:absolute; top:7.5em; right:3.7em; min-width:16em"
-          color="rgba(255, 255, 255, 0.7)"
-          >{{ $t("tooltip.polygonEnd")}}</v-card>
-          <v-card v-if="markerSelection == 'note'"
-          style="position:absolute; top:11.3em; right:3.7em; min-width:16em"
-          color="rgba(255, 255, 255, 0.7)"
-          >{{ $t("tooltip.postIt")}}</v-card>
-        </div>
       </div>
     </v-main>
     <v-main fluid class="pa-0" ref="mapbox">
@@ -233,7 +249,10 @@ export default {
       editMode: false,
       cursorType: '',
       popupForm: '',
-      paintNow: false
+      paintNow: false,
+      markerSelectionMarker: false,
+      markerSelectionPolygon: false,
+      markerSelectionNote: false
     };
   },
 
@@ -278,18 +297,32 @@ export default {
       if (this.paintNow) {
         this.cursorType = 'pointer';
       }
-      if (this.markerSelection === 'marker') {
+      if (this.markerSelectionMarker) {
         this.cursorType = 'url("data:image/svg+xml,<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z\' /></svg>"), pointer';
-      } else if (this.markerSelection === 'note') {
-        this.cursorType = 'url("data:image/svg+xml,<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M14,10H19.5L14,4.5V10M5,3H15L21,9V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5C3,3.89 3.89,3 5,3M5,5V19H19V12H12V5H5Z\' /></svg>"), pointer';
-      } else if (this.markerSelection === 'polygon') {
+      } else if (this.markerSelectionPolygon) {
         this.cursorType = 'url("data:image/svg+xml,<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M2,2V8H4.28L5.57,16H4V22H10V20.06L15,20.05V22H21V16H19.17L20,9H22V3H16V6.53L14.8,8H9.59L8,5.82V2M4,4H6V6H4M18,5H20V7H18M6.31,8H7.11L9,10.59V14H15V10.91L16.57,9H18L17.16,16H15V18.06H10V16H7.6M11,10H13V12H11M6,18H8V20H6M17,18H19V20H17\' /></svg>"), pointer';
+      } else if (this.markerSelectionNote) {
+        this.cursorType = 'url("data:image/svg+xml,<?xml version=\'1.0\' encoding=\'UTF-8\'?><!DOCTYPE svg PUBLIC \'-//W3C//DTD SVG 1.1//EN\' \'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\'><svg xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' version=\'1.1\' width=\'60\' height=\'60\' viewBox=\'0 0 24 24\'><path d=\'M14,10H19.5L14,4.5V10M5,3H15L21,9V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5C3,3.89 3.89,3 5,3M5,5V19H19V12H12V5H5Z\' /></svg>"), pointer';
       } else { this.cursorType = 'auto'; }
     },
     toggelMarkerSelection(newMode) {
-      if (this.markerSelection !== newMode) {
-        this.markerSelection = newMode;
-      } else { this.markerSelection = ''; }
+      if (newMode === 'marker') {
+        this.markerSelectionMarker = !this.markerSelectionMarker;
+        this.markerSelectionPolygon = false;
+        this.markerSelectionNote = false;
+      } else if (newMode === 'polygon') {
+        this.markerSelectionMarker = false;
+        this.markerSelectionPolygon = !this.markerSelectionPolygon;
+        this.markerSelectionNote = false;
+      } else if (newMode === 'note') {
+        this.markerSelectionMarker = false;
+        this.markerSelectionPolygon = false;
+        this.markerSelectionNote = !this.markerSelectionNote;
+      } else {
+        this.markerSelectionMarker = false;
+        this.markerSelectionPolygon = false;
+        this.markerSelectionNote = false;
+      }
       this.changeCursor();
     },
     createFeatureLayer(geojson, attribution) {
@@ -389,7 +422,7 @@ export default {
         this.map.addLayer(this.annotationMarkers);
         this.map.on('click', (event) => {
           if (this.markerTools) {
-            if (this.markerSelection === 'marker') {
+            if (this.markerSelectionMarker) {
               this.markerTools = false;
               this.toggelMarkerSelection('');
               const pathFillColor = this.hexToRgb('#0000ff');
@@ -404,7 +437,7 @@ export default {
               this.newMarker.on('click', this.editMarker, this);
               this.annotationMarkers.addLayer(this.newMarker);
             }
-            if (this.markerSelection === 'polygon') {
+            if (this.markerSelectionPolygon) {
               // eslint-disable-next-line no-const-assign
               this.paintNow = !this.paintNow;
               if (this.paintNow) {
@@ -415,7 +448,7 @@ export default {
                 this.myPolyline.on('click', this.editPolyline, this.myPolyline);
               }
             }
-            if (this.markerSelection === 'note') {
+            if (this.markerSelectionNote) {
               this.markerTools = false;
               this.toggelMarkerSelection('');
               const newMarker = L.marker(event.latlng, {
