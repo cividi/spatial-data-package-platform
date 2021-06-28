@@ -42,7 +42,7 @@
       >
         <button
           style="background-color: #543076; border-radius: 50px"
-          v-on:click="markerTools=!markerTools; showAnnotations(); map.closePopup();">
+          v-on:click="markerTools=!markerTools; showAnnotations(); map.closePopup()">
           <v-icon large color="white"> mdi-brush </v-icon>
         </button>
         <v-card v-if="markerTools" style="position: absolute; width: 36px">
@@ -81,7 +81,7 @@
               <v-col >
                 <v-tooltip left>
                   <template v-slot:activator="{on}">
-                    <v-btn icon v-bind="attrs" v-on="on"
+                    <v-btn icon v-on="on"
                        @click="toggelMarkerSelection(''); hideAnnotations();
                       markerTools=!markerTools;">
                       <v-icon large color="black"> mdi-eye-off </v-icon>
@@ -438,7 +438,6 @@ export default {
               this.annotationMarkers.addLayer(this.newMarker);
             }
             if (this.markerSelectionPolygon) {
-              // eslint-disable-next-line no-const-assign
               this.paintNow = !this.paintNow;
               if (this.paintNow) {
                 this.myPolyline = L.polyline([], { color: '#008000', weight: 15, opacity: 0.5 },).addTo(this.annotationMarkers);
@@ -500,8 +499,9 @@ export default {
     },
 
     editMarker(e) {
+      this.map.closePopup();
       const marker = e.target;
-      const popupForm = ` 
+      this.popupForm = ` 
         <div style="width: 15em; text-align: center">
           <button id="button-save" style="padding: 0px 4px 0px 4px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px"></button>
           <div style=" display: inline-block; margin: 0px 6px 0px 6px; width: 15px; height: 15px; border-radius: 15px; overflow: hidden">
@@ -515,8 +515,7 @@ export default {
       if (marker.hasOwnProperty('_popup')) {
         marker.unbindPopup();
       }
-      marker.closeTooltip();
-      marker.bindPopup(popupForm);
+      marker.bindPopup(this.popupForm);
       marker.openPopup();
 
       L.DomUtil.get('button-save').innerText = this.$i18n.t('tooltip.markerEditorSave');
@@ -538,8 +537,9 @@ export default {
     },
 
     editPolyline(e) {
+      this.map.closePopup();
       const marker = e.target;
-      const popupForm = ` 
+      this.popupForm = ` 
         <div style="width: 15em; text-align: center">
           <button id="button-save" style="padding: 0px 4px 0px 4px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px"></button>
           <div style=" display: inline-block; margin: 0px 6px 0px 6px; width: 15px; height: 15px; border-radius: 15px; overflow: hidden">
@@ -553,8 +553,8 @@ export default {
       if (marker.hasOwnProperty('_popup')) {
         marker.unbindPopup();
       }
-      marker.closeTooltip();
-      marker.bindPopup(popupForm);
+
+      marker.bindPopup(this.popupForm);
       marker.openPopup();
 
       L.DomUtil.get('button-save').innerText = this.$i18n.t('tooltip.markerEditorSave');
@@ -581,7 +581,7 @@ export default {
 
     editPostIt(e) {
       const marker = e.target;
-      const popupForm = ` 
+      this.popupForm = ` 
         <div style="width: 18em; text-align: center">
         <label id="PostItTextHeader" for="PostItText"></label><br>
         <input style="margin:5px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px;" 
@@ -594,12 +594,15 @@ export default {
           </div>
           <button id="button-delete" style="padding: 0px 4px 0px 4px; border: 1px solid rgba(0,0,0,0.3); border-radius: 2px"></button>
         </div> `;
-
       if (marker.hasOwnProperty('_popup')) {
         marker.unbindPopup();
       }
-      marker.closeTooltip();
-      marker.bindPopup(popupForm);
+
+      marker.bindPopup(this.popupForm, {
+        autoClose: false,
+        closeOnClick: false,
+        closeButton: false
+      });
       marker.openPopup();
 
       const TooltipSnippet = marker.getTooltip().getContent();
