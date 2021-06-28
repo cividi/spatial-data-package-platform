@@ -2,24 +2,24 @@
 <i18n>
 {
   "de": {
-    "tooltip.marker": "Klicken Sie auf die Karte, um eine Markierung zu platzieren",
-    "tooltip.polygonStart": "Klicken Sie auf die Karte, um ein Polygon zu beginnen",
-    "tooltip.polygonEnd": "Klicken Sie erneut, um das Polygon zu beenden",
-    "tooltip.postIt": "Klicken Sie auf die Karte, um ein Post-it zu setzten",
-    "tooltip.deactivateAnnotation": "Klicken Sie hier, um alle Anmerkung zu verbergen",
-    "tooltip.postItEditorTextInput": "Geben Sie hier Ihre Post-it-Notiz ein:",
+    "tooltip.marker": "Marker auf der Karte setzen",
+    "tooltip.polygonStart": "Klicken um Markiermodus zu starten ",
+    "tooltip.polygonEnd": "Klick um Markiermodus zu verlassen",
+    "tooltip.postIt": "Post-it auf der Karte setzen",
+    "tooltip.deactivateAnnotation": "Anmerkungen verbergen",
+    "tooltip.postItEditorTextInput": "Kommentar:",
     "tooltip.markerEditorSave": "Speichern",
     "tooltip.markerEditorDelete": "Löschen"
   },
   "fr": {
-    "tooltip.marker": "FRENCH VERSION",
-    "tooltip.polygonStart": "FRENCH VERSION",
-    "tooltip.polygonEnd": "FRENCH VERSION",
-    "tooltip.postIt": "FRENCH VERSION",
-    "tooltip.deactivateAnnotation": "FRENCH VERSION",
-    "tooltip.postItEditorTextInput": "FRENCH VERSION",
-    "tooltip.markerEditorSave": "FRENCH VERSION",
-    "tooltip.markerEditorDelete": "FRENCH VERSION"
+    "tooltip.marker": "Définir un marqueur sur la carte",
+    "tooltip.polygonStart": "Cliquez pour démarrer le mode marqueur",
+    "tooltip.polygonEnd": "Cliquez pour quitter le mode marqueur",
+    "tooltip.postIt": "Mettre un post-it sur la carte",
+    "tooltip.deactivateAnnotation": "Masquer les annotations",
+    "tooltip.postItEditorTextInput": "Annotations",
+    "tooltip.markerEditorSave": "Save",
+    "tooltip.markerEditorDelete": "Delete"
   }
 }
 </i18n>
