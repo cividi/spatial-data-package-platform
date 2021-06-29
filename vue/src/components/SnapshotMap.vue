@@ -1,3 +1,12 @@
+/*
+Annotation savings in properties:
+
+ Marker & Polygon:
+  - color: Color-hex
+ Post it:
+  - postItText: string
+  - backgroundColor: Color-hex
+ */
 <!-- eslint-disable -->
 <i18n>
 {
@@ -325,6 +334,7 @@ export default {
       }
       this.changeCursor();
     },
+
     createFeatureLayer(geojson, attribution) {
       const geoJsonExtended = L.geoJson(geojson, {
         attribution,
@@ -425,7 +435,8 @@ export default {
             if (this.markerSelectionMarker) {
               this.markerTools = false;
               this.toggelMarkerSelection('');
-              const pathFillColor = this.hexToRgb('#0000ff');
+              const colorhex = '#0000ff';
+              const pathFillColor = this.hexToRgb(colorhex);
               const markerSVG = `<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' width='60' height='60' viewBox='0 0 24 24'><path fill="${pathFillColor}" d='M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z' /></svg>`;
               this.newMarker = L.marker(event.latlng, {
                 icon: L.icon({
@@ -433,18 +444,28 @@ export default {
                   iconSize: [30, 30]
                 })
               });
-              this.newMarker.on('contextmenu', this.deleteMarker, this);
+              this.newMarker.feature = {
+                properties: { color: colorhex, annotationType: 'Marker' }
+              };
+
               this.newMarker.on('click', this.editMarker, this);
               this.annotationMarkers.addLayer(this.newMarker);
+              this.saveMarkerLocalStorage();
             }
             if (this.markerSelectionPolygon) {
               this.paintNow = !this.paintNow;
               if (this.paintNow) {
-                this.myPolyline = L.polyline([], { color: '#008000', weight: 15, opacity: 0.5 },).addTo(this.annotationMarkers);
+                const colorhex = '#008000';
+                this.myPolyline = L.polyline([], { color: colorhex, weight: 15, opacity: 0.5 },);
+                this.myPolyline.feature = {
+                  properties: { color: colorhex, annotationType: 'Polygon' }
+                };
+                this.myPolyline.addTo(this.annotationMarkers);
               } else {
                 this.markerTools = false;
                 this.toggelMarkerSelection('');
-                this.myPolyline.on('click', this.editPolyline, this.myPolyline);
+                this.myPolyline.on('click', this.editPolyline, this);
+                this.saveMarkerLocalStorage();
               }
             }
             if (this.markerSelectionNote) {
@@ -487,9 +508,82 @@ export default {
         console.log(error); // eslint-disable-line no-console
         this.isMapLoaded = true;
       }
-      // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
-      // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
+      if (localStorage.getItem('PostIts')) {
+        try {
+          this.geojsonLocalStorage = JSON.parse(localStorage.getItem('PostIts'));
+          this.readLocalStorage2Map(this.geojsonLocalStorage);
+        } catch (err) {
+          localStorage.removeItem('PostIts');
+        }
+      }
     },
+
+    readLocalStorage2Map(geojson) {
+      geojson.features.forEach((newElement) => {
+        if (newElement.geometry.geometry.type === 'Point') {
+          if (newElement.geometry.properties.annotationType === 'Marker') {
+            const colorhex = newElement.geometry.properties.color;
+            const pathFillColor = this.hexToRgb(colorhex);
+            const markerSVG = `<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' width='60' height='60' viewBox='0 0 24 24'><path fill="${pathFillColor}" d='M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z' /></svg>`;
+            this.newMarker = L.marker([newElement.geometry.geometry.coordinates[1],
+              newElement.geometry.geometry.coordinates[0]], {
+              icon: L.icon({
+                iconUrl: encodeURI(`data:image/svg+xml,${markerSVG}`),
+                iconSize: [30, 30]
+              })
+            });
+            this.newMarker.feature = {
+              properties: { color: colorhex, annotationType: 'Marker' }
+            };
+            this.newMarker.on('click', this.editMarker, this);
+            this.annotationMarkers.addLayer(this.newMarker);
+          } else if (newElement.geometry.properties.annotationType === 'PostIt') {
+            const newMarker = L.marker([newElement.geometry.geometry.coordinates[1],
+              newElement.geometry.geometry.coordinates[0]], {
+              icon: L.icon({
+                iconUrl: 'my-icon.png',
+                iconSize: [0, 0]
+              })
+            });
+            newMarker.bindTooltip('', {
+              permanent: true,
+              interactive: true,
+              className: 'leaflet-tooltip'
+            });
+            const newPostitText = newElement.geometry.properties.postItText;
+            const postItText = this.formatLongPostItNotes(newPostitText);
+            const newColorHex = newElement.geometry.properties.backgroundColor;
+            const TooltipSnippet = `<div style='background:${newColorHex}; padding:1px 3px 1px 3px'><b>${postItText}</b></div>`;
+            newMarker.setTooltipContent(TooltipSnippet);
+            newMarker.feature = {
+              properties: {
+                backgroundColor: newColorHex,
+                postItText: newPostitText,
+                annotationType: 'PostIt'
+              }
+            };
+            this.annotationMarkers.addLayer(newMarker);
+            newMarker.on('click', this.editPostIt, newMarker);
+          } else { console.log(' unknown Marker Annotation Type'); }
+        } else if (newElement.geometry.geometry.type === 'LineString') {
+          if (newElement.geometry.properties.annotationType === 'Polygon') {
+            const colorhex = newElement.geometry.properties.color;
+            const coordinatesLongLat = newElement.geometry.geometry.coordinates;
+            const coordinatesLatLong = [];
+            coordinatesLongLat.forEach((coordinate) => {
+              coordinatesLatLong.push([coordinate[1], coordinate[0]]);
+            });
+            this.myPolyline = L.polyline(coordinatesLatLong,
+              { color: colorhex, weight: 15, opacity: 0.5 },);
+            this.myPolyline.feature = { properties: { color: colorhex, annotationType: 'Polygon' } };
+
+            this.myPolyline.addTo(this.annotationMarkers);
+            this.myPolyline.on('click', this.editPolyline, this.myPolyline);
+          } else { console.log(' unknown Marker Annotation Type'); }
+        } else { console.log(' unknown Marker geometry type'); }
+      });
+    },
+
 
     hideAnnotations() {
       this.map.removeLayer(this.annotationMarkers);
@@ -522,17 +616,23 @@ export default {
       L.DomUtil.get('button-delete').innerText = this.$i18n.t('tooltip.markerEditorDelete');
 
       L.DomEvent.addListener(L.DomUtil.get('button-save'), 'click', () => {
-        const pathFillColor = this.hexToRgb(L.DomUtil.get('pathFillColor').value);
+        const newColorHex = L.DomUtil.get('pathFillColor').value;
+        const pathFillColor = this.hexToRgb(newColorHex);
         const newMarkerSVG = `<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' width='60' height='60' viewBox='0 0 24 24'><path fill="${pathFillColor}" d='M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z' /></svg>`;
         marker.setIcon(L.icon({
           iconUrl: encodeURI(`data:image/svg+xml,${newMarkerSVG}`),
           iconSize: [30, 30]
         }));
+        marker.feature = {
+          properties: { color: newColorHex, annotationType: 'Marker' }
+        };
         marker.closePopup();
+        this.saveMarkerLocalStorage();
       });
       L.DomEvent.addListener(L.DomUtil.get('button-delete'), 'click', () => {
         this.annotationMarkers.removeLayer(marker);
         marker.closePopup();
+        this.saveMarkerLocalStorage();
       });
     },
 
@@ -561,12 +661,18 @@ export default {
       L.DomUtil.get('button-delete').innerText = this.$i18n.t('tooltip.markerEditorDelete');
 
       L.DomEvent.addListener(L.DomUtil.get('button-save'), 'click', () => {
-        const pathFillColor = this.hexToRgb(L.DomUtil.get('pathFillColor').value);
-        marker.setStyle({ color: pathFillColor, weight: 15, opacity: 0.4 });
+        const newColorHex = L.DomUtil.get('pathFillColor').value;
+        const pathFillColor = this.hexToRgb(newColorHex);
+        marker.setStyle({ color: pathFillColor });
         marker.closePopup();
+        marker.feature = {
+          properties: { color: newColorHex, annotationType: 'Polygon' }
+        };
+        this.saveMarkerLocalStorage();
       });
       L.DomEvent.addListener(L.DomUtil.get('button-delete'), 'click', () => {
         this.annotationMarkers.removeLayer(marker);
+        this.saveMarkerLocalStorage();
       });
     },
 
@@ -598,11 +704,7 @@ export default {
         marker.unbindPopup();
       }
 
-      marker.bindPopup(this.popupForm, {
-        autoClose: false,
-        closeOnClick: false,
-        closeButton: false
-      });
+      marker.bindPopup(this.popupForm);
       marker.openPopup();
 
       const TooltipSnippet = marker.getTooltip().getContent();
@@ -619,15 +721,25 @@ export default {
         L.DomUtil.get('backgroundColor').value = oldPostItColor;
       }
       L.DomEvent.addListener(L.DomUtil.get('button-save'), 'click', () => {
-        const postItText = this.formatLongPostItNotes(L.DomUtil.get('PostItText').value);
-        const postItColor = L.DomUtil.get('backgroundColor').value;
-        const TooltipSnippet = `<div style='background:${postItColor}; padding:1px 3px 1px 3px'><b>${postItText}</b></div>`;
+        const newPostitText = L.DomUtil.get('PostItText').value;
+        const postItText = this.formatLongPostItNotes(newPostitText);
+        const newColorHex = L.DomUtil.get('backgroundColor').value;
+        const TooltipSnippet = `<div style='background:${newColorHex}; padding:1px 3px 1px 3px'><b>${postItText}</b></div>`;
         marker.setTooltipContent(TooltipSnippet);
+        marker.feature = {
+          properties: {
+            backgroundColor: newColorHex,
+            postItText: newPostitText,
+            annotationType: 'PostIt'
+          }
+        };
         marker.closePopup();
         marker.openTooltip();
+        this.saveMarkerLocalStorage();
       });
       L.DomEvent.addListener(L.DomUtil.get('button-delete'), 'click', () => {
         this.annotationMarkers.removeLayer(marker);
+        this.saveMarkerLocalStorage();
       });
     },
 
@@ -663,6 +775,11 @@ export default {
       }
 
       return str;
+    },
+
+    saveMarkerLocalStorage() {
+      const parsed = JSON.stringify(this.annotationMarkers.toGeoJSON());
+      localStorage.setItem('PostIts', parsed);
     },
 
 
