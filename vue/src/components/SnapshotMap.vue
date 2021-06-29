@@ -59,13 +59,15 @@
           :sources="sources"
         />
       </v-card>
+
       <p
         v-if="!hash"
         id="mapattribution"
         class="small mb-0"
         >
-      <a href="https://www.openstreetmap.org/copyright" target="_blank">{{ $t('map') }}: Mapbox, © OpenStreetMap</a>
+          <a href="https://www.openstreetmap.org/copyright" target="_blank">{{ $t('map') }}: Mapbox, © OpenStreetMap</a>
       </p>
+
     </v-content>
 </template>
 
