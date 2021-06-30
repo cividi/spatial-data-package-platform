@@ -1,16 +1,3 @@
-<!-- eslint-disable -->
-<i18n>
-{
-  "de": {
-    "map": "Karte"
-  },
-  "fr": {
-    "map": "Carte"
-  }
-}
-</i18n>
-<!-- eslint-enable -->
-
 <template>
     <v-content>
       <v-slide-x-reverse-transition>
@@ -60,14 +47,6 @@
         />
       </v-card>
 
-      <p
-        v-if="!hash"
-        id="mapattribution"
-        class="small mb-0"
-        >
-          <a href="https://www.openstreetmap.org/copyright" target="_blank">{{ $t('map') }}: Mapbox, © OpenStreetMap</a>
-      </p>
-
     </v-content>
 </template>
 
@@ -106,10 +85,6 @@ body,
     animation: none;
 }
 
-#map .mapbox-improve-map {
-    display: none;
-}
-
 #mapinfo {
     position: absolute;
     bottom: 2em;
@@ -125,15 +100,7 @@ body,
     pointer-events: auto;
     clip-path: circle(100% at center);
 }
-#mapattribution {
-    position: absolute;
-    bottom: 0.5em;
-    right: 1em;
-}
 
-.mapbox-improve-map {
-    display: none;
-}
 </style>
 
 <script>
@@ -298,7 +265,7 @@ export default {
         if (this.screenshotMode) {
           // no zoom controls in screenshot mode
           document.querySelector('.leaflet-control-zoom').style.display = 'none';
-        } else {
+        } else if (this.hash) {
           // no attribution in normal mode
           document.querySelector('.leaflet-control-attribution').style.display = 'none';
         }
