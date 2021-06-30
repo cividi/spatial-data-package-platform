@@ -12,7 +12,7 @@
 <!-- eslint-enable -->
 
 <template>
-    <v-content>
+    <v-main>
       <v-slide-x-reverse-transition>
         <v-btn fab absolute small
           style="top:1.2em; right:1.3em;"
@@ -68,7 +68,7 @@
           <a href="https://www.openstreetmap.org/copyright" target="_blank">{{ $t('map') }}: Mapbox, © OpenStreetMap</a>
       </p>
 
-    </v-content>
+    </v-main>
 </template>
 
 <style>
@@ -209,12 +209,31 @@ export default {
         pointToLayer: (feature, latlng) => {
           if (feature.properties.radius) {
             // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
+            if (feature.properties.title || feature.properties.description) {
+              feature.properties.className = 'popup-title-description';
+              const clickcircle = new L.Circle(latlng, feature.properties);
+              clickcircle.on('click', this.showTitleDescPopup);
+              return clickcircle;
+            }
+            // if clickcircle has not been returned, return normal circle
+            feature.properties.interactive = false;
             return new L.Circle(latlng, feature.properties);
           }
           return new L.Marker(latlng);
         }
       });
       return geoJsonExtended;
+    },
+
+    showTitleDescPopup(e) {
+      let content = e.target.options.description;
+      if (e.target.options.title) {
+        content = `<b>${e.target.options.title}</b><br />${content}`;
+      }
+      new L.Popup()
+        .setLatLng(e.target._latlng) // eslint-disable-line no-underscore-dangle
+        .setContent(content)
+        .openOn(this.map);
     },
 
     setupEmpty() {
