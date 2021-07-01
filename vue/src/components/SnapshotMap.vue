@@ -99,6 +99,28 @@ Annotation savings in properties:
                   {{ $t("tooltip.deactivateAnnotation")}}
                 </v-tooltip>
               </v-col>
+              <v-col >
+                <v-tooltip left>
+                  <template v-slot:activator="{on}">
+                    <v-btn icon v-on="on"
+                       @click="createAnnotatioSh()">
+                      <v-icon large color="black"> mdi-database-plus </v-icon>
+                    </v-btn>
+                  </template>
+                  Create a snapshot for annotations
+                </v-tooltip>
+              </v-col>
+              <v-col >
+                <v-tooltip left>
+                  <template v-slot:activator="{on}">
+                    <v-btn icon v-on="on"
+                       @click="patchAnnotationSh2Server()">
+                      <v-icon large color="black"> mdi-pencil-plus </v-icon>
+                    </v-btn>
+                  </template>
+                  Store the annotations in the annotation snapshot
+                </v-tooltip>
+              </v-col>
             </v-row>
         </v-card>
       </div>
@@ -224,6 +246,7 @@ body,
 </style>
 
 <script>
+import gql from 'graphql-tag';
 import Vue from 'vue';
 import L from 'mapbox.js';
 import geoViewport from '@mapbox/geo-viewport';
@@ -261,7 +284,8 @@ export default {
       paintNow: false,
       markerSelectionMarker: false,
       markerSelectionPolygon: false,
-      markerSelectionNote: false
+      markerSelectionNote: false,
+      annotationShPK: ''
     };
   },
 
@@ -302,6 +326,107 @@ export default {
   },
 
   methods: {
+    createSnapshot(annotationJson) {
+      const snapshotExample = {
+        name: 'ExampleName',
+        title: 'ExampleTitle',
+        description: 'ExampleDescription',
+        version: '1.0.0',
+        datapackage_version: '1.0.0',
+        gemeindescan_version: '0.3.1',
+        gemeindescan_meta: {
+          topic: 'GEMEINDESCAN TOPIC'
+        },
+        format: 'geojson',
+        licenses: [{
+          url: 'https://opendefinition.org/licenses/odc-by',
+          type: 'ODC-BY-1.0',
+          title: 'Open Data Commons Attribution License'
+        }],
+        views: [{
+          name: 'mapview',
+          specType: 'gemeindescanSnapshot',
+          spec: {
+            title: 'ExampleTitle',
+            description: 'ExampleDescription',
+            attribution: '',
+            bounds: ['geo:47.45236318,9.37245474', 'geo:47.46902238,9.40338365'],
+            legend: []
+          },
+          resources: ['Annotation']
+        }],
+        sources: [],
+        resources: [{
+          name: 'Annotation',
+          mediatype: 'application/geo+json',
+          licenses: [],
+          data: annotationJson
+        }],
+        contributors: [{
+          path: '',
+          role: 'author',
+          email: '',
+          title: 'Sven Brieden'
+        }]
+      };
+      return snapshotExample;
+    },
+
+    async createAnnotatioSh() {
+      const { data } = await this.$apollo.mutate({
+        mutation: gql`mutation updatesnapshot($data: SnapshotMutationInput!){
+            snapshotmutation(input: $data) {
+              snapshot {
+                id
+                pk
+                title
+                topic
+                municipality {
+                  bfsNumber
+                }
+                datafile
+              }
+            }
+          }`,
+        variables: {
+          data: {
+            title: `Annotations_${new Date().toISOString()}`,
+            topic: 'Skizzenlayer',
+            bfsNumber: 321, /* random valid bfsNumber  */
+            wshash: btoa(`WorkspaceNode:${this.$route.params.wshash}`)
+            /*   clientMutationId: this.id */
+          }
+        }
+      });
+      this.annotationShPK = data.snapshotmutation.snapshot.pk;
+    },
+
+    patchAnnotationSh2Server() {
+      if (localStorage.getItem('PostIts')) {
+        const annotationGeoJSON = JSON.parse(localStorage.getItem('PostIts'));
+        const annotationSh = this.createSnapshot(annotationGeoJSON);
+        const annotationShBlob = new Blob([JSON.stringify(annotationSh)], {
+          type: 'application/json'
+        });
+        this.httpupload(annotationShBlob, this.annotationShPK);
+      } else { console.log(' no localStorage PostIts to ship'); }
+    },
+
+    async httpupload(file, snapshotPk) {
+      const csrftoken = this.$cookies.get('csrftoken', '');
+      const formData = new FormData();
+      formData.append('data_file', file, `annotations_${new Date().toISOString()}.json`);
+      await this.$restApi.patch(`snapshots/${snapshotPk}/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'X-CSRFToken': csrftoken
+        },
+        onUploadProgress: (event) => {
+          this.progress = Math.floor(100 * event.loaded / event.total);
+        }
+      });
+    },
+
     changeCursor() {
       if (this.paintNow) {
         this.cursorType = 'pointer';
