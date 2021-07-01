@@ -121,6 +121,17 @@ Annotation savings in properties:
                   Store the annotations in the annotation snapshot
                 </v-tooltip>
               </v-col>
+              <v-col >
+                <v-tooltip left>
+                  <template v-slot:activator="{on}">
+                    <v-btn icon v-on="on"
+                       @click="laodAnnotationsfromServer()">
+                      <v-icon large color="black"> mdi-cloud-download </v-icon>
+                    </v-btn>
+                  </template>
+                  Get annotations from server
+                </v-tooltip>
+              </v-col>
             </v-row>
         </v-card>
       </div>
@@ -326,6 +337,35 @@ export default {
   },
 
   methods: {
+    storeAnnotationSh2localStorage(newAnnotationSh) {
+      newAnnotationSh.resources.forEach((resource) => {
+        if (resource.name === 'Annotation') {
+          const parsed = JSON.stringify(resource.data);
+          localStorage.setItem('PostIts', parsed);
+        }
+      });
+    },
+
+    async laodAnnotationsfromServer() {
+      console.log('get all Snapshots');
+      const { data } = await this.$apollo.mutate({
+        mutation: gql`{
+            snapshots {
+              edges {
+                node {
+                  title
+                  pk
+                  data
+                }}}}`
+      });
+      data.snapshots.edges.forEach((edge) => {
+        if (edge.node.title.includes('Annotation')) {
+          console.log(edge.node.title);
+          this.storeAnnotationSh2localStorage(edge.node.data);
+        }
+      });
+    },
+
     createSnapshot(annotationJson) {
       const snapshotExample = {
         name: 'ExampleName',
@@ -420,9 +460,6 @@ export default {
         headers: {
           'Content-Type': 'multipart/form-data',
           'X-CSRFToken': csrftoken
-        },
-        onUploadProgress: (event) => {
-          this.progress = Math.floor(100 * event.loaded / event.total);
         }
       });
     },
