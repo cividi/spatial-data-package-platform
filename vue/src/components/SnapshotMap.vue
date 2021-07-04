@@ -42,6 +42,7 @@
       >
         <button
           style="background-color: #543076; border-radius: 50px"
+          v-show="!screenshotMode"
           v-on:click="markerTools=!markerTools; showAnnotations(); map.closePopup()">
           <v-icon large color="white"> mdi-brush </v-icon>
         </button>
