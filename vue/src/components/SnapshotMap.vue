@@ -18,7 +18,7 @@
       <v-btn
         v-if="hash && !screenshotIsThumbnail"
         fab absolute small
-        style="bottom:2em; right:2em;"
+        style="bottom:2.5em; right:2em;"
         color="white"
         @click="mapinfoopen=!mapinfoopen">
         <v-icon>mdi-information-variant</v-icon>
@@ -86,7 +86,7 @@ body,
 
 #mapinfo {
     position: absolute;
-    bottom: 2em;
+    bottom: 2.5em;
     right: 2em;
     min-width: 240px;
     clip-path: circle(0% at 95% 90%);
@@ -283,9 +283,10 @@ export default {
         if (this.screenshotMode) {
           // no zoom controls in screenshot mode
           document.querySelector('.leaflet-control-zoom').style.display = 'none';
+          document.querySelector('.leaflet-control-attribution').style.display = 'none';
         } else if (this.hash) {
           // no attribution in normal mode
-          document.querySelector('.leaflet-control-attribution').style.display = 'none';
+          document.querySelector('.leaflet-control-attribution').style.background = 'none';
         }
         if (this.screenshotIsThumbnail) {
           document.querySelector('#mapinfo').style.visibility = 'hidden';
