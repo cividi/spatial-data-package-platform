@@ -5,7 +5,7 @@ DOCKER_EXEC_VUE=$(shell command -v docker > /dev/null && echo "docker-compose ex
 DOCKER_EXEC_WWW=$(shell command -v docker > /dev/null && echo "docker-compose exec $(NOTTY) www")
 
 
-.PHONY: tests
+.PHONY: deploy_version
 
 init:
 	cd django && make init
@@ -87,3 +87,9 @@ import-db:
 tests:
 	cd django && make tests
 	cd vue && make tests
+
+deploy_version:
+	bash -c 'printf "%s\t%s" "$$(git describe --abbrev=0 --tags)" "$$(git rev-parse --short HEAD)" > django/VERSION'
+	cp django/VERSION vue/VERSION
+
+-include deploy_version

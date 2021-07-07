@@ -19,4 +19,6 @@ def context_processor(request):
     return {
         'ADMIN_HEADER_COLOR': settings.ADMIN_HEADER_COLOR,
         'LOGIN_PAGE_TITLE': settings.LOGIN_PAGE_TITLE,
+        'CURRENT_TAG_VERSION': settings.CURRENT_TAG_VERSION,
+        'CURRENT_COMMIT_VERSION': settings.CURRENT_COMMIT_VERSION
     }
