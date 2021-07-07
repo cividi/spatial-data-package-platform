@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/vue/docker/vue/package/01"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "pip"
+    directory: "/django/docker/django/requirements/00"
+    schedule:
+      interval: "daily"
