@@ -1,5 +1,5 @@
 <template>
-    <v-content>
+    <v-main>
       <v-slide-x-reverse-transition>
         <v-btn fab absolute small
           style="top:1.2em; right:1.3em;"
@@ -18,7 +18,7 @@
       <v-btn
         v-if="hash && !screenshotIsThumbnail"
         fab absolute small
-        style="bottom:2em; right:2em;"
+        style="bottom:2.5em; right:2em;"
         color="white"
         @click="mapinfoopen=!mapinfoopen">
         <v-icon>mdi-information-variant</v-icon>
@@ -46,7 +46,7 @@
           :sources="sources"
         />
       </v-card>
-    </v-content>
+    </v-main>
 </template>
 
 <style>
@@ -84,13 +84,9 @@ body,
     animation: none;
 }
 
-#map .mapbox-improve-map {
-    display: none;
-}
-
 #mapinfo {
     position: absolute;
-    bottom: 2em;
+    bottom: 2.5em;
     right: 2em;
     min-width: 240px;
     clip-path: circle(0% at 95% 90%);
@@ -104,9 +100,6 @@ body,
     clip-path: circle(100% at center);
 }
 
-.mapbox-improve-map {
-    display: none;
-}
 </style>
 
 <script>
@@ -182,12 +175,31 @@ export default {
         pointToLayer: (feature, latlng) => {
           if (feature.properties.radius) {
             // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
+            if (feature.properties.title || feature.properties.description) {
+              feature.properties.className = 'popup-title-description';
+              const clickcircle = new L.Circle(latlng, feature.properties);
+              clickcircle.on('click', this.showTitleDescPopup);
+              return clickcircle;
+            }
+            // if clickcircle has not been returned, return normal circle
+            feature.properties.interactive = false;
             return new L.Circle(latlng, feature.properties);
           }
           return new L.Marker(latlng);
         }
       });
       return geoJsonExtended;
+    },
+
+    showTitleDescPopup(e) {
+      let content = e.target.options.description;
+      if (e.target.options.title) {
+        content = `<b>${e.target.options.title}</b><br />${content}`;
+      }
+      new L.Popup()
+        .setLatLng(e.target._latlng) // eslint-disable-line no-underscore-dangle
+        .setContent(content)
+        .openOn(this.map);
     },
 
     setupEmpty() {
@@ -247,6 +259,9 @@ export default {
               this.layerContainer.addLayer(this.createFeatureLayer(
                 layer.data.features, this.geojson.views[0].spec.attribution
               ));
+            } else if (layer.mediatype === 'application/vnd.wms') {
+              const tileLayer = L.tileLayer.wms(layer.path, layer.parameters);
+              this.layerContainer.addLayer(tileLayer);
             }
           });
         } else if (this.bfsNumber) { // empty municipality
@@ -268,9 +283,10 @@ export default {
         if (this.screenshotMode) {
           // no zoom controls in screenshot mode
           document.querySelector('.leaflet-control-zoom').style.display = 'none';
-        } else {
-          // no attribution in normal mode
           document.querySelector('.leaflet-control-attribution').style.display = 'none';
+        } else if (this.hash) {
+          // no attribution in normal mode
+          document.querySelector('.leaflet-control-attribution').style.background = 'none';
         }
         if (this.screenshotIsThumbnail) {
           document.querySelector('#mapinfo').style.visibility = 'hidden';
