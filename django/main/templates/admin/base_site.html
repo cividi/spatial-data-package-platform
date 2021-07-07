@@ -77,10 +77,20 @@
         text-align: center;
         color: white;
         font-weight: bold;
-        background-color: #ff0000;
+        background-color: {{ ADMIN_HEADER_COLOR }};
         display: flex;
         justify-content: center;
         align-items: center;
+        font-weight: 300;
+    }
+    footer a,
+    footer a:focus,
+    footer a:link,
+    footer a:visited {
+        color: white;
+    }
+    footer a:hover{
+        font-weight: 900;
     }
 </style>
 {% endblock %}
