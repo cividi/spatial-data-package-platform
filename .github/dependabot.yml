@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/vue/docker/vue/package/01"
+    directory: "/vue/docker/vue/package/00"
     schedule:
       interval: "daily"
 
