@@ -44,7 +44,7 @@
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.1.0",
+    "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/cli-plugin-eslint": "^4.1.0",
     "@vue/cli-plugin-router": "^4.1.0",
     "@vue/cli-plugin-vuex": "^4.1.0",
