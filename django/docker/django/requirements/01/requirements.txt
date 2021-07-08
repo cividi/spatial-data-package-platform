@@ -51,7 +51,7 @@ pylint-plugin-utils==0.6
 pyparsing==2.4.7
 pytest==6.2.1
 pytest-django==4.1.0
-pytz==2020.5
+pytz==2021.1
 requests==2.25.1
 Rx==1.6.1
 singledispatch==3.6.2
