@@ -53,7 +53,7 @@
     "ava": "^3.8.2",
     "babel-eslint": "^10.0.3",
     "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
+    "eslint-plugin-vue": "^6.2.2",
     "jsdom": "^16.2.2",
     "jsdom-global": "^3.0.2",
     "prerender-spa-plugin": "^3.2.1",
