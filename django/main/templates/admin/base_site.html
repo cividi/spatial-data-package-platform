@@ -64,5 +64,33 @@
     .object-tools a:focus, .object-tools a:hover {
         background-color: #543076;
     }
+    body {
+        height: auto;
+        min-height: calc(100vh - 35px);
+    }
+    body #container {
+        height: auto;
+        min-height: calc(100vh - 35px);
+    }
+    footer {
+        height: 35px;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        background-color: {{ ADMIN_HEADER_COLOR }};
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 300;
+    }
+    footer a,
+    footer a:focus,
+    footer a:link,
+    footer a:visited {
+        color: white;
+    }
+    footer a:hover{
+        font-weight: 900;
+    }
 </style>
 {% endblock %}

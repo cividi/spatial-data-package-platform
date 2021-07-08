@@ -1,16 +1,3 @@
-<!-- eslint-disable -->
-<i18n>
-{
-  "de": {
-    "map": "Karte"
-  },
-  "fr": {
-    "map": "Carte"
-  }
-}
-</i18n>
-<!-- eslint-enable -->
-
 <template>
     <v-main>
       <v-slide-x-reverse-transition>
@@ -31,7 +18,7 @@
       <v-btn
         v-if="hash && !screenshotIsThumbnail"
         fab absolute small
-        style="bottom:2em; right:2em;"
+        style="bottom:2.5em; right:2em;"
         color="white"
         @click="mapinfoopen=!mapinfoopen">
         <v-icon>mdi-information-variant</v-icon>
@@ -59,15 +46,6 @@
           :sources="sources"
         />
       </v-card>
-
-      <p
-        v-if="!hash"
-        id="mapattribution"
-        class="small mb-0"
-        >
-          <a href="https://www.openstreetmap.org/copyright" target="_blank">{{ $t('map') }}: Mapbox, © OpenStreetMap</a>
-      </p>
-
     </v-main>
 </template>
 
@@ -106,13 +84,9 @@ body,
     animation: none;
 }
 
-#map .mapbox-improve-map {
-    display: none;
-}
-
 #mapinfo {
     position: absolute;
-    bottom: 2em;
+    bottom: 2.5em;
     right: 2em;
     min-width: 240px;
     clip-path: circle(0% at 95% 90%);
@@ -125,15 +99,7 @@ body,
     pointer-events: auto;
     clip-path: circle(100% at center);
 }
-#mapattribution {
-    position: absolute;
-    bottom: 0.5em;
-    right: 1em;
-}
 
-.mapbox-improve-map {
-    display: none;
-}
 </style>
 
 <script>
@@ -317,9 +283,10 @@ export default {
         if (this.screenshotMode) {
           // no zoom controls in screenshot mode
           document.querySelector('.leaflet-control-zoom').style.display = 'none';
-        } else {
-          // no attribution in normal mode
           document.querySelector('.leaflet-control-attribution').style.display = 'none';
+        } else if (this.hash) {
+          // no attribution in normal mode
+          document.querySelector('.leaflet-control-attribution').style.background = 'none';
         }
         if (this.screenshotIsThumbnail) {
           document.querySelector('#mapinfo').style.visibility = 'hidden';
