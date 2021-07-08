@@ -9,7 +9,7 @@ blessings==1.7
 bpython==0.20.1
 certifi==2020.12.5
 chardet==4.0.0
-click==7.1.2
+click==8.0.1
 curtsies==0.3.4
 Django==3.1.12
 django-apscheduler==0.5.1
