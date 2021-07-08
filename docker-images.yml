@@ -10,7 +10,7 @@ services:
     hostname: vue
 
   django:
-    image: smartuse/gemeindescan-webui-django:3.1.12
+    image: smartuse/gemeindescan-webui-django:3.1.12a
     hostname: django
 
   www:

@@ -65,6 +65,11 @@ RUN apk add --no-cache \
         zlib-dev \
     && pip3 cache purge
 
+# python requirements 01 layer, depandabot updates
+COPY ./requirements/01/requirements.txt /tmp/requirements.txt
+RUN cd /opt && pip3 install -r /tmp/requirements.txt \
+    && pip3 cache purge
+
 COPY s6/etc/services.d /etc/services.d
 COPY s6/etc/cont-init.d /etc/cont-init.d
 ENTRYPOINT ["/init"]

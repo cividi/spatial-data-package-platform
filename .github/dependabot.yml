@@ -2,10 +2,18 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/vue/docker/vue/package/00"
+    allowed_updates:
+      - match:
+          update_type: "security"
+    open-pull-requests-limit: 10
     schedule:
       interval: "daily"
 
   - package-ecosystem: "pip"
-    directory: "/django/docker/django/requirements/00"
+    directory: "/django/docker/django/requirements/01"
+    allowed_updates:
+      - match:
+          update_type: "security"
+    open-pull-requests-limit: 10
     schedule:
       interval: "daily"
