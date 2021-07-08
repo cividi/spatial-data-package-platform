@@ -1,5 +1,5 @@
-GEMEINDESCAN_WEBUI_VUE=0.3.9
-GEMEINDESCAN_WEBUI_VUE_PREV=0.3.8
+GEMEINDESCAN_WEBUI_VUE=0.3.10
+GEMEINDESCAN_WEBUI_VUE_PREV=0.3.9
 NOTTY=$(shell command [ "$$DOCKER_NOTTY" = YES ] && echo "-T")
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec $(NOTTY) vue")
 
