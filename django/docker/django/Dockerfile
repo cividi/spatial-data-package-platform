@@ -67,7 +67,21 @@ RUN apk add --no-cache \
 
 # python requirements 01 layer, depandabot updates
 COPY ./requirements/01/requirements.txt /tmp/requirements.txt
-RUN cd /opt && pip3 install -r /tmp/requirements.txt \
+RUN apk add --no-cache \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        lcms2-dev \
+        openjpeg-dev \
+        tiff-dev \
+        zlib-dev \
+    && cd /opt && pip3 install --use-deprecated=legacy-resolver -r /tmp/requirements.txt \
+    && apk del \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        lcms2-dev \
+        openjpeg-dev \
+        tiff-dev \
+        zlib-dev \
     && pip3 cache purge
 
 COPY s6/etc/services.d /etc/services.d
