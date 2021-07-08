@@ -6,7 +6,7 @@ astroid==2.6.2
 attrs==20.3.0
 beautifulsoup4==4.9.3
 blessings==1.7
-bpython==0.20.1
+bpython==0.21
 certifi==2021.5.30
 chardet==4.0.0
 click==8.0.1
