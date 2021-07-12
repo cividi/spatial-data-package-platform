@@ -35,7 +35,7 @@
     "is-svg": "^4.2.2",
     "lodash": "^4.17.20",
     "mapbox.js": "^3.2.1",
-    "normalize-url": "^4.5.1",
+    "normalize-url": "^7.0.0",
     "postcss": "^7.0.36",
     "ssri": "^7.1.1",
     "vh-check": "^2.0.5",
