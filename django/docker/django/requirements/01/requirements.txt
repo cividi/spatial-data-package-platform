@@ -68,4 +68,4 @@ uvloop==0.14.0
 wcwidth==0.2.5
 websockets==9.1
 wrapt==1.12.1
-yapf==0.30.0
+yapf==0.31.0
