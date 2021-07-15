@@ -91,7 +91,7 @@
         </div>
 
         <snapshot-list
-          v-if="snapshotsStore && !hash"
+          v-if="snapshotsStore"
           :snapshots="snapshotsStore" :withTopic="true"
         />
 

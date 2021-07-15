@@ -4,6 +4,7 @@
   "de": {
     "cancel": "abbrechen",
     "mySnapshots": "Meine Kartenlayer",
+    "myAnnotations": "Meine Zeichenskizzen",
     "addSnapshot": "Kartenlayer hinzufügen",
     "workspace.intro": "Willkommen bei {platformName}. Dies ist dein persönlicher Workspace. Einführungs-video anschauen.",
     "snapshotEdit.warning": "Bearbeiten des Workspaces ist nur eingeloggt möglich."
@@ -11,6 +12,7 @@
   "fr": {
     "cancel": "Annuler",
     "mySnapshots": "Mes couche de données",
+    "myAnnotations": "FRENCH",
     "addSnapshot": "Ajouter des données",
     "workspace.intro": "Einführungsvideo: youtube.com/XYZ",
     "snapshotEdit.warning": "La modification des workspace n'est possible qu'en étant connecté."
@@ -58,6 +60,20 @@
             <p class="show-linebreaks">{{ description }}</p>
           </div>
         </div>
+
+        <div class="px-0" v-if="$store.state.isUserLoggedIn">
+          <div class="smaller hint">
+            <h4>{{ $t('myAnnotations') }}</h4>
+          </div>
+        </div>
+
+        <snapshot-list
+          :snapshots="annotationsWorkspace"
+          :workspaceHash="wshash"
+          :snapshotHash="hash"
+          :isAnnotation="true"
+          v-on:loadAnnotationLayer="loadAnnotationLayer"
+        />
 
         <div class="px-0" v-if="$store.state.isUserLoggedIn">
           <div class="smaller hint">
@@ -113,6 +129,7 @@
     <snapshot-map ref="map"
       :geojson="geojson"
       :geoboundsIn="geobounds"
+      :annotations="annotationLayer"
     />
     <v-overlay
       absolute="absolute"
@@ -168,7 +185,6 @@
 </template>
 
 <style>
-
 #snapshotview .v-text-field--outlined fieldset {
   border-color: rgba(0, 0, 0, 0.12);
 }
@@ -236,7 +252,6 @@ h4 {
   padding-top: 5px;
   font-size: 1em;
 }
-
 </style>
 
 <script>
@@ -265,6 +280,7 @@ export default {
       geobounds: [],
       municipalityName: '',
       snapshotsWorkspace: [],
+      annotationsWorkspace: [],
       title: '',
       description: '',
       errorsettings: {},
@@ -273,7 +289,8 @@ export default {
       ordering: undefined,
       onboardingTipsWorkspace: true,
       snapshotsStore: [],
-      snapshotStoreUrl: process.env.VUE_APP_SNAPSHOTSTOREURL
+      snapshotStoreUrl: process.env.VUE_APP_SNAPSHOTSTOREURL,
+      annotationLayer: null
     };
   },
 
@@ -337,6 +354,25 @@ export default {
   },
 
   methods: {
+    async loadAnnotationLayer(pk) {
+      const { data } = await this.$apollo.query({
+        query: gql`query getannotationsh($hash: ID!) {
+        snapshot(id: $hash) {
+              id
+              pk
+              data
+            }
+          }`,
+        variables: {
+          hash: btoa(`SnapshotNode:${pk}`)
+        }
+      });
+      this.annotationLayer = data.snapshot.data;
+      console.log('Workspace.vue loadAnnotationLayer(pk) with');
+      console.log(pk);
+    },
+
+
     async getWorkspaceInfo() {
       let workspaceInfo = this.$store.getters.WorkspaceInfoByHash(this.wshash);
 
@@ -403,7 +439,10 @@ export default {
         this.$router.push({ name: 'home' });
       }
       this.municipalityName = snapshot.municipality.fullname;
-      this.snapshotsWorkspace = workspace.snapshots;
+
+      this.snapshotsWorkspace = workspace.snapshots.filter(snapshot => !snapshot.title.startsWith('Annotations_'));
+      this.annotationsWorkspace = workspace.snapshots.filter(snapshot => snapshot.title.startsWith('Annotations_'));
+
       this.title = workspace.title;
       this.description = workspace.description;
       this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);

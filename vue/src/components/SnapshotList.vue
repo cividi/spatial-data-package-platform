@@ -23,7 +23,29 @@
         v-if="showTopic(index) && withTopic"
         class="px-0">{{ snapshot.topic }}</v-subheader>
       <v-list-item class="px-0 mb-4"
-        v-if="!snapshot.requestable"
+        v-if="!snapshot.requestable && isAnnotation" dense
+        v-on:click="$emit('loadAnnotationLayer', snapshot.pk)"
+        >
+          <v-list-item-content>
+            <v-list-item-title style="font-weight:700">{{ snapshot.title }}</v-list-item-title>
+          </v-list-item-content>
+          <v-list-item-action v-if="workspaceHash"
+            style="margin:0 0 4px 0; align-self: center;">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon
+                  class="nobg"
+                  v-bind="attrs" v-on="on"
+                  v-if="$store.state.isUserLoggedIn"
+                  v-on:click.stop.prevent="$emit('editme', snapshot)">
+                    <v-icon color="grey lighten-1" >mdi-pencil</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ $t('btn.snapshotEdit') }}</span>
+            </v-tooltip>
+          </v-list-item-action>
+      </v-list-item><v-list-item class="px-0 mb-4"
+        v-if="!snapshot.requestable && !isAnnotation"
         :to="createRouteLink(snapshot.pk)" dense
         >
           <v-list-item-avatar tile size="64" class="my-0">
@@ -173,6 +195,10 @@ export default {
     withTopic: {
       type: Boolean,
       default: true
+    },
+    isAnnotation: {
+      type: Boolean,
+      default: false
     }
   },
 

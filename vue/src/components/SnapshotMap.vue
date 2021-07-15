@@ -305,7 +305,8 @@ export default {
     snapshot: Object,
     geojson: Object,
     geoboundsIn: Array,
-    predecessor: Object
+    predecessor: Object,
+    annotations: Object
   },
 
   created() {
@@ -317,6 +318,24 @@ export default {
   },
 
   computed: {
+    annotationLayer() {
+      console.log('computed:annotationLayer');
+      console.log(this.annotations);
+      if (!this.annotations) {
+        if (localStorage.getItem('PostIts')) {
+          console.log('load from Storage');
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          /*
+          this.geojsonLocalStorage = JSON.parse(localStorage.getItem('PostIts'));
+          this.readLocalStorage2Map(this.geojsonLocalStorage);
+         */
+        } else {
+          return this.createSnapshot();
+        }
+      }
+      return this.annotations;
+    },
+
     computedCursor() {
       return this.cursorType;
     },
@@ -337,7 +356,26 @@ export default {
     }
   },
 
+  watch: {
+    // eslint-disable-next-line no-unused-vars
+    annotations(newsh, oldsh) {
+      console.log('test in watch');
+      this.printt(newsh);
+      this.storeAnnotationSh2localStorage(newsh);
+      this.geojsonLocalStorage = JSON.parse(localStorage.getItem('PostIts'));
+      if (this.annotationMarkers) {
+        this.annotationMarkers.clearLayers();
+      }
+      this.readLocalStorage2Map(this.geojsonLocalStorage);
+      /* updateAnnotations */
+    }
+  },
+
   methods: {
+    printt(st) {
+      console.log(st);
+    },
+
     storeAnnotationSh2localStorage(newAnnotationSh) {
       newAnnotationSh.resources.forEach((resource) => {
         if (resource.name === 'Annotation') {
