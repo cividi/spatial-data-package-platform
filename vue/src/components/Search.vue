@@ -83,6 +83,7 @@ export default {
                 bfsNumber
                 fullname
                 snapshots {
+                  title
                   pk
                 }
               }
@@ -97,6 +98,7 @@ export default {
     },
 
     submitMunicipality() {
+      this.select.node.snapshots = this.select.node.snapshots.filter(snapshot => !snapshot.title.startsWith('Annotations_'));
       if (this.select.node.bfsNumber) {
         if (this.select.node.snapshots.length === 0) {
           this.$router.push({
