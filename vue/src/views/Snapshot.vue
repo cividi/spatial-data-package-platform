@@ -285,7 +285,8 @@ export default {
       if (result) {
         if (result.data.hasOwnProperty('snapshot') && result.data.snapshot) {
           this.municipalityName = result.data.snapshot.municipality.fullname;
-          this.snapshotsMunicipality = result.data.snapshot.municipality.snapshots;
+          this.snapshotsMunicipality = result.data.snapshot.municipality.snapshots.filter(snapshot => !snapshot.title.startsWith('Annotations_'));
+
           const snapshotsIdExamplesExclude = this.snapshotsMunicipality.map(
             snapshot => snapshot.id
           );
