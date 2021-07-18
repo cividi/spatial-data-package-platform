@@ -2,8 +2,21 @@
 
 ## Releases
 
-### 0.7.2
 
+### 0.7.3
+[Released *2021-07-18*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.3)
+
+- Notices page with licenses information
+- circles with title or description, show popup on click #135
+- default snapshot permission NOT_LISTED #68
+- Added git tag & commit version to footers of frontend and backend
+- django backend footer, color and html-structure change
+- attribution on Map also in Snapshot View
+- attribution through mapbox js instead of html template
+- openstreetmap attribution on map in new municipality mode
+- adds wms support, pass simply all wms layer.parameters to leaflet
+
+### 0.7.2
 [Released *2021-05-16*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.2)
 
 - Fixed notty run of 'make update'
