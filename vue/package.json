@@ -19,7 +19,7 @@
     "apollo-link-http": "^1.5.16",
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
-    "color-string": "^1.5.5",
+    "color-string": "^1.6.0",
     "core-js": "^3.4.4",
     "cors": "^2.8.5",
     "elliptic": "^6.5.4",
