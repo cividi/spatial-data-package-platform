@@ -37,6 +37,11 @@ RUN --mount=type=cache,target=/tmp/yarn_cache \
     && yarn global add --ignore-optional http-server \
     && yarn install
 
+# vue/node layer 01 / dependabot updates
+COPY ./package/01/package.json ./package/01/yarn.lock /opt/vue/
+RUN --mount=type=cache,target=/tmp/yarn_cache \
+    yarn install
+
 COPY s6/etc/services.d /etc/services.d
 COPY s6/etc/cont-init.d /etc/cont-init.d
 ENTRYPOINT ["/init"]
