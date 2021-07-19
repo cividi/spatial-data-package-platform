@@ -4954,10 +4954,10 @@ generic-names@^1.0.2:
   dependencies:
     loader-utils "^0.2.16"
 
-generic-pool@^3.7.1:
-  version "3.7.2"
-  resolved "https://registry.yarnpkg.com/generic-pool/-/generic-pool-3.7.2.tgz#78c2e5f054fc8bb611568c435051ecea2418e965"
-  integrity sha512-Ec7D4KySmEtIdJBNRVS8jus84ejNAvYG7KaLsXMhIs4AVQ2RuXSjMtmpskTKDT0y6TFSPjo4H+cCmLKUb+vDzg==
+generic-pool@^3.8.2:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/generic-pool/-/generic-pool-3.8.2.tgz#aab4f280adb522fdfbdc5e5b64d718d3683f04e9"
+  integrity sha512-nGToKy6p3PAbYQ7p1UlWl6vSPwfwU6TMSWK7TTu+WUY4ZjyZQGniGGt2oNVvyNSpyZYSB43zMXVLcBm08MTMkg==
 
 gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
