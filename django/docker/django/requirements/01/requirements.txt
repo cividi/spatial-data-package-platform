@@ -21,7 +21,7 @@ django-sortedm2m==3.0.2
 -e git+https://github.com/svleeuwen/sortedm2m-filter-horizontal-widget.git@4ce03f6b7e6022014838afb4a8aa4691fceb9e94#egg=django_sortedm2m_filter_horizontal_widget
 djangorestframework==3.12.2
 future==0.18.2
-graphene==2.1.8
+graphene==2.1.9
 graphene-django==2.14.0
 graphql-core==2.3.2
 graphql-relay==2.0.1
