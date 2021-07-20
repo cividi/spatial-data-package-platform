@@ -118,6 +118,13 @@
           <p>
             Zürich, 09.11.2020
           </p>
+          <h2>Lizenz</h2>
+          <p>
+            Mehr über die Lizenz und die Lizenzen der verwendeten Softwarepakete
+            finden Sie auf
+            <router-link
+              :to="'/' + $i18n.locale + '/notices/'">dieser Seite</router-link>.
+          </p>
         </v-flex>
     </v-layout>
   </v-container>

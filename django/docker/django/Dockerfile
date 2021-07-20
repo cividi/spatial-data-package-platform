@@ -1,4 +1,4 @@
-FROM alpine:3.12.3
+FROM alpine:3.13.5
 MAINTAINER Yves Serrano <ys@taywa.ch>
 # https://github.com/just-containers/s6-overlay
 
@@ -10,7 +10,6 @@ RUN apk add --no-cache \
         curl \
         libpq \
         python3 \
-        py3-pillow \
         py3-gunicorn \
         py3-psycopg2 \
         jq \
@@ -27,6 +26,16 @@ RUN apk add --no-cache \
         geos \
         proj \
         yajl \
+        freetype \
+        lcms2 \
+        libimagequant \
+        libjpeg-turbo \
+        libxcb \
+        musl \
+        openjpeg \
+        py3-olefile \
+        tiff \
+        zlib \
         proj-datumgrid \
         zlib-dev \
         sqlite-dev \
@@ -38,8 +47,42 @@ ARG S6_OVERLAY_VERSION=v2.1.0.2
 RUN curl -Ls https://github.com/just-containers/s6-overlay/releases/download/$S6_OVERLAY_VERSION/s6-overlay-amd64.tar.gz | tar xz -C /
 
 # python requirements 00 layer
-COPY ./requirements/00.txt /tmp/requirements.txt
-RUN cd /opt && pip3 install -r /tmp/requirements.txt
+COPY ./requirements/00/requirements.txt /tmp/requirements.txt
+RUN apk add --no-cache \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        lcms2-dev \
+        openjpeg-dev \
+        tiff-dev \
+        zlib-dev \
+    && cd /opt && pip3 install -r /tmp/requirements.txt \
+    && apk del \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        lcms2-dev \
+        openjpeg-dev \
+        tiff-dev \
+        zlib-dev \
+    && pip3 cache purge
+
+# python requirements 01 layer, depandabot updates
+COPY ./requirements/01/requirements.txt /tmp/requirements.txt
+RUN apk add --no-cache \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        lcms2-dev \
+        openjpeg-dev \
+        tiff-dev \
+        zlib-dev \
+    && cd /opt && pip3 install --use-deprecated=legacy-resolver -r /tmp/requirements.txt \
+    && apk del \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        lcms2-dev \
+        openjpeg-dev \
+        tiff-dev \
+        zlib-dev \
+    && pip3 cache purge
 
 COPY s6/etc/services.d /etc/services.d
 COPY s6/etc/cont-init.d /etc/cont-init.d

@@ -67,6 +67,14 @@ const routes = [
         }
       },
       {
+        path: 'notices/',
+        name: 'notices',
+        component: () => import('@/views/Notices.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutDefault.vue')
+        }
+      },
+      {
         path: 'new-municipality/:bfsNumber/',
         pathToRegexpOptions: { strict: true },
         name: 'snapshotNew',

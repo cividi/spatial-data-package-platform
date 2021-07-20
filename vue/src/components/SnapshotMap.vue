@@ -144,7 +144,7 @@ Annotation savings in properties:
       <v-btn
         v-if="hash && !screenshotIsThumbnail"
         fab absolute small
-        style="bottom:2em; right:2em;"
+        style="bottom:2.5em; right:2em;"
         color="white"
         @click="mapinfoopen=!mapinfoopen">
         <v-icon>mdi-information-variant</v-icon>
@@ -210,19 +210,15 @@ body,
   animation: none;
 }
 
-#map .mapbox-improve-map {
-  display: none;
-}
-
 #mapinfo {
-  position: absolute;
-  bottom: 2em;
-  right: 2em;
-  min-width: 240px;
-  clip-path: circle(0% at 95% 90%);
-  transition: clip-path 0.3s ease-out;
-  pointer-events: none;
-  z-index: 500; /* must be above mapbox icons */
+    position: absolute;
+    bottom: 2.5em;
+    right: 2em;
+    min-width: 240px;
+    clip-path: circle(0% at 95% 90%);
+    transition: clip-path 0.3s ease-out;
+    pointer-events: none;
+    z-index: 500; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
@@ -230,31 +226,6 @@ body,
   clip-path: circle(100% at center);
 }
 
-.mapbox-improve-map {
-  display: none;
-}
-
-.leaflet-tooltip-left:before {
-  right: 0;
-  margin-right: -12px;
-  border-left-color: rgba(0, 0, 0, 0.4);
-}
-
-.leaflet-tooltip-right:before {
-  left: 0;
-  margin-left: -12px;
-  border-right-color: rgba(0, 0, 0, 0.4);
-}
-
-.leaflet-tooltip {
-  position: absolute;
-  padding: 4px;
-  background-color: rgba(0, 0, 0, 0.4);
-  border: 0px solid #000;
-  color: #000;
-  white-space: nowrap;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-}
 </style>
 
 <script>
@@ -542,12 +513,31 @@ export default {
         pointToLayer: (feature, latlng) => {
           if (feature.properties.radius) {
             // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
+            if (feature.properties.title || feature.properties.description) {
+              feature.properties.className = 'popup-title-description';
+              const clickcircle = new L.Circle(latlng, feature.properties);
+              clickcircle.on('click', this.showTitleDescPopup);
+              return clickcircle;
+            }
+            // if clickcircle has not been returned, return normal circle
+            feature.properties.interactive = false;
             return new L.Circle(latlng, feature.properties);
           }
           return new L.Marker(latlng);
         }
       });
       return geoJsonExtended;
+    },
+
+    showTitleDescPopup(e) {
+      let content = e.target.options.description;
+      if (e.target.options.title) {
+        content = `<b>${e.target.options.title}</b><br />${content}`;
+      }
+      new L.Popup()
+        .setLatLng(e.target._latlng) // eslint-disable-line no-underscore-dangle
+        .setContent(content)
+        .openOn(this.map);
     },
 
     setupEmpty() {
@@ -698,9 +688,10 @@ export default {
         if (this.screenshotMode) {
           // no zoom controls in screenshot mode
           document.querySelector('.leaflet-control-zoom').style.display = 'none';
-        } else {
-          // no attribution in normal mode
           document.querySelector('.leaflet-control-attribution').style.display = 'none';
+        } else if (this.hash) {
+          // no attribution in normal mode
+          document.querySelector('.leaflet-control-attribution').style.background = 'none';
         }
         if (this.screenshotIsThumbnail) {
           document.querySelector('#mapinfo').style.visibility = 'hidden';

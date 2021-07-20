@@ -2,11 +2,12 @@
     <main>
       <main-navigation />
 
-      <v-content>
+      <v-main>
         <v-slide-y-transition mode="out-in">
           <slot/>
         </v-slide-y-transition>
-      </v-content>
+        <version />
+      </v-main>
     </main>
 </template>
 

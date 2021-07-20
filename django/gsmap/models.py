@@ -115,7 +115,7 @@ class Snapshot(models.Model):
     permission = models.IntegerField(
         choices=[(perm.value, perm.name)
                  for perm in SnapshotPermission],
-        default=SnapshotPermission.PUBLIC
+        default=SnapshotPermission.NOT_LISTED
     )
 
     title = models.CharField(max_length=150, default='')

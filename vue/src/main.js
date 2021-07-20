@@ -15,6 +15,7 @@ import LanguageSwitch from './components/LanguageSwitch.vue';
 import UserActions from './components/UserActions.vue';
 import MainNavigation from './components/MainNavigation.vue';
 import Search from './components/Search.vue';
+import Version from './components/Version.vue';
 import App from './App.vue';
 import 'mapbox.js/dist/mapbox.css';
 
@@ -61,6 +62,7 @@ Vue.use(VueCookies);
 Vue.component('language-switch', LanguageSwitch);
 Vue.component('user-actions', UserActions);
 Vue.component('main-navigation', MainNavigation);
+Vue.component('version', Version);
 Vue.component('search', Search);
 
 new Vue({

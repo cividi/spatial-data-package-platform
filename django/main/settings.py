@@ -1,4 +1,5 @@
 import os
+import os.path
 
 # use your own secret_key, default for testing and dev
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
@@ -19,6 +20,18 @@ MANAGERS = ADMINS
 ADMIN_NAME = os.environ.get('DJANGO_ADMIN_NAME', 'dufour DEV')
 ADMIN_HEADER_COLOR = os.environ.get('DJANGO_ADMIN_HEADER_COLOR', '#543076')
 LOGIN_PAGE_TITLE = os.environ.get('LOGIN_PAGE_TITLE', 'dufour')
+
+CURRENT_TAG_VERSION = "NaN.NaN.NaN"
+CURRENT_COMMIT_VERSION = "NaN"
+
+if os.path.isfile("VERSION"):
+    with open("VERSION", 'r') as f:
+        try:
+            content = f.read().split("\t")
+            CURRENT_TAG_VERSION = content[0]
+            CURRENT_COMMIT_VERSION = content[1]
+        except:
+            pass
 
 if os.environ.get('DJANGO_ALLOWED_HOSTS'):
     ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')

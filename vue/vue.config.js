@@ -1,3 +1,16 @@
+const fs = require('fs');
+
+process.env.VUE_APP_GIT_VERSION = 'NaN.NaN.NaN\tNaN';
+
+try {
+  if (fs.existsSync('VERSION')) {
+    process.env.VUE_APP_GIT_VERSION = fs.readFileSync('VERSION', 'utf8');
+  }
+} catch(err) {
+  //pass
+}
+
+
 module.exports = {
   devServer: {
     compress: true,
