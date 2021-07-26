@@ -2,7 +2,7 @@ aniso8601==7.0.0
 appdirs==1.4.4
 APScheduler==3.6.3
 asgiref==3.4.1
-astroid==2.6.2
+astroid==2.6.5
 attrs==20.3.0
 beautifulsoup4==4.9.3
 blessings==1.7
