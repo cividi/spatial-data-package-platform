@@ -45,7 +45,7 @@ promise==2.3
 psycopg2==2.8.6
 py==1.10.0
 Pygments==2.7.4
-pylint==2.6.0
+pylint==2.9.6
 pylint-django==2.3.0
 pylint-plugin-utils==0.6
 pyparsing==2.4.7
