@@ -21,7 +21,8 @@ import LayoutDefault from '@/layouts/LayoutDefault.vue';
 export default {
   data() {
     return {
-      fathomSiteId: process.env.VUE_APP_FATHOM_SITEID
+      fathomSiteId: process.env.VUE_APP_FATHOM_SITEID,
+      fathomUrl: process.env.VUE_APP_FATHOM_URL || 'cdn.usefathom.com'
     };
   },
 
@@ -41,7 +42,7 @@ export default {
   mounted() {
     if (this.fathomSiteId !== '') {
       const fathomScript = document.createElement('script');
-      fathomScript.setAttribute('src', 'https://cdn.usefathom.com/script.js');
+      fathomScript.setAttribute('src', `https://${this.fathomUrl}/script.js`);
       fathomScript.setAttribute('spa', 'auto');
       fathomScript.setAttribute('data-site', this.fathomSiteId);
       fathomScript.setAttribute('exluded-domains', 'www,www.local,localhost');
