@@ -40,7 +40,13 @@ DJANGO_SECRET=some.R4nd0m_k3y
 MAPBOX_TOKEN=a.mapbox.api.token
 MAPBOX_STYLE=mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz
 ```
-..which will be sourced by the Makefile scripts. Or use some other way to configure your environment.
+...which will be sourced by the Makefile scripts. Or use some other way to configure your environment.
+
+If you want to add support for Fathom analytics add these two optional environment variables as well:
+```bash
+FATHOM_SITEID=you.fathom.siteid
+FATHOM_URL=custom.domain.net # needs extra setup
+```
 
 (2) Download containers and start them
 
