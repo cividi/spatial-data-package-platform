@@ -34,6 +34,7 @@ services:
       - VUE_APP_GRAPHQL_URI=http://www:8000/graphql/
       - VUE_APP_DJANGOBASEURL=http://www:8000
       - VUE_APP_FATHOM_SITEID=${FATHOM_SITEID}
+      - VUE_APP_FATHOM_URL=${FATHOM_URL}
       - VUE_APP_SNAPSHOTSTOREURL=https://gemeindescan.eu-central-1.linodeobjects.com/public/
       - PUBLIC_URL=http://www:8000
     working_dir: /opt/vue
