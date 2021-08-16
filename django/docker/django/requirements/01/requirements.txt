@@ -54,7 +54,7 @@ pytest-django==4.1.0
 pytz==2021.1
 requests==2.25.1
 Rx==1.6.1
-singledispatch==3.6.2
+singledispatch==3.7.0
 six==1.15.0
 sorl-thumbnail==12.7.0
 soupsieve==2.2.1
