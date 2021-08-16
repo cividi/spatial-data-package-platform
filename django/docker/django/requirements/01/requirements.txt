@@ -13,7 +13,7 @@ click==8.0.1
 curtsies==0.3.4
 Django==3.1.12
 django-apscheduler==0.5.1
-django-cors-headers==3.7.0
+django-cors-headers==3.8.0
 django-filter==2.4.0
 django-json-widget==1.1.1
 django-solo==1.1.5
