@@ -11,7 +11,7 @@
   "dependencies": {
     "@intlify/vue-i18n-loader": "^0.6.1",
     "@mapbox/geo-viewport": "^0.4.0",
-    "@vue/composition-api": "^1.0.0-rc.2",
+    "@vue/composition-api": "^1.2.2",
     "@vue/test-utils": "^1.0.2",
     "apollo-cache-inmemory": "^1.6.5",
     "apollo-client": "^2.6.8",
