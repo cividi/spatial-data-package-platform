@@ -355,3 +355,61 @@ class Workspace(models.Model):
 
     def __str__(self):
         return f'{self.id} {self.title}'
+
+class Category(models.Model):
+    class Meta:
+        ordering = ['my_order']
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
+
+    my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
+    hide_in_list = models.BooleanField(default=False)
+
+    name = models.CharField(max_length=255, default='')
+    icon = ImageField(upload_to='category-icons', null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.name}'
+
+class Annotation(models.Model):
+    class Meta:
+        ordering = ['-created']
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
+    public = models.BooleanField(default=False)
+
+    KIND_CHOICES = [
+        ('COM', 'Comment'),
+    ]
+    kind = models.CharField(max_length=3, choices=KIND_CHOICES)
+    data = models.JSONField(default=dict)
+    category = models.ForeignKey(
+        Category, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+    author_email = models.EmailField(max_length=254)
+    rating = models.DecimalField(default=0, decimal_places=2, max_digits=6)
+    workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
+
+    # def save(self, *args, **kwargs):
+    #     def test_exists(pk):
+    #         if self.__class__.objects.filter(pk=pk):
+    #             new_id = create_slug_hash_5()
+    #             test_exists(new_id)
+    #         else:
+    #             return pk
+
+    #     if self._state.adding:
+    #         self.id = test_exists(self.id)
+    #     super().save(*args, **kwargs)
+
+    @property
+    def fullname(self):
+        return f'{self.workspace} {self.id}'
+
+    def __str__(self):
+        return self.fullname
