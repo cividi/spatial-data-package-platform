@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.forms.widgets import Textarea
 import requests
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
-from gsmap.models import Municipality, Snapshot, Workspace
+from gsmap.models import Municipality, Snapshot, Workspace, Annotation
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
@@ -136,7 +136,21 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
+class AnnotationAdmin(admin.OSMGeoAdmin):
+    readonly_fields = ('created', 'modified')
+    fields = ('deleted', 'public', 'kind', 'data', 'category', 'author_email', 'rating', 'workspace' )
+    list_display = (
+        'workspace',
+        'id',
+        'category', 
+        'kind',
+        'author_email',
+        'rating'
+    )
+    list_filter = ('workspace', 'category', 'kind')
+    search_fields = ('id', 'data','author_email')
 
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(Snapshot, SnapshotAdmin)
 admin.site.register(Workspace, WorkspaceAdmin)
+admin.site.register(Annotation, AnnotationAdmin)
