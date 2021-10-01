@@ -358,6 +358,7 @@ class Workspace(models.Model):
 
 class Category(models.Model):
     class Meta:
+        verbose_name_plural = 'categories'
         ordering = ['my_order']
 
     created = models.DateTimeField(auto_now_add=True)
@@ -368,7 +369,7 @@ class Category(models.Model):
     hide_in_list = models.BooleanField(default=False)
 
     name = models.CharField(max_length=255, default='')
-    icon = ImageField(upload_to='category-icons', null=True, blank=True)
+    icon = models.FileField(upload_to='category-icons', null=True, blank=True)
 
     def __str__(self):
         return f'{self.name}'
@@ -413,3 +414,16 @@ class Annotation(models.Model):
 
     def __str__(self):
         return self.fullname
+
+class Attachement(models.Model):
+    class Meta:
+        ordering = ['my_order']
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
+
+    annotation =  models.ForeignKey(Annotation, on_delete=models.CASCADE)
+    document = models.FileField(upload_to='annotation-attachements', null=True, blank=True)
+    #kind = models.CharField(max_length=4)
+    my_order = models.PositiveIntegerField(default=0, blank=False, null=False)

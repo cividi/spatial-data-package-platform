@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.forms.widgets import Textarea
 import requests
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
-from gsmap.models import Municipality, Snapshot, Workspace, Annotation
+from gsmap.models import Municipality, Snapshot, Workspace, Category, Attachement, Annotation
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
@@ -136,8 +136,11 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
+class AttachementInline(admin.TabularInline):
+    model = Attachement
+
 class AnnotationAdmin(admin.OSMGeoAdmin):
-    readonly_fields = ('created', 'modified')
+    readonly_fields = ('id','created', 'modified')
     fields = ('deleted', 'public', 'kind', 'data', 'category', 'author_email', 'rating', 'workspace' )
     list_display = (
         'workspace',
@@ -147,10 +150,23 @@ class AnnotationAdmin(admin.OSMGeoAdmin):
         'author_email',
         'rating'
     )
+    inlines = [ AttachementInline, ]
     list_filter = ('workspace', 'category', 'kind')
     search_fields = ('id', 'data','author_email')
+
+class CategoryAdmin(admin.OSMGeoAdmin):
+    readonly_fields = ('id','created', 'modified')
+    fields = ('deleted', 'my_order', 'hide_in_list', 'name', 'icon' )
+    list_display = (
+        'name',
+        'my_order',
+        'hide_in_list'
+    )
+    list_filter = ('hide_in_list',)
+    search_fields = ('id', 'name')
 
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(Snapshot, SnapshotAdmin)
 admin.site.register(Workspace, WorkspaceAdmin)
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(Annotation, AnnotationAdmin)
