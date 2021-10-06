@@ -83,6 +83,10 @@ body,
     background: #dedede;
     animation: none;
 }
+.leaflet-popup-content img{
+  max-width: 100%;
+  min-width: 280px;
+}
 
 #mapinfo {
     position: absolute;
@@ -138,6 +142,7 @@ export default {
   props: {
     snapshot: Object,
     geojson: Object,
+    annotations: Array,
     geoboundsIn: Array,
     predecessor: Object
   },
@@ -173,28 +178,38 @@ export default {
       const geoJsonExtended = L.geoJson(geojson, {
         attribution,
         pointToLayer: (feature, latlng) => {
+          feature.properties.interactive = false;
+
+          if (feature.properties.title || feature.properties.description) {
+            feature.properties.className = 'popup-title-description';
+            feature.properties.interactive = true;
+          }
+
+          let curfeature;
           if (feature.properties.radius) {
             // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
-            if (feature.properties.title || feature.properties.description) {
-              feature.properties.className = 'popup-title-description';
-              const clickcircle = new L.Circle(latlng, feature.properties);
-              clickcircle.on('click', this.showTitleDescPopup);
-              return clickcircle;
+            curfeature = new L.Circle(latlng, feature.properties);
+          } else {
+            const options = {};
+            if (feature.properties.icon) {
+              options.icon = new L.Icon(feature.properties.icon);
             }
-            // if clickcircle has not been returned, return normal circle
-            feature.properties.interactive = false;
-            return new L.Circle(latlng, feature.properties);
+            curfeature = new L.Marker(latlng, options);
           }
-          return new L.Marker(latlng);
+          if (feature.properties.interactive) {
+            curfeature.on('click', this.showTitleDescPopup);
+          }
+          return curfeature;
         }
       });
       return geoJsonExtended;
     },
 
     showTitleDescPopup(e) {
-      let content = e.target.options.description;
-      if (e.target.options.title) {
-        content = `<b>${e.target.options.title}</b><br />${content}`;
+      console.log(e.target);
+      let content = e.target.feature.properties.description;
+      if (e.target.feature.properties.title) {
+        content = `<b>${e.target.feature.properties.title}</b><br />${content}`;
       }
       new L.Popup()
         .setLatLng(e.target._latlng) // eslint-disable-line no-underscore-dangle
@@ -273,6 +288,27 @@ export default {
           if (DEFAULT_STYLES) {
             this.layerContainer.addLayer(L.mapbox.styleLayer(DEFAULT_STYLES));
           }
+        }
+        if (this.annotations) {
+          this.annotations = this.annotations.map((a) => {
+            if (a.category.length === 1) {
+              a.data.properties.icon = { iconUrl: `/media/${a.category[0].icon}` };
+            }
+            if (a.attachements.length > 0) {
+              const imgs = [];
+              a.attachements.map((d) => {
+                imgs.push(`<a href="/media/${d.document}" target="_blank"><img src="/media/${d.document}"></a>`);
+                return d;
+              });
+              a.data.properties.description = imgs.join() + a.data.properties.description;
+            }
+            return a;
+          });
+          const annotationsdata = this.annotations.map(a => a.data);
+          console.log(annotationsdata);
+          this.layerContainer.addLayer(this.createFeatureLayer(
+            annotationsdata, ''
+          ));
         }
         this.layerContainer.addTo(this.map);
         L.control.scale({

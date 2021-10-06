@@ -9,7 +9,7 @@ from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
-from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace
+from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, Annotation, Category, Attachement
 from graphene_django.rest_framework.mutation import SerializerMutation
 
 
@@ -108,6 +108,33 @@ class MunicipalityNode(DjangoObjectType):
     def resolve_perimeter_bounds(self, info):
         return self.perimeter.extent
 
+class CategoryNode(DjangoObjectType):
+    class Meta:
+        model = Category
+        fields = [ 'name', 'icon','my_order','hide_in_list']
+        interfaces = [graphene.relay.Node]
+
+class AttachementNode(DjangoObjectType):
+    class Meta:
+        model = Attachement
+        fields = [ 'document','my_order']
+        interfaces = [graphene.relay.Node]
+
+class AnnotationNode(DjangoObjectType):
+    class Meta:
+        model = Annotation
+        fields = [ 'kind', 'author_email', 'data', 'rating']
+        interfaces = [graphene.relay.Node]
+    
+    category = graphene.List(CategoryNode)
+    attachements = graphene.List(AttachementNode)
+    data = generic.GenericScalar(source='data')
+
+    def resolve_category(self, info):
+        return Category.objects.filter(Q(id=self.category.id))
+    
+    def resolve_attachements(self, info):
+        return Attachement.objects.filter(Q(deleted=0) & Q(annotation=self.id))
 
 class WorkspaceNode(DjangoObjectType):
     class Meta:
@@ -118,9 +145,13 @@ class WorkspaceNode(DjangoObjectType):
     pk = graphene.String(source='id')
     snapshots = graphene.List(SnapshotNode)
 
+    annotations = graphene.List(AnnotationNode)
+
     def resolve_snapshots(self, info):
         return self.snapshots.all()
 
+    def resolve_annotations(self, info):
+        return Annotation.objects.filter(Q(public=1) & Q(workspace=self.pk))
 
 class SnapshotMutation(graphene.relay.ClientIDMutation):
     class Input:
@@ -161,7 +192,9 @@ class Query(object):
         SnapshotNode, filterset_class=SnapshotOnlyPublicFilter)
 
     workspace = graphene.relay.Node.Field(WorkspaceNode)
+    # annotations = DjangoFilterConnectionField(WorkspaceNode)
 
 
 class Mutation(graphene.ObjectType):
     snapshotmutation = SnapshotMutation.Field()
+

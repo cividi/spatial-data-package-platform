@@ -62,6 +62,7 @@
 
     <snapshot-map ref="map"
       :geojson="geojson"
+      :annotations="annotations"
       :geoboundsIn="geobounds"
     />
     <v-overlay
@@ -125,6 +126,7 @@ export default {
       hash: this.$route.params.hash,
       wshash: this.$route.params.wshash,
       geojson: null,
+      annotations: null,
       geobounds: [],
       municipalityName: '',
       snapshotsWorkspace: [],
@@ -188,8 +190,21 @@ export default {
                   fullname
                 }
               }
+              annotations{
+                id
+                kind
+                rating
+                data
+                category{
+                  name
+                  icon
+                }
+                attachements{
+                  document
+                  myOrder
+                }
+              }
             }
-
             snapshot(id: $hash) {
               id
               pk
@@ -231,6 +246,7 @@ export default {
       }
       this.municipalityName = snapshot.municipality.fullname;
       this.snapshotsWorkspace = workspace.snapshots;
+      this.annotations = workspace.annotations;
       this.title = workspace.title;
       this.description = workspace.description;
       this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);
