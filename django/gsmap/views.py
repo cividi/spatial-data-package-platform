@@ -65,3 +65,21 @@ class SnapshotFileUploadView(generics.UpdateAPIView):
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
+
+class AnnotationView(generics.UpdateAPIView):
+    queryset = Annotation.objects.all()
+    serializer_class = SnapshotDataUploadSerializer
+    lookup_url_kwarg = 'annotation_id'
+    http_method_names = ['patch',]
+    parser_classes = [parsers.MultiPartParser]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)  # Enable PATCH
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
