@@ -2,7 +2,11 @@
 <i18n>
 {
   "de": {
-    "addComment": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten."
+    "addComment": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
+    "cancel": "abbrechen",
+    "save": "speichern",
+    "saveinfo": "Speichere Angaben",
+    "mandatory": "Dies ist ein Pflichtfeld"
   },
   "fr": {
   }
@@ -62,7 +66,7 @@
       </v-card>
 
       <v-btn
-        v-if="wshash && annotationsOpen"
+        v-if="wshash && annotationsOpen && !screenshotMode"
         fab absolute small
         id="addAnnotation"
         color="primary"
@@ -71,6 +75,33 @@
         <v-icon v-if="addAnnotation">mdi-close-thick</v-icon>
       </v-btn>
 
+      <!-- v-form
+        class="pt-4"
+        ref="commentform"
+        v-model="valid"
+        lazy-validation
+        @submit="saveComment"
+      >
+        <v-text-field
+          v-model="currentAnnotation.text"
+          :label="$t('title')"
+          :rules="[v => !!v || $t('mandatory')]"
+          required
+        />
+        <div class="d-flex justify-space-between mt-4">
+          <v-btn
+          @click="$emit('cancel')">
+            {{ $t('cancel') }}
+          </v-btn>
+          <v-btn
+            type="submit"
+            color="primary"
+          >
+            {{ $t('save') }}
+          </v-btn>
+        </div>
+
+      </v-form -->
     </v-main>
 </template>
 
@@ -179,6 +210,7 @@ export default {
       layerContainer: null,
       mapinfoopen: true,
       addAnnotation: null,
+      currentAnnotation: null,
       title: '',
       description: '',
       legend: [],
@@ -367,7 +399,6 @@ export default {
         this.map.on('click', (event) => {
           if (this.addAnnotation !== null) {
             const newMarker = L.marker(event.latlng);
-            console.log(' addAnnotation');
             /*
             newMarker.bindTooltip('', {
               permanent: true,
@@ -375,8 +406,9 @@ export default {
               className: 'leaflet-tooltip'
             });
             */
+            newMarker.on('click', this.editComment);
             newMarker.addTo(this.map);
-
+            this.map.setView(event.latlng);
             this.addAnnotation = null;
           }
         });
@@ -403,6 +435,10 @@ export default {
       }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
+    },
+
+    editComment() {
+
     },
 
     async destroyMap() {
