@@ -125,10 +125,10 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
             )
         }),
         (_('Main'), {
-            'fields': ('title', 'description', 'snapshots'),
+            'fields': ('title', 'description', 'snapshots', 'annotations_open'),
         }),
     )
-    list_display = ('id', 'title', 'created', 'modified')
+    list_display = ('id', 'title', 'annotations_open', 'created', 'modified')
     search_fields = ['title']
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
@@ -141,7 +141,17 @@ class AttachementInline(admin.TabularInline):
 
 class AnnotationAdmin(admin.OSMGeoAdmin):
     readonly_fields = ('id','created', 'modified')
-    fields = ('deleted', 'public', 'kind', 'data', 'category', 'author_email', 'rating', 'workspace' )
+    fieldsets = (
+        (_('Meta'), {
+            'fields': (
+                'id',
+                'created', 'modified'
+            )
+        }),
+        (_('Main'), {
+            'fields': ('kind', 'data', 'category', 'author_email', 'rating', 'workspace','deleted', 'public'),
+        }),
+    )
     list_display = (
         'workspace',
         'id',

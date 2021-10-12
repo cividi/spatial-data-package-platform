@@ -1,3 +1,15 @@
+<!-- eslint-disable -->
+<i18n>
+{
+  "de": {
+    "addComment": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten."
+  },
+  "fr": {
+  }
+}
+</i18n>
+<!-- eslint-enable -->
+
 <template>
     <v-main>
       <v-slide-x-reverse-transition>
@@ -14,6 +26,8 @@
         <div id="map"></div>
         <span id="mapstatus" :class="{ loaded: isMapLoaded, waiting: !isMapLoaded }"></span>
       </v-container>
+
+      <p class="addHint" v-if="addAnnotation">{{ $t('addComment') }}</p>
 
       <v-btn
         v-if="hash && !screenshotIsThumbnail"
@@ -46,6 +60,17 @@
           :sources="sources"
         />
       </v-card>
+
+      <v-btn
+        v-if="wshash && annotationsOpen"
+        fab absolute small
+        id="addAnnotation"
+        color="primary"
+        @click="addAnnotation ? addAnnotation=null : addAnnotation='comment'">
+        <v-icon v-if="!addAnnotation">mdi-comment-plus-outline</v-icon>
+        <v-icon v-if="addAnnotation">mdi-close-thick</v-icon>
+      </v-btn>
+
     </v-main>
 </template>
 
@@ -104,6 +129,31 @@ body,
     clip-path: circle(100% at center);
 }
 
+#addAnnotation {
+  top: 5.6em;
+  right: 1.3em;
+  transition: top 0.3s;
+  transition-timing-function: ease-in-out;
+}
+@media (min-width: 1264px){
+  #addAnnotation {
+    top: 1.2em;
+    transition-delay: 0.4s;
+  }
+}
+
+.addHint {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  text-shadow: 0 0 2px #fff, 0 0 5px #fff;
+  background: #ffffff66;
+  padding: 5px 3em;
+}
+
+
 </style>
 
 <script>
@@ -123,10 +173,12 @@ export default {
   data() {
     return {
       hash: this.$route.params.hash,
+      wshash: this.$route.params.wshash,
       bfsNumber: this.$route.params.bfsNumber,
       map: null,
       layerContainer: null,
       mapinfoopen: true,
+      addAnnotation: null,
       title: '',
       description: '',
       legend: [],
@@ -144,7 +196,8 @@ export default {
     geojson: Object,
     annotations: Array,
     geoboundsIn: Array,
-    predecessor: Object
+    predecessor: Object,
+    annotationsOpen: Boolean
   },
 
   created() {
@@ -206,7 +259,7 @@ export default {
     },
 
     showTitleDescPopup(e) {
-      console.log(e.target);
+      // console.log(e.target);
       let content = e.target.feature.properties.description;
       if (e.target.feature.properties.title) {
         content = `<b>${e.target.feature.properties.title}</b><br />${content}`;
@@ -305,12 +358,29 @@ export default {
             return a;
           });
           const annotationsdata = this.annotations.map(a => a.data);
-          console.log(annotationsdata);
           this.layerContainer.addLayer(this.createFeatureLayer(
             annotationsdata, ''
           ));
         }
         this.layerContainer.addTo(this.map);
+
+        this.map.on('click', (event) => {
+          if (this.addAnnotation !== null) {
+            const newMarker = L.marker(event.latlng);
+            console.log(' addAnnotation');
+            /*
+            newMarker.bindTooltip('', {
+              permanent: true,
+              interactive: true,
+              className: 'leaflet-tooltip'
+            });
+            */
+            newMarker.addTo(this.map);
+
+            this.addAnnotation = null;
+          }
+        });
+
         L.control.scale({
           metric: true,
           imperial: false
@@ -357,6 +427,24 @@ export default {
       this.geobounds = [];
       this.map = null;
       this.isMapLoaded = false;
+    },
+
+    newAnnotation() {
+      // this.$route.params.wshash,
+    },
+
+    async saveAnnotation() {
+      const csrftoken = this.$cookies.get('csrftoken', '');
+      const formData = new FormData();
+
+      // formData.append('data_file', file);
+
+      await this.$restApi.post('annotations', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'X-CSRFToken': csrftoken
+        }
+      });
     }
   }
 };

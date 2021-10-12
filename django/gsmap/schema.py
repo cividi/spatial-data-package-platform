@@ -139,7 +139,7 @@ class AnnotationNode(DjangoObjectType):
 class WorkspaceNode(DjangoObjectType):
     class Meta:
         model = Workspace
-        fields = ['title', 'description']
+        fields = ['title', 'description', 'annotations_open']
         interfaces = [graphene.relay.Node]
 
     pk = graphene.String(source='id')

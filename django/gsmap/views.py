@@ -5,10 +5,10 @@ from django.http import HttpResponseRedirect
 from rest_framework import generics, parsers
 from rest_framework.response import Response
 
-from gsmap.models import Workspace, Snapshot
+from gsmap.models import Workspace, Snapshot, Annotation, Category, Attachement
 
 from .permissions import IsUser
-from .serializers import SnapshotDataUploadSerializer
+from .serializers import SnapshotDataUploadSerializer, AnnotationSerializer
 
 
 class CustomLoginView(LoginView):
@@ -66,20 +66,15 @@ class SnapshotFileUploadView(generics.UpdateAPIView):
 
         return Response(serializer.data)
 
-class AnnotationView(generics.UpdateAPIView):
+class AnnotationCreateView(generics.CreateAPIView):
     queryset = Annotation.objects.all()
-    serializer_class = SnapshotDataUploadSerializer
+    serializer_class = AnnotationSerializer
+    http_method_names = ['post',]
+    #parser_classes = [parsers.MultiPartParser]
+
+class AnnotationUpdateView(generics.UpdateAPIView):
+    queryset = Annotation.objects.all()
+    serializer_class = AnnotationSerializer
     lookup_url_kwarg = 'annotation_id'
     http_method_names = ['patch',]
-    parser_classes = [parsers.MultiPartParser]
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)  # Enable PATCH
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            instance._prefetched_objects_cache = {}
-
-        return Response(serializer.data)
+    #parser_classes = [parsers.MultiPartParser]

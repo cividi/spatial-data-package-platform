@@ -64,6 +64,7 @@
       :geojson="geojson"
       :annotations="annotations"
       :geoboundsIn="geobounds"
+      :annotationsOpen="annotationsOpen"
     />
     <v-overlay
       absolute="absolute"
@@ -133,7 +134,8 @@ export default {
       title: '',
       description: '',
       errorsettings: {},
-      editing: undefined
+      editing: undefined,
+      annotationsOpen: false
     };
   },
 
@@ -177,6 +179,7 @@ export default {
               pk
               title
               description
+              annotationsOpen
               snapshots {
                 id
                 pk
@@ -249,6 +252,7 @@ export default {
       this.annotations = workspace.annotations;
       this.title = workspace.title;
       this.description = workspace.description;
+      this.annotationsOpen = workspace.annotationsOpen;
       this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);
       this.$store.commit('setBfsname', snapshot.municipality.fullname);
     },

@@ -325,6 +325,8 @@ class Workspace(models.Model):
 
     snapshots = SortedManyToManyField(Snapshot)
 
+    annotations_open = models.BooleanField(default=False)
+
     def get_absolute_link(self):
         proto = 'https' if settings.USE_HTTPS else 'http'
         domain = Site.objects.get_current().domain
