@@ -41,7 +41,6 @@ class SnapshotOnlyPublicFilter(FilterSet):
     def qs(self):
         return super().qs.filter(Q_SNAPSHOT_ONLY_PUBLIC)
 
-
 class SnapshotNode(DjangoObjectType):
     class Meta:
         model = Snapshot
@@ -112,6 +111,9 @@ class CategoryNode(DjangoObjectType):
     class Meta:
         model = Category
         fields = [ 'name', 'icon','my_order','hide_in_list']
+        filter_fields = {
+            'hide_in_list': ['exact'],
+        }
         interfaces = [graphene.relay.Node]
 
 class AttachementNode(DjangoObjectType):
@@ -147,11 +149,16 @@ class WorkspaceNode(DjangoObjectType):
 
     annotations = graphene.List(AnnotationNode)
 
+    categories = graphene.List(CategoryNode)
+
     def resolve_snapshots(self, info):
         return self.snapshots.all()
 
     def resolve_annotations(self, info):
         return Annotation.objects.filter(Q(public=1) & Q(workspace=self.pk))
+    
+    def resolve_categories(self, info):
+        return Category.objects.filter(Q(hide_in_list=0))
 
 class SnapshotMutation(graphene.relay.ClientIDMutation):
     class Input:
@@ -192,7 +199,6 @@ class Query(object):
         SnapshotNode, filterset_class=SnapshotOnlyPublicFilter)
 
     workspace = graphene.relay.Node.Field(WorkspaceNode)
-    # annotations = DjangoFilterConnectionField(WorkspaceNode)
 
 
 class Mutation(graphene.ObjectType):

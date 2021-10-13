@@ -154,11 +154,13 @@ class AnnotationAdmin(admin.OSMGeoAdmin):
     )
     list_display = (
         'workspace',
+        'created',
         'id',
         'category', 
         'kind',
         'author_email',
-        'rating'
+        'rating',
+        'public'
     )
     inlines = [ AttachementInline, ]
     list_filter = ('workspace', 'category', 'kind')

@@ -63,6 +63,7 @@
     <snapshot-map ref="map"
       :geojson="geojson"
       :annotations="annotations"
+      :categories="categories"
       :geoboundsIn="geobounds"
       :annotationsOpen="annotationsOpen"
     />
@@ -207,6 +208,10 @@ export default {
                   myOrder
                 }
               }
+              categories{
+                name
+                icon
+              }
             }
             snapshot(id: $hash) {
               id
@@ -250,6 +255,7 @@ export default {
       this.municipalityName = snapshot.municipality.fullname;
       this.snapshotsWorkspace = workspace.snapshots;
       this.annotations = workspace.annotations;
+      this.categories = workspace.categories;
       this.title = workspace.title;
       this.description = workspace.description;
       this.annotationsOpen = workspace.annotationsOpen;

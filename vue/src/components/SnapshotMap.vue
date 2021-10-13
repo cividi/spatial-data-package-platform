@@ -13,7 +13,8 @@
     "saveinfo": "Speichere Angaben",
     "mandatory": "Dies ist ein Pflichtfeld",
     "email": "E-Mail",
-    "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:"
+    "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
+    "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben"
   },
   "fr": {
   }
@@ -93,6 +94,14 @@
           <v-stepper v-model="commentstepper" class="elevation-0">
             <v-stepper-items>
               <v-stepper-content step="1" class="pa-0">
+                <v-select
+                  :items="categories"
+                  item-text="name"
+                  v-model="currentAnnotation.category"
+                  label="Kategorie"
+                  :rules="[v => !!v || $t('mandatory')]"
+                  required
+                ></v-select>
                 <v-text-field
                   v-model="currentAnnotation.title"
                   :label="$t('title')"
@@ -127,6 +136,13 @@
                   :rules="[v => !!v || $t('mandatory')]"
                   required
                 />
+                <v-select
+                  :items="usergroups"
+                  v-model="currentAnnotation.usergroup"
+                  label="Personengruppe"
+                  :rules="[v => !!v || $t('mandatory')]"
+                  required
+                ></v-select>
                 <div class="d-flex justify-space-between">
                   <v-btn
                   @click="commentstepper = 1">
@@ -262,6 +278,7 @@ export default {
       addAnnotation: null,
       currentAnnotation: null,
       commentstepper: 1,
+      usergroups: ['Anwohner', 'Bürger', 'Beschäftigter', 'Student'],
       title: '',
       description: '',
       legend: [],
@@ -278,6 +295,7 @@ export default {
     snapshot: Object,
     geojson: Object,
     annotations: Array,
+    categories: Array,
     geoboundsIn: Array,
     predecessor: Object,
     annotationsOpen: Boolean
@@ -347,7 +365,7 @@ export default {
       if (e.target.feature.properties.title) {
         content = `<b>${e.target.feature.properties.title}</b><br />${content}`;
       }
-      new L.Popup()
+      new L.Popup({ maxWidth: 450, maxHeight: 600 })
         .setLatLng(e.target._latlng) // eslint-disable-line no-underscore-dangle
         .setContent(content)
         .openOn(this.map);
@@ -436,7 +454,7 @@ export default {
                 imgs.push(`<a href="/media/${d.document}" target="_blank"><img src="/media/${d.document}"></a>`);
                 return d;
               });
-              a.data.properties.description = imgs.join() + a.data.properties.description;
+              a.data.properties.description = imgs.join('') + a.data.properties.description;
             }
             return a;
           });
@@ -451,7 +469,7 @@ export default {
           if (this.addAnnotation !== null) {
             switch (this.addAnnotation) {
               case 'COM': {
-                const newMarker = L.marker(event.latlng);
+                const newMarker = L.marker(event.latlng, { draggable: true });
                 /*
                 newMarker.bindTooltip('', {
                   permanent: true,
@@ -462,6 +480,7 @@ export default {
                 newMarker.on('click', this.newComment);
                 newMarker.addTo(this.map);
                 this.map.setView(event.latlng);
+                window.setTimeout(() => { newMarker.fire('click'); }, 500);
                 break;
               }
               default: {
@@ -548,7 +567,8 @@ export default {
             "properties": {
               "fill": "true", 
               "title": "${this.currentAnnotation.title}", 
-              "description": "${this.currentAnnotation.text}"
+              "description": "${this.currentAnnotation.text}",
+              "usergroup": "${this.currentAnnotation.usergroup}"
             }
           }`);
           break;
