@@ -63,7 +63,7 @@ services:
       - DJANGO_HTTPS=False
       - DJANGO_EMAIL_HOST=maildev
       - DJANGO_ALLOWED_HOSTS=www,www.local,localhost,django
-      - DJANGO_ADMIN_NAME=gemeindescan DEV
+      - DJANGO_ADMIN_NAME=dføur DEV
       - DJANGO_ADMIN_HEADER_COLOR=#ff0000
       - DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES=* # * every minute, */5 every 5 minutes
       - START_APSCHEDULER=YES

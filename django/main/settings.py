@@ -17,9 +17,9 @@ EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST', 'maildev')
 ADMINS = os.environ.get('DJANGO_ADMINS', 'admin@local.lan').split(',')
 ADMINS = list(zip(ADMINS, ADMINS))
 MANAGERS = ADMINS
-ADMIN_NAME = os.environ.get('DJANGO_ADMIN_NAME', 'dufour DEV')
+ADMIN_NAME = os.environ.get('DJANGO_ADMIN_NAME', 'dføur DEV')
 ADMIN_HEADER_COLOR = os.environ.get('DJANGO_ADMIN_HEADER_COLOR', '#543076')
-LOGIN_PAGE_TITLE = os.environ.get('LOGIN_PAGE_TITLE', 'dufour')
+LOGIN_PAGE_TITLE = os.environ.get('LOGIN_PAGE_TITLE', 'dføur')
 
 CURRENT_TAG_VERSION = "NaN.NaN.NaN"
 CURRENT_COMMIT_VERSION = "NaN"
