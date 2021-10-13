@@ -28,8 +28,8 @@
       app
       width="320"
       v-model="snapshotnav">
-      <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
-        <img alt="dufour logo" height="50" src="@/assets/images/logo-dufour.svg">
+      <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block">
+        <img alt="dføur logo" height="36" src="@/assets/images/logo-dfour.svg">
       </router-link>
 
       <v-divider />
@@ -44,7 +44,7 @@
           color="primary"
           v-on:click="dismissTip('workspace')"
         >
-          {{ $t('workspace.intro', { platformName: "Dufour" }) }}
+          {{ $t('workspace.intro', { platformName: "dføur" }) }}
         </v-alert>
 
         <div class="nodata">
@@ -168,7 +168,6 @@
 </template>
 
 <style>
-
 #snapshotview .v-text-field--outlined fieldset {
   border-color: rgba(0, 0, 0, 0.12);
 }
@@ -236,7 +235,6 @@ h4 {
   padding-top: 5px;
   font-size: 1em;
 }
-
 </style>
 
 <script>
