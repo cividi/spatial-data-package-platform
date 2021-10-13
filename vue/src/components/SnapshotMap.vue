@@ -3,10 +3,17 @@
 {
   "de": {
     "addComment": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
+    "newComment": "Neuer Kommentar",
+    "title": "Titel",
+    "text":"Text",
     "cancel": "abbrechen",
+    "next": "weiter",
+    "prev": "zurück",
     "save": "speichern",
     "saveinfo": "Speichere Angaben",
-    "mandatory": "Dies ist ein Pflichtfeld"
+    "mandatory": "Dies ist ein Pflichtfeld",
+    "email": "E-Mail",
+    "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:"
   },
   "fr": {
   }
@@ -70,38 +77,73 @@
         fab absolute small
         id="addAnnotation"
         color="primary"
-        @click="addAnnotation ? addAnnotation=null : addAnnotation='comment'">
+        @click="addAnnotation ? addAnnotation=null : addAnnotation='COM'">
         <v-icon v-if="!addAnnotation">mdi-comment-plus-outline</v-icon>
         <v-icon v-if="addAnnotation">mdi-close-thick</v-icon>
       </v-btn>
 
-      <!-- v-form
-        class="pt-4"
-        ref="commentform"
-        v-model="valid"
-        lazy-validation
-        @submit="saveComment"
-      >
-        <v-text-field
-          v-model="currentAnnotation.text"
-          :label="$t('title')"
-          :rules="[v => !!v || $t('mandatory')]"
-          required
-        />
-        <div class="d-flex justify-space-between mt-4">
-          <v-btn
-          @click="$emit('cancel')">
-            {{ $t('cancel') }}
-          </v-btn>
-          <v-btn
-            type="submit"
-            color="primary"
-          >
-            {{ $t('save') }}
-          </v-btn>
-        </div>
-
-      </v-form -->
+      <v-card v-if="currentAnnotation" id="commentedit" light width="400" class="pa-4">
+        <h3>{{ $t('newComment') }}</h3>
+        <v-form
+          class="pt-4"
+          ref="commentform"
+          lazy-validation
+          @submit.prevent="saveAnnotation"
+        >
+          <v-stepper v-model="commentstepper" class="elevation-0">
+            <v-stepper-items>
+              <v-stepper-content step="1" class="pa-0">
+                <v-text-field
+                  v-model="currentAnnotation.title"
+                  :label="$t('title')"
+                  :rules="[v => !!v || $t('mandatory')]"
+                  required
+                />
+                <v-textarea
+                  outlined
+                  v-model="currentAnnotation.text"
+                  :label="$t('text')"
+                  :rules="[v => !!v || $t('mandatory')]"
+                  required
+                />
+                <div class="d-flex justify-space-between">
+                  <v-btn
+                  @click="cancelAnnotation">
+                    {{ $t('cancel') }}
+                  </v-btn>
+                  <v-btn
+                    color="primary"
+                    @click="validateStepOne"
+                  >
+                    {{ $t('next') }}
+                  </v-btn>
+                </div>
+              </v-stepper-content>
+              <v-stepper-content step="2" class="pa-0">
+                <p>{{ $t('emailhint') }}</p>
+                <v-text-field
+                  v-model="currentAnnotation.email"
+                  :label="$t('email')"
+                  :rules="[v => !!v || $t('mandatory')]"
+                  required
+                />
+                <div class="d-flex justify-space-between">
+                  <v-btn
+                  @click="commentstepper = 1">
+                    {{ $t('prev') }}
+                  </v-btn>
+                  <v-btn
+                    type="submit"
+                    color="primary"
+                  >
+                    {{ $t('save') }}
+                  </v-btn>
+                </div>
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
+        </v-form>
+      </v-card>
     </v-main>
 </template>
 
@@ -184,6 +226,14 @@ body,
   padding: 5px 3em;
 }
 
+#commentedit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 510;
+}
+
 
 </style>
 
@@ -211,6 +261,7 @@ export default {
       mapinfoopen: true,
       addAnnotation: null,
       currentAnnotation: null,
+      commentstepper: 1,
       title: '',
       description: '',
       legend: [],
@@ -398,17 +449,26 @@ export default {
 
         this.map.on('click', (event) => {
           if (this.addAnnotation !== null) {
-            const newMarker = L.marker(event.latlng);
-            /*
-            newMarker.bindTooltip('', {
-              permanent: true,
-              interactive: true,
-              className: 'leaflet-tooltip'
-            });
-            */
-            newMarker.on('click', this.editComment);
-            newMarker.addTo(this.map);
-            this.map.setView(event.latlng);
+            switch (this.addAnnotation) {
+              case 'COM': {
+                const newMarker = L.marker(event.latlng);
+                /*
+                newMarker.bindTooltip('', {
+                  permanent: true,
+                  interactive: true,
+                  className: 'leaflet-tooltip'
+                });
+                */
+                newMarker.on('click', this.newComment);
+                newMarker.addTo(this.map);
+                this.map.setView(event.latlng);
+                break;
+              }
+              default: {
+                console.log('Error - Annotation type not supported');
+              }
+            }
+
             this.addAnnotation = null;
           }
         });
@@ -437,8 +497,81 @@ export default {
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     },
 
-    editComment() {
+    newComment(e) {
+      this.currentAnnotation = {
+        kind: 'COM',
+        title: '',
+        text: '',
+        marker: e.target
+      };
+    },
 
+    validateStepOne() {
+      const myform = this.$refs.commentform;
+      if (myform.inputs[0].validate()) {
+        if (myform.inputs[1].validate()) {
+          this.commentstepper = 2;
+        } else {
+          myform.inputs[1].focus();
+        }
+      } else {
+        myform.inputs[0].focus();
+      }
+    },
+
+    cancelAnnotation() {
+      this.currentAnnotation.marker.removeFrom(this.map);
+      this.currentAnnotation = null;
+    },
+
+    async saveAnnotation() {
+      const myform = this.$refs.commentform;
+      if (!myform.validate()) {
+        return false;
+      }
+      const csrftoken = this.$cookies.get('csrftoken', '');
+      const formData = new FormData();
+
+      formData.append('kind', this.currentAnnotation.kind);
+      formData.append('workspace', this.wshash);
+      switch (this.currentAnnotation.kind) {
+        case 'COM': {
+          const latlng = this.currentAnnotation.marker.getLatLng();
+          formData.append('category', 1);
+          formData.append('author_email', this.currentAnnotation.email);
+          formData.append('data', `{
+            "type": "Feature", 
+            "geometry": {
+              "type": "Point",
+              "coordinates": [${latlng.lng}, ${latlng.lat}]
+            },
+            "properties": {
+              "fill": "true", 
+              "title": "${this.currentAnnotation.title}", 
+              "description": "${this.currentAnnotation.text}"
+            }
+          }`);
+          break;
+        }
+        default: {
+          console.log('Saving this annotation type not supported');
+          return false;
+        }
+      }
+
+      const save = await this.$restApi.post('annotations/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'X-CSRFToken': csrftoken
+        }
+      });
+      if (save.status === 201) {
+        this.cancelAnnotation();
+        alert('Kommentar gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten.');
+      } else {
+        alert('Speichern fehlgeschlagen');
+      }
+      return save;
     },
 
     async destroyMap() {
@@ -463,24 +596,6 @@ export default {
       this.geobounds = [];
       this.map = null;
       this.isMapLoaded = false;
-    },
-
-    newAnnotation() {
-      // this.$route.params.wshash,
-    },
-
-    async saveAnnotation() {
-      const csrftoken = this.$cookies.get('csrftoken', '');
-      const formData = new FormData();
-
-      // formData.append('data_file', file);
-
-      await this.$restApi.post('annotations', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'X-CSRFToken': csrftoken
-        }
-      });
     }
   }
 };
