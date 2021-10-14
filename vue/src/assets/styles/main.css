@@ -43,9 +43,15 @@ h5, p,li {
 li p {
   font-size: 1em;
 }
+form p {
+  font-size: 1.6em;
+}
 
 .small {
   font-size: 1.3em;
+}
+.leaflet-popup-content {
+  font-size: 13px;
 }
 .smaller {
   font-size: 0.722222em;
@@ -55,6 +61,9 @@ li p {
 }
 .hint {
   opacity: 0.7;
+}
+.v-list-item p {
+  margin-bottom: 0;
 }
 
 a {

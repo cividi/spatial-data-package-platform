@@ -97,11 +97,19 @@
                 <v-select
                   :items="categories"
                   item-text="name"
+                  item-value="pk"
                   v-model="currentAnnotation.category"
                   label="Kategorie"
                   :rules="[v => !!v || $t('mandatory')]"
                   required
-                ></v-select>
+                >
+                  <template slot="item" slot-scope="data">
+                    <img
+                      :src="djangobaseurl + '/media/' + data.item.icon"
+                      height="24px"
+                    /><p>{{data.item.name}} {{data.item.pk}}</p>
+                  </template>
+                </v-select>
                 <v-text-field
                   v-model="currentAnnotation.title"
                   :label="$t('title')"
@@ -250,6 +258,9 @@ body,
   z-index: 510;
 }
 
+.v-list-item img {
+  margin-right: 1em;
+}
 
 </style>
 
@@ -272,6 +283,7 @@ export default {
       hash: this.$route.params.hash,
       wshash: this.$route.params.wshash,
       bfsNumber: this.$route.params.bfsNumber,
+      djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
       map: null,
       layerContainer: null,
       mapinfoopen: true,
@@ -351,7 +363,14 @@ export default {
             curfeature = new L.Marker(latlng, options);
           }
           if (feature.properties.interactive) {
-            curfeature.on('click', this.showTitleDescPopup);
+            curfeature.bindPopup(() => {
+              let content = feature.properties.description;
+              if (feature.properties.title) {
+                content = `<b>${feature.properties.title}</b><br />${content}`;
+              }
+              return content;
+            },
+            { maxWidth: 450, maxHeight: 600 });
           }
           return curfeature;
         }
@@ -446,12 +465,12 @@ export default {
         if (this.annotations) {
           this.annotations = this.annotations.map((a) => {
             if (a.category.length === 1) {
-              a.data.properties.icon = { iconUrl: `/media/${a.category[0].icon}` };
+              a.data.properties.icon = { iconUrl: `/media/${a.category[0].icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
             }
             if (a.attachements.length > 0) {
               const imgs = [];
               a.attachements.map((d) => {
-                imgs.push(`<a href="/media/${d.document}" target="_blank"><img src="/media/${d.document}"></a>`);
+                imgs.push(`<a href="${this.djangobaseurl}/media/${d.document}" target="_blank"><img src="/media/${d.document}"></a>`);
                 return d;
               });
               a.data.properties.description = imgs.join('') + a.data.properties.description;
@@ -556,7 +575,7 @@ export default {
       switch (this.currentAnnotation.kind) {
         case 'COM': {
           const latlng = this.currentAnnotation.marker.getLatLng();
-          formData.append('category', 1);
+          formData.append('category', this.currentAnnotation.category);
           formData.append('author_email', this.currentAnnotation.email);
           formData.append('data', `{
             "type": "Feature", 

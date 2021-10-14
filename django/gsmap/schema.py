@@ -110,11 +110,13 @@ class MunicipalityNode(DjangoObjectType):
 class CategoryNode(DjangoObjectType):
     class Meta:
         model = Category
-        fields = [ 'name', 'icon','my_order','hide_in_list']
+        fields = [ 'name', 'icon', 'my_order', 'hide_in_list']
         filter_fields = {
             'hide_in_list': ['exact'],
         }
         interfaces = [graphene.relay.Node]
+
+    pk = graphene.Int(source='id')
 
 class AttachementNode(DjangoObjectType):
     class Meta:

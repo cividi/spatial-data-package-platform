@@ -209,6 +209,7 @@ export default {
                 }
               }
               categories{
+                pk
                 name
                 icon
               }
