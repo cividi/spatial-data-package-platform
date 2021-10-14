@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from gsmap.models import Workspace, Snapshot, Annotation, Category, Attachement
 
 from .permissions import IsUser
-from .serializers import SnapshotDataUploadSerializer, AnnotationSerializer
+from .serializers import SnapshotDataUploadSerializer, AnnotationSerializer, AnnotationRateUpSerializer
 
 
 class CustomLoginView(LoginView):
@@ -72,9 +72,17 @@ class AnnotationCreateView(generics.CreateAPIView):
     http_method_names = ['post',]
     #parser_classes = [parsers.MultiPartParser]
 
-class AnnotationUpdateView(generics.UpdateAPIView):
+class AnnotationRateUpView(generics.UpdateAPIView):
     queryset = Annotation.objects.all()
-    serializer_class = AnnotationSerializer
+    serializer_class = AnnotationRateUpSerializer
     lookup_url_kwarg = 'annotation_id'
     http_method_names = ['patch',]
-    #parser_classes = [parsers.MultiPartParser]
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        data = {"rating": instance.rating + 1}
+        serializer = self.get_serializer(instance, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        
+        return Response(serializer.data)

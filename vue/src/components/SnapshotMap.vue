@@ -39,7 +39,7 @@
         <span id="mapstatus" :class="{ loaded: isMapLoaded, waiting: !isMapLoaded }"></span>
       </v-container>
 
-      <p class="addHint" v-if="addAnnotation">{{ $t('addComment') }}</p>
+      <p class="addHint" v-if="addingAnnotation">{{ $t('addComment') }}</p>
 
       <v-btn
         v-if="hash && !screenshotIsThumbnail"
@@ -76,14 +76,14 @@
       <v-btn
         v-if="wshash && annotationsOpen && !screenshotMode"
         fab absolute small
-        id="addAnnotation"
+        id="addingAnnotation"
         color="primary"
-        @click="addAnnotation ? addAnnotation=null : addAnnotation='COM'">
-        <v-icon v-if="!addAnnotation">mdi-comment-plus-outline</v-icon>
-        <v-icon v-if="addAnnotation">mdi-close-thick</v-icon>
+        @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM'">
+        <v-icon v-if="!addingAnnotation">mdi-comment-plus-outline</v-icon>
+        <v-icon v-if="addingAnnotation">mdi-close-thick</v-icon>
       </v-btn>
 
-      <v-card v-if="currentAnnotation" id="commentedit" light width="400" class="pa-4">
+      <v-card v-if="newAnnotation" id="commentedit" light width="400" class="pa-4">
         <h3>{{ $t('newComment') }}</h3>
         <v-form
           class="pt-4"
@@ -98,7 +98,7 @@
                   :items="categories"
                   item-text="name"
                   item-value="pk"
-                  v-model="currentAnnotation.category"
+                  v-model="newAnnotation.category"
                   label="Kategorie"
                   :rules="[v => !!v || $t('mandatory')]"
                   required
@@ -107,18 +107,18 @@
                     <img
                       :src="djangobaseurl + '/media/' + data.item.icon"
                       height="24px"
-                    /><p>{{data.item.name}} {{data.item.pk}}</p>
+                    /><p>{{data.item.name}}</p>
                   </template>
                 </v-select>
                 <v-text-field
-                  v-model="currentAnnotation.title"
+                  v-model="newAnnotation.title"
                   :label="$t('title')"
                   :rules="[v => !!v || $t('mandatory')]"
                   required
                 />
                 <v-textarea
                   outlined
-                  v-model="currentAnnotation.text"
+                  v-model="newAnnotation.text"
                   :label="$t('text')"
                   :rules="[v => !!v || $t('mandatory')]"
                   required
@@ -139,14 +139,14 @@
               <v-stepper-content step="2" class="pa-0">
                 <p>{{ $t('emailhint') }}</p>
                 <v-text-field
-                  v-model="currentAnnotation.email"
+                  v-model="newAnnotation.email"
                   :label="$t('email')"
                   :rules="[v => !!v || $t('mandatory')]"
                   required
                 />
                 <v-select
                   :items="usergroups"
-                  v-model="currentAnnotation.usergroup"
+                  v-model="newAnnotation.usergroup"
                   label="Personengruppe"
                   :rules="[v => !!v || $t('mandatory')]"
                   required
@@ -168,6 +168,40 @@
           </v-stepper>
         </v-form>
       </v-card>
+
+      <div id="commentholder">
+        <div id="currentComment">
+          <div v-if="currentComment"
+            :class="currentComment.attachements.length ? 'maxW': ''">
+            <b>{{currentComment.data.properties.title}}</b><br>
+            <v-carousel
+              v-if="currentComment.attachements.length > 0"
+              height="auto"
+              hide-delimiters
+              class="my-1">
+              <v-carousel-item
+                v-for="(item,i) in currentComment.attachements"
+                :key="i"
+                :src="djangobaseurl + '/media/' + item.document"
+              ></v-carousel-item>
+            </v-carousel>
+            {{currentComment.data.properties.description}}<br>
+
+            <div class="d-flex align-center justify-space-between">
+                <p class="rating">
+                  <v-icon color="primary">mdi-heart-outline</v-icon>
+                  <b
+                    style="vertical-align: middle;"
+                  > {{currentComment.rating}}</b>
+                </p>
+              <v-btn
+                fab small color="primary"
+                @click="rateUp(currentComment.pk)"
+                ><v-icon small>mdi-heart-plus-outline</v-icon></v-btn>
+            </div>
+          </div>
+        </div>
+      </div>
     </v-main>
 </template>
 
@@ -176,64 +210,67 @@ html,
 body,
 #app .v-application--wrap,
 #map {
-    min-height: calc(100vh - var(--vh-offset, 0px));
-    height: calc(100vh - var(--vh-offset, 0px));
+  min-height: calc(100vh - var(--vh-offset, 0px));
+  height: calc(100vh - var(--vh-offset, 0px));
 }
 
 #map {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    background: #dedede
-        linear-gradient(90deg, #dedede 0%, #f2f2f2 17%, #dedede 23%) repeat-y;
-    background-size: 125% 10%;
-    animation: BGani 2s ease infinite;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #dedede
+    linear-gradient(90deg, #dedede 0%, #f2f2f2 17%, #dedede 23%) repeat-y;
+  background-size: 125% 10%;
+  animation: BGani 2s ease infinite;
 }
 
 @keyframes BGani {
-    0% {
-        background-position: 110% 0%;
-    }
-    66% {
-        background-position: -410% 0%;
-    }
-    100% {
-        background-position: -410% 0%;
-    }
+  0% {
+    background-position: 110% 0%;
+  }
+  66% {
+    background-position: -410% 0%;
+  }
+  100% {
+    background-position: -410% 0%;
+  }
 }
 #map.leaflet-container {
-    background: #dedede;
-    animation: none;
+  background: #dedede;
+  animation: none;
 }
-.leaflet-popup-content img{
+.leaflet-popup-content {
+  padding: 10px;
+}
+.leaflet-popup-content img {
   max-width: 100%;
-  min-width: 280px;
+  min-width: 260px;
 }
 
 #mapinfo {
-    position: absolute;
-    bottom: 2.5em;
-    right: 2em;
-    min-width: 240px;
-    clip-path: circle(0% at 95% 90%);
-    transition: clip-path 0.3s ease-out;
-    pointer-events: none;
-    z-index: 500; /* must be above mapbox icons */
+  position: absolute;
+  bottom: 2.5em;
+  right: 2em;
+  min-width: 240px;
+  clip-path: circle(0% at 95% 90%);
+  transition: clip-path 0.3s ease-out;
+  pointer-events: none;
+  z-index: 500; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
-    pointer-events: auto;
-    clip-path: circle(100% at center);
+  pointer-events: auto;
+  clip-path: circle(100% at center);
 }
 
-#addAnnotation {
+#addingAnnotation {
   top: 5.6em;
   right: 1.3em;
   transition: top 0.3s;
   transition-timing-function: ease-in-out;
 }
-@media (min-width: 1264px){
-  #addAnnotation {
+@media (min-width: 1264px) {
+  #addingAnnotation {
     top: 1.2em;
     transition-delay: 0.4s;
   }
@@ -249,6 +286,10 @@ body,
   background: #ffffff66;
   padding: 5px 3em;
 }
+#commentholder {
+  position: absolute;
+  display: none;
+}
 
 #commentedit {
   position: absolute;
@@ -258,10 +299,21 @@ body,
   z-index: 510;
 }
 
+#currentComment {
+  min-width: 200px;
+}
+#currentComment .maxW {
+  width: calc(100vw - 40px);
+  max-width: 430px;
+}
 .v-list-item img {
   margin-right: 1em;
 }
-
+p.rating {
+  color: primary;
+  font-size: 16px;
+  margin-bottom: 0;
+}
 </style>
 
 <script>
@@ -287,9 +339,10 @@ export default {
       map: null,
       layerContainer: null,
       mapinfoopen: true,
-      addAnnotation: null,
-      currentAnnotation: null,
+      addingAnnotation: null,
+      newAnnotation: null,
       commentstepper: 1,
+      currentCommentIndex: null,
       usergroups: ['Anwohner', 'Bürger', 'Beschäftigter', 'Student'],
       title: '',
       description: '',
@@ -299,7 +352,11 @@ export default {
       geobounds: [],
       screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
       screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail'),
-      isMapLoaded: false
+      isMapLoaded: false,
+      // eslint-disable-next-line global-require
+      commentIconUrl: require('@/assets/images/icons/comment_36.svg'),
+      // eslint-disable-next-line global-require
+      commentLockedIconUrl: require('@/assets/images/icons/comment_locked_36.svg')
     };
   },
 
@@ -336,6 +393,12 @@ export default {
       set(val) {
         this.$store.commit('setSnapshotnav', val);
       }
+    },
+    currentComment() {
+      if (this.annotations) {
+        return this.annotations[this.currentCommentIndex];
+      }
+      return null;
     }
   },
 
@@ -363,14 +426,15 @@ export default {
             curfeature = new L.Marker(latlng, options);
           }
           if (feature.properties.interactive) {
-            curfeature.bindPopup(() => {
-              let content = feature.properties.description;
-              if (feature.properties.title) {
-                content = `<b>${feature.properties.title}</b><br />${content}`;
-              }
-              return content;
-            },
-            { maxWidth: 450, maxHeight: 600 });
+            // curfeature.bindPopup(() => {
+            //   let content = feature.properties.description;
+            //   if (feature.properties.title) {
+            //     content = `<b>${feature.properties.title}</b><br />${content}`;
+            //   }
+            //   return content;
+            // },
+            // { maxWidth: 450, maxHeight: 600 });
+            curfeature.on('click', this.showPopup);
           }
           return curfeature;
         }
@@ -378,16 +442,28 @@ export default {
       return geoJsonExtended;
     },
 
-    showTitleDescPopup(e) {
-      // console.log(e.target);
-      let content = e.target.feature.properties.description;
-      if (e.target.feature.properties.title) {
-        content = `<b>${e.target.feature.properties.title}</b><br />${content}`;
+    showPopup(e) {
+      // console.log(e.target.feature);
+      let content;
+      if (e.target.feature.kind === 'COM') {
+        this.currentCommentIndex = e.target.feature.index;
+        content = document.getElementById('currentComment');
+      } else {
+        content = e.target.feature.properties.description;
+        if (e.target.feature.properties.title) {
+          content = `<b>${e.target.feature.properties.title}</b><br />${content}`;
+        }
       }
-      new L.Popup({ maxWidth: 450, maxHeight: 600 })
+      const myPopup = new L.Popup({ maxWidth: 450, maxHeight: 600 })
         .setLatLng(e.target._latlng) // eslint-disable-line no-underscore-dangle
-        .setContent(content)
-        .openOn(this.map);
+        .setContent(content);
+
+      myPopup.on('remove', (e) => {
+        console.log('remove');
+        document.getElementById('commentholder').append(e.target.getContent());
+      });
+
+      window.setTimeout(() => { myPopup.openOn(this.map); }, 100);
     },
 
     setupEmpty() {
@@ -463,17 +539,11 @@ export default {
           }
         }
         if (this.annotations) {
-          this.annotations = this.annotations.map((a) => {
+          this.annotations = this.annotations.map((a, i) => {
+            a.data.kind = a.kind;
+            a.data.index = i;
             if (a.category.length === 1) {
               a.data.properties.icon = { iconUrl: `/media/${a.category[0].icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
-            }
-            if (a.attachements.length > 0) {
-              const imgs = [];
-              a.attachements.map((d) => {
-                imgs.push(`<a href="${this.djangobaseurl}/media/${d.document}" target="_blank"><img src="/media/${d.document}"></a>`);
-                return d;
-              });
-              a.data.properties.description = imgs.join('') + a.data.properties.description;
             }
             return a;
           });
@@ -485,17 +555,16 @@ export default {
         this.layerContainer.addTo(this.map);
 
         this.map.on('click', (event) => {
-          if (this.addAnnotation !== null) {
-            switch (this.addAnnotation) {
+          if (this.addingAnnotation !== null) {
+            switch (this.addingAnnotation) {
               case 'COM': {
-                const newMarker = L.marker(event.latlng, { draggable: true });
-                /*
-                newMarker.bindTooltip('', {
-                  permanent: true,
-                  interactive: true,
-                  className: 'leaflet-tooltip'
+                const newMarker = L.marker(event.latlng, {
+                  icon: new L.Icon({
+                    iconUrl: this.commentIconUrl,
+                    iconSize: [36, 36]
+                  }),
+                  draggable: true
                 });
-                */
                 newMarker.on('click', this.newComment);
                 newMarker.addTo(this.map);
                 this.map.setView(event.latlng);
@@ -507,7 +576,7 @@ export default {
               }
             }
 
-            this.addAnnotation = null;
+            this.addingAnnotation = null;
           }
         });
 
@@ -536,7 +605,7 @@ export default {
     },
 
     newComment(e) {
-      this.currentAnnotation = {
+      this.newAnnotation = {
         kind: 'COM',
         title: '',
         text: '',
@@ -548,7 +617,11 @@ export default {
       const myform = this.$refs.commentform;
       if (myform.inputs[0].validate()) {
         if (myform.inputs[1].validate()) {
-          this.commentstepper = 2;
+          if (myform.inputs[2].validate()) {
+            this.commentstepper = 2;
+          } else {
+            myform.inputs[2].focus();
+          }
         } else {
           myform.inputs[1].focus();
         }
@@ -558,8 +631,8 @@ export default {
     },
 
     cancelAnnotation() {
-      this.currentAnnotation.marker.removeFrom(this.map);
-      this.currentAnnotation = null;
+      this.newAnnotation.marker.removeFrom(this.map);
+      this.newAnnotation = null;
     },
 
     async saveAnnotation() {
@@ -570,13 +643,13 @@ export default {
       const csrftoken = this.$cookies.get('csrftoken', '');
       const formData = new FormData();
 
-      formData.append('kind', this.currentAnnotation.kind);
+      formData.append('kind', this.newAnnotation.kind);
       formData.append('workspace', this.wshash);
-      switch (this.currentAnnotation.kind) {
+      switch (this.newAnnotation.kind) {
         case 'COM': {
-          const latlng = this.currentAnnotation.marker.getLatLng();
-          formData.append('category', this.currentAnnotation.category);
-          formData.append('author_email', this.currentAnnotation.email);
+          const latlng = this.newAnnotation.marker.getLatLng();
+          formData.append('category', this.newAnnotation.category);
+          formData.append('author_email', this.newAnnotation.email);
           formData.append('data', `{
             "type": "Feature", 
             "geometry": {
@@ -585,9 +658,9 @@ export default {
             },
             "properties": {
               "fill": "true", 
-              "title": "${this.currentAnnotation.title}", 
-              "description": "${this.currentAnnotation.text}",
-              "usergroup": "${this.currentAnnotation.usergroup}"
+              "title": "${this.newAnnotation.title}", 
+              "description": "${this.newAnnotation.text}",
+              "usergroup": "${this.newAnnotation.usergroup}"
             }
           }`);
           break;
@@ -605,12 +678,35 @@ export default {
         }
       });
       if (save.status === 201) {
-        this.cancelAnnotation();
-        alert('Kommentar gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten.');
+        this.newAnnotation.marker.setIcon(
+          new L.Icon({
+            iconUrl: this.commentLockedIconUrl,
+            iconSize: [36, 36]
+          })
+        );
+        this.newAnnotation = null;
+        console.log('Kommentar gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten.');
       } else {
-        alert('Speichern fehlgeschlagen');
+        console.log('Speichern fehlgeschlagen');
       }
       return save;
+    },
+
+    async rateUp(annotationPk) {
+      const csrftoken = this.$cookies.get('csrftoken', '');
+      const formData = new FormData();
+
+      const save = await this.$restApi.patch(`rateupannotation/${annotationPk}/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'X-CSRFToken': csrftoken
+        }
+      });
+      if (save.status === 200) {
+        this.currentComment.rating = parseInt(save.data.rating, 10);
+      } else {
+        console.log('Speichern fehlgeschlagen');
+      }
     },
 
     async destroyMap() {

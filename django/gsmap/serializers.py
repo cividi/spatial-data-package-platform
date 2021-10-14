@@ -21,3 +21,8 @@ class AnnotationSerializer(serializers.ModelSerializer):
             'rating',
             'workspace',
         )
+
+class AnnotationRateUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Annotation
+        fields = ('rating',)

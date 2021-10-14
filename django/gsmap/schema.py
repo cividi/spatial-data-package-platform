@@ -133,6 +133,7 @@ class AnnotationNode(DjangoObjectType):
     category = graphene.List(CategoryNode)
     attachements = graphene.List(AttachementNode)
     data = generic.GenericScalar(source='data')
+    pk = graphene.Int(source='id')
 
     def resolve_category(self, info):
         return Category.objects.filter(Q(id=self.category.id))

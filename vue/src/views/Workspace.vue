@@ -196,6 +196,7 @@ export default {
               }
               annotations{
                 id
+                pk
                 kind
                 rating
                 data
