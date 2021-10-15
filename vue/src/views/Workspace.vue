@@ -129,6 +129,7 @@ export default {
       wshash: this.$route.params.wshash,
       geojson: null,
       annotations: null,
+      categories: null,
       geobounds: [],
       municipalityName: '',
       snapshotsWorkspace: [],

@@ -13,8 +13,13 @@
     "saveinfo": "Speichere Angaben",
     "mandatory": "Dies ist ein Pflichtfeld",
     "email": "E-Mail",
+    "inv": "Dies ist keine gültige E-Mail Adresse",
     "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
-    "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben"
+    "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben",
+    "failed": "Speichern fehlgeschlagen",
+    "failedText": "Bitte prüfen Sie Ihre Eingaben oder versuchen Sie es später nochmals.",
+    "saved": "Speichern erfolgreich",
+    "commentSaved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
   },
   "fr": {
   }
@@ -35,8 +40,12 @@
       </v-slide-x-reverse-transition>
 
       <v-container fluid class="pa-0" ref="mapbox">
+        <span id="mapstatus" :class="{
+          loaded: isMapLoaded,
+          waiting: !isMapLoaded,
+          addingAnnotation: addingAnnotation!==null
+        }"></span>
         <div id="map"></div>
-        <span id="mapstatus" :class="{ loaded: isMapLoaded, waiting: !isMapLoaded }"></span>
       </v-container>
 
       <p class="addHint" v-if="addingAnnotation">{{ $t('addComment') }}</p>
@@ -73,101 +82,147 @@
         />
       </v-card>
 
-      <v-btn
-        v-if="wshash && annotationsOpen && !screenshotMode"
-        fab absolute small
-        id="addingAnnotation"
-        color="primary"
-        @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM'">
-        <v-icon v-if="!addingAnnotation">mdi-comment-plus-outline</v-icon>
-        <v-icon v-if="addingAnnotation">mdi-close-thick</v-icon>
-      </v-btn>
+      <div v-if="wshash && annotationsOpen && !screenshotMode">
+        <v-btn
+          fab absolute small
+          id="myLocation"
+          color="primary"
+          @click="myLocation">
+          <v-icon>mdi-crosshairs-gps</v-icon>
+        </v-btn>
 
-      <v-card v-if="newAnnotation" id="commentedit" light width="400" class="pa-4">
-        <h3>{{ $t('newComment') }}</h3>
-        <v-form
-          class="pt-4"
-          ref="commentform"
-          lazy-validation
-          @submit.prevent="saveAnnotation"
+        <v-btn
+          fab absolute small
+          id="addingAnnotation"
+          color="primary"
+          @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM'">
+          <v-icon v-if="!addingAnnotation">mdi-comment-plus-outline</v-icon>
+          <v-icon v-if="addingAnnotation">mdi-close-thick</v-icon>
+        </v-btn>
+
+        <v-scale-transition origin="center" duration="10000">
+          <div class="commentanimation" v-if="newAnnotation">
+            <v-card
+              id="commentedit"
+              light width="400" class="pa-4"
+            >
+              <h3>{{ $t('newComment') }}</h3>
+              <v-form
+                class="pt-4"
+                ref="commentform"
+                lazy-validation
+                @submit.prevent="saveAnnotation"
+              >
+                <v-stepper v-model="commentstepper" class="elevation-0">
+                  <v-stepper-items>
+                    <v-stepper-content step="1" class="pa-0">
+                      <v-select
+                        :items="categories"
+                        item-text="name"
+                        item-value="pk"
+                        v-model="newAnnotation.category"
+                        label="Kategorie"
+                        :rules="[v => !!v || $t('mandatory')]"
+                        required
+                      >
+                        <template slot="item" slot-scope="data">
+                          <img
+                            :src="djangobaseurl + '/media/' + data.item.icon"
+                            height="24px"
+                          /><p>{{data.item.name}}</p>
+                        </template>
+                      </v-select>
+                      <v-text-field
+                        v-model="newAnnotation.title"
+                        :label="$t('title')"
+                        :rules="[v => !!v || $t('mandatory')]"
+                        required
+                      />
+                      <v-textarea
+                        outlined
+                        v-model="newAnnotation.text"
+                        :label="$t('text')"
+                        :rules="[v => !!v || $t('mandatory')]"
+                        required
+                      />
+                      <div class="d-flex justify-space-between">
+                        <v-btn
+                        @click="cancelAnnotation">
+                          {{ $t('cancel') }}
+                        </v-btn>
+                        <v-btn
+                          color="primary"
+                          @click="validateStepOne"
+                        >
+                          {{ $t('next') }}
+                        </v-btn>
+                      </div>
+                    </v-stepper-content>
+                    <v-stepper-content step="2" class="pa-0">
+                      <p>{{ $t('emailhint') }}</p>
+                      <v-text-field
+                        v-model="newAnnotation.email"
+                        :label="$t('email')"
+                        :rules="[
+                          v => !!v || $t('mandatory'),
+                          v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/.test(v) || $t('inv')]"
+                        required
+                      />
+                      <v-select
+                        :items="usergroups"
+                        v-model="newAnnotation.usergroup"
+                        label="Personengruppe"
+                        :rules="[v => !!v || $t('mandatory')]"
+                        required
+                      ></v-select>
+                      <p class="small">{{ $t('notpublic')}}</p>
+                      <div class="d-flex justify-space-between">
+                        <v-btn
+                        @click="commentstepper = 1">
+                          {{ $t('prev') }}
+                        </v-btn>
+                        <v-btn
+                          type="submit"
+                          color="primary"
+                        >
+                          {{ $t('save') }}
+                        </v-btn>
+                      </div>
+                    </v-stepper-content>
+                  </v-stepper-items>
+                </v-stepper>
+              </v-form>
+            </v-card>
+          </div>
+        </v-scale-transition>
+
+        <v-dialog
+          v-model="dialog"
+          :hide-overlay="true"
+          width="320"
         >
-          <v-stepper v-model="commentstepper" class="elevation-0">
-            <v-stepper-items>
-              <v-stepper-content step="1" class="pa-0">
-                <v-select
-                  :items="categories"
-                  item-text="name"
-                  item-value="pk"
-                  v-model="newAnnotation.category"
-                  label="Kategorie"
-                  :rules="[v => !!v || $t('mandatory')]"
-                  required
-                >
-                  <template slot="item" slot-scope="data">
-                    <img
-                      :src="djangobaseurl + '/media/' + data.item.icon"
-                      height="24px"
-                    /><p>{{data.item.name}}</p>
-                  </template>
-                </v-select>
-                <v-text-field
-                  v-model="newAnnotation.title"
-                  :label="$t('title')"
-                  :rules="[v => !!v || $t('mandatory')]"
-                  required
-                />
-                <v-textarea
-                  outlined
-                  v-model="newAnnotation.text"
-                  :label="$t('text')"
-                  :rules="[v => !!v || $t('mandatory')]"
-                  required
-                />
-                <div class="d-flex justify-space-between">
-                  <v-btn
-                  @click="cancelAnnotation">
-                    {{ $t('cancel') }}
-                  </v-btn>
-                  <v-btn
-                    color="primary"
-                    @click="validateStepOne"
-                  >
-                    {{ $t('next') }}
-                  </v-btn>
-                </div>
-              </v-stepper-content>
-              <v-stepper-content step="2" class="pa-0">
-                <p>{{ $t('emailhint') }}</p>
-                <v-text-field
-                  v-model="newAnnotation.email"
-                  :label="$t('email')"
-                  :rules="[v => !!v || $t('mandatory')]"
-                  required
-                />
-                <v-select
-                  :items="usergroups"
-                  v-model="newAnnotation.usergroup"
-                  label="Personengruppe"
-                  :rules="[v => !!v || $t('mandatory')]"
-                  required
-                ></v-select>
-                <div class="d-flex justify-space-between">
-                  <v-btn
-                  @click="commentstepper = 1">
-                    {{ $t('prev') }}
-                  </v-btn>
-                  <v-btn
-                    type="submit"
-                    color="primary"
-                  >
-                    {{ $t('save') }}
-                  </v-btn>
-                </div>
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
-        </v-form>
-      </v-card>
+          <v-card>
+            <v-card-title class="smalltitle">
+              {{ dialogcontent.title }}
+            </v-card-title>
+
+            <v-card-text>
+              {{ dialogcontent.text }}
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="primary"
+                text
+                @click="dialog = false"
+              >
+                OK
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </div>
 
       <div id="commentholder">
         <div id="currentComment">
@@ -223,6 +278,9 @@ body,
   background-size: 125% 10%;
   animation: BGani 2s ease infinite;
 }
+.addingAnnotation + #map {
+  cursor: crosshair;
+}
 
 @keyframes BGani {
   0% {
@@ -263,16 +321,27 @@ body,
   clip-path: circle(100% at center);
 }
 
+#myLocation,
 #addingAnnotation {
   top: 5.6em;
   right: 1.3em;
   transition: top 0.3s;
   transition-timing-function: ease-in-out;
 }
+#myLocation{
+  transition-delay: 0.1s;
+}
+#addingAnnotation {
+  top: 10em;
+}
 @media (min-width: 1264px) {
-  #addingAnnotation {
+  #myLocation {
     top: 1.2em;
     transition-delay: 0.4s;
+  }
+  #addingAnnotation {
+    top: 5.6em;
+    transition-delay: 0.5s;
   }
 }
 
@@ -290,6 +359,30 @@ body,
   position: absolute;
   display: none;
 }
+.commentanimation {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  margin: -200px 0 0 -200px;
+}
+@keyframes fromcircle{
+  0% {
+    border-radius: 30em;
+  }
+  100% {
+    border-radius: 0;
+  }
+}
+.scale-transition-enter-active #commentedit{
+  animation: fromcircle 0.3s 0.1s ease-out;
+  animation-fill-mode: both;
+}
+.scale-transition-leave-active #commentedit {
+  animation: fromcircle reverse 0.2s ease-out;
+  animation-fill-mode: both;
+}
 
 #commentedit {
   position: absolute;
@@ -297,6 +390,7 @@ body,
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 510;
+  overflow: hidden;
 }
 
 #currentComment {
@@ -313,6 +407,10 @@ p.rating {
   color: primary;
   font-size: 16px;
   margin-bottom: 0;
+}
+
+.smalltitle {
+  font-size: 16px !important;
 }
 </style>
 
@@ -344,6 +442,8 @@ export default {
       commentstepper: 1,
       currentCommentIndex: null,
       usergroups: ['Anwohner', 'Bürger', 'Beschäftigter', 'Student'],
+      dialog: false,
+      dialogcontent: {},
       title: '',
       description: '',
       legend: [],
@@ -605,6 +705,7 @@ export default {
     },
 
     newComment(e) {
+      this.commentstepper = 1;
       this.newAnnotation = {
         kind: 'COM',
         title: '',
@@ -670,26 +771,46 @@ export default {
           return false;
         }
       }
+      try {
+        const save = await this.$restApi.post('annotations/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'X-CSRFToken': csrftoken
+          }
+        });
+        if (save.status === 201) {
+          const marker = this.newAnnotation.marker;
+          marker.setIcon(
+            new L.Icon({
+              iconUrl: this.commentLockedIconUrl,
+              iconSize: [36, 36],
+              popupAnchor: [0, -16]
+            })
+          );
+          marker.off();
+          marker.bindPopup(this.$t('commentSaved'));
+          this.newAnnotation = null;
 
-      const save = await this.$restApi.post('annotations/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'X-CSRFToken': csrftoken
+          this.dialogcontent = {
+            title: this.$t('saved'),
+            text: this.$t('commentSaved')
+          };
+          this.dialog = true;
         }
-      });
-      if (save.status === 201) {
-        this.newAnnotation.marker.setIcon(
-          new L.Icon({
-            iconUrl: this.commentLockedIconUrl,
-            iconSize: [36, 36]
-          })
-        );
-        this.newAnnotation = null;
-        console.log('Kommentar gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten.');
-      } else {
-        console.log('Speichern fehlgeschlagen');
+        // } else {
+        //   console.log('save');
+        //   console.log(save);
+        //   console.log('Speichern fehlgeschlagen');
+        // }
+      } catch (error) {
+        console.log(error);
+        this.dialogcontent = {
+          title: this.$t('failed'),
+          text: this.$t('failedText')
+        };
+        this.dialog = true;
       }
-      return save;
+      return true;
     },
 
     async rateUp(annotationPk) {
@@ -708,7 +829,12 @@ export default {
         console.log('Speichern fehlgeschlagen');
       }
     },
-
+    myLocation() {
+      navigator.geolocation.getCurrentPosition((position) => {
+        // .latitude, position.coords.longitude
+        this.map.setView(position.coords);
+      });
+    },
     async destroyMap() {
       this.layerContainer.clearLayers();
       this.map.eachLayer((layer) => {

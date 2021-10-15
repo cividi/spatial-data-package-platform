@@ -6,7 +6,7 @@ try {
   if (fs.existsSync('VERSION')) {
     process.env.VUE_APP_GIT_VERSION = fs.readFileSync('VERSION', 'utf8');
   }
-} catch(err) {
+} catch (err) {
   //pass
 }
 
@@ -17,6 +17,7 @@ module.exports = {
     inline: true,
     port: '8080',
     public: 'www',
+    // https: true,
     allowedHosts: [
       'www',
       'www.local',

@@ -127,7 +127,7 @@ class AttachementNode(DjangoObjectType):
 class AnnotationNode(DjangoObjectType):
     class Meta:
         model = Annotation
-        fields = [ 'kind', 'author_email', 'data', 'rating']
+        fields = [ 'kind', 'data', 'rating']
         interfaces = [graphene.relay.Node]
     
     category = graphene.List(CategoryNode)
