@@ -21,6 +21,10 @@ ADMIN_NAME = os.environ.get('DJANGO_ADMIN_NAME', 'gemeindescan DEV')
 ADMIN_HEADER_COLOR = os.environ.get('DJANGO_ADMIN_HEADER_COLOR', '#543076')
 LOGIN_PAGE_TITLE = os.environ.get('LOGIN_PAGE_TITLE', 'Gemeindescan')
 
+# DEV: Output mail to console
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+MAILER_EMAIL_BACKEND = EMAIL_BACKEND
+
 CURRENT_TAG_VERSION = "NaN.NaN.NaN"
 CURRENT_COMMIT_VERSION = "NaN"
 

@@ -3,6 +3,7 @@ import os
 import requests
 import secrets
 import string
+import hashlib
 from enum import IntFlag
 
 from sortedm2m.fields import SortedManyToManyField
@@ -23,6 +24,11 @@ from django.utils.html import escape, format_html
 
 from gsuser.models import User
 
+from django.core.mail import send_mail
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
 
 class OverwriteStorage(FileSystemStorage):
     def get_available_name(self, name, max_length=None):
@@ -429,3 +435,32 @@ class Attachement(models.Model):
     document = models.FileField(upload_to='annotation-attachements', null=True, blank=True)
     #kind = models.CharField(max_length=4)
     my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
+
+@receiver(post_save, sender=Annotation)
+def send_new_annotation_email(sender, instance, created, **kwargs):
+
+    # if a new officer is created, compose and send the email
+    if created:
+        # name = instance.name if instance.name else "no name given"
+        # rank = instance.rank.name if instance.rank else "no rank given"
+        # ship_assignment = instance.ship_assignment.name if instance.ship_assignment else 'no ship assignment'
+
+        recipient = instance.author_email
+        idstr = str(instance.id)
+
+        uniquestr = instance.author_email + idstr + SECRET_KEY
+        publishKeyHex = hashlib.md5(uniquestr.encode()).hexdigest()
+
+        subject = 'Kommentar freischalten'
+        message = 'Besten Dank für Ihren Kommentar!\n'
+        message += 'Sie Können ihn unter folgender URL freischalten:\n'
+        message += 'http://www:8000/publish/'+ idstr +'/' + publishKeyHex + '\n'
+        message += '--' * 30
+
+        send_mail(
+            subject,
+            message,
+            'noreply@bochum.de',
+            [ recipient ],
+            fail_silently=False,
+        )

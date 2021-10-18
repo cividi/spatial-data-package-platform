@@ -17,7 +17,7 @@ module.exports = {
     inline: true,
     port: '8080',
     public: 'www',
-    // https: true,
+    //https: true,
     allowedHosts: [
       'www',
       'www.local',

@@ -28,7 +28,7 @@
 <!-- eslint-enable -->
 
 <template>
-    <v-main>
+    <v-main :class="{navopen : snapshotnav}">
       <v-slide-x-reverse-transition>
         <v-btn fab absolute small
           style="top:1.2em; right:1.3em;"
@@ -53,7 +53,8 @@
       <v-btn
         v-if="hash && !screenshotIsThumbnail"
         fab absolute small
-        style="bottom:2.5em; right:2em;"
+        style="bottom:2.2em; right:1.3em;"
+        :elevation="mapinfoopen ? 0 : 6"
         color="white"
         @click="mapinfoopen=!mapinfoopen">
         <v-icon>mdi-information-variant</v-icon>
@@ -244,13 +245,13 @@
 
             <div class="d-flex align-center justify-space-between">
                 <p class="rating">
-                  <v-icon color="primary">mdi-heart-outline</v-icon>
+                  <v-icon color="primary" small>mdi-heart-outline</v-icon>
                   <b
                     style="vertical-align: middle;"
                   > {{currentComment.rating}}</b>
                 </p>
               <v-btn
-                fab small color="primary"
+                fab x-small color="primary"
                 @click="rateUp(currentComment.pk)"
                 ><v-icon small>mdi-heart-plus-outline</v-icon></v-btn>
             </div>
@@ -308,7 +309,7 @@ body,
 #mapinfo {
   position: absolute;
   bottom: 2.5em;
-  right: 2em;
+  right: 1.6em;
   min-width: 240px;
   clip-path: circle(0% at 95% 90%);
   transition: clip-path 0.3s ease-out;
@@ -334,15 +335,13 @@ body,
 #addingAnnotation {
   top: 10em;
 }
-@media (min-width: 1264px) {
-  #myLocation {
-    top: 1.2em;
-    transition-delay: 0.4s;
-  }
-  #addingAnnotation {
-    top: 5.6em;
-    transition-delay: 0.5s;
-  }
+.navopen #myLocation {
+  top: 1.2em;
+  transition-delay: 0.3s;
+}
+.navopen #addingAnnotation {
+  top: 5.6em;
+  transition-delay: 0.4s;
 }
 
 .addHint {
@@ -405,12 +404,23 @@ body,
 }
 p.rating {
   color: primary;
-  font-size: 16px;
+  font-size: 13px;
   margin-bottom: 0;
 }
 
 .smalltitle {
   font-size: 16px !important;
+}
+
+.leaflet-control-attribution.leaflet-compact-attribution::after {
+  content: none;
+  display: none;
+}
+.leaflet-container .leaflet-control-attribution.leaflet-compact-attribution {
+  margin:0;
+  visibility: visible;
+  padding:0;
+  padding-right: 5px;
 }
 </style>
 
@@ -562,7 +572,7 @@ export default {
         console.log('remove');
         document.getElementById('commentholder').append(e.target.getContent());
       });
-
+      this.mapinfoopen = false;
       window.setTimeout(() => { myPopup.openOn(this.map); }, 100);
     },
 

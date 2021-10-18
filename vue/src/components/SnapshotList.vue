@@ -18,6 +18,7 @@
         class="px-0">{{ snapshot.topic }}</v-subheader>
       <v-list-item class="px-0 mb-4"
         v-if="!snapshot.requestable"
+        @click="snapshotnav=false"
         :to="createRouteLink(snapshot.pk)" dense
         >
           <v-list-item-avatar tile size="64" class="my-0">
@@ -179,6 +180,14 @@ export default {
       });
 
       return Object.values(topicgroups).flat();
+    },
+    snapshotnav: {
+      get() {
+        return this.$store.state.snapshotnav;
+      },
+      set(val) {
+        this.$store.commit('setSnapshotnav', val);
+      }
     }
   }
 };
