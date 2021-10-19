@@ -3,13 +3,13 @@
 {
   "de": {
     "img.1.alt":
-      "Gemeindescan Schweiz",
+      "dføur Bochum",
     "h2.2": "Beispiele",
     "networkerror": "Die Gemeindesuche ist zur Zeit nicht verfügbar."
   },
   "fr": {
     "img.1.alt":
-      "Le Gemeindescan Suisse",
+      "Le dføur Bochum",
     "h2.2": "Examples",
    "networkerror": "La recherche de communauté n'est pas disponible actuellement."
   }
