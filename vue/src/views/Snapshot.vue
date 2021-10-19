@@ -12,8 +12,8 @@
     "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
     "noSnapshot.p3.1": "Gerne beraten wir Sie telefonisch unter",
     "noSnapshot.p3.2": " oder per email",
-    "contactEmail": "info@gemeindescan.ch",
-    "contactEmailSubject": "Anfrage Gemeindescan",
+    "contactEmail": "support@dfour.space",
+    "contactEmailSubject": "Anfrage dføur",
     "contactPhone": "+41 43 543 44 48",
     "listtitle": "Fallbeispiele",
     "listtitleMore": "Weitere Fallbeispiele"
@@ -29,8 +29,8 @@
     "noSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
     "noSnapshot.p3.1": "Nous vous conseillons volontiers par téléphone au",
     "noSnapshot.p3.2": "ou par courriel",
-    "contactEmail": "info@gemeindescan.ch",
-    "contactEmailSubject": "Offre pour Gemeindescan",
+    "contactEmail": "support@dfour.space",
+    "contactEmailSubject": "Offre pour dføur",
     "contactPhone": "+41 43 543 44 48",
     "listtitle": "Examples",
     "listtitleMore": "D'autres examples"
@@ -48,8 +48,8 @@
       app
       width="320"
       v-model="snapshotnav">
-      <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
-        <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
+      <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block">
+        <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
       </router-link>
 
       <v-divider />

@@ -98,13 +98,21 @@
         <v-icon small color="primary">mdi-chevron-right</v-icon>
         {{ $t('sources') }}
     </v-btn>
-    <a href="https://gemeindescan.ch" target="_blank"><img alt="gemeindescan logo" height="35"
-      style="float:right; opacity:0.55;"
-      src="@/assets/images/gemeindescan-logo.svg"></a>
+    <a href="https://dfour.space" target="_blank">
+      <img alt="dføur logo" height="18" id="legendLogo"
+        style="float:right; opacity:0.55;"
+        src="@/assets/images/dfour-logo.svg">
+      </a>
   </div>
 </template>
 
 <style>
+#legendLogo {
+  float: right;
+  margin-right: -5px;
+  margin-top: 5px;
+  opacity: 0.45;
+}
 .legend.v-list--dense .v-list-item {
   min-height: 0;
   height: 0;

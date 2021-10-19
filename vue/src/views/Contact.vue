@@ -4,15 +4,15 @@
   "de": {
     "h1.1": "Kontakt",
     "p.1":
-      "Direkt mit dem Gemeindescan-Team in Kontakt treten:<br><a href=\"mailto:kontakt@gemeindescan.ch\">kontakt@gemeindescan.ch</a><br><a href=\"tel:+41 43 543 44 45\">+41 43 543 44 45</a><br>Flüelastrasse 10<br>8048 Zürich",
+      "Direkt mit dem dføur-Team in Kontakt treten:<br><a href=\"mailto:support@dfour.space\">support@dfour.space</a><br><a href=\"tel:+41 43 543 44 45\">+41 43 543 44 45</a><br>Flüelastrasse 10<br>8048 Zürich",
     "p.2":
-      "Die Gemeindescan-Plattform ist Open Source und Open Development. Zum Gemeindescan beitragen: <a href=\"https://bitbucket.org/cividi/gemeindescan-webui\" target=\"_blank\">Projekt auf Bitbucket</a>",
+      "Die dføur-Plattform ist Open Source und Open Development. Zum dføur beitragen: <a href=\"https://github.org/cividi/spatial-data-package-platform\" target=\"_blank\">Projekt auf GitHub</a>",
     "p.3":
       "cividi - digitale Werkzeuge für die analoge Stadt.",
     "p.4":
       "<small>Das Pionierprojekt wird ermöglicht durch <a href=\"https://www.engagement-migros.ch/de\" target=\"_blank\">Engagement Migros</a>,<br>dem Förderfonds der Migros-Gruppe.</small>",
     "p.5": 
-      "Der Gemeindescan ist eine <a href=\"https://cividi.ch\" target=\"_blank\">cividi</a> Anwendung, die in Zusammenarbeit mit <a href=\"https://taywa.ch\" target=\"_blank\">Taywa</a> entwickelt wird.",
+      "dføur ist eine <a href=\"https://cividi.ch\" target=\"_blank\">cividi</a> Anwendung, die in Zusammenarbeit mit <a href=\"https://taywa.ch\" target=\"_blank\">Taywa</a> entwickelt wird.",
     "cividi.link":
       "https://cividi.ch",
     "em.link":
@@ -21,15 +21,15 @@
   "fr": {
     "h1.1": "Contact",
     "p.1":
-      "Prenez contact directement avec l'équipe du Gemeindescan.<br><a href=\"mailto:contact@gemeindescan.ch\">contact@gemeindescan.ch</a><br><a href=\"tel:+41 43 543 44 45\">+41 43 543 44 45</a><br>Flüelastrasse 10<br>8048 Zürich",
+      "Prenez contact directement avec l'équipe du dføur.<br><a href=\"mailto:support@dfour.space\">support@dfour.space</a><br><a href=\"tel:+41 43 543 44 45\">+41 43 543 44 45</a><br>Flüelastrasse 10<br>8048 Zürich",
     "p.2":
-      "La plate-forme du Gemeindescan est un logiciel Open Source & Development. Contribuer au Gemeindescan:  <a href=\"https://bitbucket.org/cividi/gemeindescan-webui\" target=\"_blank\">Projet sur Bitbucket</a>",
+      "La plate-forme du dføur est un logiciel Open Source & Development. Contribuer au dføur:  <a href=\"https://github.com/cividi/spatial-data-package-platform\" target=\"_blank\">Projet sur GitHub</a>",
     "p.3":
       "cividi - Des outils numériques pour la ville analogique",
     "p.4":
       "<small>Ce projet innovateur est rendu possible grâce à <a href=\"https://www.engagement-migros.ch/fr\" target=\"_blank\">l'engagement de Migros</a>,<br>le fonds de développement du groupe Migros.</small>",
     "p.5":
-      "Le Gemeindescan est une application <a href=\"https://cividi.ch/societe/\" target=\"_blank\">cividi</a> développée en coopération avec <a href=\"https://taywa.ch\" target=\"_blank\">Taywa</a>.",
+      "Le dføur est une application <a href=\"https://cividi.ch/societe/\" target=\"_blank\">cividi</a> développée en coopération avec <a href=\"https://taywa.ch\" target=\"_blank\">Taywa</a>.",
     "cividi.link":
       "https://cividi.ch/societe",
     "em.link":
