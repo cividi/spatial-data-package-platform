@@ -7,3 +7,5 @@ docker-prod.yml
 docker-compose-prod.yml
 __pycache__/
 docker-compose.yml
+etc/nginx/*.conf
+www
