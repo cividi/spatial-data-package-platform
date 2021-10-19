@@ -7,11 +7,11 @@
     }
 
     a:focus, a:hover, a:link, a:visited {
-        color: #61388B;
+        color: {{ ADMIN_HEADER_COLOR }};
     }
 
     #changelist-filter a:focus, #changelist-filter a:hover, #changelist-filter li.selected a:focus, #changelist-filter li.selected a:hover {
-        color: #543076 !important;
+        color: {{ ADMIN_HEADER_COLOR }} !important;
     }
 
     div.breadcrumbs a:hover {
@@ -24,7 +24,7 @@
     }
 
     .module h2, .module caption, .inline-group h2 {
-        background: #543076;
+        background: {{ ADMIN_HEADER_COLOR }};
         color: #fff;
     }
 
@@ -38,7 +38,7 @@
     }
 
     .paginator a:link, .paginator a:visited {
-        background: #543076 !important;
+        background: {{ ADMIN_HEADER_COLOR }} !important;
     }
 
     #changelist-filter li.selected a {
@@ -46,31 +46,31 @@
     }
 
     .button, input[type=submit], input[type=button], .submit-row input, a.button {
-        background: #824DB7;
+        background: {{ ADMIN_HEADER_COLOR }};
     }
 
     .button.default, input[type=submit].default, .submit-row input.default {
-        background: #543076;
+        background: {{ ADMIN_HEADER_COLOR }};
     }
 
     .button:active, input[type=submit]:active, input[type=button]:active, .button:focus, input[type=submit]:focus, input[type=button]:focus, .button:hover, input[type=submit]:hover, input[type=button]:hover {
-        background: #61388B !important;
+        background:{{ ADMIN_HEADER_COLOR }} !important;
     }
 
     .selector-chosen h2 {
-        background: #543076 !important;
+        background: {{ ADMIN_HEADER_COLOR }} !important;
     }
 
     .object-tools a:focus, .object-tools a:hover {
-        background-color: #543076;
+        background-color: {{ ADMIN_HEADER_COLOR }};
     }
     body {
         height: auto;
-        min-height: calc(100vh - 35px);
+        min-height: calc(100vh - 237px);
     }
     body #container {
         height: auto;
-        min-height: calc(100vh - 35px);
+        min-height: calc(100vh - 237px);
     }
     footer {
         height: 35px;
