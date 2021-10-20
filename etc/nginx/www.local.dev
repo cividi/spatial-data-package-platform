@@ -18,12 +18,15 @@ server {
 
     # root /var/services/django/static/dist/; # for production build
 
+    # developer SSL settings
+    ssl_certificate /etc/nginx/certs/default.crt;
+    ssl_certificate_key /etc/nginx/certs/default.key;
+
     location = / {
         set $lang_sup "de,fr";
         set_by_lua_file $lang_accept /etc/nginx/conf.d/lang.lua $lang_sup;
         return $scheme://$host:$server_port/$lang_accept;
     }
-
 
     location /static {
         alias /var/services/django/static;
