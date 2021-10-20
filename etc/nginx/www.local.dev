@@ -19,8 +19,8 @@ server {
     # root /var/services/django/static/dist/; # for production build
 
     # developer SSL settings
-    ssl_certificate /etc/nginx/certs/default.crt;
-    ssl_certificate_key /etc/nginx/certs/default.key;
+    ssl_certificate /etc/nginx/conf.d/localhost.crt;
+    ssl_certificate_key /etc/nginx/conf.d/localhost.key;
 
     location = / {
         set $lang_sup "de,fr";
