@@ -101,7 +101,7 @@
           <v-icon v-if="addingAnnotation">mdi-close-thick</v-icon>
         </v-btn>
 
-        <v-scale-transition origin="center" duration="10000">
+        <v-scale-transition origin="center">
           <div class="commentanimation" v-if="newAnnotation">
             <v-card
               id="commentedit"
@@ -466,7 +466,10 @@ export default {
       // eslint-disable-next-line global-require
       commentIconUrl: require('@/assets/images/icons/comment_36.svg'),
       // eslint-disable-next-line global-require
-      commentLockedIconUrl: require('@/assets/images/icons/comment_locked_36.svg')
+      commentLockedIconUrl: require('@/assets/images/icons/comment_locked_36.svg'),
+      setMapMyLocation: false,
+      locationWatcher: null,
+      myLocationMarker: null
     };
   },
 
@@ -839,11 +842,27 @@ export default {
         console.log('Speichern fehlgeschlagen');
       }
     },
+
     myLocation() {
-      navigator.geolocation.getCurrentPosition((position) => {
-        // .latitude, position.coords.longitude
-        this.map.setView(position.coords);
-      });
+      this.setMapMyLocation = true;
+      if (this.locationWatcher === null) {
+        this.myLocationMarker = L.marker([0, 0], {
+          icon: new L.Icon({
+            iconUrl: this.commentIconUrl,
+            iconSize: [36, 36]
+          }),
+          interactive: false
+        });
+        this.myLocationMarker.addTo(this.map);
+        this.locationWatcher = navigator.geolocation.watchPosition((position) => {
+          const myLatlng = L.latLng(position.coords.latitude, position.coords.longitude);
+          if (this.setMapMyLocation) {
+            this.map.setView(myLatlng);
+            this.setMapMyLocation = false;
+          }
+          this.myLocationMarker.setLatLng(myLatlng);
+        });
+      }
     },
     async destroyMap() {
       this.layerContainer.clearLayers();
