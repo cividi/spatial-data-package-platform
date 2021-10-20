@@ -467,6 +467,8 @@ export default {
       commentIconUrl: require('@/assets/images/icons/comment_36.svg'),
       // eslint-disable-next-line global-require
       commentLockedIconUrl: require('@/assets/images/icons/comment_locked_36.svg'),
+      // eslint-disable-next-line global-require
+      locationIconUrl: require('@/assets/images/icons/location.svg'),
       setMapMyLocation: false,
       locationWatcher: null,
       myLocationMarker: null
@@ -848,8 +850,8 @@ export default {
       if (this.locationWatcher === null) {
         this.myLocationMarker = L.marker([0, 0], {
           icon: new L.Icon({
-            iconUrl: this.commentIconUrl,
-            iconSize: [36, 36]
+            iconUrl: this.locationIconUrl,
+            iconSize: [24, 24]
           }),
           interactive: false
         });
