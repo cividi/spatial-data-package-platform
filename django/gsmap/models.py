@@ -1,9 +1,9 @@
 import json
 import os
-import requests
 import secrets
 import string
 import hashlib
+import requests
 from enum import IntFlag
 
 from sortedm2m.fields import SortedManyToManyField
@@ -448,7 +448,7 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
         recipient = instance.author_email
         idstr = str(instance.id)
 
-        uniquestr = instance.author_email + idstr + SECRET_KEY
+        uniquestr = recipient + idstr + SECRET_KEY
         publishKeyHex = hashlib.md5(uniquestr.encode()).hexdigest()
 
         subject = 'Kommentar freischalten'

@@ -1,10 +1,11 @@
+import hashlib
+import os
+
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login as auth_login
 from django.http import HttpResponseRedirect
-from django.http import HttpResponse
 
 from django.views.generic import DetailView
-from django.shortcuts import get_object_or_404
 
 from rest_framework import generics, parsers
 from rest_framework.response import Response
@@ -14,6 +15,7 @@ from gsmap.models import Workspace, Snapshot, Annotation, Category, Attachement
 from .permissions import IsUser
 from .serializers import SnapshotDataUploadSerializer, AnnotationSerializer, AnnotationRateUpSerializer
 
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
 
 class CustomLoginView(LoginView):
     """
@@ -91,12 +93,29 @@ class AnnotationRateUpView(generics.UpdateAPIView):
         
         return Response(serializer.data)
 
-#class AnnotationPublishView(request, annotation_id, publishKeyHex):
 class AnnotationPublishView(DetailView):
+    model = Annotation
     template_name = "annotation_publish.html"
     
     def get_queryset(self):
-        return Annotation.objects.filter(id=self.kwargs['annotation_id'])
+        return Annotation.objects.filter(id=self.kwargs['pk'])
 
-    # account.public = True
-    # account.save() 
+    def get_context_data(self, **kwargs):
+        context = super(AnnotationPublishView, self).get_context_data(**kwargs)
+        context['nochange'] = False
+        if self.object.public:
+            context['nochange'] = True
+            return context
+        context['publishKeyHex'] = self.kwargs['publishKeyHex']
+        recipient = self.object.author_email
+        idstr = str(self.object.id)
+        uniquestr = recipient + idstr + SECRET_KEY
+        publishKeyHex = hashlib.md5(uniquestr.encode()).hexdigest()
+        context['success'] = False
+
+        if publishKeyHex == self.kwargs['publishKeyHex']:
+            self.object.public = True
+            self.object.save()
+            self.object.refresh_from_db()
+            context['success'] = True
+        return context

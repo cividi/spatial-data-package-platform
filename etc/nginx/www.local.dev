@@ -109,7 +109,7 @@ server {
     }
 
     # django server
-    location ~ ^/(api|api-auth|api-noauth|gmanage|cms|account|registration|documents|search|pages|graphql) {
+    location ~ ^/(api|api-auth|api-noauth|gmanage|cms|account|registration|documents|search|pages|graphql|annotation) {
         include "/etc/nginx/conf.d/proxy_conf.inc";
         if (!-f $request_filename) {
             proxy_pass http://django;
