@@ -48,7 +48,9 @@
         <div id="map"></div>
       </v-container>
 
-      <p class="addHint" v-if="addingAnnotation">{{ $t('addComment') }}</p>
+      <v-slide-y-transition>
+        <p class="addHint elevation-6" v-if="addingAnnotation">{{ $t('addComment') }}</p>
+      </v-slide-y-transition>
 
       <v-btn
         v-if="hash && !screenshotIsThumbnail"
@@ -105,7 +107,7 @@
           <div class="commentanimation" v-if="newAnnotation">
             <v-card
               id="commentedit"
-              light width="400" class="pa-4"
+              light width="400" class="pa-4 elevation-6"
             >
               <h3>{{ $t('newComment') }}</h3>
               <v-form
@@ -243,7 +245,7 @@
             </v-carousel>
             {{currentComment.data.properties.description}}<br>
 
-            <div class="d-flex align-center justify-space-between">
+            <div class="d-flex align-center justify-end primary--text">
                 <p class="rating">
                   <v-icon color="primary" small>mdi-heart-outline</v-icon>
                   <b
@@ -251,9 +253,10 @@
                   > {{currentComment.rating}}</b>
                 </p>
               <v-btn
-                fab x-small color="primary"
+                fab x-small color="white"
+                class="primary--text"
                 @click="rateUp(currentComment.pk)"
-                ><v-icon small>mdi-heart-plus-outline</v-icon></v-btn>
+                ><v-icon small>mdi-heart-plus</v-icon></v-btn>
             </div>
           </div>
         </div>
@@ -346,13 +349,26 @@ body,
 
 .addHint {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+  top: -4px;
+  left: 50%;
+  width: 680px;
+  margin-left: -340px;
   text-align: center;
   text-shadow: 0 0 2px #fff, 0 0 5px #fff;
-  background: #ffffff66;
-  padding: 5px 3em;
+  background: #ffffff;
+  padding: 14px 1em 10px 1em;
+  border-radius: 4px;
+  font-size: 16px;
+  line-height: 1.2em;
+  z-index: 1001; /* above [+/-] map zoom button */
+}
+
+@media (max-width: 700px) {
+  .addHint {
+    width: 90%;
+    left: 5%;
+    margin-left: 0;
+  }
 }
 #commentholder {
   position: absolute;
@@ -364,7 +380,14 @@ body,
   left: 50%;
   width: 400px;
   height: 400px;
+  max-width: 90vw;
   margin: -200px 0 0 -200px;
+}
+@media (max-width: 420px) {
+  .commentanimation {
+    width: 90vw;
+    margin: -200px 0 0 -45vw;
+  }
 }
 @keyframes fromcircle{
   0% {
@@ -390,10 +413,12 @@ body,
   transform: translate(-50%, -50%);
   z-index: 510;
   overflow: hidden;
+  max-width: 90vw;
 }
 
 #currentComment {
   min-width: 200px;
+  max-width: calc(90vw - 20px);
 }
 #currentComment .maxW {
   width: calc(100vw - 40px);
@@ -406,6 +431,7 @@ p.rating {
   color: primary;
   font-size: 13px;
   margin-bottom: 0;
+  padding-right: 1em;
 }
 
 .smalltitle {
@@ -446,7 +472,7 @@ export default {
       djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
       map: null,
       layerContainer: null,
-      mapinfoopen: true,
+      mapinfoopen: false,
       addingAnnotation: null,
       newAnnotation: null,
       commentstepper: 1,
