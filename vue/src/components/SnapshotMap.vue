@@ -332,7 +332,7 @@ body,
   transition: top 0.3s;
   transition-timing-function: ease-in-out;
 }
-#myLocation{
+#myLocation {
   transition-delay: 0.1s;
 }
 #addingAnnotation {
@@ -477,7 +477,7 @@ export default {
       newAnnotation: null,
       commentstepper: 1,
       currentCommentIndex: null,
-      usergroups: ['Anwohner', 'Bürger', 'Beschäftigter', 'Student'],
+      usergroups: ['Anwohner:in', 'Bürger:in', 'Beschäftigte:r', 'Student:in', 'Weitere'],
       dialog: false,
       dialogcontent: {},
       title: '',
