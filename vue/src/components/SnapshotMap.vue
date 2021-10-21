@@ -600,7 +600,7 @@ export default {
         .setContent(content);
 
       myPopup.on('remove', (e) => {
-        console.log('remove');
+        console.log('remove'); // eslint-disable-line no-console
         document.getElementById('commentholder').append(e.target.getContent());
       });
       this.mapinfoopen = false;
@@ -713,7 +713,7 @@ export default {
                 break;
               }
               default: {
-                console.log('Error - Annotation type not supported');
+                console.log('Error - Annotation type not supported'); // eslint-disable-line no-console
               }
             }
 
@@ -808,7 +808,7 @@ export default {
           break;
         }
         default: {
-          console.log('Saving this annotation type not supported');
+          console.log('Saving this annotation type not supported'); // eslint-disable-line no-console
           return false;
         }
       }
@@ -844,7 +844,7 @@ export default {
         //   console.log('Speichern fehlgeschlagen');
         // }
       } catch (error) {
-        console.log(error);
+        console.log(error); // eslint-disable-line no-console
         this.dialogcontent = {
           title: this.$t('failed'),
           text: this.$t('failedText')
@@ -867,7 +867,7 @@ export default {
       if (save.status === 200) {
         this.currentComment.rating = parseInt(save.data.rating, 10);
       } else {
-        console.log('Speichern fehlgeschlagen');
+        console.log('Speichern fehlgeschlagen'); // eslint-disable-line no-console
       }
     },
 

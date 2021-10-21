@@ -81,7 +81,7 @@ export default {
       window.location.reload();
     },
     composeEmail() {
-      window.location.href = `mailto:kontakt@gemeindescan.ch?subject=${this.titleString}&body=`;
+      window.location.href = `mailto:support@dfour.space?subject=${this.titleString}&body=`;
     }
   }
 };
