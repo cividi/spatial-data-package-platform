@@ -7,7 +7,8 @@ upstream vue-dev {
 }
 
 server {
-    listen 8000;
+    listen 8000 default_server;
+    listen 8443 ssl;
     server_name www www.local;
 
     access_log /var/log/local.www.access.log;
@@ -17,12 +18,15 @@ server {
 
     # root /var/services/django/static/dist/; # for production build
 
+    # developer SSL settings
+    ssl_certificate /etc/nginx/conf.d/localhost.crt;
+    ssl_certificate_key /etc/nginx/conf.d/localhost.key;
+
     location = / {
         set $lang_sup "de,fr";
         set_by_lua_file $lang_accept /etc/nginx/conf.d/lang.lua $lang_sup;
-        return $scheme://$host:8000/$lang_accept;
+        return $scheme://$host:$server_port/$lang_accept;
     }
-
 
     location /static {
         alias /var/services/django/static;

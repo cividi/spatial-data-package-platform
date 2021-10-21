@@ -31,12 +31,12 @@ services:
       - VUE_APP_MAPBOX_ACCESSTOKEN_DEV=pk.eyJ1IjoiZ2VtZWluZGVzY2FuIiwiYSI6ImNrNXdrOXV2ZjEwdXcza28wcXNoYXE1ZGMifQ.P-nCvxNRK4AOs7YdRbHCLg
       - VUE_APP_MAPBOX_DEFAULT_STYLES=${MAPBOX_STYLE}
       - VUE_APP_MAPBOX_DEFAULT_STYLES_DEV=mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz
-      - VUE_APP_GRAPHQL_URI=http://www:8000/graphql/
-      - VUE_APP_DJANGOBASEURL=http://www:8000
       - VUE_APP_FATHOM_SITEID=${FATHOM_SITEID}
       - VUE_APP_FATHOM_URL=${FATHOM_URL}
       - VUE_APP_SNAPSHOTSTOREURL=https://gemeindescan.eu-central-1.linodeobjects.com/public/
-      - PUBLIC_URL=http://www:8000
+      - VUE_APP_GRAPHQL_URI=https://www:8443/graphql/
+      - VUE_APP_DJANGOBASEURL=https://www:8443
+      - PUBLIC_URL=https://www:8443
     working_dir: /opt/vue
     volumes:
       - ./vue:/opt/vue:Z

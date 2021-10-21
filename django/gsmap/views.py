@@ -3,6 +3,9 @@ from django.contrib.auth import login as auth_login
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 
+from django.views.generic import DetailView
+from django.shortcuts import get_object_or_404
+
 from rest_framework import generics, parsers
 from rest_framework.response import Response
 
@@ -89,7 +92,11 @@ class AnnotationRateUpView(generics.UpdateAPIView):
         return Response(serializer.data)
 
 #class AnnotationPublishView(request, annotation_id, publishKeyHex):
-    #annotation  = get_object_or_404(Annotation, id=annotation_id)
+class AnnotationPublishView(DetailView):
+    template_name = "annotation_publish.html"
+    
+    def get_queryset(self):
+        return Annotation.objects.filter(id=self.kwargs['annotation_id'])
+
     # account.public = True
     # account.save() 
-    # return HttpResponse("annotation_id: %s." % annotation_id)
