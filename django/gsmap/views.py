@@ -90,18 +90,18 @@ class AnnotationRateUpView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        
+
         return Response(serializer.data)
 
 class AnnotationPublishView(DetailView):
     model = Annotation
     template_name = "annotation_publish.html"
-    
+
     def get_queryset(self):
         return Annotation.objects.filter(id=self.kwargs['pk'])
 
     def get_context_data(self, **kwargs):
-        context = super(AnnotationPublishView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['nochange'] = False
         if self.object.public:
             context['nochange'] = True

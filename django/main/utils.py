@@ -1,9 +1,9 @@
-
 import os.path
+from django.conf import settings
+from django.contrib.sites.models import Site
 from sorl.thumbnail.base import ThumbnailBackend, EXTENSIONS
 from sorl.thumbnail.conf import settings
 from sorl.thumbnail.helpers import tokey, serialize
-from django.conf import settings
 
 class PermalinkThumbnailBackend(ThumbnailBackend):
     def _get_thumbnail_filename(self, source, geometry_string, options):
@@ -22,3 +22,7 @@ def context_processor(request):
         'CURRENT_TAG_VERSION': settings.CURRENT_TAG_VERSION,
         'CURRENT_COMMIT_VERSION': settings.CURRENT_COMMIT_VERSION
     }
+
+def get_website(current):
+    proto = 'https' if settings.USE_HTTPS else 'http'
+    return {'domain': current.domain, 'proto': proto, 'base': f'{proto}://{current.domain}'}
