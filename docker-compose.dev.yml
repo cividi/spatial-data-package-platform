@@ -63,6 +63,9 @@ services:
       - DJANGO_DEBUG=True
       - DJANGO_HTTPS=False
       - DJANGO_EMAIL_HOST=maildev
+      - DJANGO_EMAIL_PORT=25
+      - DJANGO_EMAIL_HOST_USER=
+      - DJANGO_EMAIL_HOST_PASSWORD=
       - DJANGO_ALLOWED_HOSTS=www,www.local,localhost,django
       - DJANGO_ADMIN_NAME=gemeindescan DEV
       - DJANGO_ADMIN_HEADER_COLOR=#ff0000
@@ -92,3 +95,10 @@ services:
       sh -c '[ ! -e /etc/nginx/conf.d/www.local.conf ] && ln -s /etc/nginx/conf.d/www.local.dev /etc/nginx/conf.d/www.local.conf;
       /usr/local/openresty/bin/openresty -g "daemon off;"'
     # command: tail -f /dev/null
+
+  # dev email server accessible via http://localhost:1080
+  maildev:
+    image: yvess/alpine-maildev
+    hostname: maildev
+    ports:
+      - "1080:80"
