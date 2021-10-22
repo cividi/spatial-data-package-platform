@@ -15,18 +15,19 @@ from django.dispatch import receiver
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.gis.db import models
 from django.contrib.postgres import fields as pg_fields
-from django.contrib.sites.models import Site
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
 from django.utils.html import escape, format_html
-
-from gsuser.models import User
-
 from django.core.mail import send_mail
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
+from django.contrib.sites.models import Site
+
+from gsuser.models import User
+from main.utils import get_website
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
 
@@ -207,11 +208,10 @@ class Snapshot(models.Model):
             return ''
 
     def get_absolute_link(self):
-        domain = Site.objects.get_current().domain
-        proto = 'https' if settings.USE_HTTPS else 'http'
+        website = get_website(Site.objects.get_current())
         return format_html(
-            f'<a href="{proto}://{domain}{self.get_absolute_url()}" target="_blank">'
-            f'{domain}{self.get_absolute_url()}</a>'
+            f'<a href="{website["proto"]}://{website["domain"]}{self.get_absolute_url()}" target="_blank">'
+            f'{website["domain"]}{self.get_absolute_url()}</a>'
         )
     get_absolute_link.short_description = "Snapshot Url"
 
@@ -292,15 +292,14 @@ class Snapshot(models.Model):
         return screenshot_file
 
     def create_meta(self, storage):
-        domain = Site.objects.get_current().domain
-        proto = 'https' if settings.USE_HTTPS else 'http'
+        website = get_website(Site.objects.get_current())
         meta = f'''
 <meta property="og:title" content="{ escape(self.title_data) }">
 <meta property="og:description" content="{ escape(self.description_data) }">
 <meta property="og:type" content="website">
-<meta property="og:url" content="{ proto }://{ domain }{ self.get_absolute_url() }">
-<meta property="og:image" content="{ proto }://{ domain }/{ self.image_facebook() }">
-<meta name="twitter:image" content="{ proto }://{ domain }/{ self.image_twitter() }">
+<meta property="og:url" content="{ website["proto"] }://{ website["domain"] }{ self.get_absolute_url() }">
+<meta property="og:image" content="{ website["proto"] }://{ website["domain"] }/{ self.image_facebook() }">
+<meta name="twitter:image" content="{ website["proto"] }://{ website["domain"] }/{ self.image_twitter() }">
 '''
         storage.save(f'snapshot-meta/{self.id}.html', ContentFile(meta))
 
@@ -334,12 +333,11 @@ class Workspace(models.Model):
     annotations_open = models.BooleanField(default=False)
 
     def get_absolute_link(self):
-        proto = 'https' if settings.USE_HTTPS else 'http'
-        domain = Site.objects.get_current().domain
+        website = get_website(Site.objects.get_current())
         return format_html(
-            f'<a href="{proto}://{domain}{self.get_absolute_url()}" target="_blank">'
-            f'{domain}{self.get_absolute_url()}</a>'
-        )
+            f'<a href="{website["proto"]}://{website["domain"]}{self.get_absolute_url()}" target="_blank">'
+            f'{website["domain"]}{self.get_absolute_url()}</a>')
+
     get_absolute_link.short_description = "Workspace Url"
 
     def get_absolute_url(self):
@@ -450,11 +448,13 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
 
         uniquestr = recipient + idstr + SECRET_KEY
         publishKeyHex = hashlib.md5(uniquestr.encode()).hexdigest()
+        website = get_website(Site.objects.get_current())
+        publish_url = reverse('annotation-publish', args=[idstr, publishKeyHex])
 
         subject = 'Kommentar freischalten'
         message = 'Besten Dank für Ihren Kommentar!\n'
         message += 'Sie Können ihn unter folgender URL freischalten:\n'
-        message += 'http://www:8000/publish/'+ idstr +'/' + publishKeyHex + '\n'
+        message += f'{website["base"]}{publish_url}\n'
         message += '--' * 30
 
         send_mail(
