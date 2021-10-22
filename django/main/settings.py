@@ -14,16 +14,16 @@ if USE_HTTPS:
     # SECURE_SSL_REDIRECT = True
 
 EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST', 'maildev')
+EMAIL_PORT = int(os.environ.get('DJANGO_EMAIL_PORT', 25))
+EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_SSL = True if EMAIL_PORT == 465 else False
 ADMINS = os.environ.get('DJANGO_ADMINS', 'admin@local.lan').split(',')
 ADMINS = list(zip(ADMINS, ADMINS))
 MANAGERS = ADMINS
 ADMIN_NAME = os.environ.get('DJANGO_ADMIN_NAME', 'gemeindescan DEV')
 ADMIN_HEADER_COLOR = os.environ.get('DJANGO_ADMIN_HEADER_COLOR', '#543076')
 LOGIN_PAGE_TITLE = os.environ.get('LOGIN_PAGE_TITLE', 'Gemeindescan')
-
-# DEV: Output mail to console
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-MAILER_EMAIL_BACKEND = EMAIL_BACKEND
 
 CURRENT_TAG_VERSION = "NaN.NaN.NaN"
 CURRENT_COMMIT_VERSION = "NaN"
@@ -172,4 +172,3 @@ SESSION_COOKIE_HTTPONLY = False
 THUMBNAIL_BACKEND = 'main.utils.PermalinkThumbnailBackend'
 THUMBNAIL_PREFIX = 'cache/'
 SCREENSHOT_SCHEDULER_CRON_MINUTES = os.environ.get('DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES', '*')
- 
