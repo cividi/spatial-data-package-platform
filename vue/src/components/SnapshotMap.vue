@@ -246,17 +246,26 @@
             {{currentComment.data.properties.description}}<br>
 
             <div class="d-flex align-center justify-end primary--text">
-                <p class="rating">
-                  <v-icon color="primary" small>mdi-heart-outline</v-icon>
-                  <b
-                    style="vertical-align: middle;"
-                  > {{currentComment.rating}}</b>
-                </p>
+              <p class="rating">
+                <v-icon color="primary" small>mdi-heart-outline</v-icon>
+                <b
+                  style="vertical-align: middle;"
+                > {{currentComment.rating}}</b>
+              </p>
               <v-btn
                 fab x-small color="white"
+                :disabled="ratingpause"
                 class="primary--text"
+                ref="rateupBtn"
                 @click="rateUp(currentComment.pk)"
                 ><v-icon small>mdi-heart-plus</v-icon></v-btn>
+              <v-icon
+                id="addHeart"
+                v-if="ratingpause"
+                small
+                color="primary"
+                :style="cssVars"
+                >mdi-heart</v-icon>
             </div>
           </div>
         </div>
@@ -432,6 +441,39 @@ p.rating {
   font-size: 13px;
   margin-bottom: 0;
   padding-right: 1em;
+  user-select: none;
+}
+#addHeart {
+  position: absolute;
+  right: 1.2em;
+  animation: addHeart 1.2s 0.4s ease-in-out both;
+}
+@keyframes addHeart{
+  0% {
+    right: 1.2em;
+    scale: 0.6;
+    opacity: 0;
+  }
+  13% {
+    opacity: 1;
+    scale: 2;
+  }
+  25% {
+    scale: 1.6;
+    right: 1.2em;
+  }
+  70%{
+    scale: 1.6;
+    right: var(--endpos);
+    opacity: 1;
+  }
+  95% {
+    scale: 0.3;
+    right: var(--endpos);
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .smalltitle {
@@ -476,8 +518,9 @@ export default {
       addingAnnotation: null,
       newAnnotation: null,
       commentstepper: 1,
-      currentCommentIndex: null,
       usergroups: ['Anwohner', 'Bürger', 'Beschäftigter', 'Student'],
+      currentCommentIndex: null,
+      ratingpause: false,
       dialog: false,
       dialogcontent: {},
       title: '',
@@ -540,6 +583,22 @@ export default {
         return this.annotations[this.currentCommentIndex];
       }
       return null;
+    },
+
+    cssVars() {
+      let endpos = 4.1;
+      if (this.currentComment.rating >= 10) {
+        if (this.currentComment.rating >= 100) {
+          if (this.currentComment.rating >= 1000) {
+            endpos = 5.5;
+          } else {
+            endpos = 5.1;
+          }
+        } else {
+          endpos = 4.6;
+        }
+      }
+      return { '--endpos': `${endpos}em` };
     }
   },
 
@@ -855,6 +914,7 @@ export default {
     },
 
     async rateUp(annotationPk) {
+      this.ratingpause = true;
       const csrftoken = this.$cookies.get('csrftoken', '');
       const formData = new FormData();
 
@@ -865,10 +925,14 @@ export default {
         }
       });
       if (save.status === 200) {
-        this.currentComment.rating = parseInt(save.data.rating, 10);
+        window.setTimeout(() => {
+          this.currentComment.rating = parseInt(save.data.rating, 10);
+        }, 1400);
       } else {
         console.log('Speichern fehlgeschlagen'); // eslint-disable-line no-console
       }
+      this.$refs.rateupBtn.$el.blur();
+      window.setTimeout(() => { this.ratingpause = false; }, 1800);
     },
 
     myLocation() {

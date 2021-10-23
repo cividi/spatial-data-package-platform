@@ -437,12 +437,7 @@ class Attachement(models.Model):
 @receiver(post_save, sender=Annotation)
 def send_new_annotation_email(sender, instance, created, **kwargs):
 
-    # if a new officer is created, compose and send the email
-    if created:
-        # name = instance.name if instance.name else "no name given"
-        # rank = instance.rank.name if instance.rank else "no rank given"
-        # ship_assignment = instance.ship_assignment.name if instance.ship_assignment else 'no ship assignment'
-
+      if created:
         recipient = instance.author_email
         idstr = str(instance.id)
 
