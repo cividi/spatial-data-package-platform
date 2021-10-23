@@ -341,7 +341,7 @@ body,
   transition: top 0.3s;
   transition-timing-function: ease-in-out;
 }
-#myLocation{
+#myLocation {
   transition-delay: 0.1s;
 }
 #addingAnnotation {
