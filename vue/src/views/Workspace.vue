@@ -18,9 +18,13 @@
       app
       width="320"
       v-model="snapshotnav">
-      <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block">
+      <!-- <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block"> -->
+      <a id="logo" class="px-4 py-4 d-block"
+        @click="window.fathom('trackGoal','K19HMJIL',0);"
+        href="https://campusbochum.de">
         <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
-      </router-link>
+      </a>
+      <!-- </router-link> -->
 
       <v-divider />
 
@@ -53,10 +57,10 @@
         absolute
         bottom>
         <div class="useractions">
-          <user-actions noRequest="1" />
+          <user-actions noLogin="1" />
         </div>
         <v-spacer/>
-        <language-switch/>
+        <!-- <language-switch/> -->
       </v-toolbar>
     </v-navigation-drawer>
 

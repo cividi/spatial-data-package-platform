@@ -16,7 +16,12 @@
 <!-- eslint-enable -->
 
 <template>
-<div v-if="vertical">
+<div v-if="noLogin">
+  <v-btn small text color="white" class="mt-4">
+    <a href="https://campusbochum.de/imprint">Impressum</a>
+  </v-btn>
+</div>
+<div v-else-if="vertical">
    <v-btn small text color="white" class="mt-4">
     <router-link v-if="!$store.state.isUserLoggedIn" :to="'/' + $i18n.locale + '/login/'">
       {{ $t('loginText') }}
@@ -63,7 +68,8 @@ export default {
   },
   props: [
     'vertical',
-    'noRequest'
+    'noRequest',
+    'noLogin'
   ]
 };
 </script>

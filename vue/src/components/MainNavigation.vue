@@ -20,17 +20,17 @@
         <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
       </router-link>
       <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
+      <!-- <div class="d-none d-md-block"><language-switch/></div>
+      <div class="useractions d-none d-sm-block">
+        <user-actions />
+      </div>-->
       <nav id="mainnav" class="d-none d-md-block">
         <router-link
           v-for="item in mainnav"
           :key="item.textKey"
           :to="'/' + $i18n.locale + item.route + '/'">{{ $t(item.textKey) }}</router-link>
       </nav>
-      <v-spacer></v-spacer>
-      <div class="d-none d-md-block"><language-switch/></div>
-      <div class="useractions d-none d-sm-block">
-        <user-actions />
-      </div>
       <v-app-bar-nav-icon @click="mobnav=!mobnav" class="d-md-none"></v-app-bar-nav-icon>
     </v-app-bar>
 
@@ -79,8 +79,8 @@ export default {
     return {
       mobnav: false,
       mainnav: [
-        { route: '/imprint', textKey: 'mainnav.imprint' },
-        { route: '/contact', textKey: 'mainnav.contact' }
+        { route: '/imprint', textKey: 'mainnav.imprint' }
+        // { route: '/contact', textKey: 'mainnav.contact' }
       ]
     };
   }

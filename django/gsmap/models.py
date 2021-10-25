@@ -455,7 +455,7 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
         send_mail(
             subject,
             message,
-            'noreply@bochum.de',
+            None,
             [ recipient ],
             fail_silently=False,
         )

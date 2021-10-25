@@ -34,7 +34,8 @@
           style="top:1.2em; right:1.3em;"
           color="primary"
           v-if="!snapshotnav"
-          @click="snapshotnav=!snapshotnav">
+          @click="snapshotnav=!snapshotnav;
+            window.fathom('trackGoal','KICHTOFA', 0);">
           <v-icon>mdi-menu</v-icon>
         </v-btn>
       </v-slide-x-reverse-transition>
@@ -73,7 +74,8 @@
           v-show="!screenshotMode"
           style="position: absolute; top:0; right:0;"
           class="pa-2"
-          @click="mapinfoopen=!mapinfoopen" >mdi-close-circle-outline
+          @click="mapinfoopen=!mapinfoopen;window.fathom('trackGoal','B0RNXKWY',0);">
+          mdi-close-circle-outline
         </v-icon>
         <snapshot-meta
           :title="title"
@@ -98,7 +100,8 @@
           fab absolute small
           id="addingAnnotation"
           color="primary"
-          @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM'">
+          @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM';
+            window.fathom('trackGoal','HXTO4DAQ',0);">
           <v-icon v-if="!addingAnnotation">mdi-comment-plus-outline</v-icon>
           <v-icon v-if="addingAnnotation">mdi-close-thick</v-icon>
         </v-btn>
@@ -239,6 +242,7 @@
               class="my-1">
               <v-carousel-item
                 v-for="(item,i) in currentComment.attachements"
+                @click="window.fathom('trackGoal','C0I8PZTQ',0);"
                 :key="i"
                 :src="djangobaseurl + '/media/' + item.document"
               ></v-carousel-item>
@@ -514,11 +518,11 @@ export default {
       djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
       map: null,
       layerContainer: null,
-      mapinfoopen: false,
+      mapinfoopen: true,
       addingAnnotation: null,
       newAnnotation: null,
       commentstepper: 1,
-      usergroups: ['Anwohner', 'Bürger', 'Beschäftigter', 'Student'],
+      usergroups: ['Anwohner:in', 'Bürger:in', 'Beschäftigte:r', 'Student:in', 'Andere'],
       currentCommentIndex: null,
       ratingpause: false,
       dialog: false,
@@ -792,6 +796,8 @@ export default {
         } else if (this.hash) {
           // no attribution in normal mode
           document.querySelector('.leaflet-control-attribution').style.background = 'none';
+        } else {
+          document.querySelector('.leaflet-control-zoom').onclick = window.fathom.trackGoal('NEA4HYUH', 0);
         }
         if (this.screenshotIsThumbnail) {
           document.querySelector('#mapinfo').style.visibility = 'hidden';

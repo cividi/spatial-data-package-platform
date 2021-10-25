@@ -52,14 +52,23 @@
           {% if success %}
             <h1>Kommentar freigeschaltet</h1>
             <p>Vielen Dank für Ihre Teilnahme. Ihr Kommentar wurde erfolgreich publiziert.</p>
+            <p>
+              Bei Fragen und Rückmeldungen wenden Sie sich an Frau Lisa Lienkamp, LLienkamp@bochum.de
+            </p>
           {% elif nochange %}
-            <h1>Kommentar unverändert</h1>
+            <h1>Kommentar bereits publiziert</h1>
             <p>Dieser Kommentar ist bereits publiziert. Wenn Sie einen weiteren Kommentar gemacht haben prüfen Sie bitte Ihre Mailbox für einen neuen Aktivierungslink.</p>
+            <p>
+              Bei Fragen und Rückmeldungen wenden Sie sich an Frau Lisa Lienkamp, LLienkamp@bochum.de
+            </p>
           {% else %}
             <h1>Ungültiger Aktivierungslink</h1>
             <p>Ihr Kommentar konnte nicht publiziert werden. Bitte stellen Sie sicher, dass Sie die ganze URL aus der Email kopiert haben.</p>
+            <p>
+              Bei Fragen und Rückmeldungen wenden Sie sich an Frau Lisa Lienkamp, LLienkamp@bochum.de
+            </p>
           {% endif %}
-          <p><a href="{{ request.META.HTTP_X_FORWARDED_PROTO }}://{{ request.META.HTTP_HOST }}">Zur Startseite</a></p>
+          <p><a href="{{ request.META.HTTP_X_FORWARDED_PROTO }}://{{ request.META.HTTP_HOST }}/SDY4F/0N2AQB/">Zurück zur Karte</a></p>
         </div>
         {% block footer %}<div id="footer"></div>{% endblock %}
 </div>

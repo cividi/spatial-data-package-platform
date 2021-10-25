@@ -13,6 +13,7 @@ if USE_HTTPS:
     CSRF_COOKIE_SECURE = True
     # SECURE_SSL_REDIRECT = True
 
+DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', 'noreply@www.local')
 EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST', 'maildev')
 EMAIL_PORT = int(os.environ.get('DJANGO_EMAIL_PORT', 25))
 EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER', '')
