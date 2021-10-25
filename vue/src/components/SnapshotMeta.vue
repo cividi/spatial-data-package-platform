@@ -21,10 +21,10 @@
   <div>
     <div class="smaller">
       <h3 class="mr-4">{{ title }}</h3>
-      <p >
-        <a class="legend--hash" :href="djangobaseurl + '/' + hash + '/'" target="_blank">
+      <p>
+        <!-- <a class="legend--hash" :href="djangobaseurl + '/' + hash + '/'" target="_blank">
         {{ djangobaseurlDisplay }}/{{ hash }}/
-        </a>
+        </a> -->
       </p>
       <p>
         {{ description }}
@@ -59,8 +59,7 @@
       v-if="hasSecondaryLegend"
       v-show="!screenshotMode"
       text x-small
-      @click="window.fathom('trackGoal','XB1624JI',0);"
-      @click="showWholeLegend=!showWholeLegend"
+      @click="showWholeLegend=!showWholeLegend;window.fathom('trackGoal','XB1624JI',0);"
       class="moreLegendToggle"
       :class="{legendsvisible: showWholeLegend}"
       style="margin:-1.5em 0 0 -8px; text-transform:none;">
@@ -94,8 +93,7 @@
       text x-small
       class="sourcesToggle"
       :class="{sourcesvisible: showSources}"
-      @click="showSources=!showSources"
-      @click="window.fathom('trackGoal','R92GS3GF',0);"
+      @click="showSources=!showSources;window.fathom('trackGoal','R92GS3GF',0);"
       style="text-transform:none; float:left; margin: 8px 0px 0px -8px;">
         <v-icon small color="primary">mdi-chevron-right</v-icon>
         {{ $t('sources') }}
