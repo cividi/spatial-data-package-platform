@@ -398,7 +398,7 @@ body,
     margin: -200px 0 0 -45vw;
   }
 }
-@keyframes fromcircle{
+@keyframes fromcircle {
   0% {
     border-radius: 30em;
   }
@@ -406,7 +406,7 @@ body,
     border-radius: 0;
   }
 }
-.scale-transition-enter-active #commentedit{
+.scale-transition-enter-active #commentedit {
   animation: fromcircle 0.3s 0.1s ease-out;
   animation-fill-mode: both;
 }
@@ -448,7 +448,7 @@ p.rating {
   right: 1.2em;
   animation: addHeart 1.2s 0.4s ease-in-out both;
 }
-@keyframes addHeart{
+@keyframes addHeart {
   0% {
     right: 1.2em;
     scale: 0.6;
@@ -462,7 +462,7 @@ p.rating {
     scale: 1.6;
     right: 1.2em;
   }
-  70%{
+  70% {
     scale: 1.6;
     right: var(--endpos);
     opacity: 1;
@@ -485,9 +485,9 @@ p.rating {
   display: none;
 }
 .leaflet-container .leaflet-control-attribution.leaflet-compact-attribution {
-  margin:0;
+  margin: 0;
   visibility: visible;
-  padding:0;
+  padding: 0;
   padding-right: 5px;
 }
 </style>
@@ -859,8 +859,8 @@ export default {
             },
             "properties": {
               "fill": "true", 
-              "title": "${this.newAnnotation.title}", 
-              "description": "${this.newAnnotation.text}",
+              "title": ${JSON.stringify(this.newAnnotation.title)}, 
+              "description": ${JSON.stringify(this.newAnnotation.text)},
               "usergroup": "${this.newAnnotation.usergroup}"
             }
           }`);
