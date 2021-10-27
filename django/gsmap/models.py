@@ -451,14 +451,15 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
         publish_url = reverse('annotation-publish', args=[idstr, publishKeyHex])
 
         subject = 'Kommentar freischalten'
-        message = 'Besten Dank für Ihren Kommentar!\n'
-        message += 'Sie Können ihn unter folgender URL freischalten:\n'
+        message = 'Besten Dank für Ihren Kommentar!\n\n'
+        message += 'Sie können ihn unter folgender URL freischalten:\n'
         message += f'{website["base"]}{publish_url}\n'
         message += '--' * 30
 
         send_mail(
             subject,
             message,
+            # todo: move from address to env Varable or sites property
             'noreply@bochum.de',
             [ recipient ],
             fail_silently=False,
