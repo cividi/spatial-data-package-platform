@@ -1,5 +1,5 @@
-DJANGO_VERSION=3.1.12a
-DJANGO_VERSION_PREV=3.1.12
+DJANGO_VERSION=3.1.12b
+DJANGO_VERSION_PREV=3.1.12a
 NOTTY=$(shell command [ "$$DOCKER_NOTTY" = YES ] && echo "-T")
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec $(NOTTY) django")
 SHELL := /bin/bash

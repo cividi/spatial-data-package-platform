@@ -1,4 +1,4 @@
-FROM alpine:3.13.5
+FROM alpine:3.14.2
 MAINTAINER Yves Serrano <ys@taywa.ch>
 # https://github.com/just-containers/s6-overlay
 
@@ -36,14 +36,13 @@ RUN apk add --no-cache \
         py3-olefile \
         tiff \
         zlib \
-        proj-datumgrid \
         zlib-dev \
         sqlite-dev \
         yaml-dev \
         libressl-dev \
         yajl-dev \
     && curl -s https://bootstrap.pypa.io/get-pip.py | python3
-ARG S6_OVERLAY_VERSION=v2.1.0.2
+ARG S6_OVERLAY_VERSION=v2.2.0.3
 RUN curl -Ls https://github.com/just-containers/s6-overlay/releases/download/$S6_OVERLAY_VERSION/s6-overlay-amd64.tar.gz | tar xz -C /
 
 # python requirements 00 layer
