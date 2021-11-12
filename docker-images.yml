@@ -2,15 +2,15 @@ version: "2"
 
 services:
   pdb:
-    image: postgis/postgis:11-2.5-alpine
+    image: postgis/postgis:12-2.5-alpine
     hostname: pdb
 
   vue:
-    image: smartuse/gemeindescan-webui-vue:0.3.10
+    image: smartuse/gemeindescan-webui-vue:0.4
     hostname: vue
 
   django:
-    image: smartuse/gemeindescan-webui-django:3.1.12b
+    image: smartuse/gemeindescan-webui-django:3.2
     hostname: django
 
   www:

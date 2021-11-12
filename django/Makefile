@@ -1,5 +1,5 @@
-DJANGO_VERSION=3.1.12b
-DJANGO_VERSION_PREV=3.1.12a
+DJANGO_VERSION=3.2
+DJANGO_VERSION_PREV=3.1.12b
 NOTTY=$(shell command [ "$$DOCKER_NOTTY" = YES ] && echo "-T")
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec $(NOTTY) django")
 SHELL := /bin/bash
@@ -12,11 +12,12 @@ enter:
 	$(DOCKER_EXEC) ash
 
 build_docker:
-	cd docker && DOCKER_BUILDKIT=1 \
+	cd docker && S6_OVERLAY_VERSION=$(S6_OVERLAY_VERSION) DOCKER_BUILDKIT=1 \
 	docker buildx build \
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
 		--cache-from smartuse/gemeindescan-webui-django:$(DJANGO_VERSION_PREV) \
 		-t smartuse/gemeindescan-webui-django:$(DJANGO_VERSION) \
+		--load \
 		django
 
 push:

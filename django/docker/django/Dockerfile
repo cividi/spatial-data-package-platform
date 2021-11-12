@@ -42,8 +42,10 @@ RUN apk add --no-cache \
         libressl-dev \
         yajl-dev \
     && curl -s https://bootstrap.pypa.io/get-pip.py | python3
+COPY ./s6_download.sh /tmp/s6_download.sh
+RUN chmod +x /tmp/s6_download.sh
 ARG S6_OVERLAY_VERSION=v2.2.0.3
-RUN curl -Ls https://github.com/just-containers/s6-overlay/releases/download/$S6_OVERLAY_VERSION/s6-overlay-amd64.tar.gz | tar xz -C /
+RUN /tmp/s6_download.sh
 
 # python requirements 00 layer
 COPY ./requirements/00/requirements.txt /tmp/requirements.txt
