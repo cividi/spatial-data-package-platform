@@ -13,12 +13,21 @@ enter:
 
 build_docker:
 	cd docker && DOCKER_BUILDKIT=1 \
-	docker build django \
+	docker buildx build \
+		--build-arg BUILDKIT_INLINE_CACHE=1 \
 		--cache-from smartuse/gemeindescan-webui-django:$(DJANGO_VERSION_PREV) \
-		--build-arg BUILDKIT_INLINE_CACHE=1 -t smartuse/gemeindescan-webui-django:$(DJANGO_VERSION)
+		-t smartuse/gemeindescan-webui-django:$(DJANGO_VERSION) \
+		django
 
 push:
-	docker push smartuse/gemeindescan-webui-django:$(DJANGO_VERSION)
+	cd docker && DOCKER_BUILDKIT=1 \
+	docker buildx build \
+		--build-arg BUILDKIT_INLINE_CACHE=1 \
+		--cache-from smartuse/gemeindescan-webui-django:$(DJANGO_VERSION_PREV) \
+		-t smartuse/gemeindescan-webui-django:$(DJANGO_VERSION) \
+		--platform linux/amd64,linux/arm64 \
+		--push \
+		django
 
 dev:
 	$(DOCKER_EXEC) uvicorn main.asgi:application --port 8081 --host 0.0.0.0 --reload
