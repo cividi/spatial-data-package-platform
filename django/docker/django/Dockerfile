@@ -1,4 +1,4 @@
-FROM alpine:3.13.5
+FROM alpine:3.13.6
 MAINTAINER Yves Serrano <ys@taywa.ch>
 # https://github.com/just-containers/s6-overlay
 
@@ -36,37 +36,17 @@ RUN apk add --no-cache \
         py3-olefile \
         tiff \
         zlib \
-        proj-datumgrid \
         zlib-dev \
         sqlite-dev \
         yaml-dev \
         libressl-dev \
         yajl-dev \
     && curl -s https://bootstrap.pypa.io/get-pip.py | python3
-ARG S6_OVERLAY_VERSION=v2.1.0.2
+ARG S6_OVERLAY_VERSION=v2.2.0.3
 RUN curl -Ls https://github.com/just-containers/s6-overlay/releases/download/$S6_OVERLAY_VERSION/s6-overlay-amd64.tar.gz | tar xz -C /
 
 # python requirements 00 layer
 COPY ./requirements/00/requirements.txt /tmp/requirements.txt
-RUN apk add --no-cache \
-        libjpeg-turbo-dev \
-        freetype-dev \
-        lcms2-dev \
-        openjpeg-dev \
-        tiff-dev \
-        zlib-dev \
-    && cd /opt && pip3 install -r /tmp/requirements.txt \
-    && apk del \
-        libjpeg-turbo-dev \
-        freetype-dev \
-        lcms2-dev \
-        openjpeg-dev \
-        tiff-dev \
-        zlib-dev \
-    && pip3 cache purge
-
-# python requirements 01 layer, depandabot updates
-COPY ./requirements/01/requirements.txt /tmp/requirements.txt
 RUN apk add --no-cache \
         libjpeg-turbo-dev \
         freetype-dev \

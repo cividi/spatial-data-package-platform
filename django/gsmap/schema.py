@@ -11,6 +11,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
 from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, Annotation, Category, Attachement
 from graphene_django.rest_framework.mutation import SerializerMutation
+import graphene_django_optimizer as gql_optimizer
 
 
 class GeoJSON(graphene.Scalar):
@@ -30,7 +31,6 @@ def convert_field_to_geojson(field, registry=None):
 
 Q_SNAPSHOT_ONLY_PUBLIC = Q(permission__exact=SnapshotPermission.PUBLIC)
 Q_SNAPSHOT_WITH_NOT_LISTED = Q(permission__lte=SnapshotPermission.NOT_LISTED)
-
 
 class SnapshotOnlyPublicFilter(FilterSet):
     class Meta:
@@ -124,24 +124,21 @@ class AttachementNode(DjangoObjectType):
         fields = [ 'document','my_order']
         interfaces = [graphene.relay.Node]
 
-class AnnotationNode(DjangoObjectType):
+class AnnotationNode(gql_optimizer.OptimizedDjangoObjectType):
     class Meta:
         model = Annotation
-        fields = [ 'kind', 'data', 'rating']
+        fields = ['kind', 'data', 'rating']
         interfaces = [graphene.relay.Node]
     
-    category = graphene.List(CategoryNode)
+    category = graphene.Field(CategoryNode)
     attachements = graphene.List(AttachementNode)
     data = generic.GenericScalar(source='data')
     pk = graphene.Int(source='id')
 
-    def resolve_category(self, info):
-        return Category.objects.filter(Q(id=self.category.id))
-    
     def resolve_attachements(self, info):
-        return Attachement.objects.filter(Q(deleted=0) & Q(annotation=self.id))
-
-class WorkspaceNode(DjangoObjectType):
+        return gql_optimizer.query(Attachement.objects.filter(Q(deleted=0) & Q(annotation=self.id)), info)
+    
+class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
     class Meta:
         model = Workspace
         fields = ['title', 'description', 'annotations_open']
@@ -155,13 +152,13 @@ class WorkspaceNode(DjangoObjectType):
     categories = graphene.List(CategoryNode)
 
     def resolve_snapshots(self, info):
-        return self.snapshots.all()
+        return gql_optimizer.query(self.snapshots.all(), info)
 
     def resolve_annotations(self, info):
-        return Annotation.objects.filter(Q(public=1) & Q(workspace=self.pk))
+        return gql_optimizer.query(Annotation.objects.filter(Q(public=1) & Q(workspace=self.pk)), info)
     
     def resolve_categories(self, info):
-        return Category.objects.filter(Q(hide_in_list=0))
+        return gql_optimizer.query(Category.objects.filter(Q(hide_in_list=0)),info)
 
 class SnapshotMutation(graphene.relay.ClientIDMutation):
     class Input:
