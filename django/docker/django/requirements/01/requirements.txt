@@ -17,7 +17,7 @@ django-cors-headers==3.7.0
 django-filter==2.4.0
 django-json-widget==1.1.1
 django-solo==1.1.5
-django-sortedm2m==3.0.2
+django-sortedm2m==3.1.1
 -e git+https://github.com/svleeuwen/sortedm2m-filter-horizontal-widget.git@4ce03f6b7e6022014838afb4a8aa4691fceb9e94#egg=django_sortedm2m_filter_horizontal_widget
 djangorestframework==3.12.2
 future==0.18.2
