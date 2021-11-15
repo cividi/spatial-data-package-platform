@@ -45,7 +45,7 @@
     "vue-i18n": "^8.15.3",
     "vue-router": "^3.1.3",
     "vue-router-sitemap": "^0.0.4",
-    "vuetify": "^2.1.0",
+    "vuetify": "^2.5.14",
     "vuex": "^3.1.2",
     "whatwg-fetch": "^3.0.0",
     "ws": "^7.4.6"
