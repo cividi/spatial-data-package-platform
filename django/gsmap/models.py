@@ -439,18 +439,25 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
 
       if created:
         recipient = instance.author_email
-        idstr = str(instance.id)
-
-        uniquestr = recipient + idstr + SECRET_KEY
-        publishKeyHex = hashlib.md5(uniquestr.encode()).hexdigest()
-        website = get_website(Site.objects.get_current())
-        publish_url = reverse('annotation-publish', args=[idstr, publishKeyHex])
-
         subject = 'Kommentar freischalten'
         message = 'Besten Dank für Ihren Kommentar!\n'
-        message += 'Sie Können ihn unter folgender URL freischalten:\n'
-        message += f'{website["base"]}{publish_url}\n'
-        message += '--' * 30
+
+        website = get_website(Site.objects.get_current())
+
+        if instance.workspace.annotations_open:
+            idstr = str(instance.id)
+
+            uniquestr = recipient + idstr + SECRET_KEY
+            publishKeyHex = hashlib.md5(uniquestr.encode()).hexdigest()
+            publish_url = reverse('annotation-publish', args=[idstr, publishKeyHex])
+
+            message += 'Sie können ihn unter folgender URL freischalten:\n'
+            message += f'{website["base"]}{publish_url}\n'
+            message += '--' * 30
+        else:
+            message += "Leider ist die Beteiligung nun abgeschlossen.\n"
+            message += f"Zur Karte mit allen öffentlichen Kommentaren: {website['base']}/de/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/"
+            message += '--' * 30
 
         send_mail(
             subject,
