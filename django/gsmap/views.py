@@ -86,7 +86,8 @@ class AnnotationRateUpView(generics.UpdateAPIView):
 
     def patch(self, request, *args, **kwargs):
         instance = self.get_object()
-        data = {"rating": instance.rating + 1}
+        workspace = Workspace.objects.filter(annotation=instance).first()
+        data = {"rating": instance.rating + 1, "annotations_open": workspace.annotations_open}
         serializer = self.get_serializer(instance, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)

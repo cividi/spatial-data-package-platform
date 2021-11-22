@@ -87,14 +87,15 @@
         />
       </v-card>
 
+      <v-btn
+        fab absolute small
+        id="myLocation"
+        color="primary"
+        @click="myLocation">
+        <v-icon>mdi-crosshairs-gps</v-icon>
+      </v-btn>
+
       <div v-if="wshash && annotationsOpen && !screenshotMode">
-        <v-btn
-          fab absolute small
-          id="myLocation"
-          color="primary"
-          @click="myLocation">
-          <v-icon>mdi-crosshairs-gps</v-icon>
-        </v-btn>
 
         <v-btn
           fab absolute small
@@ -257,6 +258,7 @@
                 > {{currentComment.rating}}</b>
               </p>
               <v-btn
+                v-if="annotationsOpen"
                 fab x-small color="white"
                 :disabled="ratingpause"
                 class="primary--text"
@@ -921,24 +923,28 @@ export default {
 
     async rateUp(annotationPk) {
       this.ratingpause = true;
-      const csrftoken = this.$cookies.get('csrftoken', '');
-      const formData = new FormData();
 
-      const save = await this.$restApi.patch(`rateupannotation/${annotationPk}/`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'X-CSRFToken': csrftoken
+      if (this.annotationsOpen) {
+        const csrftoken = this.$cookies.get('csrftoken', '');
+        const formData = new FormData();
+
+        const save = await this.$restApi.patch(`rateupannotation/${annotationPk}/`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'X-CSRFToken': csrftoken
+          }
+        });
+        if (save.status === 200) {
+          window.setTimeout(() => {
+            this.currentComment.rating = parseInt(save.data.rating, 10);
+          }, 1400);
+        } else {
+          console.log('Speichern fehlgeschlagen'); // eslint-disable-line no-console
         }
-      });
-      if (save.status === 200) {
-        window.setTimeout(() => {
-          this.currentComment.rating = parseInt(save.data.rating, 10);
-        }, 1400);
-      } else {
-        console.log('Speichern fehlgeschlagen'); // eslint-disable-line no-console
+
+        this.$refs.rateupBtn.$el.blur();
+        window.setTimeout(() => { this.ratingpause = false; }, 1800);
       }
-      this.$refs.rateupBtn.$el.blur();
-      window.setTimeout(() => { this.ratingpause = false; }, 1800);
     },
 
     myLocation() {
