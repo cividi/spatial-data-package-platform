@@ -1,5 +1,5 @@
-GEMEINDESCAN_WEBUI_VUE=0.3.10
-GEMEINDESCAN_WEBUI_VUE_PREV=0.3.9
+GEMEINDESCAN_WEBUI_VUE=0.4
+GEMEINDESCAN_WEBUI_VUE_PREV=0.3.10
 NOTTY=$(shell command [ "$$DOCKER_NOTTY" = YES ] && echo "-T")
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec $(NOTTY) vue")
 
@@ -11,13 +11,22 @@ enter:
 	$(DOCKER_EXEC) ash
 
 build_docker:
-	cd docker && DOCKER_BUILDKIT=1 docker build vue \
-	--cache-from smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE_PREV) \
-	--build-arg BUILDKIT_INLINE_CACHE=1 \
-	-t smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE)
+	cd docker && DOCKER_BUILDKIT=1 \
+	docker buildx build \
+		--build-arg BUILDKIT_INLINE_CACHE=1 \
+		--cache-from smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE_PREV) \
+		-t smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE) \
+		--load \
+		vue
 
 push:
-	docker push smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE)
+	cd docker && DOCKER_BUILDKIT=1 \
+	docker buildx build \
+		--build-arg BUILDKIT_INLINE_CACHE=1 \
+		--cache-from smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE_PREV) \
+		-t smartuse/gemeindescan-webui-vue:$(GEMEINDESCAN_WEBUI_VUE) \
+		--push \
+		vue
 
 dev:
 	$(DOCKER_EXEC) yarn serve

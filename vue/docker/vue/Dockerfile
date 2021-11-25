@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-FROM alpine:3.13.2
+FROM alpine:3.13.6
 MAINTAINER Yves Serrano <ys@taywa.ch>
 
 ENV LANG C.UTF-8
@@ -13,8 +13,10 @@ RUN apk add --no-cache \
         yarn \
         make
 RUN mkdir -p /opt/vue /opt/node_modules /tmp/yarn_cache && echo '--modules-folder /opt/node_modules' >> /opt/vue/.yarnrc
-ARG S6_OVERLAY_VERSION=v1.22.1.0
-RUN curl -Ls https://github.com/just-containers/s6-overlay/releases/download/$S6_OVERLAY_VERSION/s6-overlay-amd64.tar.gz | tar xz -C /
+COPY ./s6_download.sh /tmp/s6_download.sh
+RUN chmod +x /tmp/s6_download.sh
+ARG S6_OVERLAY_VERSION=v2.2.0.3
+RUN sh /tmp/s6_download.sh
 
 WORKDIR /opt/vue/
 
