@@ -68,7 +68,7 @@
               Bei Fragen und Rückmeldungen wenden Sie sich an Frau Lisa Lienkamp, LLienkamp@bochum.de
             </p>
           {% endif %}
-          <p><a href="{{ request.META.HTTP_X_FORWARDED_PROTO }}://{{ request.META.HTTP_HOST }}/SDY4F/0N2AQB/">Zurück zur Karte</a></p>
+          <p><a href="{{ request.META.HTTP_X_FORWARDED_PROTO }}://{{ request.META.HTTP_HOST }}/{{ workspaceHash }}/{{ snapshotHash }}/">Zurück zur Karte</a></p>
         </div>
         {% block footer %}<div id="footer"></div>{% endblock %}
 </div>

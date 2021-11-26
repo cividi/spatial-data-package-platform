@@ -114,6 +114,9 @@ class AnnotationPublishView(DetailView):
         publishKeyHex = hashlib.md5(uniquestr.encode()).hexdigest()
         context['success'] = False
 
+        context['workspaceHash'] = self.object.workspace.pk
+        context['snapshotHash'] = self.object.workspace.snapshots.first().pk
+
         if publishKeyHex == self.kwargs['publishKeyHex']:
             self.object.public = True
             self.object.save()
