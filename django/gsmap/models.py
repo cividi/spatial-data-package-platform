@@ -330,7 +330,11 @@ class Workspace(models.Model):
 
     snapshots = SortedManyToManyField(Snapshot)
 
-    annotations_open = models.BooleanField(default=False)
+    annotations_open = models.BooleanField(default=False, help_text="Enable annotations on workspace", verbose_name="Annotations enabled")
+    annotations_likes_enabled = models.BooleanField(default=True, help_text="Enable like buttons on workspace", verbose_name="Likes enabled")
+
+    annotations_contact_name = models.CharField(max_length=100, default='', verbose_name="Contact first & lastname")
+    annotations_contact_email = models.EmailField(default='', verbose_name='Contact email address')
 
     def get_absolute_link(self):
         website = get_website(Site.objects.get_current())

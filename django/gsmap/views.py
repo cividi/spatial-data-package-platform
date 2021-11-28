@@ -76,7 +76,6 @@ class AnnotationCreateView(generics.CreateAPIView):
     queryset = Annotation.objects.all()
     serializer_class = AnnotationSerializer
     http_method_names = ['post',]
-    #parser_classes = [parsers.MultiPartParser]
 
 class AnnotationRateUpView(generics.UpdateAPIView):
     queryset = Annotation.objects.all()
@@ -86,8 +85,7 @@ class AnnotationRateUpView(generics.UpdateAPIView):
 
     def patch(self, request, *args, **kwargs):
         instance = self.get_object()
-        workspace = Workspace.objects.filter(annotation=instance).first()
-        data = {"rating": instance.rating + 1, "annotations_open": workspace.annotations_open}
+        data = {}
         serializer = self.get_serializer(instance, data=data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
@@ -104,6 +102,12 @@ class AnnotationPublishView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['nochange'] = False
+
+        context['workspaceHash'] = self.object.workspace.pk
+        context['snapshotHash'] = self.object.workspace.snapshots.first().pk
+        context['contactName'] = self.object.workspace.annotations_contact_name
+        context['contactEmail'] = self.object.workspace.annotations_contact_email
+
         if self.object.public:
             context['nochange'] = True
             return context

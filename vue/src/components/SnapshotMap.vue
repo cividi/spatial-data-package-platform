@@ -88,6 +88,7 @@
       </v-card>
 
       <v-btn
+        v-if="!screenshotMode"
         fab absolute small
         id="myLocation"
         color="primary"
@@ -95,7 +96,7 @@
         <v-icon>mdi-crosshairs-gps</v-icon>
       </v-btn>
 
-      <div v-if="wshash && annotationsOpen && !screenshotMode">
+      <div v-if="wshash && annotations.open && !screenshotMode">
 
         <v-btn
           fab absolute small
@@ -124,7 +125,7 @@
                   <v-stepper-items>
                     <v-stepper-content step="1" class="pa-0">
                       <v-select
-                        :items="categories"
+                        :items="annotations.categories"
                         item-text="name"
                         item-value="pk"
                         v-model="newAnnotation.category"
@@ -165,7 +166,9 @@
                         </v-btn>
                       </div>
                     </v-stepper-content>
-                    <v-stepper-content step="2" class="pa-0">
+                    <v-stepper-content
+                      step="2"
+                      class="pa-0">
                       <p>{{ $t('emailhint') }}</p>
                       <v-text-field
                         v-model="newAnnotation.email"
@@ -250,7 +253,9 @@
             </v-carousel>
             {{currentComment.data.properties.description}}<br>
 
-            <div class="d-flex align-center justify-end primary--text">
+            <div
+              v-if="annotations.likes"
+              class="d-flex align-center justify-end primary--text">
               <p class="rating">
                 <v-icon color="primary" small>mdi-heart-outline</v-icon>
                 <b
@@ -258,7 +263,6 @@
                 > {{currentComment.rating}}</b>
               </p>
               <v-btn
-                v-if="annotationsOpen"
                 fab x-small color="white"
                 :disabled="ratingpause"
                 class="primary--text"
@@ -553,11 +557,9 @@ export default {
   props: {
     snapshot: Object,
     geojson: Object,
-    annotations: Array,
-    categories: Array,
+    annotations: Object,
     geoboundsIn: Array,
-    predecessor: Object,
-    annotationsOpen: Boolean
+    predecessor: Object
   },
 
   created() {
@@ -585,8 +587,8 @@ export default {
       }
     },
     currentComment() {
-      if (this.annotations) {
-        return this.annotations[this.currentCommentIndex];
+      if (this.annotations.items) {
+        return this.annotations.items[this.currentCommentIndex];
       }
       return null;
     },
@@ -744,8 +746,8 @@ export default {
             this.layerContainer.addLayer(L.mapbox.styleLayer(DEFAULT_STYLES));
           }
         }
-        if (this.annotations) {
-          this.annotations = this.annotations.map((a, i) => {
+        if (this.annotations.items) {
+          this.annotations.items = this.annotations.items.map((a, i) => {
             a.data.kind = a.kind;
             a.data.index = i;
             if (a.category) {
@@ -753,7 +755,7 @@ export default {
             }
             return a;
           });
-          const annotationsdata = this.annotations.map(a => a.data);
+          const annotationsdata = this.annotations.items.map(a => a.data);
           this.layerContainer.addLayer(this.createFeatureLayer(
             annotationsdata, ''
           ));
@@ -924,7 +926,7 @@ export default {
     async rateUp(annotationPk) {
       this.ratingpause = true;
 
-      if (this.annotationsOpen) {
+      if (this.annotations.open) {
         const csrftoken = this.$cookies.get('csrftoken', '');
         const formData = new FormData();
 
