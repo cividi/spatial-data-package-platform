@@ -56,10 +56,10 @@
         absolute
         bottom>
         <div class="useractions">
-          <user-actions noLogin="1" />
+          <user-actions noRequest=1 noLogin=1 />
         </div>
         <v-spacer/>
-        <!-- <language-switch/> -->
+        <language-switch/>
       </v-toolbar>
     </v-navigation-drawer>
 

@@ -152,7 +152,7 @@
                         outlined
                         v-model="newAnnotation.price"
                         :label="$t('price')"
-                        :rules="[rules.required, rules.number]"
+                        :rules="[rules.required]"
                         required
                       />
                       <div class="d-flex justify-space-between">
@@ -250,7 +250,9 @@
                 :src="djangobaseurl + '/media/' + item.document"
               ></v-carousel-item>
             </v-carousel>
-            {{currentComment.data.properties.description}}<br>
+            {{ currentComment.data.properties.price }}
+            {{ currentComment.data.properties.description }}
+            <br>
 
             <div
               v-if="annotations.likes"
@@ -821,7 +823,7 @@ export default {
       this.newAnnotation = {
         kind: 'COM',
         title: '',
-        price: 0.00,
+        price: '',
         marker: e.target
       };
     },
@@ -872,7 +874,7 @@ export default {
             "properties": {
               "fill": "true", 
               "title": "${this.newAnnotation.title}", 
-              "description": "${this.newAnnotation.text}",
+              "price": "${this.newAnnotation.price}",
               "usergroup": "${this.newAnnotation.usergroup}"
             }
           }`);

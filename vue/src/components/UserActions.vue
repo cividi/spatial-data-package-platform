@@ -18,7 +18,7 @@
 <template>
 <div v-if="noLogin">
   <v-btn small text color="white" class="mt-4">
-    <a href="https://campusbochum.de/imprint">Impressum</a>
+    <a href="/de/imprint/">Impressum</a>
   </v-btn>
 </div>
 <div v-else-if="vertical">
