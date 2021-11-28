@@ -128,7 +128,7 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
         }),
         (_('Annotations'), {
             'fields': (
-                ('annotations_open', 'annotations_require_verification'),
+                ('annotations_open', 'annotations_likes_enabled'),
                 ('annotations_contact_name', 'annotations_contact_email')
             )
         }),

@@ -331,7 +331,7 @@ class Workspace(models.Model):
     snapshots = SortedManyToManyField(Snapshot)
 
     annotations_open = models.BooleanField(default=False, help_text="Enable annotations on workspace", verbose_name="Annotations enabled")
-    annotations_require_verification = models.BooleanField(default=True, help_text="Submitting an annotation requires validation via E-Mail.", verbose_name="E-Mail verification enabled")
+    annotations_likes_enabled = models.BooleanField(default=True, help_text="Enable like buttons on workspace", verbose_name="Likes enabled")
 
     annotations_contact_name = models.CharField(max_length=100, default='', verbose_name="Contact first & lastname")
     annotations_contact_email = models.EmailField(default='', verbose_name='Contact email address')
