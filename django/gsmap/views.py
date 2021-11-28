@@ -104,6 +104,12 @@ class AnnotationPublishView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['nochange'] = False
+
+        context['workspaceHash'] = self.object.workspace.pk
+        context['snapshotHash'] = self.object.workspace.snapshots.first().pk
+        context['contactName'] = self.object.workspace.annotations_contact_name
+        context['contactEmail'] = self.object.workspace.annotations_contact_email
+
         if self.object.public:
             context['nochange'] = True
             return context
@@ -113,9 +119,6 @@ class AnnotationPublishView(DetailView):
         uniquestr = recipient + idstr + SECRET_KEY
         publishKeyHex = hashlib.md5(uniquestr.encode()).hexdigest()
         context['success'] = False
-
-        context['workspaceHash'] = self.object.workspace.pk
-        context['snapshotHash'] = self.object.workspace.snapshots.first().pk
 
         if publishKeyHex == self.kwargs['publishKeyHex']:
             self.object.public = True

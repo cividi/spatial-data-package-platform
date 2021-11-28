@@ -141,7 +141,7 @@ class AnnotationNode(gql_optimizer.OptimizedDjangoObjectType):
 class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
     class Meta:
         model = Workspace
-        fields = ['title', 'description', 'annotations_open']
+        fields = ['title', 'description', 'annotations_open', 'annotations_require_verification', 'annotations_contact_name', 'annotations_contact_email']
         interfaces = [graphene.relay.Node]
 
     pk = graphene.String(source='id')

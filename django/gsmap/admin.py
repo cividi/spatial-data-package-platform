@@ -120,12 +120,17 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
     fieldsets = (
         (_('Meta'), {
             'fields': (
-                'id', 'get_absolute_link',
-                'created', 'modified'
+                ('id', 'get_absolute_link', 'created', 'modified'),
             )
         }),
         (_('Main'), {
-            'fields': ('title', 'description', 'snapshots', 'annotations_open'),
+            'fields': ('title', 'description', 'snapshots'),
+        }),
+        (_('Annotations'), {
+            'fields': (
+                ('annotations_open', 'annotations_require_verification'),
+                ('annotations_contact_name', 'annotations_contact_email')
+            )
         }),
     )
     list_display = ('id', 'title', 'annotations_open', 'created', 'modified')

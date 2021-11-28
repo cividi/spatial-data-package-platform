@@ -1,8 +1,9 @@
-{% load i18n static %}<!DOCTYPE html>
+{% load i18n %}
+<!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
-<html lang="{{ LANGUAGE_CODE|default:"de" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
+<html lang="{{ LANGUAGE_CODE|default:"en" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
 <head>
-<title>Kommentar veröffentlichen</title>
+<title>{% translate "Publish annotation" %}</title>
 <style type="text/css">
   body {
     font-family: sans-serif;
@@ -50,25 +51,23 @@
 <div id="container">
         <div id="content">
           {% if success %}
-            <h1>Kommentar freigeschaltet</h1>
-            <p>Vielen Dank für Ihre Teilnahme. Ihr Kommentar wurde erfolgreich publiziert.</p>
-            <p>
-              Bei Fragen und Rückmeldungen wenden Sie sich an Frau Lisa Lienkamp, LLienkamp@bochum.de
-            </p>
+            <h1>{% translate "Annotation published" %}</h1>
+            <p>{% translate "Thank you for your participation. Your comment was successfully published." %}</p>
           {% elif nochange %}
-            <h1>Kommentar bereits publiziert</h1>
-            <p>Dieser Kommentar ist bereits publiziert. Wenn Sie einen weiteren Kommentar gemacht haben prüfen Sie bitte Ihre Mailbox für einen neuen Aktivierungslink.</p>
-            <p>
-              Bei Fragen und Rückmeldungen wenden Sie sich an Frau Lisa Lienkamp, LLienkamp@bochum.de
-            </p>
+            <h1>{% translate "Annotation already published" %}</h1>
+            <p>{% translate "This comment has already been published. If you have made another comment, please check your mailbox for a new activation link." %}</p>
           {% else %}
-            <h1>Ungültiger Aktivierungslink</h1>
-            <p>Ihr Kommentar konnte nicht publiziert werden. Bitte stellen Sie sicher, dass Sie die ganze URL aus der Email kopiert haben.</p>
-            <p>
-              Bei Fragen und Rückmeldungen wenden Sie sich an Frau Lisa Lienkamp, LLienkamp@bochum.de
-            </p>
+            <h1>{% translate "Invalid activation link" %}</h1>
+            <p>{% translate "Your comment could not be published. Please make sure that you have copied the whole URL from the email." %}</p>
           {% endif %}
-          <p><a href="{{ request.META.HTTP_X_FORWARDED_PROTO }}://{{ request.META.HTTP_HOST }}/{{ workspaceHash }}/{{ snapshotHash }}/">Zurück zur Karte</a></p>
+          <p>
+            {% blocktranslate %}For questions and feedback, please contact {{ contactName }} at {{ contactEmail }}{% endblocktranslate %}
+          </p>
+          <p>
+            <a href="{{ request.META.HTTP_X_FORWARDED_PROTO }}://{{ request.META.HTTP_HOST }}/{{ workspaceHash }}/{{ snapshotHash }}/">
+              {% translate "Back to the map" %}
+            </a>
+          </p>
         </div>
         {% block footer %}<div id="footer"></div>{% endblock %}
 </div>
