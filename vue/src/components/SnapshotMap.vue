@@ -4,14 +4,18 @@
   "de": {
     "addComment": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
     "newComment": "Neuer Kommentar",
-    "title": "Titel",
-    "text":"Text",
+    "category": "Kategorie",
+    "title": "Name",
+    "price":"Preis (in lokaler Währung)",
+    "resident": "Einwohner:in",
+    "tourist": "Tourist:in",
     "cancel": "abbrechen",
     "next": "weiter",
     "prev": "zurück",
     "save": "speichern",
     "saveinfo": "Speichere Angaben",
     "mandatory": "Dies ist ein Pflichtfeld",
+    "nan": "Bitte eine Zahl eingeben",
     "email": "E-Mail",
     "inv": "Dies ist keine gültige E-Mail Adresse",
     "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
@@ -128,7 +132,7 @@
                         item-value="pk"
                         v-model="newAnnotation.category"
                         label="Kategorie"
-                        :rules="[v => !!v || $t('mandatory')]"
+                        :rules="[rules.required]"
                         required
                       >
                         <template slot="item" slot-scope="data">
@@ -141,14 +145,14 @@
                       <v-text-field
                         v-model="newAnnotation.title"
                         :label="$t('title')"
-                        :rules="[v => !!v || $t('mandatory')]"
+                        :rules="[rules.required]"
                         required
                       />
-                      <v-textarea
+                      <v-text-field
                         outlined
-                        v-model="newAnnotation.text"
-                        :label="$t('text')"
-                        :rules="[v => !!v || $t('mandatory')]"
+                        v-model="newAnnotation.price"
+                        :label="$t('price')"
+                        :rules="[rules.required, rules.number]"
                         required
                       />
                       <div class="d-flex justify-space-between">
@@ -171,16 +175,14 @@
                       <v-text-field
                         v-model="newAnnotation.email"
                         :label="$t('email')"
-                        :rules="[
-                          v => !!v || $t('mandatory'),
-                          v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/.test(v) || $t('inv')]"
+                        :rules="[rules.required,rules.email]"
                         required
                       />
                       <v-select
                         :items="usergroups"
                         v-model="newAnnotation.usergroup"
                         label="Personengruppe"
-                        :rules="[v => !!v || $t('mandatory')]"
+                        :rules="[rules.required]"
                         required
                       ></v-select>
                       <p class="small">{{ $t('notpublic')}}</p>
@@ -525,7 +527,7 @@ export default {
       addingAnnotation: null,
       newAnnotation: null,
       commentstepper: 1,
-      usergroups: ['Anwohner:in', 'Bürger:in', 'Beschäftigte:r', 'Student:in', 'Andere'],
+      usergroups: [this.$t('resident'), this.$t('tourist')],
       currentCommentIndex: null,
       ratingpause: false,
       dialog: false,
@@ -547,7 +549,12 @@ export default {
       locationIconUrl: require('@/assets/images/icons/location.svg'),
       setMapMyLocation: false,
       locationWatcher: null,
-      myLocationMarker: null
+      myLocationMarker: null,
+      rules: {
+        required: v => !!v || this.$t('mandatory'),
+        email: v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/.test(v) || this.$t('inv'),
+        number: v => /^\d+[.,]?\d{0,2}$/.test(v) || this.$t('nan')
+      }
     };
   },
 
@@ -748,7 +755,7 @@ export default {
             a.data.kind = a.kind;
             a.data.index = i;
             if (a.category) {
-              a.data.properties.icon = { iconUrl: `/media/${a.category.icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
+              a.data.properties.icon = { iconUrl: `/media/${a.category.icon}`, iconSize: [30, 30], popupAnchor: [0, -15] };
             }
             return a;
           });
@@ -766,7 +773,7 @@ export default {
                 const newMarker = L.marker(event.latlng, {
                   icon: new L.Icon({
                     iconUrl: this.commentIconUrl,
-                    iconSize: [36, 36]
+                    iconSize: [30, 30]
                   }),
                   draggable: true
                 });
@@ -814,7 +821,7 @@ export default {
       this.newAnnotation = {
         kind: 'COM',
         title: '',
-        text: '',
+        price: 0.00,
         marker: e.target
       };
     },
