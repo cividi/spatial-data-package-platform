@@ -20,7 +20,6 @@
       v-model="snapshotnav">
       <!-- <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block"> -->
       <a id="logo" class="px-4 py-4 d-block"
-        @click="window.fathom('trackGoal','K19HMJIL',0);"
         href="https://campusbochum.de">
         <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
       </a>

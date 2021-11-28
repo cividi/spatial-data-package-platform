@@ -59,7 +59,7 @@
       v-if="hasSecondaryLegend"
       v-show="!screenshotMode"
       text x-small
-      @click="showWholeLegend=!showWholeLegend;window.fathom('trackGoal','XB1624JI',0);"
+      @click="showWholeLegend=!showWholeLegend"
       class="moreLegendToggle"
       :class="{legendsvisible: showWholeLegend}"
       style="margin:-1.5em 0 0 -8px; text-transform:none;">
@@ -93,12 +93,12 @@
       text x-small
       class="sourcesToggle"
       :class="{sourcesvisible: showSources}"
-      @click="showSources=!showSources;window.fathom('trackGoal','R92GS3GF',0);"
+      @click="showSources=!showSources"
       style="text-transform:none; float:left; margin: 8px 0px 0px -8px;">
         <v-icon small color="primary">mdi-chevron-right</v-icon>
         {{ $t('sources') }}
     </v-btn>
-    <a href="https://dfour.space" target="_blank" @click="window.fathom('trackGoal','IA4E289B',0);">
+    <a href="https://dfour.space" target="_blank">
       <img alt="dføur logo" height="18" id="legendLogo"
         style="float:right; opacity:0.55;"
         src="@/assets/images/dfour-logo.svg">
