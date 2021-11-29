@@ -5,7 +5,7 @@
     "addComment": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
     "newComment": "Neuer Kommentar",
     "category": "Kategorie",
-    "title": "Name",
+    "title": "Title",
     "price":"Preis (in lokaler Währung)",
     "resident": "Einwohner:in",
     "tourist": "Tourist:in",
@@ -26,6 +26,30 @@
     "commentSaved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
   },
   "fr": {
+  },
+  "en": {
+    "addComment": "Please click on the place in the map where you want to add a comment.",
+    "newComment": "New annotation",
+    "category": "Category",
+    "title": "Title",
+    "price":"Price (in local currency)",
+    "resident": "Resident",
+    "tourist": "Tourist",
+    "cancel": "cancel",
+    "next": "next",
+    "prev": "back",
+    "save": "save",
+    "saveinfo": "Saving",
+    "mandatory": "This field is mandatory",
+    "nan": "Please enter a valid number",
+    "email": "E-mail",
+    "inv": "Please enter a valid e-mail address",
+    "emailhint": "In order to publish your input, you will receive an e-mail with an activation link. Please share your address:",
+    "notpublic":"This information will not be published or forwarded to 3rd parties",
+    "failed": "Save failed",
+    "failedText": "Please check your entries or try again later.",
+    "saved": "Save successful",
+    "commentSaved": "Your comment has been saved. Click the link in the email to activate it."
   }
 }
 </i18n>
@@ -131,7 +155,7 @@
                         item-text="name"
                         item-value="pk"
                         v-model="newAnnotation.category"
-                        label="Kategorie"
+                        :label="$t('category')"
                         :rules="[rules.required]"
                         required
                       >

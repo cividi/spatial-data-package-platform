@@ -5,11 +5,16 @@
     "loginText": "Login",
     "logoutText": "Logout",
     "signupText": "Unverbindliche Anfrage"
-},
+  },
   "fr": {
     "loginText": "Login",
     "logoutText": "Logout",
     "signupText": "Demande sans engagement"
+  },
+  "en": {
+    "loginText": "Login",
+    "logoutText": "Logout",
+    "signupText": "Non-binding request"
   }
 }
 </i18n>

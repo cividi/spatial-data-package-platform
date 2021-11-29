@@ -3,15 +3,21 @@
 {
   "de": {
     "img.1.alt":
-      "dføur Bochum",
+      "dføur",
     "h2.2": "Beispiele",
     "networkerror": "Die Gemeindesuche ist zur Zeit nicht verfügbar."
   },
   "fr": {
     "img.1.alt":
-      "Le dføur Bochum",
+      "Le dføur",
     "h2.2": "Examples",
    "networkerror": "La recherche de communauté n'est pas disponible actuellement."
+  },
+  "en": {
+    "img.1.alt":
+      "dføur",
+    "h2.2": "Examples",
+    "networkerror": "The municipality search is not available at the moment."
   }
 }
 </i18n>

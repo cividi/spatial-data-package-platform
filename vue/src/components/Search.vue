@@ -8,6 +8,10 @@
   "fr": {
     "placeholder": "Recherche",
     "label": "Communauté"
+  },
+  "en": {
+    "placeholder": "Search",
+    "label": "Municipality"
   }
 }
 </i18n>
