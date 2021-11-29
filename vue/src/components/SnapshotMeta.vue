@@ -5,13 +5,19 @@
     "sources": "Quellenangaben",
     "expandlegend": "mehr",
     "collapslegend": "weniger",
-    "predecessor": "Vorgänerversion"
+    "predecessor": "Vorgängerversion"
   },
   "fr": {
     "sources": "Source",
     "expandlegend": "plus",
     "collapslegend": "moin",
     "predecessor": "version prédécesseuse"
+  },
+  "en": {
+    "sources": "Sources",
+    "expandlegend": "more",
+    "collapslegend": "less",
+    "predecessor": "Previous version"
   }
 }
 </i18n>

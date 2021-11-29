@@ -4,6 +4,8 @@
   "de": {
   },
   "fr": {
+  },
+  "en" : {
   }
 }
 </i18n>
@@ -20,7 +22,7 @@
       v-model="snapshotnav">
       <!-- <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block"> -->
       <a id="logo" class="px-4 py-4 d-block"
-        href="https://campusbochum.de">
+        href="/">
         <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
       </a>
       <!-- </router-link> -->

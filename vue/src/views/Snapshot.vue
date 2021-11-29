@@ -34,6 +34,23 @@
     "contactPhone": "+41 43 543 44 48",
     "listtitle": "Examples",
     "listtitleMore": "D'autres examples"
+  },
+  "en": {
+    "calltoactionText": "Get a quote for your community",
+    "hasSnapshot.title": "Data availability",
+    "hasSnapshot.p1": "Initial analyses are available for {municipalityText}.",
+    "hasSnapshot.p2": "Explore our other case studies to get a better picture of the possibilities for your community.",
+    "noSnapshot.title": "Data availability",
+    "noSnapshot.municipalityText": "this municipality",
+    "noSnapshot.p1": "There are currently no analyses available for {municipalityText}.",
+    "noSnapshot.p2": "Explore our case studies to get a better picture of the possibilities for your community.",
+    "noSnapshot.p3.1": "We will be happy to advise you by telephone at",
+    "noSnapshot.p3.2": " or by email",
+    "contactEmail": "support@dfour.space",
+    "contactEmailSubject": "dføur request",
+    "contactPhone": "+41 43 543 44 48",
+    "listtitle": "Case studies",
+    "listtitleMore": "Other case studies"
   }
 }
 </i18n>
@@ -49,7 +66,7 @@
       width="320"
       v-model="snapshotnav">
       <!-- <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block"> -->
-      <a id="logo" class="px-4 py-4 d-block" href="https://campusbochum.de">
+      <a id="logo" class="px-4 py-4 d-block" href="/">
         <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
       </a>
       <!-- </router-link> -->

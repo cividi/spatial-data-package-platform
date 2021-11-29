@@ -7,7 +7,7 @@ try {
     process.env.VUE_APP_GIT_VERSION = fs.readFileSync('VERSION', 'utf8');
   }
 } catch (err) {
-  //pass
+  // pass
 }
 
 
@@ -17,7 +17,7 @@ module.exports = {
     inline: true,
     port: '8080',
     public: 'www',
-    //https: true,
+    // https: true,
     allowedHosts: [
       'www',
       'www.local',
@@ -46,6 +46,7 @@ module.exports = {
       renderRoutes: [
         '/de/',
         '/fr/',
+        '/en',
         '/de/login/',
         '/de/signup/',
         '/de/about/',
@@ -55,7 +56,12 @@ module.exports = {
         '/fr/signup/',
         '/fr/about/',
         '/fr/imprint/',
-        '/fr/contact/'
+        '/fr/contact/',
+        '/en/login/',
+        '/en/signup/',
+        '/en/about/',
+        '/en/imprint/',
+        '/en/contact/'
       ],
       useRenderEvent: true,
       headless: true,
