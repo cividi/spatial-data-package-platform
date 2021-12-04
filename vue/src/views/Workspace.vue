@@ -14,17 +14,24 @@
 <template>
   <div id="snapshotview">
     <v-navigation-drawer
-      v-if="$store.state.notIframe"
       id="snapshotnav"
       clipped="clipped"
       app
+      :stateless="!this.$store.state.snapshotnav"
       width="320"
       v-model="snapshotnav">
       <!-- <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block"> -->
-      <a id="logo" class="px-4 py-4 d-block"
+      <a
+        v-if="$store.state.notIframe"
+        id="logo" class="px-4 py-4 d-block"
         href="/">
         <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
       </a>
+      <div
+        v-else
+        class="px-4 py-4 d-block">
+        <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
+      </div>
       <!-- </router-link> -->
 
       <v-divider />
@@ -54,6 +61,7 @@
       </div>
 
       <v-toolbar
+        v-if="$store.state.notIframe"
         width="320"
         absolute
         bottom>
