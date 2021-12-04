@@ -1027,7 +1027,7 @@ export default {
         this.locationWatcher = navigator.geolocation.watchPosition((position) => {
           const myLatlng = L.latLng(position.coords.latitude, position.coords.longitude);
           if (this.setMapMyLocation) {
-            this.map.setView(myLatlng);
+            this.map.flyTo(myLatlng, 17);
             this.setMapMyLocation = false;
           }
           this.myLocationMarker.setLatLng(myLatlng);
