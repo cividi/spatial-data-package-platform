@@ -2,54 +2,82 @@
 <i18n>
 {
   "de": {
-    "addComment": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
-    "newComment": "Neuer Kommentar",
-    "category": "Kategorie",
-    "title": "Title",
-    "price":"Preis (in lokaler Währung)",
-    "resident": "Einwohner:in",
-    "tourist": "Tourist:in",
-    "cancel": "abbrechen",
-    "next": "weiter",
-    "prev": "zurück",
-    "save": "speichern",
-    "saveinfo": "Speichere Angaben",
-    "mandatory": "Dies ist ein Pflichtfeld",
-    "nan": "Bitte eine Zahl eingeben",
-    "email": "E-Mail",
-    "inv": "Dies ist keine gültige E-Mail Adresse",
-    "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
-    "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben",
-    "failed": "Speichern fehlgeschlagen",
-    "failedText": "Bitte prüfen Sie Ihre Eingaben oder versuchen Sie es später nochmals.",
-    "saved": "Speichern erfolgreich",
-    "commentSaved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+    "label": {
+      "addComment": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
+      "newComment": "Neuer Kommentar",
+      "title": "Title",
+      "category": "Kategorie",
+      "price":"Preis (in lokaler Währung) oder Beschreibung",
+      "group": "Personengruppe",
+      "groups": {
+        "resident": "Einwohner:in",
+        "tourist": "Tourist:in"
+      },
+      "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
+      "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben",
+      "saveinfo": "Speichere Angaben"
+    },
+    "btn": {
+      "cancel": "abbrechen",
+      "next": "weiter",
+      "prev": "zurück",
+      "save": "speichern"
+    },
+    "validationError": {
+      "mandatory": "Dies ist ein Pflichtfeld",
+      "nan": "Bitte eine Zahl eingeben",
+      "email": "E-Mail",
+      "inv": "Dies ist keine gültige E-Mail Adresse",
+      "toolong": "Zu lange Eingabe, bitte ein wenig kürzer halten."
+    },
+    "error": {
+      "failed": "Speichern fehlgeschlagen",
+      "failedText": "Bitte prüfen Sie Ihre Eingaben oder versuchen Sie es später nochmals."
+    },
+    "success": {
+      "saved": "Speichern erfolgreich",
+      "commentSaved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+    }
   },
   "fr": {
   },
   "en": {
-    "addComment": "Please click on the place in the map where you want to add a comment.",
-    "newComment": "New annotation",
-    "category": "Category",
-    "title": "Title",
-    "price":"Price (in local currency)",
-    "resident": "Resident",
-    "tourist": "Tourist",
-    "cancel": "cancel",
-    "next": "next",
-    "prev": "back",
-    "save": "save",
-    "saveinfo": "Saving",
-    "mandatory": "This field is mandatory",
-    "nan": "Please enter a valid number",
-    "email": "E-mail",
-    "inv": "Please enter a valid e-mail address",
-    "emailhint": "In order to publish your input, you will receive an e-mail with an activation link. Please share your address:",
-    "notpublic":"This information will not be published or forwarded to 3rd parties",
-    "failed": "Save failed",
-    "failedText": "Please check your entries or try again later.",
-    "saved": "Save successful",
-    "commentSaved": "Your comment has been saved. Click the link in the email to activate it."
+    "label": {
+      "addComment": "Please click on the place in the map where you want to add a comment.",
+      "newComment": "New annotation",
+      "category": "Category",
+      "title": "Title",
+      "group": "I am a",
+      "groups": {
+        "resident": "Resident",
+        "tourist": "Tourist"
+      },
+      "price":"Price (in local currency) or description",
+      "saveinfo": "Saving",
+      "email": "E-mail",
+      "emailhint": "In order to publish your input, you will receive an e-mail with an activation link. Please share your address:",
+      "notpublic":"This information will not be published or forwarded to 3rd parties"
+    },
+    "btn": {
+      "cancel": "cancel",
+      "next": "next",
+      "prev": "back",
+      "save": "save"
+    },
+    "validationError": {
+      "mandatory": "This field is mandatory",
+      "nan": "Please enter a valid number",
+      "inv": "Please enter a valid e-mail address",
+      "toolong": "Too long, please keep it shorter."
+    },
+    "error": {
+      "failed": "Save failed",
+      "failedText": "Please check your entries or try again later."
+    },
+    "success": {
+      "saved": "Save successful",
+      "commentSaved": "Your comment has been saved. Click the link in the email to activate it."
+    }
   }
 }
 </i18n>
@@ -77,7 +105,7 @@
       </v-container>
 
       <v-slide-y-transition>
-        <p class="addHint elevation-6" v-if="addingAnnotation">{{ $t('addComment') }}</p>
+        <p class="addHint elevation-6" v-if="addingAnnotation">{{ $t('label.addComment') }}</p>
       </v-slide-y-transition>
 
       <v-btn
@@ -140,7 +168,7 @@
               id="commentedit"
               light width="400" class="pa-4 elevation-6"
             >
-              <h3>{{ $t('newComment') }}</h3>
+              <h3>{{ $t('label.newComment') }}</h3>
               <v-form
                 class="pt-4"
                 ref="commentform"
@@ -155,7 +183,7 @@
                         item-text="name"
                         item-value="pk"
                         v-model="newAnnotation.category"
-                        :label="$t('category')"
+                        :label="$t('label.category')"
                         :rules="[rules.required]"
                         required
                       >
@@ -168,58 +196,61 @@
                       </v-select>
                       <v-text-field
                         v-model="newAnnotation.title"
-                        :label="$t('title')"
-                        :rules="[rules.required]"
+                        :label="$t('label.title')"
+                        :rules="[rules.required,rules.maxlength]"
+                        counter=30
+                        maxlength=35
                         required
                       />
                       <v-text-field
-                        outlined
                         v-model="newAnnotation.price"
-                        :label="$t('price')"
-                        :rules="[rules.required]"
-                        required
+                        :label="$t('label.price')"
+                        :rules="[rules.maxlength]"
+                        counter=30
+                        maxlength=35
                       />
                       <div class="d-flex justify-space-between">
                         <v-btn
                         @click="cancelAnnotation">
-                          {{ $t('cancel') }}
+                          {{ $t('btn.cancel') }}
                         </v-btn>
                         <v-btn
                           color="primary"
                           @click="validateStepOne"
                         >
-                          {{ $t('next') }}
+                          {{ $t('btn.next') }}
                         </v-btn>
                       </div>
                     </v-stepper-content>
                     <v-stepper-content
                       step="2"
                       class="pa-0">
-                      <p>{{ $t('emailhint') }}</p>
+                      <p>{{ $t('label.emailhint') }}</p>
                       <v-text-field
                         v-model="newAnnotation.email"
-                        :label="$t('email')"
+                        :label="$t('label.email')"
                         :rules="[rules.required,rules.email]"
+                        maxlength=100
                         required
                       />
                       <v-select
                         :items="usergroups"
                         v-model="newAnnotation.usergroup"
-                        label="Personengruppe"
+                        :label="$t('label.group')"
                         :rules="[rules.required]"
                         required
                       ></v-select>
-                      <p class="small">{{ $t('notpublic')}}</p>
+                      <p class="small">{{ $t('label.notpublic')}}</p>
                       <div class="d-flex justify-space-between">
                         <v-btn
                         @click="commentstepper = 1">
-                          {{ $t('prev') }}
+                          {{ $t('btn.prev') }}
                         </v-btn>
                         <v-btn
                           type="submit"
                           color="primary"
                         >
-                          {{ $t('save') }}
+                          {{ $t('btn.save') }}
                         </v-btn>
                       </div>
                     </v-stepper-content>
@@ -553,7 +584,7 @@ export default {
       addingAnnotation: null,
       newAnnotation: null,
       commentstepper: 1,
-      usergroups: [this.$t('resident'), this.$t('tourist')],
+      usergroups: [this.$t('label.groups.resident'), this.$t('label.groups.tourist')],
       currentCommentIndex: null,
       ratingpause: false,
       dialog: false,
@@ -577,9 +608,10 @@ export default {
       locationWatcher: null,
       myLocationMarker: null,
       rules: {
-        required: v => !!v || this.$t('mandatory'),
-        email: v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/.test(v) || this.$t('inv'),
-        number: v => /^\d+[.,]?\d{0,2}$/.test(v) || this.$t('nan')
+        required: v => !!v || this.$t('validationError.mandatory'),
+        email: v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/.test(v) || this.$t('validationError.inv'),
+        number: v => /^\d+[.,]?\d{0,2}$/.test(v) || this.$t('validationError.nan'),
+        maxlength: v => v.length <= 30 || this.$t('validationError.toolong') // eslint-disable-line no-console
       }
     };
   },
@@ -926,12 +958,12 @@ export default {
             })
           );
           marker.off();
-          marker.bindPopup(this.$t('commentSaved'));
+          marker.bindPopup(this.$t('success.commentSaved'));
           this.newAnnotation = null;
 
           this.dialogcontent = {
-            title: this.$t('saved'),
-            text: this.$t('commentSaved')
+            title: this.$t('success.saved'),
+            text: this.$t('success.commentSaved')
           };
           this.dialog = true;
         }
@@ -943,8 +975,8 @@ export default {
       } catch (error) {
         console.log(error); // eslint-disable-line no-console
         this.dialogcontent = {
-          title: this.$t('failed'),
-          text: this.$t('failedText')
+          title: this.$t('error.failed'),
+          text: this.$t('error.failedText')
         };
         this.dialog = true;
       }
