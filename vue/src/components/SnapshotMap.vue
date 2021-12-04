@@ -781,7 +781,7 @@ export default {
             a.data.kind = a.kind;
             a.data.index = i;
             if (a.category) {
-              a.data.properties.icon = { iconUrl: `/media/${a.category.icon}`, iconSize: [30, 30], popupAnchor: [0, -15] };
+              a.data.properties.icon = { iconUrl: `/media/${a.category.icon}`, iconSize: [20, 20], popupAnchor: [0, -10] };
             }
             return a;
           });
@@ -799,7 +799,7 @@ export default {
                 const newMarker = L.marker(event.latlng, {
                   icon: new L.Icon({
                     iconUrl: this.commentIconUrl,
-                    iconSize: [30, 30]
+                    iconSize: [20, 20]
                   }),
                   draggable: true
                 });
