@@ -13,6 +13,7 @@
         "resident": "Einwohner:in",
         "tourist": "Tourist:in"
       },
+      "priceordescription": "Preis/Beschreibung",
       "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
       "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben",
       "saveinfo": "Speichere Angaben"
@@ -28,7 +29,8 @@
       "nan": "Bitte eine Zahl eingeben",
       "email": "E-Mail",
       "inv": "Dies ist keine gültige E-Mail Adresse",
-      "toolong": "Zu lange Eingabe, bitte ein wenig kürzer halten."
+      "toolong": "Zu lange Eingabe, bitte ein wenig kürzer halten.",
+      "url": "Keine gültiger Link."
     },
     "error": {
       "failed": "Speichern fehlgeschlagen",
@@ -52,6 +54,7 @@
         "resident": "Resident",
         "tourist": "Tourist"
       },
+      "priceordescription": "Price/description",
       "price":"Price (in local currency) or description",
       "saveinfo": "Saving",
       "email": "E-mail",
@@ -68,7 +71,8 @@
       "mandatory": "This field is mandatory",
       "nan": "Please enter a valid number",
       "inv": "Please enter a valid e-mail address",
-      "toolong": "Too long, please keep it shorter."
+      "toolong": "Too long, please keep it shorter.",
+      "url": "Not a valid URL."
     },
     "error": {
       "failed": "Save failed",
@@ -305,10 +309,9 @@
                 :src="djangobaseurl + '/media/' + item.document"
               ></v-carousel-item>
             </v-carousel>
-            {{ currentComment.data.properties.price }}
+            <i>{{ $t("label.priceordescription") }}</i>: {{ currentComment.data.properties.price }}
             {{ currentComment.data.properties.description }}
             <br>
-
             <div
               v-if="annotations.likes"
               class="d-flex align-center justify-end primary--text">
@@ -611,7 +614,8 @@ export default {
         required: v => !!v || this.$t('validationError.mandatory'),
         email: v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/.test(v) || this.$t('validationError.inv'),
         number: v => /^\d+[.,]?\d{0,2}$/.test(v) || this.$t('validationError.nan'),
-        maxlength: v => v.length <= 30 || this.$t('validationError.toolong') // eslint-disable-line no-console
+        maxlength: v => v.length <= 30 || this.$t('validationError.toolong'),
+        url: v => /^((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w\-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[.!/\w]*))?)$/.test(v) || this.$t('validationError.url')
       }
     };
   },
