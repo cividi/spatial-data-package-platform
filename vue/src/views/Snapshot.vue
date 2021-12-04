@@ -138,6 +138,7 @@
       :geojson="geojson"
       :geoboundsIn="geobounds"
       :predecessor="predecessor"
+      :annotations="annotations"
     />
 
     <!-- <snapshot-change ref="change"
@@ -193,7 +194,10 @@ export default {
       predecessor: null,
       screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
       screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail'),
-      errorsettings: {}
+      errorsettings: {},
+      annotations: {
+        items: null, categories: null, open: false, likes: false
+      }
     };
   },
 
