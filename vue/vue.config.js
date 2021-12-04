@@ -46,7 +46,7 @@ module.exports = {
       renderRoutes: [
         '/de/',
         '/fr/',
-        '/en',
+        '/en/',
         '/de/login/',
         '/de/signup/',
         '/de/about/',
