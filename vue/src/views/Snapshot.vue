@@ -66,7 +66,7 @@
       width="320"
       v-model="snapshotnav">
       <!-- <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block"> -->
-      <a id="logo" class="px-4 py-4 d-block" href="/">
+      <a id="logo" class="px-4 py-4 d-block" href="https://xmas.dfour.io" target="_top">
         <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
       </a>
       <!-- </router-link> -->

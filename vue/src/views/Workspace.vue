@@ -22,16 +22,12 @@
       v-model="snapshotnav">
       <!-- <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block"> -->
       <a
-        v-if="$store.state.notIframe"
         id="logo" class="px-4 py-4 d-block"
-        href="/">
+        href="https://xmas.dfour.io"
+        target="_top"
+        >
         <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
       </a>
-      <div
-        v-else
-        class="px-4 py-4 d-block">
-        <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
-      </div>
       <!-- </router-link> -->
 
       <v-divider />
