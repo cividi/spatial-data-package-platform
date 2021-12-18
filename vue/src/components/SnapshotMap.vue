@@ -209,9 +209,9 @@
                       <v-text-field
                         v-model="newAnnotation.price"
                         :label="$t('label.price')"
-                        :rules="[rules.maxlength]"
-                        counter=30
-                        maxlength=35
+                        :rules="[rules.maxlengthLong]"
+                        counter=50
+                        maxlength=55
                       />
                       <div class="d-flex justify-space-between">
                         <v-btn
@@ -615,6 +615,7 @@ export default {
         email: v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/.test(v) || this.$t('validationError.inv'),
         number: v => /^\d+[.,]?\d{0,2}$/.test(v) || this.$t('validationError.nan'),
         maxlength: v => v.length <= 30 || this.$t('validationError.toolong'),
+        maxlengthLong: v => v.length <= 50 || this.$t('validationError.toolong'),
         url: v => /^((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w\-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[.!/\w]*))?)$/.test(v) || this.$t('validationError.url')
       }
     };
