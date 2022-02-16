@@ -39,7 +39,9 @@
         </v-btn>
       </v-slide-x-reverse-transition>
 
-      <v-container fluid class="pa-0" ref="mapbox">
+      <v-container
+        @mousemove="drawGuideline"
+        fluid class="pa-0" ref="mapbox">
         <span id="mapstatus" :class="{
           loaded: isMapLoaded,
           waiting: !isMapLoaded,
@@ -99,11 +101,24 @@
 
         <v-btn
           fab absolute small
-          id="addingAnnotation"
+          id="addingAnnotationPt"
           color="primary"
-          @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM'">
-          <v-icon v-if="!addingAnnotation">mdi-comment-plus-outline</v-icon>
-          <v-icon v-if="addingAnnotation">mdi-close-thick</v-icon>
+          @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM';">
+          <v-icon v-if="!addingAnnotation || addingAnnotation != 'COM'">
+            mdi-comment-plus-outline
+          </v-icon>
+          <v-icon v-if="addingAnnotation && addingAnnotation == 'COM'">mdi-close-thick</v-icon>
+        </v-btn>
+
+        <v-btn
+          fab absolute small
+          id="addingAnnotationPly"
+          color="primary"
+          @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='PLY';">
+          <v-icon v-if="!addingAnnotation || addingAnnotation != 'PLY'">
+            mdi-comment-plus-outline
+          </v-icon>
+          <v-icon v-if="addingAnnotation && addingAnnotation == 'PLY'">mdi-close-thick</v-icon>
         </v-btn>
 
         <v-scale-transition origin="center">
@@ -342,7 +357,9 @@ body,
 }
 
 #myLocation,
-#addingAnnotation {
+#addingAnnotationPt,
+#addingAnnotationPly
+{
   top: 5.6em;
   right: 1.3em;
   transition: top 0.3s;
@@ -351,15 +368,23 @@ body,
 #myLocation {
   transition-delay: 0.1s;
 }
-#addingAnnotation {
+#addingAnnotationPt {
   top: 10em;
 }
+#addingAnnotationPly {
+  top: 14.4em;
+}
+
 .navopen #myLocation {
   top: 1.2em;
   transition-delay: 0.3s;
 }
-.navopen #addingAnnotation {
+.navopen #addingAnnotationPt {
   top: 5.6em;
+  transition-delay: 0.4s;
+}
+.navopen #addingAnnotationPly {
+  top: 10em;
   transition-delay: 0.4s;
 }
 
@@ -524,6 +549,9 @@ export default {
       mapinfoopen: true,
       addingAnnotation: null,
       newAnnotation: null,
+      polygonString: [],
+      drawnItems: null,
+      guides: null,
       commentstepper: 1,
       usergroups: ['Anwohner:in', 'Bürger:in', 'Beschäftigte:r', 'Student:in', 'Andere'],
       currentCommentIndex: null,
@@ -547,7 +575,8 @@ export default {
       locationIconUrl: require('@/assets/images/icons/location.svg'),
       setMapMyLocation: false,
       locationWatcher: null,
-      myLocationMarker: null
+      myLocationMarker: null,
+      escListener: null
     };
   },
 
@@ -561,10 +590,16 @@ export default {
 
   created() {
     this.geobounds = this.geoboundsIn;
+    this.escListener = document.addEventListener('keyup', (e) => {
+      if (e.key === 'Escape') {
+        this.cancelAnnotation();
+      }
+    });
   },
 
   destroy() {
     this.destroyMap();
+    document.removeEventListener(this.escListener);
   },
 
   computed: {
@@ -664,7 +699,7 @@ export default {
         .setContent(content);
 
       myPopup.on('remove', (e) => {
-        console.log('remove'); // eslint-disable-line no-console
+        // console.log('remove'); // eslint-disable-line no-console
         document.getElementById('commentholder').append(e.target.getContent());
       });
       this.mapinfoopen = false;
@@ -759,6 +794,16 @@ export default {
         }
         this.layerContainer.addTo(this.map);
 
+        this.drawnItems = new L.FeatureGroup();
+        this.drawnItems.addTo(this.map);
+
+        // POLYGON finished drawing
+        // this.map.on('annotation:finished', (e) => {
+        //   console.log(e); // eslint-disable-line no-console
+        //   const layer = e.layer;
+        //   this.drawnItems.addLayer(layer);
+        // });
+
         this.map.on('click', (event) => {
           if (this.addingAnnotation !== null) {
             switch (this.addingAnnotation) {
@@ -774,14 +819,68 @@ export default {
                 newMarker.addTo(this.map);
                 this.map.setView(event.latlng);
                 window.setTimeout(() => { newMarker.fire('click'); }, 500);
+                this.addingAnnotation = null;
+                break;
+              }
+              case 'PLY': {
+                // todo
+                // 1.
+                // On each click while in Polygon mode
+                // record click series
+                console.log('new point', event); // eslint-disable-next-line no-underscore-dangle
+                const newMarker = event.latlng;
+                this.polygonString = [...this.polygonString, [newMarker.lat, newMarker.lng]];
+
+                // 2.
+                // Update Marker / Polygon rendering
+                // from curent list of points
+                if (this.polygonString.length === 1) {
+                  L.polyline(
+                    this.polygonString,
+                    {
+                      stroke: true,
+                      color: '#543076',
+                      weight: 3,
+                      opacity: 0.9,
+                      lineCap: 'round',
+                      lineJoin: 'round',
+                      dashArray: '8 6',
+                      dashOffset: '8',
+                      fill: true,
+                      fillColor: '#543076',
+                      fillOpacity: 0.4
+                    }
+                  ).addTo(this.drawnItems);
+                } else if (this.polygonString.length >= 2) {
+                  // calculate distance to starting point
+                  const distanceToStart = event.containerPoint.distanceTo(
+                    this.map.latLngToLayerPoint(this.polygonString[0])
+                  );
+
+                  console.log(distanceToStart); // eslint-disable-line no-console
+
+                  // check if point is close to starting point
+                  if (Math.abs(distanceToStart) < 9 * (window.devicePixelRatio || 1)) {
+                    this.addingAnnotation = null;
+                    // set new point exactly to starting point
+                    this.polygonString[this.polygonString.length - 1] = this.polygonString[0];
+                  }
+                  const drawingLayer = this.drawnItems.getLayers();
+                  const layer = drawingLayer[0];
+                  layer.addLatLng(
+                    this.polygonString[this.polygonString.length - 1]
+                  );
+                  layer.redraw();
+                }
+
+                // todo: handle finishing the polygon
                 break;
               }
               default: {
+                this.addingAnnotation = null;
                 console.log('Error - Annotation type not supported'); // eslint-disable-line no-console
               }
             }
-
-            this.addingAnnotation = null;
           }
         });
 
@@ -809,10 +908,51 @@ export default {
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     },
 
+    drawGuideline(e) {
+      if (this.polygonString.length >= 1 && this.addingAnnotation) {
+        const endPoint = Object.values(this.map.layerPointToLatLng(
+          L.point(e.clientX, e.clientY)
+        ));
+
+        const drawingLayer = this.drawnItems.getLayers();
+        const layer = drawingLayer[0];
+
+        let currentPolylineString = [];
+        if (!layer.isEmpty()) {
+          currentPolylineString = layer.getLatLngs();
+        } else {
+          currentPolylineString = this.polygonString;
+        }
+
+        if (currentPolylineString.length > this.polygonString.length) {
+          // update
+          currentPolylineString[currentPolylineString.length - 1] = endPoint;
+          layer.setLatLngs(
+            currentPolylineString
+          );
+        } else {
+          // add
+          layer.addLatLng(endPoint);
+        }
+        layer.redraw();
+      }
+      // console.log(e); // eslint-disable-line no-console
+    },
+
     newComment(e) {
       this.commentstepper = 1;
       this.newAnnotation = {
         kind: 'COM',
+        title: '',
+        text: '',
+        marker: e.target
+      };
+    },
+
+    newPolygon(e) {
+      this.commentstepper = 1;
+      this.newAnnotation = {
+        kind: 'PLY',
         title: '',
         text: '',
         marker: e.target
@@ -837,8 +977,13 @@ export default {
     },
 
     cancelAnnotation() {
-      this.newAnnotation.marker.removeFrom(this.map);
-      this.newAnnotation = null;
+      if (this.newAnnotation && this.newAnnotation.marker) {
+        this.newAnnotation.marker.removeFrom(this.map);
+        this.newAnnotation = null;
+      }
+      this.polygonString = [];
+      this.drawnItems.clearLayers();
+      this.addingAnnotation = null;
     },
 
     async saveAnnotation() {
@@ -866,6 +1011,26 @@ export default {
               "fill": "true", 
               "title": ${JSON.stringify(this.newAnnotation.title)}, 
               "description": ${JSON.stringify(this.newAnnotation.text)},
+              "usergroup": "${this.newAnnotation.usergroup}"
+            }
+          }`);
+          break;
+        }
+        case 'PLY': {
+          // todo: get coordinates from polygon instead of point marker
+          const latlng = this.newAnnotation.marker.getLatLng();
+          formData.append('category', this.newAnnotation.category);
+          formData.append('author_email', this.newAnnotation.email);
+          formData.append('data', `{
+            "type": "Feature", 
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [${latlng.lng}, ${latlng.lat}]
+            },
+            "properties": {
+              "fill": "true", 
+              "title": "${this.newAnnotation.title}", 
+              "description": "${this.newAnnotation.text}",
               "usergroup": "${this.newAnnotation.usergroup}"
             }
           }`);
