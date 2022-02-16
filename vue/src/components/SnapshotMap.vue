@@ -864,8 +864,8 @@ export default {
             },
             "properties": {
               "fill": "true", 
-              "title": "${this.newAnnotation.title}", 
-              "description": "${this.newAnnotation.text}",
+              "title": ${JSON.stringify(this.newAnnotation.title)}, 
+              "description": ${JSON.stringify(this.newAnnotation.text)},
               "usergroup": "${this.newAnnotation.usergroup}"
             }
           }`);

@@ -5,6 +5,7 @@ import string
 import hashlib
 import requests
 from enum import IntFlag
+import bleach
 
 from sortedm2m.fields import SortedManyToManyField
 from sorl.thumbnail import ImageField, get_thumbnail
@@ -25,6 +26,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.contrib.sites.models import Site
+
+
 
 from gsuser.models import User
 from main.utils import get_website
@@ -406,22 +409,23 @@ class Annotation(models.Model):
     rating = models.DecimalField(default=0, decimal_places=2, max_digits=6)
     workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
 
-    # def save(self, *args, **kwargs):
-    #     def test_exists(pk):
-    #         if self.__class__.objects.filter(pk=pk):
-    #             new_id = create_slug_hash_5()
-    #             test_exists(new_id)
-    #         else:
-    #             return pk
+    def save(self, *args, **kwargs):
+        if self.data['properties']['description']:
+            self.data['properties']['description'] = bleach.clean(self.data['properties']['description'])
 
-    #     if self._state.adding:
-    #         self.id = test_exists(self.id)
-    #     super().save(*args, **kwargs)
+        if self.data['properties']['title']:
+            self.data['properties']['title'] = bleach.clean(self.data['properties']['title'])
+        
+        super().save(*args, **kwargs)
 
     @property
     def fullname(self):
-        return f'{self.workspace} {self.id}'
-
+        return f'{self.workspace} {self.id} {self.data["properties"]["title"]}'
+    
+    @property
+    def title(self):
+        return f'{self.data["properties"]["title"]}'
+    
     def __str__(self):
         return self.fullname
 

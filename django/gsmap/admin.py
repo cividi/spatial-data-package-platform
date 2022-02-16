@@ -159,8 +159,9 @@ class AnnotationAdmin(admin.OSMGeoAdmin):
     )
     list_display = (
         'workspace',
-        'created',
         'id',
+        'title',
+        'created',
         'category', 
         'kind',
         'author_email',

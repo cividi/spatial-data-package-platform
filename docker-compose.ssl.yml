@@ -95,3 +95,10 @@ services:
       sh -c '[ ! -e /etc/nginx/conf.d/www.local.conf ] && ln -s /etc/nginx/conf.d/www.local.dev /etc/nginx/conf.d/www.local.conf;
       /usr/local/openresty/bin/openresty -g "daemon off;"'
     # command: tail -f /dev/null
+
+  # dev email server accessible via http://localhost:1080
+  maildev:
+    image: yvess/alpine-maildev
+    hostname: maildev
+    ports:
+      - "1080:80"
