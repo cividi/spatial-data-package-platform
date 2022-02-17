@@ -39,9 +39,7 @@
         </v-btn>
       </v-slide-x-reverse-transition>
 
-      <v-container
-        @mousemove="drawGuideline"
-        fluid class="pa-0" ref="mapbox">
+      <v-container fluid class="pa-0" ref="mapbox" @mousemove="onMouseMove">
         <span id="mapstatus" :class="{
           loaded: isMapLoaded,
           waiting: !isMapLoaded,
@@ -551,6 +549,8 @@ export default {
       newAnnotation: null,
       polygonString: [],
       drawnItems: null,
+      tooltipContainer: null,
+      timeout: null,
       guides: null,
       commentstepper: 1,
       usergroups: ['Anwohner:in', 'Bürger:in', 'Beschäftigte:r', 'Student:in', 'Andere'],
@@ -797,13 +797,6 @@ export default {
         this.drawnItems = new L.FeatureGroup();
         this.drawnItems.addTo(this.map);
 
-        // POLYGON finished drawing
-        // this.map.on('annotation:finished', (e) => {
-        //   console.log(e); // eslint-disable-line no-console
-        //   const layer = e.layer;
-        //   this.drawnItems.addLayer(layer);
-        // });
-
         this.map.on('click', (event) => {
           if (this.addingAnnotation !== null) {
             switch (this.addingAnnotation) {
@@ -853,7 +846,9 @@ export default {
                   ).addTo(this.drawnItems);
                 } else if (this.polygonString.length >= 2) {
                   // calculate distance to starting point
-                  const distanceToStart = event.containerPoint.distanceTo(
+                  const distanceToStart = this.map.latLngToLayerPoint(
+                    event.latlng
+                  ).distanceTo(
                     this.map.latLngToLayerPoint(this.polygonString[0])
                   );
 
@@ -873,7 +868,9 @@ export default {
                   layer.redraw();
                 }
 
-                // todo: handle finishing the polygon
+                // todo: handle finishing the polygon and saving
+                // todo: implement invisible marker to avoid collisions
+
                 break;
               }
               default: {
@@ -908,11 +905,51 @@ export default {
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     },
 
-    drawGuideline(e) {
+    onMouseMove(e) {
+      if (this.addingAnnotation) {
+        const newPos = this.map.mouseEventToLayerPoint(e);
+        const latlng = this.map.layerPointToLatLng(newPos);
+        const pos = this.map.latLngToLayerPoint(latlng);
+
+        const distanceToStart = pos.distanceTo(
+          this.map.latLngToLayerPoint(this.polygonString[0])
+        );
+        const withinReach = Math.abs(distanceToStart) < 9 * (window.devicePixelRatio || 1);
+
+        this.updateTooltip(pos, `
+          Position: ${latlng} / ${pos}<br>
+          Distance: ${distanceToStart}<br>Within reach: ${withinReach}
+        `);
+        this.updateGuideline(latlng);
+      }
+    },
+
+    updateGuideline(pos) {
+      if (this.timeout) clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.drawGuideline(pos);
+      }, 5);
+    },
+
+    updateTooltip(pos, text) {
+      if (this.tooltipContainer === null) {
+        this.tooltipContainer = L.DomUtil.create(
+          // eslint-disable-next-line no-underscore-dangle
+          'div', 'leaflet-draw-tooltip', this.map._panes.popupPane
+        );
+      }
+
+      if (pos) {
+        const tooltipContainer = this.tooltipContainer;
+        L.DomUtil.setPosition(tooltipContainer, pos);
+      }
+
+      this.tooltipContainer.innerHTML = text;
+    },
+
+    drawGuideline(latlng) {
       if (this.polygonString.length >= 1 && this.addingAnnotation) {
-        const endPoint = Object.values(this.map.layerPointToLatLng(
-          L.point(e.clientX, e.clientY)
-        ));
+        const endPoint = latlng;
 
         const drawingLayer = this.drawnItems.getLayers();
         const layer = drawingLayer[0];
