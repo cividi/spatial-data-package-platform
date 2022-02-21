@@ -130,7 +130,8 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
         (_('Annotations'), {
             'fields': (
                 ('annotations_open', 'annotations_likes_enabled'),
-                ('annotations_contact_name', 'annotations_contact_email')
+                ('annotations_contact_name', 'annotations_contact_email'),
+                'categories',
             )
         }),
     )
@@ -138,7 +139,7 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
     search_fields = ['title']
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if db_field.name == 'snapshots':
+        if db_field.name == 'snapshots' or db_field.name == 'categories':
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
@@ -151,27 +152,28 @@ class AnnotationAdmin(admin.OSMGeoAdmin):
         (_('Meta'), {
             'fields': (
                 'id',
-                'created', 'modified'
+                ('created', 'modified'),
             )
         }),
         (_('Main'), {
-            'fields': ('kind', 'data', 'category', 'author_email', 'rating', 'workspace','deleted', 'public'),
+            'fields': ('kind', 'data', 'category', 'rating', 'workspace','deleted', 'public'),
         }),
     )
     list_display = (
-        'workspace',
         'id',
+        'public',
         'title',
-        'created',
+        'description',
+        'usergroup',
         'category', 
-        'kind',
-        'author_email',
+        'created',
         'rating',
-        'public'
+        'kind',
+        'workspace',
     )
     inlines = [ AttachementInline, ]
     list_filter = ('workspace', 'category', 'kind')
-    search_fields = ('id', 'data','author_email')
+    search_fields = ('id', 'data')
 
 class CategoryAdminForm(ModelForm):
     class Meta:

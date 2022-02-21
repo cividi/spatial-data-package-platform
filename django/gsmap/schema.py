@@ -160,7 +160,7 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
         return gql_optimizer.query(Annotation.objects.filter(Q(public=1) & Q(workspace=self.pk)), info)
     
     def resolve_categories(self, info):
-        return gql_optimizer.query(Category.objects.filter(Q(hide_in_list=0)),info)
+        return gql_optimizer.query(self.categories.filter(Q(hide_in_list=0)),info)
 
 class SnapshotMutation(graphene.relay.ClientIDMutation):
     class Input:

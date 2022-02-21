@@ -130,7 +130,7 @@ class Snapshot(models.Model):
 
     title = models.CharField(max_length=150, default='')
     topic = models.CharField(max_length=100, default='')
-    data = pg_fields.JSONField(default=dict)
+    data = models.JSONField(default=dict)
     data_file = models.FileField(upload_to='data-files', null=True, blank=True)
     screenshot_generated = ImageField(upload_to='snapshot-screenshots', null=True, blank=True)
     thumbnail_generated = ImageField(upload_to='snapshot-thumbnails', null=True, blank=True)
@@ -206,7 +206,8 @@ class Snapshot(models.Model):
     def description_data(self):
         try:
             data = self.data_file_json
-            return data['views'][0]['spec']['description']
+            data = data['views'][0]['spec']['description']
+            return (data[:75] + '…') if len(data) > 75 else data
         except KeyError:
             return ''
 
@@ -316,6 +317,26 @@ def resave(sender, instance, created, **kwargs):
     if created:
         transaction.on_commit(lambda: instance.save())
 
+class Category(models.Model):
+    class Meta:
+        verbose_name_plural = 'categories'
+        ordering = ['my_order']
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
+
+    my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
+    hide_in_list = models.BooleanField(default=False)
+
+    name = models.CharField(max_length=255, default='')
+    icon = models.FileField(upload_to='category-icons', null=True, blank=True)
+    color = models.CharField(max_length=7, default='#cccccc')
+
+    # workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.name}'
 
 class Workspace(models.Model):
     class Meta:
@@ -332,6 +353,8 @@ class Workspace(models.Model):
     description = models.TextField(default='')
 
     snapshots = SortedManyToManyField(Snapshot)
+
+    categories = SortedManyToManyField(Category)
 
     annotations_open = models.BooleanField(default=False, help_text="Enable annotations on workspace", verbose_name="Annotations enabled")
     annotations_likes_enabled = models.BooleanField(default=True, help_text="Enable like buttons on workspace", verbose_name="Likes enabled")
@@ -368,25 +391,6 @@ class Workspace(models.Model):
 
     def __str__(self):
         return f'{self.id} {self.title}'
-
-class Category(models.Model):
-    class Meta:
-        verbose_name_plural = 'categories'
-        ordering = ['my_order']
-
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-    deleted = models.BooleanField(default=False)
-
-    my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
-    hide_in_list = models.BooleanField(default=False)
-
-    name = models.CharField(max_length=255, default='')
-    icon = models.FileField(upload_to='category-icons', null=True, blank=True)
-    color = models.CharField(max_length=7, default='#cccccc')
-
-    def __str__(self):
-        return f'{self.name}'
 
 class Annotation(models.Model):
     class Meta:
@@ -426,7 +430,24 @@ class Annotation(models.Model):
     
     @property
     def title(self):
-        return f'{self.data["properties"]["title"]}'
+        if "properties" in self.data.keys() and "title" in self.data["properties"].keys():
+            return f'{self.data["properties"]["title"]}'
+        else:
+            return None
+    
+    @property
+    def description(self):
+        if "properties" in self.data.keys() and "description" in self.data["properties"].keys():
+            return f'{self.data["properties"]["description"]}'
+        else:
+            return None
+    
+    @property
+    def usergroup(self):
+        if "properties" in self.data.keys() and "usergroup" in self.data["properties"].keys():
+            return f'{self.data["properties"]["usergroup"]}'
+        else:
+            return None
     
     def __str__(self):
         return self.fullname
