@@ -4,7 +4,8 @@ from django.utils.translation import gettext as _
 from django_json_widget.widgets import JSONEditorWidget
 from django.utils.html import mark_safe
 from django.contrib import messages
-from django.forms.widgets import Textarea
+from django.forms import ModelForm
+from django.forms.widgets import Textarea, TextInput
 import requests
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 from gsmap.models import Municipality, Snapshot, Workspace, Category, Attachement, Annotation
@@ -172,15 +173,25 @@ class AnnotationAdmin(admin.OSMGeoAdmin):
     list_filter = ('workspace', 'category', 'kind')
     search_fields = ('id', 'data','author_email')
 
+class CategoryAdminForm(ModelForm):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        widgets = {
+            'color': TextInput(attrs={'type': 'color'}),
+        }
+
 class CategoryAdmin(admin.OSMGeoAdmin):
+    form = CategoryAdminForm
     readonly_fields = ('id','created', 'modified')
-    fields = ('deleted', 'my_order', 'hide_in_list', 'name', 'icon' )
+    fields = ('deleted', 'my_order', 'hide_in_list', 'name', 'icon', 'color' )
     list_display = (
         'name',
         'my_order',
+        'color',
         'hide_in_list'
     )
-    list_filter = ('hide_in_list',)
+    list_filter = ('hide_in_list','color')
     search_fields = ('id', 'name')
 
 admin.site.register(Municipality, MunicipalityAdmin)

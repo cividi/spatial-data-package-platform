@@ -383,6 +383,7 @@ class Category(models.Model):
 
     name = models.CharField(max_length=255, default='')
     icon = models.FileField(upload_to='category-icons', null=True, blank=True)
+    color = models.CharField(max_length=7, default='#cccccc')
 
     def __str__(self):
         return f'{self.name}'
@@ -398,6 +399,7 @@ class Annotation(models.Model):
 
     KIND_CHOICES = [
         ('COM', 'Comment'),
+        ('PLY', 'Polygon'),
     ]
     kind = models.CharField(max_length=3, choices=KIND_CHOICES)
     data = models.JSONField(default=dict)

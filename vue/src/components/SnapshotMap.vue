@@ -266,6 +266,16 @@
             <div
               v-if="annotations.likes"
               class="d-flex align-center justify-end primary--text">
+              <img
+                v-if="currentComment.data.kind == 'PLY'"
+                :src="currentComment.data.properties.icon.iconUrl"
+                style="max-width: 32px; min-width:32px;"
+                width="32"
+                height="32"
+              >
+              <div style="flex-grow:1">
+                {{currentComment.data.properties.area}}
+              </div>
               <p class="rating">
                 <v-icon color="primary" small>mdi-heart-outline</v-icon>
                 <b
@@ -643,59 +653,91 @@ export default {
   },
 
   methods: {
-    createFeatureLayer(geojson, attribution) {
-      const geoJsonExtended = L.geoJson(geojson, {
-        attribution,
-        pointToLayer: (feature, latlng) => {
-          feature.properties.interactive = false;
+    createFeatureLayer(geojson, attribution, points = true) {
+      let features;
+      if (points) {
+        features = L.geoJson(geojson, {
+          attribution,
+          pointToLayer: (feature, latlng) => {
+            feature.properties.interactive = false;
 
-          if (feature.properties.title || feature.properties.description) {
-            feature.properties.className = 'popup-title-description';
-            feature.properties.interactive = true;
-          }
-
-          let curfeature;
-          if (feature.properties.radius) {
-            // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
-            curfeature = new L.Circle(latlng, feature.properties);
-          } else {
-            const options = {};
-            if (feature.properties.icon) {
-              options.icon = new L.Icon(feature.properties.icon);
+            if (feature.properties.title || feature.properties.description) {
+              feature.properties.className = 'popup-title-description';
+              feature.properties.interactive = true;
             }
-            curfeature = new L.Marker(latlng, options);
+
+            let curfeature;
+            if (feature.properties.radius) {
+              // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
+              curfeature = new L.Circle(latlng, feature.properties);
+            } else {
+              const options = {};
+              if (feature.properties.icon) {
+                options.icon = new L.Icon(feature.properties.icon);
+              }
+              curfeature = new L.Marker(latlng, options);
+            }
+            if (feature.properties.interactive) {
+              // curfeature.bindPopup(() => {
+              //   let content = feature.properties.description;
+              //   if (feature.properties.title) {
+              //     content = `<b>${feature.properties.title}</b><br />${content}`;
+              //   }
+              //   return content;
+              // },
+              // { maxWidth: 450, maxHeight: 600 });
+              curfeature.on('click', this.showPopup);
+            }
+            return curfeature;
           }
-          if (feature.properties.interactive) {
-            // curfeature.bindPopup(() => {
-            //   let content = feature.properties.description;
-            //   if (feature.properties.title) {
-            //     content = `<b>${feature.properties.title}</b><br />${content}`;
-            //   }
-            //   return content;
-            // },
-            // { maxWidth: 450, maxHeight: 600 });
-            curfeature.on('click', this.showPopup);
-          }
-          return curfeature;
-        }
-      });
-      return geoJsonExtended;
+        });
+      } else {
+        features = L.featureGroup(
+          geojson.map((polygon) => {
+            const poly = new L.Polygon(
+              polygon.geometry.coordinates[0].map(
+                c => [c[1], c[0]]
+              ),
+              {
+                ...polygon.properties
+              }
+            );
+            poly.feature = polygon;
+            if (polygon.properties.title || polygon.properties.description) {
+              poly.on('click', this.showPopup);
+            }
+            return poly;
+          })
+        );
+        console.log(features); // eslint-disable-line no-console
+      }
+      return features;
     },
 
     showPopup(e) {
-      // console.log(e.target.feature);
       let content;
+      let latlng;
       if (e.target.feature.kind === 'COM') {
         this.currentCommentIndex = e.target.feature.index;
         content = document.getElementById('currentComment');
+        latlng = e.target._latlng; // eslint-disable-line no-underscore-dangle
+      } else if (e.target.feature.kind === 'PLY') {
+        this.currentCommentIndex = e.target.feature.index;
+        content = document.getElementById('currentComment');
+        latlng = e.target.getCenter(); // eslint-disable-line no-underscore-dangle
+        // content = e.target.feature.properties.description;
+        // if (e.target.feature.properties.title) {
+        //   content = `<b>${e.target.feature.properties.title}</b><br />${content}`;
+        // }
       } else {
         content = e.target.feature.properties.description;
         if (e.target.feature.properties.title) {
           content = `<b>${e.target.feature.properties.title}</b><br />${content}`;
         }
+        latlng = e.target._latlng; // eslint-disable-line no-underscore-dangle
       }
       const myPopup = new L.Popup({ maxWidth: 450, maxHeight: 600 })
-        .setLatLng(e.target._latlng) // eslint-disable-line no-underscore-dangle
+        .setLatLng(latlng)
         .setContent(content);
 
       myPopup.on('remove', (e) => {
@@ -784,12 +826,33 @@ export default {
             a.data.index = i;
             if (a.category) {
               a.data.properties.icon = { iconUrl: `/media/${a.category.icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
+              if (a.kind === 'PLY') {
+                const area = this.geodesicArea(
+                  a.data.geometry.coordinates[0].map(
+                    c => L.latLng([c[1], c[0]])
+                  )
+                );
+                a.data.properties = {
+                  ...a.data.properties,
+                  color: a.category.color,
+                  opacity: 0.9,
+                  weight: 3,
+                  dashArray: '8 6',
+                  dashOffset: '8',
+                  fillColor: a.category.color,
+                  fillOpacity: 0.4,
+                  area
+                };
+              }
             }
             return a;
           });
           const annotationsdata = this.annotations.items.map(a => a.data);
           this.layerContainer.addLayer(this.createFeatureLayer(
-            annotationsdata, ''
+            annotationsdata.filter(a => a.kind === 'COM'), ''
+          ));
+          this.layerContainer.addLayer(this.createFeatureLayer(
+            annotationsdata.filter(a => a.kind === 'PLY'), '', false
           ));
         }
         this.layerContainer.addTo(this.map);
@@ -856,16 +919,38 @@ export default {
 
                   // check if point is close to starting point
                   if (Math.abs(distanceToStart) < 9 * (window.devicePixelRatio || 1)) {
-                    this.addingAnnotation = null;
                     // set new point exactly to starting point
                     this.polygonString[this.polygonString.length - 1] = this.polygonString[0];
+                    // add new marker
+                    const newMarker = L.polyline(
+                      this.polygonString,
+                      {
+                        stroke: true,
+                        color: '#543076',
+                        weight: 3,
+                        opacity: 0.9,
+                        lineCap: 'round',
+                        lineJoin: 'round',
+                        dashArray: '8 6',
+                        dashOffset: '8',
+                        fill: true,
+                        fillColor: '#543076',
+                        fillOpacity: 0.4
+                      }
+                    );
+                    newMarker.on('click', this.newPolygon);
+                    newMarker.addTo(this.map);
+                    // this.map.setView(event.latlng);
+                    window.setTimeout(() => { newMarker.fire('click'); }, 500);
+                    this.cancelAnnotation();
+                  } else {
+                    const drawingLayer = this.drawnItems.getLayers();
+                    const layer = drawingLayer[0];
+                    layer.addLatLng(
+                      this.polygonString[this.polygonString.length - 1]
+                    );
+                    layer.redraw();
                   }
-                  const drawingLayer = this.drawnItems.getLayers();
-                  const layer = drawingLayer[0];
-                  layer.addLatLng(
-                    this.polygonString[this.polygonString.length - 1]
-                  );
-                  layer.redraw();
                 }
 
                 // todo: handle finishing the polygon and saving
@@ -905,22 +990,58 @@ export default {
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
     },
 
+    geodesicArea(latLngs) {
+      // ported from https://github.com/Leaflet/Leaflet.draw/blob/develop/src/ext/GeometryUtil.js
+
+      const pointsCount = latLngs.length;
+      const d2r = Math.PI / 180;
+      let p1 = [];
+      let p2 = [];
+      let area = 0.0;
+
+      if (pointsCount > 2) {
+        for (let i = 0; i < pointsCount; i += 1) {
+          p1 = latLngs[i];
+          p2 = latLngs[(i + 1) % pointsCount];
+          area += ((p2.lng - p1.lng) * d2r)
+            * (2 + Math.sin(p1.lat * d2r) + Math.sin(p2.lat * d2r));
+        }
+        area = area * 6378137.0 * 6378137.0 / 2.0;
+      }
+
+      area = Math.round(Math.abs(area) * 10) / 10;
+      let areaStr = '';
+
+      if (area >= 1000000) {
+        areaStr = `${area * 0.000001} km²`;
+      } else {
+        areaStr = `${area} m²`;
+      }
+
+      return areaStr;
+    },
+
     onMouseMove(e) {
       if (this.addingAnnotation) {
         const newPos = this.map.mouseEventToLayerPoint(e);
         const latlng = this.map.layerPointToLatLng(newPos);
         const pos = this.map.latLngToLayerPoint(latlng);
 
-        const distanceToStart = pos.distanceTo(
-          this.map.latLngToLayerPoint(this.polygonString[0])
-        );
-        const withinReach = Math.abs(distanceToStart) < 9 * (window.devicePixelRatio || 1);
+        if (this.polygonString.length > 0) {
+          const distanceToStart = pos.distanceTo(
+            this.map.latLngToLayerPoint({
+              lat: this.polygonString[0][0],
+              lng: this.polygonString[0][1]
+            })
+          );
+          const withinReach = Math.abs(distanceToStart) < 9 * (window.devicePixelRatio || 1);
 
-        this.updateTooltip(pos, `
-          Position: ${latlng} / ${pos}<br>
-          Distance: ${distanceToStart}<br>Within reach: ${withinReach}
-        `);
-        this.updateGuideline(latlng);
+          this.updateTooltip(pos, `
+            Position: ${latlng} / ${pos}<br>
+            Distance: ${distanceToStart}<br>Within reach: ${withinReach}
+          `);
+          this.updateGuideline(latlng);
+        }
       }
     },
 
@@ -1036,41 +1157,44 @@ export default {
       switch (this.newAnnotation.kind) {
         case 'COM': {
           const latlng = this.newAnnotation.marker.getLatLng();
+          const data = {
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [latlng.lng, latlng.lat]
+            },
+            properties: {
+              fill: true,
+              title: this.newAnnotation.title,
+              description: this.newAnnotation.text,
+              usergroup: this.newAnnotation.usergroup
+            }
+          };
           formData.append('category', this.newAnnotation.category);
           formData.append('author_email', this.newAnnotation.email);
-          formData.append('data', `{
-            "type": "Feature", 
-            "geometry": {
-              "type": "Point",
-              "coordinates": [${latlng.lng}, ${latlng.lat}]
-            },
-            "properties": {
-              "fill": "true", 
-              "title": ${JSON.stringify(this.newAnnotation.title)}, 
-              "description": ${JSON.stringify(this.newAnnotation.text)},
-              "usergroup": "${this.newAnnotation.usergroup}"
-            }
-          }`);
+          formData.append('data', JSON.stringify(data));
           break;
         }
         case 'PLY': {
-          // todo: get coordinates from polygon instead of point marker
-          const latlng = this.newAnnotation.marker.getLatLng();
+          const data = {
+            type: 'Feature',
+            geometry: {
+              type: 'Polygon',
+              coordinates: [[
+                ...this.newAnnotation.marker.getLatLngs().map(
+                  latlng => [latlng.lng, latlng.lat]
+                )
+              ]]
+            },
+            properties: {
+              title: this.newAnnotation.title,
+              description: this.newAnnotation.text,
+              usergroup: this.newAnnotation.usergroup
+            }
+          };
           formData.append('category', this.newAnnotation.category);
           formData.append('author_email', this.newAnnotation.email);
-          formData.append('data', `{
-            "type": "Feature", 
-            "geometry": {
-              "type": "Polygon",
-              "coordinates": [${latlng.lng}, ${latlng.lat}]
-            },
-            "properties": {
-              "fill": "true", 
-              "title": "${this.newAnnotation.title}", 
-              "description": "${this.newAnnotation.text}",
-              "usergroup": "${this.newAnnotation.usergroup}"
-            }
-          }`);
+          formData.append('data', JSON.stringify(data));
           break;
         }
         default: {
@@ -1087,14 +1211,22 @@ export default {
         });
         if (save.status === 201) {
           const marker = this.newAnnotation.marker;
-          marker.setIcon(
-            new L.Icon({
-              iconUrl: this.commentLockedIconUrl,
-              iconSize: [36, 36],
-              popupAnchor: [0, -16]
-            })
-          );
-          marker.off();
+          if (this.newAnnotation.type === 'COM') {
+            marker.setIcon(
+              new L.Icon({
+                iconUrl: this.commentLockedIconUrl,
+                iconSize: [36, 36],
+                popupAnchor: [0, -16]
+              })
+            );
+            marker.off();
+          } else if (this.newAnnotation.type === 'PLY') {
+            marker.setStyle({
+              color: '#cccccc',
+              fillColor: '#cccccc'
+            });
+            marker.off();
+          }
           marker.bindPopup(this.$t('commentSaved'));
           this.newAnnotation = null;
 

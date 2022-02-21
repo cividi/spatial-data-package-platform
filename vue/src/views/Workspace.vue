@@ -206,6 +206,7 @@ export default {
                 category{
                   name
                   icon
+                  color
                 }
                 attachements{
                   document
