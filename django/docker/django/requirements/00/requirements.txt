@@ -27,6 +27,7 @@ graphene-django==2.14.0
 graphene-django-optimizer==0.8.0
 graphql-core==2.3.2
 graphql-relay==2.0.1
+django-parler==2.3
 greenlet==0.4.17
 gunicorn==20.1.0
 h11==0.12.0

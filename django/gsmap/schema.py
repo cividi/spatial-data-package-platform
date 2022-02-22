@@ -4,6 +4,8 @@ import graphene
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models import Q
 from django_filters import FilterSet
+from django.utils import translation
+from django.conf import settings
 from graphql_relay import from_global_id
 from graphene.types import generic
 from graphene_django.types import DjangoObjectType
@@ -28,9 +30,12 @@ def convert_field_to_geojson(field, registry=None):
         required=not field.null
     )
 
-
 Q_SNAPSHOT_ONLY_PUBLIC = Q(permission__exact=SnapshotPermission.PUBLIC)
 Q_SNAPSHOT_WITH_NOT_LISTED = Q(permission__lte=SnapshotPermission.NOT_LISTED)
+Q_LANGUAGE = graphene.Enum(
+    "LanguageCodeEnum",
+    [(lang[0], lang[1]) for lang in settings.LANGUAGES],
+)
 
 class SnapshotOnlyPublicFilter(FilterSet):
     class Meta:
@@ -110,13 +115,19 @@ class MunicipalityNode(DjangoObjectType):
 class CategoryNode(DjangoObjectType):
     class Meta:
         model = Category
-        fields = [ 'name', 'icon', 'color', 'my_order', 'hide_in_list']
+        fields = ['name', 'icon', 'color', 'hide_in_list']
         filter_fields = {
             'hide_in_list': ['exact'],
         }
         interfaces = [graphene.relay.Node]
 
+    name = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=translation.get_language()),
+    )
     pk = graphene.Int(source='id')
+
+    def resolve_name(root: Category, info, language_code=None):
+        return root.safe_translation_getter("name", language_code=language_code)
 
 class AttachementNode(DjangoObjectType):
     class Meta:
@@ -142,7 +153,7 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
     class Meta:
         model = Workspace
         fields = [
-            'title', 'description', 'annotations_open', 'annotations_require_verification', 'annotations_likes_enabled', 'annotations_contact_name', 'annotations_contact_email'
+            'title', 'description', 'annotations_open', 'annotations_likes_enabled', 'annotations_contact_name', 'annotations_contact_email'
         ]
         interfaces = [graphene.relay.Node]
 
@@ -151,7 +162,10 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
 
     annotations = graphene.List(AnnotationNode)
 
-    categories = graphene.List(CategoryNode)
+    categories = graphene.List(
+        CategoryNode,
+        show_all=graphene.Argument(graphene.Boolean, default_value=False),
+    )
 
     def resolve_snapshots(self, info):
         return gql_optimizer.query(self.snapshots.all(), info)
@@ -159,8 +173,11 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
     def resolve_annotations(self, info):
         return gql_optimizer.query(Annotation.objects.filter(Q(public=1) & Q(workspace=self.pk)), info)
     
-    def resolve_categories(self, info):
-        return gql_optimizer.query(self.categories.filter(Q(hide_in_list=0)),info)
+    def resolve_categories(self, info, show_all):
+        if show_all:
+            return gql_optimizer.query(self.categories.all(),info)
+        else:
+            return gql_optimizer.query(self.categories.filter(Q(hide_in_list=0)),info)
 
 class SnapshotMutation(graphene.relay.ClientIDMutation):
     class Input:

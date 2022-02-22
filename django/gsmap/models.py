@@ -28,6 +28,8 @@ from django.urls import reverse
 from django.contrib.sites.models import Site
 
 
+from parler.models import TranslatableModel, TranslatedFields
+
 
 from gsuser.models import User
 from main.utils import get_website
@@ -317,26 +319,29 @@ def resave(sender, instance, created, **kwargs):
     if created:
         transaction.on_commit(lambda: instance.save())
 
-class Category(models.Model):
+class Category(TranslatableModel):
     class Meta:
         verbose_name_plural = 'categories'
-        ordering = ['my_order']
+        ordering = ['namespace']
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     deleted = models.BooleanField(default=False)
 
-    my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
+    # my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
     hide_in_list = models.BooleanField(default=False)
 
-    name = models.CharField(max_length=255, default='')
+    namespace = models.CharField(max_length=255, default='core/beteiligung')
     icon = models.FileField(upload_to='category-icons', null=True, blank=True)
     color = models.CharField(max_length=7, default='#cccccc')
 
+    translations = TranslatedFields(
+        name=models.CharField(max_length=255),
+    )
     # workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.namespace}/{self.name}'
 
 class Workspace(models.Model):
     class Meta:

@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.forms import ModelForm
 from django.forms.widgets import Textarea, TextInput
 import requests
+from parler.admin import TranslatableAdmin
+from parler.forms import TranslatableModelForm
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 from gsmap.models import Municipality, Snapshot, Workspace, Category, Attachement, Annotation
 
@@ -175,7 +177,7 @@ class AnnotationAdmin(admin.OSMGeoAdmin):
     list_filter = ('workspace', 'category', 'kind')
     search_fields = ('id', 'data')
 
-class CategoryAdminForm(ModelForm):
+class CategoryAdminForm(TranslatableModelForm):
     class Meta:
         model = Category
         fields = '__all__'
@@ -183,18 +185,38 @@ class CategoryAdminForm(ModelForm):
             'color': TextInput(attrs={'type': 'color'}),
         }
 
-class CategoryAdmin(admin.OSMGeoAdmin):
+    # def get_prepopulated_fields(self, request, obj=None):
+    #     return {
+    #         'slug': ('name',)
+    #     }
+
+class CategoryAdmin(TranslatableAdmin): # admin.OSMGeoAdmin, 
     form = CategoryAdminForm
-    readonly_fields = ('id','created', 'modified')
-    fields = ('deleted', 'my_order', 'hide_in_list', 'name', 'icon', 'color' )
+
+    readonly_fields = ('id', 'created', 'modified')
+    fieldsets = (
+        (_('Meta'), {
+            'fields': ('deleted', 'hide_in_list', 'namespace'),
+        }),
+        (_('Category'), {
+            'fields': ('name', 'icon', 'color'),
+        }),
+    )
+
     list_display = (
         'name',
-        'my_order',
+        'namespace',
         'color',
         'hide_in_list'
     )
-    list_filter = ('hide_in_list','color')
-    search_fields = ('id', 'name')
+
+    list_filter = ('namespace', 'hide_in_list', 'color')
+    search_fields = ('id', 'translations__name', 'namespace')
+
+    # def get_prepopulated_fields(self, request, obj=None):
+    #     return {
+    #         'slug': ('name',)
+    #     }
 
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(Snapshot, SnapshotAdmin)
