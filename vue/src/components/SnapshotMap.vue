@@ -114,7 +114,7 @@
           color="primary"
           @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='PLY';">
           <v-icon v-if="!addingAnnotation || addingAnnotation != 'PLY'">
-            mdi-comment-plus-outline
+            mdi-shape-polygon-plus
           </v-icon>
           <v-icon v-if="addingAnnotation && addingAnnotation == 'PLY'">mdi-close-thick</v-icon>
         </v-btn>
@@ -879,11 +879,9 @@ export default {
                 break;
               }
               case 'PLY': {
-                // todo
                 // 1.
                 // On each click while in Polygon mode
                 // record click series
-                console.log('new point', event); // eslint-disable-next-line no-underscore-dangle
                 const newMarker = event.latlng;
                 this.polygonString = [...this.polygonString, [newMarker.lat, newMarker.lng]];
 
@@ -953,7 +951,6 @@ export default {
                   }
                 }
 
-                // todo: handle finishing the polygon and saving
                 // todo: implement invisible marker to avoid collisions
 
                 break;
@@ -1211,7 +1208,7 @@ export default {
         });
         if (save.status === 201) {
           const marker = this.newAnnotation.marker;
-          if (this.newAnnotation.type === 'COM') {
+          if (this.newAnnotation.kind === 'COM') {
             marker.setIcon(
               new L.Icon({
                 iconUrl: this.commentLockedIconUrl,
@@ -1220,10 +1217,10 @@ export default {
               })
             );
             marker.off();
-          } else if (this.newAnnotation.type === 'PLY') {
+          } else if (this.newAnnotation.kind === 'PLY') {
             marker.setStyle({
-              color: '#cccccc',
-              fillColor: '#cccccc'
+              opacity: 0.6,
+              fillOpacity: 0.2
             });
             marker.off();
           }
