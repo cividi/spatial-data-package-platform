@@ -336,13 +336,20 @@ class Category(TranslatableModel):
     icon = models.FileField(upload_to='category-icons', null=True, blank=True)
     color = models.CharField(max_length=7, default='#cccccc')
 
+    group = models.ForeignKey(
+        Group, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+
     translations = TranslatedFields(
         name=models.CharField(max_length=255),
     )
     # workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.namespace}/{self.name}'
+        if self.group:
+            return f'{self.group.name}/{self.name}'
+        return f'{self.name}'
 
 class Usergroup(TranslatableModel):
     class Meta:
@@ -358,14 +365,21 @@ class Usergroup(TranslatableModel):
         primary_key=True
     )
 
+    group = models.ForeignKey(
+        Group, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+
     translations = TranslatedFields(
         name=models.CharField(max_length=255),
     )
 
     def __str__(self):
+        if self.group:
+            return f'{self.group.name}/{self.name}'
         return f'{self.name}'
 
-class Workspace(models.Model):
+class Workspace(TranslatableModel):
     class Meta:
         ordering = ['-created']
 
@@ -387,6 +401,11 @@ class Workspace(models.Model):
         ("PAR", _("Beteiligung")),
     ]
     mode = models.CharField(max_length=3, choices=MODE_CHOICES, default="OFF")
+
+    group =models.ForeignKey(
+        Group, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
 
     annotations_open = models.BooleanField(default=False, help_text="Enable marker annotations", verbose_name="Marker Annotations enabled")
     annotations_likes_enabled = models.BooleanField(default=True, help_text="Enable like buttons on marker annotations", verbose_name="Marker Likes enabled")
