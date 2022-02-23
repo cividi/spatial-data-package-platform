@@ -31,7 +31,7 @@ from django.contrib.sites.models import Site
 
 from parler.models import TranslatableModel, TranslatedFields
 
-
+from django.contrib.auth.models import Group
 from gsuser.models import User
 from main.utils import get_website
 
@@ -376,9 +376,6 @@ class Workspace(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
-    title = models.CharField(max_length=150, default='')
-    description = models.TextField(default='')
-
     snapshots = SortedManyToManyField(Snapshot)
 
     categories = SortedManyToManyField(Category)
@@ -401,6 +398,11 @@ class Workspace(models.Model):
     annotations_contact_email = models.EmailField(default='', verbose_name='Contact email address')
 
     findme_enabled = models.BooleanField(default=False, help_text="Enable 'Find Me'", verbose_name="Find me enabled")
+
+    translations = TranslatedFields(
+        title = models.CharField(max_length=150, default=''),
+        description = models.TextField(default=''),
+    )
 
     def get_absolute_link(self):
         website = get_website(Site.objects.get_current())
@@ -430,7 +432,7 @@ class Workspace(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.id} {self.title}'
+        return f'{self.id}'
 
 class Annotation(models.Model):
     class Meta:
@@ -457,7 +459,7 @@ class Annotation(models.Model):
     )
     author_email = models.EmailField(max_length=254)
     rating = models.DecimalField(default=0, decimal_places=2, max_digits=6)
-    workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         if self.data['properties']['description']:

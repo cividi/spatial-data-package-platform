@@ -182,6 +182,13 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
         interfaces = [graphene.relay.Node]
 
     pk = graphene.String(source='id')
+    title = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
+
+    description = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
     snapshots = graphene.List(SnapshotNode)
 
     annotations = graphene.List(AnnotationNode)
@@ -192,6 +199,14 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
     )
     
     usergroups = graphene.List(UsergroupNode)
+    
+    def resolve_title(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("title", language_code=lang)
+
+    def resolve_description(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("description", language_code=lang)
 
     def resolve_snapshots(self, info):
         return gql_optimizer.query(self.snapshots.all(), info)

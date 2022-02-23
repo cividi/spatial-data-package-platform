@@ -1,10 +1,10 @@
 from django.contrib.gis import admin
+from django.contrib.admin import SimpleListFilter
 from django.contrib.postgres import fields
 from django.utils.translation import gettext as _
 from django_json_widget.widgets import JSONEditorWidget
 from django.utils.html import mark_safe
 from django.contrib import messages
-from django.forms import ModelForm
 from django.forms.widgets import Textarea, TextInput
 import requests
 from parler.admin import TranslatableAdmin
@@ -118,7 +118,7 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
             )
 
 
-class WorkspaceAdmin(admin.OSMGeoAdmin):
+class WorkspaceAdmin(TranslatableAdmin):
     readonly_fields = ('id', 'created', 'modified', 'get_absolute_link')
     fieldsets = (
         (_('Meta'), {
@@ -127,7 +127,7 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
             )
         }),
         (_('Main'), {
-            'fields': ('title', 'description', 'snapshots'),
+            'fields': ('group', 'title', 'description', 'snapshots'),
         }),
         (_('Annotations'), {
             'fields': (
@@ -138,18 +138,61 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
             )
         }),
     )
-    list_display = ('id', 'title', 'annotations_open', 'created', 'modified')
-    search_fields = ['title']
+    list_display = ('title', 'group', 'get_absolute_link', 'mode', 'annotations_contact_name', 'annotations_contact_email', 'findme_enabled', 'annotations_open', 'annotations_likes_enabled', 'polygon_open', 'polygon_likes_enabled', 'created', 'modified')
+    list_filter = ['mode']
+    search_fields = ['title', 'description']
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
         if db_field.name == 'snapshots' or db_field.name == 'categories' or db_field.name == 'usergroups':
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super().formfield_for_manytomany(db_field, request, **kwargs)
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if not request.user.is_superuser:
+            return qs.select_related('group').filter(group__in=request.user.groups.all())
+        return qs
 
 class AttachementInline(admin.TabularInline):
     model = Attachement
 
-class AnnotationAdmin(admin.OSMGeoAdmin):
+class AnnotationWorkspaceFilter(SimpleListFilter):
+    title = _('Workspace')
+    parameter_name = 'workspace'
+
+    def lookups(self, request, model_admin):
+        return [(x.id, x.title) for x in Workspace.objects.all() if request.user.is_superuser or x.group in request.user.groups.all()]
+    
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(workspace__id=self.value())
+        return queryset
+
+class CategoryGroupFilter(SimpleListFilter):
+    title = _('Category')
+    parameter_name = 'category'
+
+    def lookups(self, request, model_admin):
+        return [(x.id, f'{x.group.name}/{x.name}') for x in Category.objects.all() if request.user.is_superuser or x.group in request.user.groups.all()]
+    
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(category__id=self.value())
+        return queryset
+
+class UsergroupGroupFilter(SimpleListFilter):
+    title = _('Usergroup')
+    parameter_name = 'usergroup'
+
+    def lookups(self, request, model_admin):
+        return [(x.pk, f'{x.group.name}/{x.name}') for x in Usergroup.objects.all() if request.user.is_superuser or x.group in request.user.groups.all()]
+    
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(usergroup__pk=self.value())
+        return queryset
+
+class AnnotationAdmin(admin.ModelAdmin):
     readonly_fields = ('id','created', 'modified')
     fieldsets = (
         (_('Meta'), {
@@ -175,8 +218,14 @@ class AnnotationAdmin(admin.OSMGeoAdmin):
         'workspace',
     )
     inlines = [ AttachementInline, ]
-    list_filter = ('workspace', 'category', 'kind', 'usergroup')
+    list_filter = (AnnotationWorkspaceFilter, CategoryGroupFilter, 'kind', UsergroupGroupFilter,)
     search_fields = ('id', 'data')
+
+    def get_queryset(self, request): 
+        queryset = super().get_queryset(request)
+        if not request.user.is_superuser:
+            return queryset.select_related('workspace__group').filter(workspace__group__in=request.user.groups.all())
+        return queryset
 
 class CategoryAdminForm(TranslatableModelForm):
     class Meta:
@@ -197,22 +246,28 @@ class CategoryAdmin(TranslatableAdmin): # admin.OSMGeoAdmin,
     readonly_fields = ('id', 'created', 'modified')
     fieldsets = (
         (_('Meta'), {
-            'fields': ('deleted', 'hide_in_list', 'namespace'),
+            'fields': ('deleted', 'hide_in_list'),
         }),
         (_('Category'), {
-            'fields': ('name', 'icon', 'color'),
+            'fields': ('group', 'name', 'icon', 'color'),
         }),
     )
 
     list_display = (
         'name',
-        'namespace',
+        'group',
         'color',
         'hide_in_list'
     )
 
-    list_filter = ('namespace', 'hide_in_list', 'color')
-    search_fields = ('id', 'translations__name', 'namespace')
+    list_filter = (CategoryGroupFilter, 'hide_in_list', 'color')
+    search_fields = ('id', 'translations__name')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if not request.user.is_superuser:
+            return qs.select_related('group').filter(group__in=request.user.groups.all())
+        return qs
 
 class UsergroupAdmin(TranslatableAdmin): # admin.OSMGeoAdmin, 
     readonly_fields = ('created', 'modified')
@@ -221,16 +276,31 @@ class UsergroupAdmin(TranslatableAdmin): # admin.OSMGeoAdmin,
             'fields': ('deleted', 'created', 'modified'),
         }),
         (_('Category'), {
-            'fields': ('key', 'name'),
+            'fields': ('group', 'key', 'name'),
         }),
     )
 
     list_display = (
         'key',
+        'group',
         'name',
     )
 
     search_fields = ('id', 'name', 'key')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if not request.user.is_superuser:
+            return qs.select_related('group').filter(group__in=request.user.groups.all())
+        return qs
+
+def _has_change_permission(needed, group, user_groups):
+    for g in user_groups:
+        if g == group:
+            for p in g.permissions.all():
+                if p.codename == needed:
+                    return True
+    return False
 
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(Snapshot, SnapshotAdmin)
