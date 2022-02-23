@@ -344,6 +344,27 @@ class Category(TranslatableModel):
     def __str__(self):
         return f'{self.namespace}/{self.name}'
 
+class Usergroup(TranslatableModel):
+    class Meta:
+        verbose_name_plural = 'usergroups'
+        # ordering = ['name']
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
+
+    key = models.CharField(
+        max_length=50, unique=True,
+        primary_key=True
+    )
+
+    translations = TranslatedFields(
+        name=models.CharField(max_length=255),
+    )
+
+    def __str__(self):
+        return f'{self.name}'
+
 class Workspace(models.Model):
     class Meta:
         ordering = ['-created']
@@ -361,6 +382,7 @@ class Workspace(models.Model):
     snapshots = SortedManyToManyField(Snapshot)
 
     categories = SortedManyToManyField(Category)
+    usergroups = SortedManyToManyField(Usergroup)
 
     MODE_CHOICES = [
         ("OFF", _("Off")),
@@ -429,6 +451,10 @@ class Annotation(models.Model):
         Category, default=None, blank=True,
         null=True, on_delete=models.SET_NULL
     )
+    usergroup = models.ForeignKey(
+        Usergroup, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
     author_email = models.EmailField(max_length=254)
     rating = models.DecimalField(default=0, decimal_places=2, max_digits=6)
     workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
@@ -457,13 +483,6 @@ class Annotation(models.Model):
     def description(self):
         if "properties" in self.data.keys() and "description" in self.data["properties"].keys():
             return f'{self.data["properties"]["description"]}'
-        else:
-            return None
-    
-    @property
-    def usergroup(self):
-        if "properties" in self.data.keys() and "usergroup" in self.data["properties"].keys():
-            return f'{self.data["properties"]["usergroup"]}'
         else:
             return None
     

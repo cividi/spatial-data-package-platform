@@ -132,6 +132,7 @@ export default {
       annotations: {
         items: null,
         categories: null,
+        usergroups: null,
         mode: 'OFF',
         findme: false,
         marker: {
@@ -235,6 +236,10 @@ export default {
                 hideInList
                 icon
               }
+              usergroups {
+                key
+                name(languageCode: $lang)
+              }
             }
             snapshot(id: $hash) {
               id
@@ -280,6 +285,7 @@ export default {
       this.snapshotsWorkspace = workspace.snapshots;
       this.annotations.items = workspace.annotations;
       this.annotations.categories = workspace.categories;
+      this.annotations.usergroups = workspace.usergroups;
       this.annotations.mode = workspace.mode;
       this.annotations.findme = workspace.findmeEnabled;
       this.annotations.marker.open = workspace.annotationsOpen;

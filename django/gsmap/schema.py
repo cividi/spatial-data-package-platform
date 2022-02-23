@@ -11,7 +11,7 @@ from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
-from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, Annotation, Category, Attachement
+from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, Annotation, Category, Usergroup, Attachement
 from graphene_django.rest_framework.mutation import SerializerMutation
 import graphene_django_optimizer as gql_optimizer
 
@@ -122,12 +122,32 @@ class CategoryNode(DjangoObjectType):
         interfaces = [graphene.relay.Node]
 
     name = graphene.String(
-        language_code=graphene.Argument(Q_LANGUAGE, default_value=translation.get_language()),
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
     )
     pk = graphene.Int(source='id')
 
-    def resolve_name(root: Category, info, language_code=None):
-        return root.safe_translation_getter("name", language_code=language_code)
+    def resolve_name(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("name", language_code=lang)
+
+class UsergroupNode(DjangoObjectType):
+    class Meta:
+        model = Usergroup
+        fields = ['key', 'name']
+        filter_fields = {
+            'key': ['exact'],
+            'name': ['exact', 'icontains', 'istartswith'],
+        }
+        interfaces = [graphene.relay.Node]
+
+    name = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
+    key = graphene.String(source='key')
+
+    def resolve_name(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("name", language_code=lang)
 
 class AttachementNode(DjangoObjectType):
     class Meta:
@@ -170,6 +190,8 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
         CategoryNode,
         show_all=graphene.Argument(graphene.Boolean, default_value=False),
     )
+    
+    usergroups = graphene.List(UsergroupNode)
 
     def resolve_snapshots(self, info):
         return gql_optimizer.query(self.snapshots.all(), info)
@@ -182,6 +204,9 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
             return gql_optimizer.query(self.categories.all(),info)
         else:
             return gql_optimizer.query(self.categories.filter(Q(hide_in_list=0)),info)
+    
+    def resolve_usergroups(self, info):
+        return gql_optimizer.query(self.usergroups.all(), info)
 
 class SnapshotMutation(graphene.relay.ClientIDMutation):
     class Input:

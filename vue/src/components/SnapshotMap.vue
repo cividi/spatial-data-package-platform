@@ -231,7 +231,9 @@
                         required
                       />
                       <v-select
-                        :items="usergroups"
+                        :items="annotations.usergroups"
+                        item-text="name"
+                        item-value="key"
                         v-model="newAnnotation.usergroup"
                         label="Personengruppe"
                         :rules="[v => !!v || $t('mandatory')]"
@@ -612,7 +614,6 @@ export default {
       timeout: null,
       guides: null,
       commentstepper: 1,
-      usergroups: ['Anwohner:in', 'Bürger:in', 'Beschäftigte:r', 'Student:in', 'Andere'],
       currentCommentIndex: null,
       ratingpause: false,
       dialog: false,
@@ -1247,12 +1248,12 @@ export default {
             properties: {
               fill: true,
               title: this.newAnnotation.title,
-              description: this.newAnnotation.text,
-              usergroup: this.newAnnotation.usergroup
+              description: this.newAnnotation.text
             }
           };
           formData.append('category', this.newAnnotation.category);
           formData.append('author_email', this.newAnnotation.email);
+          formData.append('usergroup', this.newAnnotation.usergroup);
           formData.append('data', JSON.stringify(data));
           break;
         }
@@ -1269,12 +1270,12 @@ export default {
             },
             properties: {
               title: this.newAnnotation.title,
-              description: this.newAnnotation.text,
-              usergroup: this.newAnnotation.usergroup
+              description: this.newAnnotation.text
             }
           };
           formData.append('category', this.newAnnotation.category);
           formData.append('author_email', this.newAnnotation.email);
+          formData.append('usergroup', this.newAnnotation.usergroup);
           formData.append('data', JSON.stringify(data));
           break;
         }

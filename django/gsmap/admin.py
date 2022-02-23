@@ -10,7 +10,7 @@ import requests
 from parler.admin import TranslatableAdmin
 from parler.forms import TranslatableModelForm
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
-from gsmap.models import Municipality, Snapshot, Workspace, Category, Attachement, Annotation
+from gsmap.models import Municipality, Snapshot, Workspace, Category, Usergroup, Attachement, Annotation
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
@@ -134,7 +134,7 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
                 ('mode'),
                 ('findme_enabled', 'annotations_open', 'annotations_likes_enabled', 'polygon_open', 'polygon_likes_enabled'),
                 ('annotations_contact_name', 'annotations_contact_email'),
-                'categories',
+                'categories', 'usergroups'
             )
         }),
     )
@@ -142,7 +142,7 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
     search_fields = ['title']
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if db_field.name == 'snapshots' or db_field.name == 'categories':
+        if db_field.name == 'snapshots' or db_field.name == 'categories' or db_field.name == 'usergroups':
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
@@ -159,7 +159,7 @@ class AnnotationAdmin(admin.OSMGeoAdmin):
             )
         }),
         (_('Main'), {
-            'fields': ('kind', 'data', 'category', 'rating', 'workspace','deleted', 'public'),
+            'fields': ('kind', 'data', 'category', 'usergroup', 'rating', 'workspace','deleted', 'public'),
         }),
     )
     list_display = (
@@ -175,7 +175,7 @@ class AnnotationAdmin(admin.OSMGeoAdmin):
         'workspace',
     )
     inlines = [ AttachementInline, ]
-    list_filter = ('workspace', 'category', 'kind')
+    list_filter = ('workspace', 'category', 'kind', 'usergroup')
     search_fields = ('id', 'data')
 
 class CategoryAdminForm(TranslatableModelForm):
@@ -214,13 +214,27 @@ class CategoryAdmin(TranslatableAdmin): # admin.OSMGeoAdmin,
     list_filter = ('namespace', 'hide_in_list', 'color')
     search_fields = ('id', 'translations__name', 'namespace')
 
-    # def get_prepopulated_fields(self, request, obj=None):
-    #     return {
-    #         'slug': ('name',)
-    #     }
+class UsergroupAdmin(TranslatableAdmin): # admin.OSMGeoAdmin, 
+    readonly_fields = ('created', 'modified')
+    fieldsets = (
+        (_('Meta'), {
+            'fields': ('deleted', 'created', 'modified'),
+        }),
+        (_('Category'), {
+            'fields': ('key', 'name'),
+        }),
+    )
+
+    list_display = (
+        'key',
+        'name',
+    )
+
+    search_fields = ('id', 'name', 'key')
 
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(Snapshot, SnapshotAdmin)
 admin.site.register(Workspace, WorkspaceAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Usergroup, UsergroupAdmin)
 admin.site.register(Annotation, AnnotationAdmin)
