@@ -130,7 +130,18 @@ export default {
       wshash: this.$route.params.wshash,
       geojson: null,
       annotations: {
-        items: null, categories: null, open: false, likes: true
+        items: null,
+        categories: null,
+        mode: 'OFF',
+        findme: false,
+        marker: {
+          open: false,
+          likes: false
+        },
+        polygon: {
+          open: false,
+          likes: false
+        }
       },
       geobounds: [],
       municipalityName: '',
@@ -176,14 +187,18 @@ export default {
 
       if (!workspaceInfo) {
         const result = await this.$apollo.query({
-          query: gql`query getworkspace($wshash: ID!, $hash: ID!) {
+          query: gql`query getworkspace($wshash: ID!, $hash: ID!, $lang: LanguageCodeEnum!) {
             workspace(id: $wshash) {
               id
               pk
               title
               description
+              mode
+              findmeEnabled
               annotationsOpen
               annotationsLikesEnabled
+              polygonOpen
+              polygonLikesEnabled
               snapshots {
                 id
                 pk
@@ -204,7 +219,7 @@ export default {
                 rating
                 data
                 category{
-                  name
+                  name(languageCode: $lang)
                   icon
                   color
                 }
@@ -213,9 +228,10 @@ export default {
                   myOrder
                 }
               }
-              categories{
+              categories(showAll:true){
                 pk
-                name
+                name(languageCode: $lang)
+                hideInList
                 icon
               }
             }
@@ -239,7 +255,8 @@ export default {
           }`,
           variables: {
             wshash: btoa(`WorkspaceNode:${this.wshash}`),
-            hash: btoa(`SnapshotNode:${this.hash}`)
+            hash: btoa(`SnapshotNode:${this.hash}`),
+            lang: this.$route.params.lang
           }
         }).catch((error) => {
           this.errorsettings = { type: 'netwokerror', open: true, error };
@@ -262,8 +279,12 @@ export default {
       this.snapshotsWorkspace = workspace.snapshots;
       this.annotations.items = workspace.annotations;
       this.annotations.categories = workspace.categories;
-      this.annotations.open = workspace.annotationsOpen;
-      this.annotations.likes = workspace.annotationsLikesEnabled;
+      this.annotations.mode = workspace.mode;
+      this.annotations.findme = workspace.findmeEnabled;
+      this.annotations.marker.open = workspace.annotationsOpen;
+      this.annotations.marker.likes = workspace.annotationsLikesEnabled;
+      this.annotations.polygon.open = workspace.polygonOpen;
+      this.annotations.polygon.likes = workspace.polygonLikesEnabled;
       this.title = workspace.title;
       this.description = workspace.description;
       this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);

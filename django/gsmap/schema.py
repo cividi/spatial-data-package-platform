@@ -153,7 +153,11 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
     class Meta:
         model = Workspace
         fields = [
-            'title', 'description', 'annotations_open', 'annotations_likes_enabled', 'annotations_contact_name', 'annotations_contact_email'
+            'title', 'description',
+            'mode', 'findme_enabled',
+            'annotations_open', 'annotations_likes_enabled',
+            'polygon_open', 'polygon_likes_enabled',
+            'annotations_contact_name', 'annotations_contact_email'
         ]
         interfaces = [graphene.relay.Node]
 

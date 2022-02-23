@@ -87,7 +87,7 @@
       </v-card>
 
       <v-btn
-        v-if="!screenshotMode"
+        v-if="!screenshotMode && annotations.findme"
         fab absolute small
         id="myLocation"
         color="primary"
@@ -95,12 +95,13 @@
         <v-icon>mdi-crosshairs-gps</v-icon>
       </v-btn>
 
-      <div v-if="wshash && annotations.open && !screenshotMode">
+      <div v-if="wshash && !screenshotMode">
 
         <v-btn
           fab absolute small
           id="addingAnnotationPt"
           color="primary"
+          v-if="annotations.marker.open"
           @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM';">
           <v-icon v-if="!addingAnnotation || addingAnnotation != 'COM'">
             mdi-comment-plus-outline
@@ -112,6 +113,7 @@
           fab absolute small
           id="addingAnnotationPly"
           color="primary"
+          v-if="annotations.polygon.open"
           @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='PLY';">
           <v-icon v-if="!addingAnnotation || addingAnnotation != 'PLY'">
             mdi-shape-polygon-plus
@@ -136,7 +138,7 @@
                   <v-stepper-items>
                     <v-stepper-content step="1" class="pa-0">
                       <v-select
-                        :items="annotations.categories"
+                        :items="categoriesList"
                         item-text="name"
                         item-value="pk"
                         v-model="newAnnotation.category"
@@ -261,41 +263,43 @@
                 :src="djangobaseurl + '/media/' + item.document"
               ></v-carousel-item>
             </v-carousel>
+            <div
+              v-if="annotations.mode == 'MGT' && currentComment.kind == 'PLY'">
+              Status:
+              <span
+                class="statusLabel"
+                :style="{ 'background-color': currentComment.category.color }">
+                {{currentComment.category.name}}
+              </span><br>
+              Fläche: ca. {{currentComment.data.properties.area}}
+            </div>
             {{currentComment.data.properties.description}}<br>
 
             <div
-              v-if="annotations.likes"
               class="d-flex align-center justify-end primary--text">
-              <img
-                v-if="currentComment.data.kind == 'PLY'"
-                :src="currentComment.data.properties.icon.iconUrl"
-                style="max-width: 32px; min-width:32px;"
-                width="32"
-                height="32"
-              >
-              <div style="flex-grow:1">
-                {{currentComment.data.properties.area}}
-              </div>
               <p class="rating">
                 <v-icon color="primary" small>mdi-heart-outline</v-icon>
                 <b
                   style="vertical-align: middle;"
                 > {{currentComment.rating}}</b>
               </p>
-              <v-btn
-                fab x-small color="white"
-                :disabled="ratingpause"
-                class="primary--text"
-                ref="rateupBtn"
-                @click="rateUp(currentComment.pk)"
-                ><v-icon small>mdi-heart-plus</v-icon></v-btn>
-              <v-icon
-                id="addHeart"
-                v-if="ratingpause"
-                small
-                color="primary"
-                :style="cssVars"
-                >mdi-heart</v-icon>
+              <div v-if="(annotations.marker.likes && currentComment.kind == 'COM') ||
+                (annotations.polygon.likes && currentComment.kind == 'PLY')">
+                <v-btn
+                  fab x-small color="white"
+                  :disabled="ratingpause"
+                  class="primary--text"
+                  ref="rateupBtn"
+                  @click="rateUp(currentComment.pk)"
+                  ><v-icon small>mdi-heart-plus</v-icon></v-btn>
+                <v-icon
+                  id="addHeart"
+                  v-if="ratingpause"
+                  small
+                  color="primary"
+                  :style="cssVars"
+                  >mdi-heart</v-icon>
+                </div>
             </div>
           </div>
         </div>
@@ -381,6 +385,12 @@ body,
 }
 #addingAnnotationPly {
   top: 14.4em;
+}
+
+span.statusLabel {
+  padding: 1px 4px;
+  border: 1px solid #000;
+  border-radius: 4px;
 }
 
 .navopen #myLocation {
@@ -649,6 +659,13 @@ export default {
         }
       }
       return { '--endpos': `${endpos}em` };
+    },
+
+    categoriesList() {
+      if (this.$store.state.isUserLoggedIn) {
+        return this.annotations.categories;
+      }
+      return this.annotations.categories.filter(a => !a.hideInList);
     }
   },
 
@@ -1006,7 +1023,7 @@ export default {
         area = area * 6378137.0 * 6378137.0 / 2.0;
       }
 
-      area = Math.round(Math.abs(area) * 10) / 10;
+      area = Math.round(Math.abs(area));
       let areaStr = '';
 
       if (area >= 1000000) {

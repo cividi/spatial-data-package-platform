@@ -11,6 +11,7 @@ from sortedm2m.fields import SortedManyToManyField
 from sorl.thumbnail import ImageField, get_thumbnail
 
 from django.db import transaction, DatabaseError
+from django.utils.translation import gettext as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -361,11 +362,23 @@ class Workspace(models.Model):
 
     categories = SortedManyToManyField(Category)
 
-    annotations_open = models.BooleanField(default=False, help_text="Enable annotations on workspace", verbose_name="Annotations enabled")
-    annotations_likes_enabled = models.BooleanField(default=True, help_text="Enable like buttons on workspace", verbose_name="Likes enabled")
+    MODE_CHOICES = [
+        ("OFF", _("Off")),
+        ("MGT", _("Portfolio-/Flächenmanagement")),
+        ("PAR", _("Beteiligung")),
+    ]
+    mode = models.CharField(max_length=3, choices=MODE_CHOICES, default="OFF")
+
+    annotations_open = models.BooleanField(default=False, help_text="Enable marker annotations", verbose_name="Marker Annotations enabled")
+    annotations_likes_enabled = models.BooleanField(default=True, help_text="Enable like buttons on marker annotations", verbose_name="Marker Likes enabled")
+
+    polygon_open = models.BooleanField(default=False, help_text="Enable polygon annotation", verbose_name="Polygon annotations enabled")
+    polygon_likes_enabled = models.BooleanField(default=False, help_text="Enable like buttons on polygon annotations", verbose_name="Polygon Likes enabled")
 
     annotations_contact_name = models.CharField(max_length=100, default='', verbose_name="Contact first & lastname")
     annotations_contact_email = models.EmailField(default='', verbose_name='Contact email address')
+
+    findme_enabled = models.BooleanField(default=False, help_text="Enable 'Find Me'", verbose_name="Find me enabled")
 
     def get_absolute_link(self):
         website = get_website(Site.objects.get_current())

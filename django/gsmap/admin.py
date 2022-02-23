@@ -131,7 +131,8 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
         }),
         (_('Annotations'), {
             'fields': (
-                ('annotations_open', 'annotations_likes_enabled'),
+                ('mode'),
+                ('findme_enabled', 'annotations_open', 'annotations_likes_enabled', 'polygon_open', 'polygon_likes_enabled'),
                 ('annotations_contact_name', 'annotations_contact_email'),
                 'categories',
             )
