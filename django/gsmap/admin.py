@@ -1,7 +1,10 @@
 from django.contrib.gis import admin
 from django.contrib.admin import SimpleListFilter
+from django.contrib import admin as admin_
+from django.contrib.auth import get_permission_codename
 from django.contrib.postgres import fields
 from django.utils.translation import gettext as _
+from django.utils.translation import ngettext as __
 from django_json_widget.widgets import JSONEditorWidget
 from django.utils.html import mark_safe
 from django.contrib import messages
@@ -11,6 +14,10 @@ from parler.admin import TranslatableAdmin
 from parler.forms import TranslatableModelForm
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 from gsmap.models import Municipality, Snapshot, Workspace, Category, Usergroup, Attachement, Annotation
+from django.http import HttpResponse
+import csv
+from django.utils.timezone import localtime
+import zoneinfo
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
@@ -207,25 +214,98 @@ class AnnotationAdmin(admin.ModelAdmin):
     )
     list_display = (
         'id',
+        'created',
+        'rating',
         'public',
         'title',
         'description',
         'usergroup',
-        'category', 
-        'created',
-        'rating',
+        'category',
+        'email_domain',
+        'email_hash_short',
         'kind',
         'workspace',
     )
     inlines = [ AttachementInline, ]
-    list_filter = (AnnotationWorkspaceFilter, CategoryGroupFilter, 'kind', UsergroupGroupFilter,)
+    list_filter = (AnnotationWorkspaceFilter, CategoryGroupFilter, 'kind', UsergroupGroupFilter)
     search_fields = ('id', 'data')
+    actions = ['make_published','make_unpublished','export_as_csv']
 
     def get_queryset(self, request): 
         queryset = super().get_queryset(request)
         if not request.user.is_superuser:
             return queryset.select_related('workspace__group').filter(workspace__group__in=request.user.groups.all())
         return queryset
+    
+    # @admin_.action(description='Publish selected annotations')
+    def make_published(self, request, queryset):
+        updated = queryset.update(public=True)
+        self.message_user(request, __(
+            '%d annotation was successfully published.',
+            '%d annotations were successfully published.',
+            updated,
+        ) % updated, messages.SUCCESS)
+    # todo refactor when upgrading to django 3.2 as action decorator
+    make_published.short_description = "Publish selected annotations"
+    make_published.allowed_permissions = ('annotation_publish',)
+
+    # @admin_.action(description='Publish selected annotations')
+    def make_unpublished(self, request, queryset):
+        updated = queryset.update(public=False)
+        self.message_user(request, __(
+            '%d annotation was successfully unpublished.',
+            '%d annotations were successfully unpublished.',
+            updated,
+        ) % updated, messages.SUCCESS)
+    # todo refactor when upgrading to django 3.2 as action decorator
+    make_unpublished.short_description = "Unpublish selected annotations"
+    make_unpublished.allowed_permissions = ('annotation_publish',)
+
+    def has_annotation_publish_permission(self, request):
+        """Does the user have the publish permission?"""
+        opts = self.opts
+        codename = get_permission_codename('annotation_publish', opts)
+        return request.user.has_perm('%s.%s' % (opts.app_label, codename))
+
+    def export_as_csv(self, request, queryset):
+        response = HttpResponse(content_type="text/csv")
+        # response['Content-Disposition'] = 'attachment; filename="export.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['no', 'created (UTC)', 'title', 'description', 'usergroup_type', 'usergroup', 'category_type', 'category', 'rating', 'workspace', 'public', 'email_hash', 'email_domain', 'geojson'])
+
+        for i, r in enumerate(queryset.all()):
+            w = r.workspace
+            u = r.usergroup
+            ug = u.group if u else None
+            c = r.category
+            cg = c.group if c else None
+            u_name = u.name if u else None
+            u_group = ug.name if ug else None
+            c_name = c.name if c else None
+            c_group = ug.name if ug else None
+            writer.writerow([
+                i + 1, 
+                r.created.strftime("%Y-%m-%d %H:%M:%S"),
+                r.title,
+                r.description,
+                u_group,
+                u_name,
+                c_group,
+                c_name,
+                r.rating,
+                w.title,
+                r.public,
+                r.email_hash_short,
+                r.email_domain,
+                r.data
+            ])
+        return response
+
+    def has_annotation_export_permission(self, request):
+        """Does the user have the publish permission?"""
+        opts = self.opts
+        codename = get_permission_codename('annotation_export', opts)
+        return request.user.has_perm('%s.%s' % (opts.app_label, codename))
 
 class CategoryAdminForm(TranslatableModelForm):
     class Meta:

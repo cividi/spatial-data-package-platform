@@ -6,6 +6,7 @@ import hashlib
 import requests
 from enum import IntFlag
 import bleach
+import hashlib
 
 from sortedm2m.fields import SortedManyToManyField
 from sorl.thumbnail import ImageField, get_thumbnail
@@ -34,6 +35,7 @@ from parler.models import TranslatableModel, TranslatedFields
 from django.contrib.auth.models import Group
 from gsuser.models import User
 from main.utils import get_website
+
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
 
@@ -499,6 +501,21 @@ class Annotation(models.Model):
             return f'{self.data["properties"]["title"]}'
         else:
             return None
+
+    @property
+    def email_domain(self):
+        return self.author_email.split("@")[1]
+
+    @property
+    def email_hash(self):
+        m = hashlib.sha512()
+        m.update(SECRET_KEY.encode('ascii'))
+        m.update(self.author_email.encode('ascii'))
+        return m.hexdigest()
+
+    @property
+    def email_hash_short(self):
+        return self.email_hash[:10]
     
     @property
     def description(self):
