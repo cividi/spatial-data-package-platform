@@ -458,6 +458,10 @@ class Workspace(TranslatableModel):
 class Annotation(models.Model):
     class Meta:
         ordering = ['-created']
+        permissions = [
+            ('publish_annotation', 'Can publish annotations'),
+            ('export_annotation', 'Can export annotations'),
+        ]
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -515,7 +519,7 @@ class Annotation(models.Model):
 
     @property
     def email_hash_short(self):
-        return self.email_hash[:10]
+        return self.email_hash[:12]
     
     @property
     def description(self):

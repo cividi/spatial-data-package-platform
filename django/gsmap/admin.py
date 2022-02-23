@@ -247,7 +247,7 @@ class AnnotationAdmin(admin.ModelAdmin):
         ) % updated, messages.SUCCESS)
     # todo refactor when upgrading to django 3.2 as action decorator
     make_published.short_description = "Publish selected annotations"
-    make_published.allowed_permissions = ('annotation_publish',)
+    make_published.allowed_permissions = ('publish',)
 
     # @admin_.action(description='Publish selected annotations')
     def make_unpublished(self, request, queryset):
@@ -259,12 +259,12 @@ class AnnotationAdmin(admin.ModelAdmin):
         ) % updated, messages.SUCCESS)
     # todo refactor when upgrading to django 3.2 as action decorator
     make_unpublished.short_description = "Unpublish selected annotations"
-    make_unpublished.allowed_permissions = ('annotation_publish',)
+    make_unpublished.allowed_permissions = ('publish',)
 
-    def has_annotation_publish_permission(self, request):
+    def has_publish_permission(self, request):
         """Does the user have the publish permission?"""
         opts = self.opts
-        codename = get_permission_codename('annotation_publish', opts)
+        codename = get_permission_codename('publish', opts)
         return request.user.has_perm('%s.%s' % (opts.app_label, codename))
 
     def export_as_csv(self, request, queryset):
@@ -300,11 +300,13 @@ class AnnotationAdmin(admin.ModelAdmin):
                 r.data
             ])
         return response
+    export_as_csv.short_description = "Export selected annotations"
+    export_as_csv.allowed_permissions = ('export',)
 
-    def has_annotation_export_permission(self, request):
+    def has_export_permission(self, request):
         """Does the user have the publish permission?"""
         opts = self.opts
-        codename = get_permission_codename('annotation_export', opts)
+        codename = get_permission_codename('export', opts)
         return request.user.has_perm('%s.%s' % (opts.app_label, codename))
 
 class CategoryAdminForm(TranslatableModelForm):
