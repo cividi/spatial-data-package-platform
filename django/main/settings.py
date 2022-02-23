@@ -156,8 +156,8 @@ LANGUAGES = [
 
 PARLER_LANGUAGES = {
     1: (
-        {'code': 'en',},
         {'code': 'de',},
+        {'code': 'en',},
         {'code': 'fr',},
         {'code': 'it',},
     ),

@@ -2,8 +2,30 @@
 <i18n>
 {
   "de": {
-    "addComment": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
-    "newComment": "Neuer Kommentar",
+    "participation": {
+      "categoryLabel": "Kategorie",
+      "annotation": {
+        "add": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
+        "new": "Neuer Kommentar",
+        "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
+        "commentSaved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+      }
+    },
+    "areamanagement": {
+      "categoryLabel": "Status",
+      "note": {
+        "add": "Klicken Sie auf die Stelle in Karte an der Sie eine Notiz hinzufügen möchten.",
+        "new": "Neue Notiz",
+        "emailhint": "Um Ihren Notiz freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
+        "commentSaved": "Ihre Notiz wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+      },
+      "polygon": {
+        "add": "Klicken Sie auf die Stelle in Karte an der Sie eine Fläche hinzufügen möchten.",
+        "new": "Neue Fläche",
+        "emailhint": "Um Ihren Fläche freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
+        "commentSaved": "Ihre Fläche wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+      }
+    },
     "title": "Titel",
     "text":"Text",
     "cancel": "abbrechen",
@@ -14,12 +36,10 @@
     "mandatory": "Dies ist ein Pflichtfeld",
     "email": "E-Mail",
     "inv": "Dies ist keine gültige E-Mail Adresse",
-    "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
     "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben",
     "failed": "Speichern fehlgeschlagen",
     "failedText": "Bitte prüfen Sie Ihre Eingaben oder versuchen Sie es später nochmals.",
-    "saved": "Speichern erfolgreich",
-    "commentSaved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+    "saved": "Speichern erfolgreich"
   },
   "fr": {
   }
@@ -49,7 +69,13 @@
       </v-container>
 
       <v-slide-y-transition>
-        <p class="addHint elevation-6" v-if="addingAnnotation">{{ $t('addComment') }}</p>
+        <p class="addHint elevation-6" v-if="addingAnnotation">
+          <span v-if="annotations.mode == 'PAR'">{{ $t('participation.annotation.add') }}</span>
+          <span v-else-if="annotations.mode == 'MGT' && addingAnnotation == 'PLY'">
+            {{ $t('areamanagement.polygon.add') }}</span>
+          <span v-else-if="annotations.mode == 'MGT' && addingAnnotation == 'COM'">
+            {{ $t('areamanagement.note.add') }}</span>
+        </p>
       </v-slide-y-transition>
 
       <v-btn
@@ -127,7 +153,14 @@
               id="commentedit"
               light width="400" class="pa-4 elevation-6"
             >
-              <h3>{{ $t('newComment') }}</h3>
+              <h3>
+                <span v-if="annotations.mode == 'PAR'">
+                  {{ $t('participation.annotation.new') }}</span>
+                <span v-else-if="annotations.mode == 'MGT' && newAnnotation.kind == 'PLY'">
+                  {{ $t('areamanagement.polygon.new') }}</span>
+                <span v-else-if="annotations.mode == 'MGT' && newAnnotation.kind == 'COM'">
+                  {{ $t('areamanagement.note.new') }}</span>
+              </h3>
               <v-form
                 class="pt-4"
                 ref="commentform"
@@ -142,12 +175,13 @@
                         item-text="name"
                         item-value="pk"
                         v-model="newAnnotation.category"
-                        label="Kategorie"
+                        :label="formLabel('categoryLabel')"
                         :rules="[v => !!v || $t('mandatory')]"
                         required
                       >
                         <template slot="item" slot-scope="data">
                           <img
+                            v-if="annotations.mode === 'PAR'"
                             :src="djangobaseurl + '/media/' + data.item.icon"
                             height="24px"
                           /><p>{{data.item.name}}</p>
@@ -182,7 +216,12 @@
                     <v-stepper-content
                       step="2"
                       class="pa-0">
-                      <p>{{ $t('emailhint') }}</p>
+                      <p v-if="annotations.mode == 'PAR'">
+                        {{ $t('participation.annotation.emailhint') }}</p>
+                      <p v-else-if="annotations.mode == 'MGT' && newAnnotation.kind == 'PLY'">
+                        {{ $t('areamanagement.polygon.emailhint') }}</p>
+                      <p v-else-if="annotations.mode == 'MGT' && newAnnotation.kind == 'COM'">
+                        {{ $t('areamanagement.note.emailhint') }}</p>
                       <v-text-field
                         v-model="newAnnotation.email"
                         :label="$t('email')"
@@ -773,6 +812,34 @@ export default {
       this.title = this.geojson.views[0].spec.title;
       this.description = this.geojson.views[0].spec.description;
       this.legend = this.geojson.views[0].spec.legend;
+      if (this.annotations.mode !== 'OFF') {
+        let extraItems = [];
+        if (this.annotations.mode === 'PAR') {
+          extraItems = this.annotations.categories
+            .map(c => ({
+              svg: `/media/${c.icon}`,
+              label: c.name,
+              primary: !c.hideInList
+            }));
+        } else if (this.annotations.mode === 'MGT') {
+          extraItems = this.annotations.categories
+            .map(c => ({
+              label: c.name,
+              primary: !c.hideInList,
+              shape: 'square',
+              size: 1.0,
+              fillColor: c.color,
+              fillOpacity: 0.4,
+              strokeColor: c.color,
+              strokeOpacity: 0.9,
+              strokeWidth: 2
+            }));
+        }
+        this.legend = [
+          ...this.legend,
+          ...extraItems
+        ];
+      }
       this.sources = this.geojson.sources;
     },
 
@@ -1225,6 +1292,7 @@ export default {
         });
         if (save.status === 201) {
           const marker = this.newAnnotation.marker;
+          let labelPath = 'participation.annotation';
           if (this.newAnnotation.kind === 'COM') {
             marker.setIcon(
               new L.Icon({
@@ -1234,19 +1302,21 @@ export default {
               })
             );
             marker.off();
+            labelPath = this.annotations.mode === 'MGT' ? 'areamanagement.note' : labelPath;
           } else if (this.newAnnotation.kind === 'PLY') {
             marker.setStyle({
               opacity: 0.6,
               fillOpacity: 0.2
             });
             marker.off();
+            labelPath = this.annotations.mode === 'MGT' ? 'areamanagement.polygon' : labelPath;
           }
           marker.bindPopup(this.$t('commentSaved'));
           this.newAnnotation = null;
 
           this.dialogcontent = {
             title: this.$t('saved'),
-            text: this.$t('commentSaved')
+            text: this.$t(`${labelPath}.commentSaved`)
           };
           this.dialog = true;
         }
@@ -1335,6 +1405,10 @@ export default {
       this.geobounds = [];
       this.map = null;
       this.isMapLoaded = false;
+    },
+
+    formLabel(label) {
+      return this.annotations.mode === 'PAR' ? this.$t(`participation.${label}`) : this.$t(`areamanagement.${label}`);
     }
   }
 };
