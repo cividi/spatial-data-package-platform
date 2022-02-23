@@ -46,7 +46,14 @@
         :class="{isPrimary: item.primary}"
         >
         <v-list-item-icon class="my-0 mr-2">
-          <legend-icon :shape="item.shape" :isPrimary="item.primary" :attr="item" />
+          <img
+            width="20" height="20"
+            v-if="item.svg"
+            :src="item.svg">
+          <legend-icon v-else
+            :shape="item.shape"
+            :isPrimary="item.primary"
+            :attr="item" />
         </v-list-item-icon>
         <v-list-item-content class="py-0">
           <v-list-item-title>

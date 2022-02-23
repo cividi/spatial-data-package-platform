@@ -230,6 +230,7 @@ export default {
               }
               categories(showAll:true){
                 pk
+                color
                 name(languageCode: $lang)
                 hideInList
                 icon
