@@ -4,6 +4,7 @@ APScheduler==3.6.3
 asgiref==3.4.1
 astroid==2.6.2
 attrs==20.3.0
+backports.zoneinfo==0.2.1
 beautifulsoup4==4.9.3
 bleach==4.1.0
 blessings==1.7
@@ -12,11 +13,12 @@ certifi==2021.5.30
 chardet==4.0.0
 click==8.0.1
 curtsies==0.3.4
-Django==3.1.13
+Django==3.1.14
 django-apscheduler==0.5.1
 django-cors-headers==3.7.0
 django-filter==2.4.0
 django-json-widget==1.1.1
+django-parler==2.3
 django-solo==1.1.5
 django-sortedm2m==3.0.2
 -e git+https://github.com/svleeuwen/sortedm2m-filter-horizontal-widget.git@4ce03f6b7e6022014838afb4a8aa4691fceb9e94#egg=django_sortedm2m_filter_horizontal_widget

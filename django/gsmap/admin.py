@@ -17,7 +17,10 @@ from gsmap.models import Municipality, Snapshot, Workspace, Category, Usergroup,
 from django.http import HttpResponse
 import csv
 from django.utils.timezone import localtime
-import zoneinfo
+try:
+    import zoneinfo
+except ImportError:
+    from backports import zoneinfo
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
