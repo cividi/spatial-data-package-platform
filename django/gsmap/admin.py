@@ -249,7 +249,7 @@ class AnnotationAdmin(admin.ModelAdmin):
             updated,
         ) % updated, messages.SUCCESS)
     # todo refactor when upgrading to django 3.2 as action decorator
-    make_published.short_description = "Publish selected annotations"
+    make_published.short_description = _("Publish selected annotations")
     make_published.allowed_permissions = ('publish',)
 
     # @admin_.action(description='Publish selected annotations')
@@ -261,7 +261,7 @@ class AnnotationAdmin(admin.ModelAdmin):
             updated,
         ) % updated, messages.SUCCESS)
     # todo refactor when upgrading to django 3.2 as action decorator
-    make_unpublished.short_description = "Unpublish selected annotations"
+    make_unpublished.short_description = _("Unpublish selected annotations")
     make_unpublished.allowed_permissions = ('publish',)
 
     def has_publish_permission(self, request):
@@ -303,7 +303,7 @@ class AnnotationAdmin(admin.ModelAdmin):
                 r.data
             ])
         return response
-    export_as_csv.short_description = "Export selected annotations"
+    export_as_csv.short_description = _("Export selected annotations")
     export_as_csv.allowed_permissions = ('export',)
 
     def has_export_permission(self, request):

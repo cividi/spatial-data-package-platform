@@ -49,8 +49,9 @@ class OverwriteStorage(FileSystemStorage):
 
 class Municipality(models.Model):
     class Meta:
-        verbose_name_plural = 'municipalities'
+        verbose_name_plural = _('municipalities')
         ordering = ['name']
+        verbose_name = _("municipality")
 
     CANTONS_CHOICES = [
         ('GR', 'Graubünden'),
@@ -117,6 +118,8 @@ class SnapshotPermission(IntFlag):
 class Snapshot(models.Model):
     class Meta:
         ordering = ['-created']
+        verbose_name = _("snapshot")
+        verbose_name_plural = _("snapshots")
 
     id = models.CharField(
         max_length=8, unique=True,
@@ -324,19 +327,20 @@ def resave(sender, instance, created, **kwargs):
 
 class Category(TranslatableModel):
     class Meta:
-        verbose_name_plural = 'categories'
+        verbose_name_plural = _('categories')
         ordering = ['namespace']
+        verbose_name = _("category")
 
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-    deleted = models.BooleanField(default=False)
+    created = models.DateTimeField(_("created"), auto_now_add=True)
+    modified = models.DateTimeField(_("modified"), auto_now=True)
+    deleted = models.BooleanField(_("deleted"), default=False)
 
     # my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
-    hide_in_list = models.BooleanField(default=False)
+    hide_in_list = models.BooleanField(_("hide in list"), default=False)
 
     namespace = models.CharField(max_length=255, default='core/beteiligung')
-    icon = models.FileField(upload_to='category-icons', null=True, blank=True)
-    color = models.CharField(max_length=7, default='#cccccc')
+    icon = models.FileField(_("icon"), upload_to='category-icons', null=True, blank=True)
+    color = models.CharField(_("color"), max_length=7, default='#cccccc')
 
     group = models.ForeignKey(
         Group, default=None, blank=True,
@@ -344,7 +348,7 @@ class Category(TranslatableModel):
     )
 
     translations = TranslatedFields(
-        name=models.CharField(max_length=255),
+        name=models.CharField(_("name"), max_length=255),
     )
     # workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
 
@@ -355,12 +359,13 @@ class Category(TranslatableModel):
 
 class Usergroup(TranslatableModel):
     class Meta:
-        verbose_name_plural = 'usergroups'
+        verbose_name_plural = _('usergroups')
+        verbose_name = _("usergroup")
         # ordering = ['name']
 
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-    deleted = models.BooleanField(default=False)
+    created = models.DateTimeField(_("created"), auto_now_add=True)
+    modified = models.DateTimeField(_("modified"), auto_now=True)
+    deleted = models.BooleanField(_("deleted"), default=False)
 
     key = models.CharField(
         max_length=50, unique=True,
@@ -373,7 +378,7 @@ class Usergroup(TranslatableModel):
     )
 
     translations = TranslatedFields(
-        name=models.CharField(max_length=255),
+        name=models.CharField(_("name"), max_length=255),
     )
 
     def __str__(self):
@@ -384,6 +389,8 @@ class Usergroup(TranslatableModel):
 class Workspace(TranslatableModel):
     class Meta:
         ordering = ['-created']
+        verbose_name = _("workspace")
+        verbose_name_plural = _("workspaces")
 
     id = models.CharField(
         max_length=8, unique=True,
@@ -404,7 +411,7 @@ class Workspace(TranslatableModel):
     ]
     mode = models.CharField(max_length=3, choices=MODE_CHOICES, default="OFF")
 
-    group =models.ForeignKey(
+    group = models.ForeignKey(
         Group, default=None, blank=True,
         null=True, on_delete=models.SET_NULL
     )
@@ -459,21 +466,23 @@ class Annotation(models.Model):
     class Meta:
         ordering = ['-created']
         permissions = [
-            ('publish_annotation', 'Can publish annotations'),
-            ('export_annotation', 'Can export annotations'),
+            ('publish_annotation', _('Can publish annotations')),
+            ('export_annotation', _('Can export annotations')),
         ]
+        verbose_name = _("annotation")
+        verbose_name_plural = _("annotations")
 
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-    deleted = models.BooleanField(default=False)
-    public = models.BooleanField(default=False)
+    created = models.DateTimeField(_("created"), auto_now_add=True)
+    modified = models.DateTimeField(_("modified"), auto_now=True)
+    deleted = models.BooleanField(_("deleted"), default=False)
+    public = models.BooleanField(_("public"), default=False)
 
     KIND_CHOICES = [
-        ('COM', 'Comment'),
-        ('PLY', 'Polygon'),
+        ('COM', _('Comment')),
+        ('PLY', _('Polygon')),
     ]
-    kind = models.CharField(max_length=3, choices=KIND_CHOICES)
-    data = models.JSONField(default=dict)
+    kind = models.CharField(_("kind"), max_length=3, choices=KIND_CHOICES)
+    data = models.JSONField(_("data"), default=dict)
     category = models.ForeignKey(
         Category, default=None, blank=True,
         null=True, on_delete=models.SET_NULL
@@ -482,8 +491,8 @@ class Annotation(models.Model):
         Usergroup, default=None, blank=True,
         null=True, on_delete=models.SET_NULL
     )
-    author_email = models.EmailField(max_length=254)
-    rating = models.DecimalField(default=0, decimal_places=2, max_digits=6)
+    author_email = models.EmailField(_("author email"), max_length=254)
+    rating = models.DecimalField(_("rating"), default=0, decimal_places=2, max_digits=6)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
@@ -540,6 +549,8 @@ class Annotation(models.Model):
 class Attachement(models.Model):
     class Meta:
         ordering = ['my_order']
+        verbose_name = _("attachment")
+        verbose_name_plural = _("attachments")
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -553,26 +564,26 @@ class Attachement(models.Model):
 @receiver(post_save, sender=Annotation)
 def send_new_annotation_email(sender, instance, created, **kwargs):
 
-      if created:
+      if created and instance.author_email:
         recipient = instance.author_email
-        subject = 'Kommentar freischalten'
-        message = 'Besten Dank für Ihren Kommentar!\n'
+        subject = _('Kommentar freischalten')
+        message = _('Besten Dank für Ihren Kommentar!\n')
 
         website = get_website(Site.objects.get_current())
 
-        if instance.workspace.annotations_open:
+        if instance.workspace.annotations_open or instance.workspace.polygon_open:
             idstr = str(instance.id)
 
             uniquestr = recipient + idstr + SECRET_KEY
             publishKeyHex = hashlib.md5(uniquestr.encode()).hexdigest()
             publish_url = reverse('annotation-publish', args=[idstr, publishKeyHex])
 
-            message += 'Sie können ihn unter folgender URL freischalten:\n'
-            message += f'{website["base"]}{publish_url}\n'
+            message += _('Sie können ihn unter folgender URL freischalten:\n')
+            message += _(f'{website["base"]}{publish_url}\n')
             message += '--' * 30
         else:
-            message += "Leider ist die Beteiligung nun abgeschlossen.\n"
-            message += f"Zur Karte mit allen öffentlichen Kommentaren: {website['base']}/de/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/"
+            message += _("Leider ist die Beteiligung nun abgeschlossen.\n")
+            message += _(f"Zur Karte mit allen öffentlichen Kommentaren: {website['base']}/de/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/")
             message += '--' * 30
 
         send_mail(
