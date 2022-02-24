@@ -3,6 +3,7 @@
 from django.db import migrations, models
 import gsmap.models
 import sortedm2m.fields
+import parler.models
 
 
 class Migration(migrations.Migration):
@@ -30,5 +31,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['-created'],
             },
+            bases=(parler.models.TranslatableModelMixin, models.Model),
         ),
     ]

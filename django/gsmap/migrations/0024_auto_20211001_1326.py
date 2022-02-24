@@ -2,6 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
+import parler.models
 
 
 class Migration(migrations.Migration):
@@ -44,6 +45,7 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'categories',
                 'ordering': ['my_order'],
             },
+            bases=(parler.models.TranslatableModelMixin, models.Model),
         ),
         migrations.CreateModel(
             name='Attachement',

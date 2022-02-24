@@ -4,12 +4,14 @@ import graphene
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models import Q
 from django_filters import FilterSet
+from django.utils import translation
+from django.conf import settings
 from graphql_relay import from_global_id
 from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
-from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, Annotation, Category, Attachement
+from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, Annotation, Category, Usergroup, Attachement
 from graphene_django.rest_framework.mutation import SerializerMutation
 import graphene_django_optimizer as gql_optimizer
 
@@ -28,9 +30,12 @@ def convert_field_to_geojson(field, registry=None):
         required=not field.null
     )
 
-
 Q_SNAPSHOT_ONLY_PUBLIC = Q(permission__exact=SnapshotPermission.PUBLIC)
 Q_SNAPSHOT_WITH_NOT_LISTED = Q(permission__lte=SnapshotPermission.NOT_LISTED)
+Q_LANGUAGE = graphene.Enum(
+    "LanguageCodeEnum",
+    [(lang[0], lang[1]) for lang in settings.LANGUAGES],
+)
 
 class SnapshotOnlyPublicFilter(FilterSet):
     class Meta:
@@ -110,13 +115,39 @@ class MunicipalityNode(DjangoObjectType):
 class CategoryNode(DjangoObjectType):
     class Meta:
         model = Category
-        fields = [ 'name', 'icon', 'my_order', 'hide_in_list']
+        fields = ['name', 'icon', 'color', 'hide_in_list']
         filter_fields = {
             'hide_in_list': ['exact'],
         }
         interfaces = [graphene.relay.Node]
 
+    name = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
     pk = graphene.Int(source='id')
+
+    def resolve_name(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("name", language_code=lang)
+
+class UsergroupNode(DjangoObjectType):
+    class Meta:
+        model = Usergroup
+        fields = ['key', 'name']
+        filter_fields = {
+            'key': ['exact'],
+            'name': ['exact', 'icontains', 'istartswith'],
+        }
+        interfaces = [graphene.relay.Node]
+
+    name = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
+    key = graphene.String(source='key')
+
+    def resolve_name(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("name", language_code=lang)
 
 class AttachementNode(DjangoObjectType):
     class Meta:
@@ -142,16 +173,40 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
     class Meta:
         model = Workspace
         fields = [
-            'title', 'description', 'annotations_open', 'annotations_require_verification', 'annotations_likes_enabled', 'annotations_contact_name', 'annotations_contact_email'
+            'title', 'description',
+            'mode', 'findme_enabled',
+            'annotations_open', 'annotations_likes_enabled',
+            'polygon_open', 'polygon_likes_enabled',
+            'annotations_contact_name', 'annotations_contact_email'
         ]
         interfaces = [graphene.relay.Node]
 
     pk = graphene.String(source='id')
+    title = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
+
+    description = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
     snapshots = graphene.List(SnapshotNode)
 
     annotations = graphene.List(AnnotationNode)
 
-    categories = graphene.List(CategoryNode)
+    categories = graphene.List(
+        CategoryNode,
+        show_all=graphene.Argument(graphene.Boolean, default_value=False),
+    )
+    
+    usergroups = graphene.List(UsergroupNode)
+    
+    def resolve_title(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("title", language_code=lang)
+
+    def resolve_description(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("description", language_code=lang)
 
     def resolve_snapshots(self, info):
         return gql_optimizer.query(self.snapshots.all(), info)
@@ -159,8 +214,14 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
     def resolve_annotations(self, info):
         return gql_optimizer.query(Annotation.objects.filter(Q(public=1) & Q(workspace=self.pk)), info)
     
-    def resolve_categories(self, info):
-        return gql_optimizer.query(Category.objects.filter(Q(hide_in_list=0)),info)
+    def resolve_categories(self, info, show_all):
+        if show_all:
+            return gql_optimizer.query(self.categories.all(),info)
+        else:
+            return gql_optimizer.query(self.categories.filter(Q(hide_in_list=0)),info)
+    
+    def resolve_usergroups(self, info):
+        return gql_optimizer.query(self.usergroups.all(), info)
 
 class SnapshotMutation(graphene.relay.ClientIDMutation):
     class Input:

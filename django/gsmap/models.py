@@ -5,11 +5,14 @@ import string
 import hashlib
 import requests
 from enum import IntFlag
+import bleach
+import hashlib
 
 from sortedm2m.fields import SortedManyToManyField
 from sorl.thumbnail import ImageField, get_thumbnail
 
 from django.db import transaction, DatabaseError
+from django.utils.translation import gettext as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -26,8 +29,13 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.contrib.sites.models import Site
 
+
+from parler.models import TranslatableModel, TranslatedFields
+
+from django.contrib.auth.models import Group
 from gsuser.models import User
 from main.utils import get_website
+
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
 
@@ -127,7 +135,7 @@ class Snapshot(models.Model):
 
     title = models.CharField(max_length=150, default='')
     topic = models.CharField(max_length=100, default='')
-    data = pg_fields.JSONField(default=dict)
+    data = models.JSONField(default=dict)
     data_file = models.FileField(upload_to='data-files', null=True, blank=True)
     screenshot_generated = ImageField(upload_to='snapshot-screenshots', null=True, blank=True)
     thumbnail_generated = ImageField(upload_to='snapshot-thumbnails', null=True, blank=True)
@@ -203,7 +211,8 @@ class Snapshot(models.Model):
     def description_data(self):
         try:
             data = self.data_file_json
-            return data['views'][0]['spec']['description']
+            data = data['views'][0]['spec']['description']
+            return (data[:75] + '…') if len(data) > 75 else data
         except KeyError:
             return ''
 
@@ -313,8 +322,66 @@ def resave(sender, instance, created, **kwargs):
     if created:
         transaction.on_commit(lambda: instance.save())
 
+class Category(TranslatableModel):
+    class Meta:
+        verbose_name_plural = 'categories'
+        ordering = ['namespace']
 
-class Workspace(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
+
+    # my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
+    hide_in_list = models.BooleanField(default=False)
+
+    namespace = models.CharField(max_length=255, default='core/beteiligung')
+    icon = models.FileField(upload_to='category-icons', null=True, blank=True)
+    color = models.CharField(max_length=7, default='#cccccc')
+
+    group = models.ForeignKey(
+        Group, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+
+    translations = TranslatedFields(
+        name=models.CharField(max_length=255),
+    )
+    # workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
+
+    def __str__(self):
+        if self.group:
+            return f'{self.group.name}/{self.name}'
+        return f'{self.name}'
+
+class Usergroup(TranslatableModel):
+    class Meta:
+        verbose_name_plural = 'usergroups'
+        # ordering = ['name']
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
+
+    key = models.CharField(
+        max_length=50, unique=True,
+        primary_key=True
+    )
+
+    group = models.ForeignKey(
+        Group, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+
+    translations = TranslatedFields(
+        name=models.CharField(max_length=255),
+    )
+
+    def __str__(self):
+        if self.group:
+            return f'{self.group.name}/{self.name}'
+        return f'{self.name}'
+
+class Workspace(TranslatableModel):
     class Meta:
         ordering = ['-created']
 
@@ -325,16 +392,38 @@ class Workspace(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
-    title = models.CharField(max_length=150, default='')
-    description = models.TextField(default='')
-
     snapshots = SortedManyToManyField(Snapshot)
 
-    annotations_open = models.BooleanField(default=False, help_text="Enable annotations on workspace", verbose_name="Annotations enabled")
-    annotations_likes_enabled = models.BooleanField(default=True, help_text="Enable like buttons on workspace", verbose_name="Likes enabled")
+    categories = SortedManyToManyField(Category)
+    usergroups = SortedManyToManyField(Usergroup)
+
+    MODE_CHOICES = [
+        ("OFF", _("Off")),
+        ("MGT", _("Portfolio-/Flächenmanagement")),
+        ("PAR", _("Beteiligung")),
+    ]
+    mode = models.CharField(max_length=3, choices=MODE_CHOICES, default="OFF")
+
+    group =models.ForeignKey(
+        Group, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+
+    annotations_open = models.BooleanField(default=False, help_text="Enable marker annotations", verbose_name="Marker Annotations enabled")
+    annotations_likes_enabled = models.BooleanField(default=True, help_text="Enable like buttons on marker annotations", verbose_name="Marker Likes enabled")
+
+    polygon_open = models.BooleanField(default=False, help_text="Enable polygon annotation", verbose_name="Polygon annotations enabled")
+    polygon_likes_enabled = models.BooleanField(default=False, help_text="Enable like buttons on polygon annotations", verbose_name="Polygon Likes enabled")
 
     annotations_contact_name = models.CharField(max_length=100, default='', verbose_name="Contact first & lastname")
     annotations_contact_email = models.EmailField(default='', verbose_name='Contact email address')
+
+    findme_enabled = models.BooleanField(default=False, help_text="Enable 'Find Me'", verbose_name="Find me enabled")
+
+    translations = TranslatedFields(
+        title = models.CharField(max_length=150, default=''),
+        description = models.TextField(default=''),
+    )
 
     def get_absolute_link(self):
         website = get_website(Site.objects.get_current())
@@ -364,29 +453,15 @@ class Workspace(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.id} {self.title}'
-
-class Category(models.Model):
-    class Meta:
-        verbose_name_plural = 'categories'
-        ordering = ['my_order']
-
-    created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
-    deleted = models.BooleanField(default=False)
-
-    my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
-    hide_in_list = models.BooleanField(default=False)
-
-    name = models.CharField(max_length=255, default='')
-    icon = models.FileField(upload_to='category-icons', null=True, blank=True)
-
-    def __str__(self):
-        return f'{self.name}'
+        return f'{self.id}'
 
 class Annotation(models.Model):
     class Meta:
         ordering = ['-created']
+        permissions = [
+            ('publish_annotation', 'Can publish annotations'),
+            ('export_annotation', 'Can export annotations'),
+        ]
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -395,6 +470,7 @@ class Annotation(models.Model):
 
     KIND_CHOICES = [
         ('COM', 'Comment'),
+        ('PLY', 'Polygon'),
     ]
     kind = models.CharField(max_length=3, choices=KIND_CHOICES)
     data = models.JSONField(default=dict)
@@ -402,26 +478,56 @@ class Annotation(models.Model):
         Category, default=None, blank=True,
         null=True, on_delete=models.SET_NULL
     )
+    usergroup = models.ForeignKey(
+        Usergroup, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
     author_email = models.EmailField(max_length=254)
     rating = models.DecimalField(default=0, decimal_places=2, max_digits=6)
-    workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
 
-    # def save(self, *args, **kwargs):
-    #     def test_exists(pk):
-    #         if self.__class__.objects.filter(pk=pk):
-    #             new_id = create_slug_hash_5()
-    #             test_exists(new_id)
-    #         else:
-    #             return pk
+    def save(self, *args, **kwargs):
+        if self.data['properties']['description']:
+            self.data['properties']['description'] = bleach.clean(self.data['properties']['description'])
 
-    #     if self._state.adding:
-    #         self.id = test_exists(self.id)
-    #     super().save(*args, **kwargs)
+        if self.data['properties']['title']:
+            self.data['properties']['title'] = bleach.clean(self.data['properties']['title'])
+        
+        super().save(*args, **kwargs)
 
     @property
     def fullname(self):
-        return f'{self.workspace} {self.id}'
+        return f'{self.workspace} {self.id} {self.data["properties"]["title"]}'
+    
+    @property
+    def title(self):
+        if "properties" in self.data.keys() and "title" in self.data["properties"].keys():
+            return f'{self.data["properties"]["title"]}'
+        else:
+            return None
 
+    @property
+    def email_domain(self):
+        return self.author_email.split("@")[1]
+
+    @property
+    def email_hash(self):
+        m = hashlib.sha512()
+        m.update(SECRET_KEY.encode('ascii'))
+        m.update(self.author_email.encode('ascii'))
+        return m.hexdigest()
+
+    @property
+    def email_hash_short(self):
+        return self.email_hash[:12]
+    
+    @property
+    def description(self):
+        if "properties" in self.data.keys() and "description" in self.data["properties"].keys():
+            return f'{self.data["properties"]["description"]}'
+        else:
+            return None
+    
     def __str__(self):
         return self.fullname
 

@@ -1,4 +1,4 @@
-FROM alpine:3.13.6
+FROM alpine:3.13.7
 MAINTAINER Yves Serrano <ys@taywa.ch>
 # https://github.com/just-containers/s6-overlay
 
@@ -63,6 +63,8 @@ RUN apk add --no-cache \
         tiff-dev \
         zlib-dev \
     && pip3 cache purge
+
+RUN apk add --update tzdata
 
 COPY s6/etc/services.d /etc/services.d
 COPY s6/etc/cont-init.d /etc/cont-init.d

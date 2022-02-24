@@ -17,14 +17,17 @@ class AnnotationSerializer(serializers.ModelSerializer):
             'data',
             'category',
             'author_email',
+            'usergroup',
             'workspace',
         )
     
     def validate(self, data):
-        if not data.get("workspace").annotations_open:
-            raise serializers.ValidationError(f'Rating annotations is not allowed currently for this workspace.')
+        if not (data.get("workspace").annotations_open or data.get("workspace").poylgons_open):
+            raise serializers.ValidationError('Rating annotations is not allowed currently for this workspace.')
         if not data.get("author_email"):
-            raise serializers.ValidationError(f'Adding annotations to this workspace requires an email.')
+            raise serializers.ValidationError('Adding annotations to this workspace requires an email.')
+        if not data.get("usergroup"):
+            raise serializers.ValidationError('Adding annotations to this workspace requires a usergroup.')
         
         return data
 

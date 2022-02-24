@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_apscheduler',
     'solo',
+    'parler',
 
     # own
     'gsuser',
@@ -138,7 +139,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
@@ -152,6 +153,21 @@ LANGUAGES = [
     ('fr', _('French')),
     ('it', _('Italian')),
 ]
+
+PARLER_LANGUAGES = {
+    1: (
+        {'code': 'de',},
+        {'code': 'en',},
+        {'code': 'fr',},
+        {'code': 'it',},
+    ),
+    'default': {
+        'fallback': 'de',             # defaults to PARLER_DEFAULT_LANGUAGE_CODE
+        'hide_untranslated': False,   # the default; let .active_translations() return fallbacks too.
+    }
+}
+
+PARLER_DEFAULT_LANGUAGE_CODE = 'de'
 
 FORMAT_MODULE_PATH = 'main.formats'
 

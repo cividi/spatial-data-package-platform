@@ -1,13 +1,26 @@
 from django.contrib.gis import admin
+from django.contrib.admin import SimpleListFilter
+from django.contrib import admin as admin_
+from django.contrib.auth import get_permission_codename
 from django.contrib.postgres import fields
 from django.utils.translation import gettext as _
+from django.utils.translation import ngettext as __
 from django_json_widget.widgets import JSONEditorWidget
 from django.utils.html import mark_safe
 from django.contrib import messages
-from django.forms.widgets import Textarea
+from django.forms.widgets import Textarea, TextInput
 import requests
+from parler.admin import TranslatableAdmin
+from parler.forms import TranslatableModelForm
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
-from gsmap.models import Municipality, Snapshot, Workspace, Category, Attachement, Annotation
+from gsmap.models import Municipality, Snapshot, Workspace, Category, Usergroup, Attachement, Annotation
+from django.http import HttpResponse
+import csv
+from django.utils.timezone import localtime
+try:
+    import zoneinfo
+except ImportError:
+    from backports import zoneinfo
 
 
 class MunicipalityAdmin(admin.OSMGeoAdmin):
@@ -115,7 +128,7 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
             )
 
 
-class WorkspaceAdmin(admin.OSMGeoAdmin):
+class WorkspaceAdmin(TranslatableAdmin):
     readonly_fields = ('id', 'created', 'modified', 'get_absolute_link')
     fieldsets = (
         (_('Meta'), {
@@ -124,66 +137,259 @@ class WorkspaceAdmin(admin.OSMGeoAdmin):
             )
         }),
         (_('Main'), {
-            'fields': ('title', 'description', 'snapshots'),
+            'fields': ('group', 'title', 'description', 'snapshots'),
         }),
         (_('Annotations'), {
             'fields': (
-                ('annotations_open', 'annotations_likes_enabled'),
-                ('annotations_contact_name', 'annotations_contact_email')
+                ('mode'),
+                ('findme_enabled', 'annotations_open', 'annotations_likes_enabled', 'polygon_open', 'polygon_likes_enabled'),
+                ('annotations_contact_name', 'annotations_contact_email'),
+                'categories', 'usergroups'
             )
         }),
     )
-    list_display = ('id', 'title', 'annotations_open', 'created', 'modified')
-    search_fields = ['title']
+    list_display = ('title', 'group', 'get_absolute_link', 'mode', 'annotations_contact_name', 'annotations_contact_email', 'findme_enabled', 'annotations_open', 'annotations_likes_enabled', 'polygon_open', 'polygon_likes_enabled', 'created', 'modified')
+    list_filter = ['mode']
+    search_fields = ['title', 'description']
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if db_field.name == 'snapshots':
+        if db_field.name == 'snapshots' or db_field.name == 'categories' or db_field.name == 'usergroups':
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super().formfield_for_manytomany(db_field, request, **kwargs)
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if not request.user.is_superuser:
+            return qs.select_related('group').filter(group__in=request.user.groups.all())
+        return qs
 
 class AttachementInline(admin.TabularInline):
     model = Attachement
 
-class AnnotationAdmin(admin.OSMGeoAdmin):
+class AnnotationWorkspaceFilter(SimpleListFilter):
+    title = _('Workspace')
+    parameter_name = 'workspace'
+
+    def lookups(self, request, model_admin):
+        return [(x.id, x.title) for x in Workspace.objects.all() if request.user.is_superuser or x.group in request.user.groups.all()]
+    
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(workspace__id=self.value())
+        return queryset
+
+class CategoryGroupFilter(SimpleListFilter):
+    title = _('Category')
+    parameter_name = 'category'
+
+    def lookups(self, request, model_admin):
+        return [(x.id, f'{x.group.name}/{x.name}') for x in Category.objects.all() if request.user.is_superuser or x.group in request.user.groups.all()]
+    
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(category__id=self.value())
+        return queryset
+
+class UsergroupGroupFilter(SimpleListFilter):
+    title = _('Usergroup')
+    parameter_name = 'usergroup'
+
+    def lookups(self, request, model_admin):
+        return [(x.pk, f'{x.group.name}/{x.name}') for x in Usergroup.objects.all() if request.user.is_superuser or x.group in request.user.groups.all()]
+    
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(usergroup__pk=self.value())
+        return queryset
+
+class AnnotationAdmin(admin.ModelAdmin):
     readonly_fields = ('id','created', 'modified')
     fieldsets = (
         (_('Meta'), {
             'fields': (
                 'id',
-                'created', 'modified'
+                ('created', 'modified'),
             )
         }),
         (_('Main'), {
-            'fields': ('kind', 'data', 'category', 'author_email', 'rating', 'workspace','deleted', 'public'),
+            'fields': ('kind', 'data', 'category', 'usergroup', 'rating', 'workspace','deleted', 'public'),
         }),
     )
     list_display = (
-        'workspace',
-        'created',
         'id',
-        'category', 
-        'kind',
-        'author_email',
+        'created',
         'rating',
-        'public'
+        'public',
+        'title',
+        'description',
+        'usergroup',
+        'category',
+        'email_domain',
+        'email_hash_short',
+        'kind',
+        'workspace',
     )
     inlines = [ AttachementInline, ]
-    list_filter = ('workspace', 'category', 'kind')
-    search_fields = ('id', 'data','author_email')
+    list_filter = (AnnotationWorkspaceFilter, CategoryGroupFilter, 'kind', UsergroupGroupFilter)
+    search_fields = ('id', 'data')
+    actions = ['make_published','make_unpublished','export_as_csv']
 
-class CategoryAdmin(admin.OSMGeoAdmin):
-    readonly_fields = ('id','created', 'modified')
-    fields = ('deleted', 'my_order', 'hide_in_list', 'name', 'icon' )
+    def get_queryset(self, request): 
+        queryset = super().get_queryset(request)
+        if not request.user.is_superuser:
+            return queryset.select_related('workspace__group').filter(workspace__group__in=request.user.groups.all())
+        return queryset
+    
+    # @admin_.action(description='Publish selected annotations')
+    def make_published(self, request, queryset):
+        updated = queryset.update(public=True)
+        self.message_user(request, __(
+            '%d annotation was successfully published.',
+            '%d annotations were successfully published.',
+            updated,
+        ) % updated, messages.SUCCESS)
+    # todo refactor when upgrading to django 3.2 as action decorator
+    make_published.short_description = "Publish selected annotations"
+    make_published.allowed_permissions = ('publish',)
+
+    # @admin_.action(description='Publish selected annotations')
+    def make_unpublished(self, request, queryset):
+        updated = queryset.update(public=False)
+        self.message_user(request, __(
+            '%d annotation was successfully unpublished.',
+            '%d annotations were successfully unpublished.',
+            updated,
+        ) % updated, messages.SUCCESS)
+    # todo refactor when upgrading to django 3.2 as action decorator
+    make_unpublished.short_description = "Unpublish selected annotations"
+    make_unpublished.allowed_permissions = ('publish',)
+
+    def has_publish_permission(self, request):
+        """Does the user have the publish permission?"""
+        opts = self.opts
+        codename = get_permission_codename('publish', opts)
+        return request.user.has_perm('%s.%s' % (opts.app_label, codename))
+
+    def export_as_csv(self, request, queryset):
+        response = HttpResponse(content_type="text/csv")
+        # response['Content-Disposition'] = 'attachment; filename="export.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['no', 'created (UTC)', 'title', 'description', 'usergroup_type', 'usergroup', 'category_type', 'category', 'rating', 'workspace', 'public', 'email_hash', 'email_domain', 'geojson'])
+
+        for i, r in enumerate(queryset.all()):
+            w = r.workspace
+            u = r.usergroup
+            ug = u.group if u else None
+            c = r.category
+            cg = c.group if c else None
+            u_name = u.name if u else None
+            u_group = ug.name if ug else None
+            c_name = c.name if c else None
+            c_group = ug.name if ug else None
+            writer.writerow([
+                i + 1, 
+                r.created.strftime("%Y-%m-%d %H:%M:%S"),
+                r.title,
+                r.description,
+                u_group,
+                u_name,
+                c_group,
+                c_name,
+                r.rating,
+                w.title,
+                r.public,
+                r.email_hash_short,
+                r.email_domain,
+                r.data
+            ])
+        return response
+    export_as_csv.short_description = "Export selected annotations"
+    export_as_csv.allowed_permissions = ('export',)
+
+    def has_export_permission(self, request):
+        """Does the user have the publish permission?"""
+        opts = self.opts
+        codename = get_permission_codename('export', opts)
+        return request.user.has_perm('%s.%s' % (opts.app_label, codename))
+
+class CategoryAdminForm(TranslatableModelForm):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        widgets = {
+            'color': TextInput(attrs={'type': 'color'}),
+        }
+
+    # def get_prepopulated_fields(self, request, obj=None):
+    #     return {
+    #         'slug': ('name',)
+    #     }
+
+class CategoryAdmin(TranslatableAdmin): # admin.OSMGeoAdmin, 
+    form = CategoryAdminForm
+
+    readonly_fields = ('id', 'created', 'modified')
+    fieldsets = (
+        (_('Meta'), {
+            'fields': ('deleted', 'hide_in_list'),
+        }),
+        (_('Category'), {
+            'fields': ('group', 'name', 'icon', 'color'),
+        }),
+    )
+
     list_display = (
         'name',
-        'my_order',
+        'group',
+        'color',
         'hide_in_list'
     )
-    list_filter = ('hide_in_list',)
-    search_fields = ('id', 'name')
+
+    list_filter = (CategoryGroupFilter, 'hide_in_list', 'color')
+    search_fields = ('id', 'translations__name')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if not request.user.is_superuser:
+            return qs.select_related('group').filter(group__in=request.user.groups.all())
+        return qs
+
+class UsergroupAdmin(TranslatableAdmin): # admin.OSMGeoAdmin, 
+    readonly_fields = ('created', 'modified')
+    fieldsets = (
+        (_('Meta'), {
+            'fields': ('deleted', 'created', 'modified'),
+        }),
+        (_('Category'), {
+            'fields': ('group', 'key', 'name'),
+        }),
+    )
+
+    list_display = (
+        'key',
+        'group',
+        'name',
+    )
+
+    search_fields = ('id', 'name', 'key')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if not request.user.is_superuser:
+            return qs.select_related('group').filter(group__in=request.user.groups.all())
+        return qs
+
+def _has_change_permission(needed, group, user_groups):
+    for g in user_groups:
+        if g == group:
+            for p in g.permissions.all():
+                if p.codename == needed:
+                    return True
+    return False
 
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(Snapshot, SnapshotAdmin)
 admin.site.register(Workspace, WorkspaceAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Usergroup, UsergroupAdmin)
 admin.site.register(Annotation, AnnotationAdmin)
