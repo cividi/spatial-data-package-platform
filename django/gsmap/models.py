@@ -508,18 +508,24 @@ class Annotation(models.Model):
 
     @property
     def email_domain(self):
-        return self.author_email.split("@")[1]
+        if self.author_email:
+            return self.author_email.split("@")[1]
+        return None
 
     @property
     def email_hash(self):
-        m = hashlib.sha512()
-        m.update(SECRET_KEY.encode('ascii'))
-        m.update(self.author_email.encode('ascii'))
-        return m.hexdigest()
+        if self.author_email:
+            m = hashlib.sha512()
+            m.update(SECRET_KEY.encode('ascii'))
+            m.update(self.author_email.encode('ascii'))
+            return m.hexdigest()
+        return None
 
     @property
     def email_hash_short(self):
-        return self.email_hash[:12]
+        if self.author_email:
+            return self.email_hash[:12]
+        return None
     
     @property
     def description(self):
