@@ -161,6 +161,7 @@ export default {
       this.$refs.map.setupMeta();
       this.$refs.map.setupMapbox();
       this.$refs.map.displayMapbox();
+      document.title = `dføur – ${this.title}`;
     }
   },
 

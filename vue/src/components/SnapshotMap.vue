@@ -9,6 +9,14 @@
         "new": "Neuer Kommentar",
         "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
         "commentSaved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+      },
+       "polygon": {
+        "add": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
+        "editing": {
+          "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
+          "unfinished": "Klicken Sie erneut auf den Startpunkt, um den Kommentar abzuschliessen",
+          "closable": "Klicken Sie hier, um den Kommentar abzuschliessen."
+        }
       }
     },
     "areamanagement": {
@@ -21,6 +29,11 @@
       },
       "polygon": {
         "add": "Klicken Sie auf die Stelle in Karte an der Sie eine Fläche hinzufügen möchten.",
+        "editing": {
+          "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
+          "unfinished": "Klicken Sie erneut auf den Startpunkt, um die Fläche abzuschliessen",
+          "closable": "Klicken Sie hier, um die Fläche abzuschliessen."
+        },
         "new": "Neue Fläche",
         "emailhint": "Um Ihren Fläche freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
         "commentSaved": "Ihre Fläche wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
@@ -70,9 +83,26 @@
 
       <v-slide-y-transition>
         <p class="addHint elevation-6" v-if="addingAnnotation">
-          <span v-if="annotations.mode == 'PAR'">{{ $t('participation.annotation.add') }}</span>
+          <span v-if="annotations.mode == 'PAR'">
+            <span v-if="polygonEditingState.invalid">
+              {{ $t('participation.polygon.editing.invalid') }}</span>
+            <span v-else-if="polygonEditingState.closable">
+              {{ $t('participation.polygon.editing.closable') }}</span>
+            <span v-else-if="polygonEditingState.active">
+              {{ $t('participation.polygon.editing.unfinished') }}</span>
+            <span v-else>
+              {{ $t('participation.annotation.add') }}</span>
+          </span>
           <span v-else-if="annotations.mode == 'MGT' && addingAnnotation == 'PLY'">
-            {{ $t('areamanagement.polygon.add') }}</span>
+            <span v-if="polygonEditingState.invalid">
+              {{ $t('areamanagement.polygon.editing.invalid') }}</span>
+            <span v-else-if="polygonEditingState.closable">
+              {{ $t('areamanagement.polygon.editing.closable') }}</span>
+            <span v-else-if="polygonEditingState.active">
+              {{ $t('areamanagement.polygon.editing.unfinished') }}</span>
+            <span v-else>
+              {{ $t('areamanagement.polygon.add') }}</span>
+          </span>
           <span v-else-if="annotations.mode == 'MGT' && addingAnnotation == 'COM'">
             {{ $t('areamanagement.note.add') }}</span>
         </p>
@@ -140,7 +170,7 @@
           id="addingAnnotationPly"
           color="primary"
           v-if="annotations.polygon.open"
-          @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='PLY';">
+          @click="addingAnnotation ? addingAnnotation = null : addingAnnotation = 'PLY';">
           <v-icon v-if="!addingAnnotation || addingAnnotation != 'PLY'">
             mdi-shape-polygon-plus
           </v-icon>
@@ -154,11 +184,14 @@
               light width="400" class="pa-4 elevation-6"
             >
               <h3>
-                <span v-if="annotations.mode == 'PAR'">
-                  {{ $t('participation.annotation.new') }}</span>
-                <span v-else-if="annotations.mode == 'MGT' && newAnnotation.kind == 'PLY'">
+                <span v-if="annotations.mode == 'PAR' && addingAnnotation == 'PLY'">
+                  <span>{{ $t('participation.polygon.new') }}</span>
+                </span>
+                <span v-else-if="annotations.mode == 'PAR' && addingAnnotation == 'COM'">
+                  {{ $t('participation.note.new') }}</span>
+                <span v-else-if="annotations.mode == 'MGT' && addingAnnotation == 'PLY'">
                   {{ $t('areamanagement.polygon.new') }}</span>
-                <span v-else-if="annotations.mode == 'MGT' && newAnnotation.kind == 'COM'">
+                <span v-else-if="annotations.mode == 'MGT' && addingAnnotation == 'COM'">
                   {{ $t('areamanagement.note.new') }}</span>
               </h3>
               <v-form
@@ -317,6 +350,8 @@
             {{currentComment.data.properties.description}}<br>
 
             <div
+              v-if="(annotations.marker.likes && currentComment.kind == 'COM') ||
+                (annotations.polygon.likes && currentComment.kind == 'PLY')"
               class="d-flex align-center justify-end primary--text">
               <p class="rating">
                 <v-icon color="primary" small>mdi-heart-outline</v-icon>
@@ -324,24 +359,21 @@
                   style="vertical-align: middle;"
                 > {{currentComment.rating}}</b>
               </p>
-              <div v-if="(annotations.marker.likes && currentComment.kind == 'COM') ||
-                (annotations.polygon.likes && currentComment.kind == 'PLY')">
-                <v-btn
-                  fab x-small color="white"
-                  :disabled="ratingpause"
-                  class="primary--text"
-                  ref="rateupBtn"
-                  @click="rateUp(currentComment.pk)"
-                  ><v-icon small>mdi-heart-plus</v-icon></v-btn>
-                <v-icon
-                  id="addHeart"
-                  v-if="ratingpause"
-                  small
-                  color="primary"
-                  :style="cssVars"
-                  >mdi-heart</v-icon>
-                </div>
-            </div>
+              <v-btn
+                fab x-small color="white"
+                :disabled="ratingpause"
+                class="primary--text"
+                ref="rateupBtn"
+                @click="rateUp(currentComment.pk)"
+                ><v-icon small>mdi-heart-plus</v-icon></v-btn>
+              <v-icon
+                id="addHeart"
+                v-if="ratingpause"
+                small
+                color="primary"
+                :style="cssVars"
+                >mdi-heart</v-icon>
+              </div>
           </div>
         </div>
       </div>
@@ -411,8 +443,7 @@ body,
 
 #myLocation,
 #addingAnnotationPt,
-#addingAnnotationPly
-{
+#addingAnnotationPly {
   top: 5.6em;
   right: 1.3em;
   transition: top 0.3s;
@@ -608,6 +639,11 @@ export default {
       mapinfoopen: true,
       addingAnnotation: null,
       newAnnotation: null,
+      polygonEditingState: {
+        active: false,
+        invalid: false,
+        closable: false
+      },
       polygonString: [],
       drawnItems: null,
       tooltipContainer: null,
@@ -964,6 +1000,7 @@ export default {
                 break;
               }
               case 'PLY': {
+                this.polygonEditingState.active = true;
                 // 1.
                 // On each click while in Polygon mode
                 // record click series
@@ -1026,6 +1063,7 @@ export default {
                     // this.map.setView(event.latlng);
                     window.setTimeout(() => { newMarker.fire('click'); }, 500);
                     this.cancelAnnotation();
+                    this.polygonEditingState.active = false;
                   } else {
                     const drawingLayer = this.drawnItems.getLayers();
                     const layer = drawingLayer[0];
@@ -1118,10 +1156,14 @@ export default {
           );
           const withinReach = Math.abs(distanceToStart) < 9 * (window.devicePixelRatio || 1);
 
-          this.updateTooltip(pos, `
-            Position: ${latlng} / ${pos}<br>
-            Distance: ${distanceToStart}<br>Within reach: ${withinReach}
-          `);
+          this.polygonEditingState.closable = this.polygonString.length > 1 ? withinReach : false;
+
+          // todo: detect invalid, e.g. self-intersecting geomtries and set flag
+
+          // this.updateTooltip(pos, `
+          //   Position: ${latlng} / ${pos}<br>
+          //   Distance: ${distanceToStart}<br>Within reach: ${withinReach}
+          // `);
           this.updateGuideline(latlng);
         }
       }
@@ -1340,7 +1382,7 @@ export default {
     async rateUp(annotationPk) {
       this.ratingpause = true;
 
-      if (this.annotations.open) {
+      if (this.annotations.polygon.likes || this.annotations.marker.likes) {
         const csrftoken = this.$cookies.get('csrftoken', '');
         const formData = new FormData();
 

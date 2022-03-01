@@ -52,6 +52,12 @@ migrate:
 	$(DOCKER_EXEC) python3 manage.py migrate
 	make collectstatic
 
+makemessages:
+	$(DOCKER_EXEC) python3 manage.py makemessages --all
+
+compilemessages:
+	$(DOCKER_EXEC) python3 manage.py compilemessages
+
 createcachetable:
 	$(DOCKER_EXEC) python3 manage.py createcachetable
 

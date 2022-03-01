@@ -22,7 +22,7 @@ class AnnotationSerializer(serializers.ModelSerializer):
         )
     
     def validate(self, data):
-        if not (data.get("workspace").annotations_open or data.get("workspace").poylgons_open):
+        if not (data.get("workspace").annotations_open or data.get("workspace").polygon_open):
             raise serializers.ValidationError('Rating annotations is not allowed currently for this workspace.')
         if not data.get("author_email"):
             raise serializers.ValidationError('Adding annotations to this workspace requires an email.')

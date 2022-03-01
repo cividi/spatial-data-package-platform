@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 
 from django.views.generic import DetailView
 
-from rest_framework import generics, parsers
+from rest_framework import generics, parsers, renderers
 from rest_framework.response import Response
 
 from gsmap.models import Workspace, Snapshot, Annotation, Category, Attachement
@@ -16,6 +16,16 @@ from .permissions import IsUser
 from .serializers import SnapshotDataUploadSerializer, AnnotationSerializer, AnnotationRateUpSerializer
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
+
+class StaffBrowsableMixin(object):
+    def get_renderers(self):
+        """
+        Add Browsable API renderer if user is staff.
+        """
+        rends = self.renderer_classes
+        if self.request.user and self.request.user.is_superuser:
+            rends.append(renderers.BrowsableAPIRenderer)
+        return [renderer() for renderer in rends]
 
 class CustomLoginView(LoginView):
     """
@@ -51,7 +61,7 @@ def logout(request):
     return response
 
 
-class SnapshotFileUploadView(generics.UpdateAPIView):
+class SnapshotFileUploadView(StaffBrowsableMixin, generics.UpdateAPIView):
     permission_classes = [IsUser,]
     queryset = Snapshot.objects.all()
     serializer_class = SnapshotDataUploadSerializer
@@ -72,12 +82,12 @@ class SnapshotFileUploadView(generics.UpdateAPIView):
 
         return Response(serializer.data)
 
-class AnnotationCreateView(generics.CreateAPIView):
+class AnnotationCreateView(StaffBrowsableMixin, generics.CreateAPIView):
     queryset = Annotation.objects.all()
     serializer_class = AnnotationSerializer
     http_method_names = ['post',]
 
-class AnnotationRateUpView(generics.UpdateAPIView):
+class AnnotationRateUpView(StaffBrowsableMixin, generics.UpdateAPIView):
     queryset = Annotation.objects.all()
     serializer_class = AnnotationRateUpSerializer
     lookup_url_kwarg = 'annotation_id'

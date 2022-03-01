@@ -86,6 +86,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    # Only enable JSON renderer by default.
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+}
+
 ROOT_URLCONF = 'main.urls'
 
 TEMPLATES = [
@@ -145,13 +152,13 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-LOCALE_PATH = []
+LOCALE_PATHS = ( 'locale', )
 
 LANGUAGES = [
-    ('en', _('English')),
-    ('de', _('German')),
-    ('fr', _('French')),
-    ('it', _('Italian')),
+    ('en', 'English'),
+    ('de', 'German'),
+    ('fr', 'French'),
+    ('it', 'Italian'),
 ]
 
 PARLER_LANGUAGES = {

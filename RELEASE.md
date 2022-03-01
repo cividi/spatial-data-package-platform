@@ -3,6 +3,14 @@
 ## Releases
 
 
+### 0.7.4 beta 2
+[Released *2022-03-01*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.4-b2)
+
+### improved
+- admin translations
+- data migration from previous versions
+- forced csv file download
+
 ### 0.7.4 beta 1
 [Released *2022-02-24*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.4-b1)
 
