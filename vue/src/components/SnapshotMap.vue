@@ -184,14 +184,11 @@
               light width="400" class="pa-4 elevation-6"
             >
               <h3>
-                <span v-if="annotations.mode == 'PAR' && addingAnnotation == 'PLY'">
-                  <span>{{ $t('participation.polygon.new') }}</span>
-                </span>
-                <span v-else-if="annotations.mode == 'PAR' && addingAnnotation == 'COM'">
-                  {{ $t('participation.note.new') }}</span>
-                <span v-else-if="annotations.mode == 'MGT' && addingAnnotation == 'PLY'">
+                <span v-if="annotations.mode == 'PAR'">
+                  {{ $t('participation.annotation.new') }}</span>
+                <span v-else-if="annotations.mode == 'MGT' && newAnnotation.kind == 'PLY'">
                   {{ $t('areamanagement.polygon.new') }}</span>
-                <span v-else-if="annotations.mode == 'MGT' && addingAnnotation == 'COM'">
+                <span v-else-if="annotations.mode == 'MGT' && newAnnotation.kind == 'COM'">
                   {{ $t('areamanagement.note.new') }}</span>
               </h3>
               <v-form
