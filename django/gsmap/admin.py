@@ -272,7 +272,7 @@ class AnnotationAdmin(admin.ModelAdmin):
 
     def export_as_csv(self, request, queryset):
         response = HttpResponse(content_type="text/csv")
-        # response['Content-Disposition'] = 'attachment; filename="export.csv"'
+        response['Content-Disposition'] = 'attachment; filename="export.csv"'
         writer = csv.writer(response)
         writer.writerow(['no', 'created (UTC)', 'title', 'description', 'usergroup_type', 'usergroup', 'category_type', 'category', 'rating', 'workspace', 'public', 'email_hash', 'email_domain', 'geojson'])
 

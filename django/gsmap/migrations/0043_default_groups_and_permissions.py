@@ -32,10 +32,17 @@ def apply_migration(apps, schema_editor):
     core_p_group.user_set.add(*users)
     core_a_group.user_set.add(*users)
 
-    # todo: Add non-existent standard categories and usergroups then assign to core groups
+    Category = apps.get_model("gsmap", "Category")
+    categories = Category.objects.using(db_alias).filter(group=None).all()
+    for i, c in enumerate(categories):
+        categories[i].group = default
+    Category.objects.using(db_alias).bulk_update(categories, ["group"])
 
-    # todo: Add default group to objects without group
+    Workspace = apps.get_model("gsmap", "Workspace")
+    Workspace.objects.using(db_alias).filter(group=None).bulk_update(group=default)
 
+    Usergroup = apps.get_model("gsmap", "Usergroup")
+    Usergroup.objects.using(db_alias).filter(group=None).bulk_update(group=default)
 
 def revert_migration(apps, schema_editor):
     Group = apps.get_model("auth", "Group")

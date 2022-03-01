@@ -155,10 +155,10 @@ USE_TZ = True
 LOCALE_PATHS = ( 'locale', )
 
 LANGUAGES = [
-    ('en', _('English')),
-    ('de', _('German')),
-    ('fr', _('French')),
-    ('it', _('Italian')),
+    ('en', 'English'),
+    ('de', 'German'),
+    ('fr', 'French'),
+    ('it', 'Italian'),
 ]
 
 PARLER_LANGUAGES = {

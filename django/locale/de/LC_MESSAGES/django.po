@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.7.4-b2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-24 15:01+0000\n"
+"POT-Creation-Date: 2022-03-01 14:28+0000\n"
 "PO-Revision-Date: 2022-02-24 15:34+0200\n"
 "Last-Translator: Thorben Westerhuys <thorben@cividi.ch>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -304,22 +304,6 @@ msgstr ""
 msgid "Back to the map"
 msgstr "Zurück zur Karte"
 
-#: main/settings.py:158
-msgid "English"
-msgstr "Englisch"
-
-#: main/settings.py:159
-msgid "German"
-msgstr "Deutsch"
-
-#: main/settings.py:160
-msgid "French"
-msgstr "Französisch"
-
-#: main/settings.py:161
-msgid "Italian"
-msgstr "Italienisch"
-
 #: main/templates/admin/base.html:39
 msgid "Welcome,"
 msgstr "Willkommen,"
@@ -368,3 +352,15 @@ msgstr ""
 #: main/templates/registration/login.html:70
 msgid "Forgotten your password or username?"
 msgstr "Passwort oder Benutzername vergessen?"
+
+#~ msgid "English"
+#~ msgstr "Englisch"
+
+#~ msgid "German"
+#~ msgstr "Deutsch"
+
+#~ msgid "French"
+#~ msgstr "Französisch"
+
+#~ msgid "Italian"
+#~ msgstr "Italienisch"

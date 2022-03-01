@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-24 15:01+0000\n"
+"POT-Creation-Date: 2022-03-01 14:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -267,22 +267,6 @@ msgstr ""
 
 #: gsmap/templates/annotation_publish.html:68
 msgid "Back to the map"
-msgstr ""
-
-#: main/settings.py:158
-msgid "English"
-msgstr ""
-
-#: main/settings.py:159
-msgid "German"
-msgstr ""
-
-#: main/settings.py:160
-msgid "French"
-msgstr ""
-
-#: main/settings.py:161
-msgid "Italian"
 msgstr ""
 
 #: main/templates/admin/base.html:39
