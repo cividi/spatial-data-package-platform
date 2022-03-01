@@ -7,15 +7,22 @@ def apply_migration(apps, schema_editor):
     db_alias = schema_editor.connection.alias
 
     Group = apps.get_model("auth", "Group")
-    Group.objects.using(db_alias).bulk_create(
-        [
-            Group(name="core/participation"),
-            Group(name="core/areamanagement"),
-            Group(name="default"),
-        ]
-    )
+    Permission = apps.get_model("auth", "Permission")
+    default_groups = [
+        Group(name="core/participation"),
+        Group(name="core/areamanagement"),
+        Group(name="default"),
+    ]
 
-    permissions = ['view_workspace','view_annotation','view_category', 'view_usergroup']
+    for g in default_groups:
+        Group.objects.using(db_alias).get_or_create(name=g.name)
+
+    permissions = [
+        Permission.objects.get(codename='view_workspace'),
+        Permission.objects.get(codename='view_annotation'),
+        Permission.objects.get(codename='view_category'),
+        Permission.objects.get(codename='view_usergroup'),
+    ]
 
     default = Group.objects.using(db_alias).get(name="default")
     core_p_group = Group.objects.using(db_alias).get(name="core/participation")
@@ -33,16 +40,13 @@ def apply_migration(apps, schema_editor):
     core_a_group.user_set.add(*users)
 
     Category = apps.get_model("gsmap", "Category")
-    categories = Category.objects.using(db_alias).filter(group=None).all()
-    for i, c in enumerate(categories):
-        categories[i].group = default
-    Category.objects.using(db_alias).bulk_update(categories, ["group"])
+    Category.objects.using(db_alias).filter(group=None).update(group=default)
 
     Workspace = apps.get_model("gsmap", "Workspace")
-    Workspace.objects.using(db_alias).filter(group=None).bulk_update(group=default)
+    Workspace.objects.using(db_alias).filter(group=None).update(group=default)
 
     Usergroup = apps.get_model("gsmap", "Usergroup")
-    Usergroup.objects.using(db_alias).filter(group=None).bulk_update(group=default)
+    Usergroup.objects.using(db_alias).filter(group=None).update(group=default)
 
 def revert_migration(apps, schema_editor):
     Group = apps.get_model("auth", "Group")
