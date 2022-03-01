@@ -350,6 +350,8 @@
             {{currentComment.data.properties.description}}<br>
 
             <div
+              v-if="(annotations.marker.likes && currentComment.kind == 'COM') ||
+                (annotations.polygon.likes && currentComment.kind == 'PLY')"
               class="d-flex align-center justify-end primary--text">
               <p class="rating">
                 <v-icon color="primary" small>mdi-heart-outline</v-icon>
@@ -357,24 +359,21 @@
                   style="vertical-align: middle;"
                 > {{currentComment.rating}}</b>
               </p>
-              <div v-if="(annotations.marker.likes && currentComment.kind == 'COM') ||
-                (annotations.polygon.likes && currentComment.kind == 'PLY')">
-                <v-btn
-                  fab x-small color="white"
-                  :disabled="ratingpause"
-                  class="primary--text"
-                  ref="rateupBtn"
-                  @click="rateUp(currentComment.pk)"
-                  ><v-icon small>mdi-heart-plus</v-icon></v-btn>
-                <v-icon
-                  id="addHeart"
-                  v-if="ratingpause"
-                  small
-                  color="primary"
-                  :style="cssVars"
-                  >mdi-heart</v-icon>
-                </div>
-            </div>
+              <v-btn
+                fab x-small color="white"
+                :disabled="ratingpause"
+                class="primary--text"
+                ref="rateupBtn"
+                @click="rateUp(currentComment.pk)"
+                ><v-icon small>mdi-heart-plus</v-icon></v-btn>
+              <v-icon
+                id="addHeart"
+                v-if="ratingpause"
+                small
+                color="primary"
+                :style="cssVars"
+                >mdi-heart</v-icon>
+              </div>
           </div>
         </div>
       </div>
@@ -1383,7 +1382,7 @@ export default {
     async rateUp(annotationPk) {
       this.ratingpause = true;
 
-      if (this.annotations.open) {
+      if (this.annotations.polygon.likes || this.annotations.marker.likes) {
         const csrftoken = this.$cookies.get('csrftoken', '');
         const formData = new FormData();
 
