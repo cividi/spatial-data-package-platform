@@ -943,9 +943,7 @@ export default {
         this.statisticPanelOpen = true;
         const coordinates = this.currentComment.data.geometry.coordinates[0].map(i => `${i[0]} ${i[1]}`).join(', ');
         const wkt = `Polygon ((${coordinates}))`;
-        console.log(wkt); // eslint-disable-line no-console
         this.queries.forEach((q) => {
-          console.log(q, ''); // eslint-disable-line no-console
           this.fetchPolygonStats(
             this.spatialDatasettes[0], q,
             wkt, '', 'all'
@@ -1151,8 +1149,6 @@ export default {
                   ).distanceTo(
                     this.map.latLngToLayerPoint(this.polygonString[0])
                   );
-
-                  console.log(distanceToStart); // eslint-disable-line no-console
 
                   // check if point is close to starting point
                   if (Math.abs(distanceToStart) < 9 * (window.devicePixelRatio || 1)) {
@@ -1595,7 +1591,6 @@ export default {
         })
         .then((json) => {
           // set the response data
-          console.log(json.rows[0]);
           this.spatialData[query][scope] = json.rows[0];
           this.spatialData[query][scope].progress = Math.round(
             this.spatialData[query][scope][
@@ -1625,7 +1620,6 @@ export default {
 
     resetSpatialData() {
       const facets = { all: {}, neighbourhood: {}, polygon: {} };
-      console.log(this.queries); // eslint-disable-line no-console
       // eslint-disable-next-line no-return-assign
       const filled = {};
       this.queries.forEach((q) => {
