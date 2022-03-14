@@ -36,6 +36,7 @@ services:
       - VUE_APP_FATHOM_SITEID=${FATHOM_SITEID}
       - VUE_APP_FATHOM_URL=${FATHOM_URL}
       - VUE_APP_SNAPSHOTSTOREURL=https://gemeindescan.eu-central-1.linodeobjects.com/public/
+      - VUE_APP_SPATIALDATASETTE_TOKEN=${SPATIALDATASETTE_TOKEN}
       - PUBLIC_URL=http://www:8000
     working_dir: /opt/vue
     volumes:

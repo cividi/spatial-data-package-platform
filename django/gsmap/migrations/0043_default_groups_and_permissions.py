@@ -21,7 +21,7 @@ def apply_migration(apps, schema_editor):
         Permission.objects.get(codename='view_workspace'),
         Permission.objects.get(codename='view_annotation'),
         Permission.objects.get(codename='view_category'),
-        Permission.objects.get(codename='view_usergroup'),
+        # Permission.objects.get(codename='view_usergroup'),
     ]
 
     default = Group.objects.using(db_alias).get(name="default")

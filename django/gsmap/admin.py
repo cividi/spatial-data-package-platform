@@ -13,7 +13,7 @@ import requests
 from parler.admin import TranslatableAdmin
 from parler.forms import TranslatableModelForm
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
-from gsmap.models import Municipality, Snapshot, Workspace, Category, Usergroup, Attachement, Annotation
+from gsmap.models import Municipality, Snapshot, Workspace, Category, SpatialDatasette, Usergroup, Attachement, Annotation
 from django.http import HttpResponse
 import csv
 from django.utils.timezone import localtime
@@ -144,7 +144,8 @@ class WorkspaceAdmin(TranslatableAdmin):
                 ('mode'),
                 ('findme_enabled', 'annotations_open', 'annotations_likes_enabled', 'polygon_open', 'polygon_likes_enabled'),
                 ('annotations_contact_name', 'annotations_contact_email'),
-                'categories', 'usergroups'
+                'categories', 'usergroups',
+                ('spatial_datasettes'),
             )
         }),
     )
@@ -153,7 +154,7 @@ class WorkspaceAdmin(TranslatableAdmin):
     search_fields = ['title', 'description']
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if db_field.name == 'snapshots' or db_field.name == 'categories' or db_field.name == 'usergroups':
+        if db_field.name in ['snapshots', 'categories', 'usergroups', 'spatial_datasettes']:
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super().formfield_for_manytomany(db_field, request, **kwargs)
     
@@ -387,9 +388,27 @@ def _has_change_permission(needed, group, user_groups):
                     return True
     return False
 
+class SpatialDatasetteAdmin(admin.ModelAdmin):
+    readonly_fields = ('id',)
+    fieldsets = (
+        (_('Meta'), {
+            'fields': ('id',)
+        }),
+        (_('Spatial Datasette'), {
+            'fields': ('name', 'base_url', 'queries'),
+        }),
+    )
+
+    list_display = (
+        'name',
+    )
+
+    search_fields = ('id', 'name', 'queries', 'base_url')
+
 admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(Snapshot, SnapshotAdmin)
 admin.site.register(Workspace, WorkspaceAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Usergroup, UsergroupAdmin)
+admin.site.register(SpatialDatasette, SpatialDatasetteAdmin)
 admin.site.register(Annotation, AnnotationAdmin)
