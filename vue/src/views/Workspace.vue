@@ -66,6 +66,7 @@
     <snapshot-map ref="map"
       :geojson="geojson"
       :annotations="annotations"
+      :spatialDatasettes="spatialDatasettes"
       :geoboundsIn="geobounds"
     />
     <v-overlay
@@ -144,6 +145,7 @@ export default {
           likes: false
         }
       },
+      spatialDatasettes: null,
       geobounds: [],
       municipalityName: '',
       snapshotsWorkspace: [],
@@ -237,7 +239,7 @@ export default {
                 hideInList
                 icon
               }
-              spatialdatasette {
+              spatialDatasettes {
                 name
                 baseUrl
                 queries
@@ -298,6 +300,7 @@ export default {
       this.annotations.marker.likes = workspace.annotationsLikesEnabled;
       this.annotations.polygon.open = workspace.polygonOpen;
       this.annotations.polygon.likes = workspace.polygonLikesEnabled;
+      this.spatialDatasettes = workspace.spatialDatasettes;
       this.title = workspace.title;
       this.description = workspace.description;
       this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);

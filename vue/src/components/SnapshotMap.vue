@@ -318,6 +318,41 @@
         </v-dialog>
       </div>
 
+      <div id="polygonstatisticsholder" v-if="statisticPanelOpen">
+        <div v-for="(statistic, key) in spatialData" :key="key">
+          <h2>{{ queriesData[key].title }}</h2>
+          <div>
+            <h3>Polygon</h3>
+            <div class="progress-container">
+              <div class="progress-indicator"
+                :style="{ width: statistic.polygon.progress + '%'
+                  }">
+                {{ statistic.polygon.label }}</div>
+            </div>
+          </div>
+          <!-- <div>
+            <h3>Quartier</h3>
+            <div class="progress-container">
+              <div class="progress-indicator"
+                :style="{ width:
+                  statistic.neighbourhood.progress + '%'
+                  }">
+                {{ statistic.neighbourhood.label }}</div>
+            </div>
+          </div> -->
+          <div>
+            <h3>Stadt</h3>
+            <div class="progress-container">
+              <div class="progress-indicator"
+                :style="{ width:
+                  statistic.all.progress + '%'
+                  }">
+                {{ statistic.all.label }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="commentholder">
         <div id="currentComment">
           <div v-if="currentComment"
@@ -609,6 +644,50 @@ p.rating {
   padding: 0;
   padding-right: 5px;
 }
+
+#polygonstatisticsholder {
+  width: 320px;
+  height: 96vh;
+  z-index: 500;
+  display: block;
+  top: 15px;
+  right: 15px;
+  position: fixed;
+  background: white;
+  border-radius: 4px;
+  padding: 10px 8px;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  overflow-y: scroll;
+}
+
+#polygonstatisticsholder h2 {
+  font-size: 2.2em;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+#polygonstatisticsholder h3 {
+  font-size: 1.5em;
+}
+
+.progress-container {
+  width: 100%;
+  max-width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.progress-indicator {
+  background: black;
+  border-radius: 10px;
+  min-height: 20px;
+  text-align: center;
+  color: white;
+  font-size: 12px;
+  padding: 1px 0;
+  min-width: 50px;
+}
 </style>
 
 <script>
@@ -643,6 +722,8 @@ export default {
       },
       polygonString: [],
       drawnItems: null,
+      spatialData: {},
+      statisticPanelOpen: false,
       tooltipContainer: null,
       timeout: null,
       guides: null,
@@ -677,6 +758,7 @@ export default {
     snapshot: Object,
     geojson: Object,
     annotations: Object,
+    spatialDatasettes: Array,
     geoboundsIn: Array,
     predecessor: Object
   },
@@ -739,6 +821,24 @@ export default {
         return this.annotations.categories;
       }
       return this.annotations.categories.filter(a => !a.hideInList);
+    },
+
+    queries() {
+      return this.spatialDatasettes[0].queries.map(
+        item => item.name
+      );
+    },
+
+    queriesData() {
+      const qd = {};
+      this.spatialDatasettes[0].queries.forEach((i) => {
+        qd[i.name] = { ...i };
+      });
+      return qd;
+    },
+
+    token() {
+      return `${process.env.VUE_APP_SPATIALDATASETTE_TOKEN}` || null;
     }
   },
 
@@ -833,9 +933,29 @@ export default {
       myPopup.on('remove', (e) => {
         // console.log('remove'); // eslint-disable-line no-console
         document.getElementById('commentholder').append(e.target.getContent());
+        this.statisticPanelOpen = false;
+        this.resetSpatialData();
       });
       this.mapinfoopen = false;
       window.setTimeout(() => { myPopup.openOn(this.map); }, 100);
+
+      if (this.spatialDatasettes && e.target.feature.kind === 'PLY') {
+        this.statisticPanelOpen = true;
+        const coordinates = this.currentComment.data.geometry.coordinates[0].map(i => `${i[0]} ${i[1]}`).join(', ');
+        const wkt = `Polygon ((${coordinates}))`;
+        console.log(wkt); // eslint-disable-line no-console
+        this.queries.forEach((q) => {
+          console.log(q, ''); // eslint-disable-line no-console
+          this.fetchPolygonStats(
+            this.spatialDatasettes[0], q,
+            wkt, '', 'all'
+          );
+          this.fetchPolygonStats(
+            this.spatialDatasettes[0], q,
+            wkt, '', 'polygon'
+          );
+        });
+      }
     },
 
     setupEmpty() {
@@ -1447,8 +1567,81 @@ export default {
       this.isMapLoaded = false;
     },
 
+    fetchPolygonStats(db, query, polygon, neighbourhood, scope) {
+      if (scope === 'all') {
+        polygon = '';
+        neighbourhood = '';
+      } else if (scope === 'neighbourhood') {
+        polygon = '';
+      } else {
+        neighbourhood = '';
+      }
+      return fetch(`${db.baseUrl}/${query}.json?_shape=objects&polygon=${polygon}&neighbourhood=${neighbourhood}`, {
+        method: 'get',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+        .then((res) => {
+          // a non-200 response code
+          if (!res.ok) {
+            // create error instance with HTTP status text
+            const error = new Error(res.statusText);
+            error.json = res.json();
+            throw error;
+          }
+          return res.json();
+        })
+        .then((json) => {
+          // set the response data
+          console.log(json.rows[0]);
+          this.spatialData[query][scope] = json.rows[0];
+          this.spatialData[query][scope].progress = Math.round(
+            this.spatialData[query][scope][
+              this.queriesData[
+                query
+              ].summary_stat
+            ] / this.queriesData[query].summary_compare * 100
+          );
+          this.spatialData[query][scope].label = Math.round(
+            this.spatialData[query][scope][
+              this.queriesData[
+                query
+              ].summary_stat
+            ] * 100
+          ) / 100;
+        })
+        .catch((err) => {
+          // error.value = err;
+          if (err.json) {
+            return err.json; // .then((json) => {
+            // error.value.message = json.message;
+            // });
+          }
+          return null;
+        });
+    },
+
+    resetSpatialData() {
+      const facets = { all: {}, neighbourhood: {}, polygon: {} };
+      console.log(this.queries); // eslint-disable-line no-console
+      // eslint-disable-next-line no-return-assign
+      const filled = {};
+      this.queries.forEach((q) => {
+        filled[q] = { ...facets };
+      });
+      this.spatialData = filled;
+    },
+
     formLabel(label) {
       return this.annotations.mode === 'PAR' ? this.$t(`participation.${label}`) : this.$t(`areamanagement.${label}`);
+    }
+  },
+
+  watch: {
+    spatialDatasettes() {
+      this.resetSpatialData();
     }
   }
 };
