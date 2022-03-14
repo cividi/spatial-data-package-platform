@@ -443,7 +443,7 @@ class Workspace(TranslatableModel):
 
     findme_enabled = models.BooleanField(default=False, help_text="Enable 'Find Me'", verbose_name="Find me enabled")
 
-    spatial_datasettes = SortedManyToManyField(SpatialDatasette)
+    spatial_datasettes = SortedManyToManyField(SpatialDatasette, blank=True)
 
     translations = TranslatedFields(
         title = models.CharField(max_length=150, default=''),
