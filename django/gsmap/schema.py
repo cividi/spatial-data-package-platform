@@ -11,7 +11,7 @@ from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
-from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, Annotation, Category, Usergroup, Attachement
+from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, Annotation, Category, SpatialDatasette, Usergroup, Attachement
 from graphene_django.rest_framework.mutation import SerializerMutation
 import graphene_django_optimizer as gql_optimizer
 
@@ -168,7 +168,15 @@ class AnnotationNode(gql_optimizer.OptimizedDjangoObjectType):
 
     def resolve_attachements(self, info):
         return gql_optimizer.query(Attachement.objects.filter(Q(deleted=0) & Q(annotation=self.id)), info)
+
+class SpatialDatasetteNode(DjangoObjectType):
+    class Meta:
+        model = SpatialDatasette
+        fields = ['id', 'name', 'base_url', 'queries']
+        interfaces = [graphene.relay.Node]
     
+    queries = generic.GenericScalar(source='queries')
+
 class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
     class Meta:
         model = Workspace
@@ -177,7 +185,8 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
             'mode', 'findme_enabled',
             'annotations_open', 'annotations_likes_enabled',
             'polygon_open', 'polygon_likes_enabled',
-            'annotations_contact_name', 'annotations_contact_email'
+            'annotations_contact_name', 'annotations_contact_email',
+            'spatial_datasettes',
         ]
         interfaces = [graphene.relay.Node]
 
@@ -190,6 +199,8 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
         language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
     )
     snapshots = graphene.List(SnapshotNode)
+
+    spatial_datasettes = graphene.List(SpatialDatasetteNode)
 
     annotations = graphene.List(AnnotationNode)
 
@@ -210,6 +221,9 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
 
     def resolve_snapshots(self, info):
         return gql_optimizer.query(self.snapshots.all(), info)
+
+    def resolve_spatial_datasettes(self, info):
+        return gql_optimizer.query(self.spatial_datasettes.all(), info)
 
     def resolve_annotations(self, info):
         return gql_optimizer.query(Annotation.objects.filter(Q(public=1) & Q(workspace=self.pk)), info)

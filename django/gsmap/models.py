@@ -386,6 +386,22 @@ class Usergroup(TranslatableModel):
             return f'{self.group.name}/{self.name}'
         return f'{self.name}'
 
+class SpatialDatasette(models.Model):
+    class Meta:
+        verbose_name = _("Spatial Datasette")
+        verbose_name_plural = _("Spatial Datasettes")
+
+    id = models.CharField(
+        max_length=8, unique=True,
+        primary_key=True, default=create_slug_hash_5
+    )
+    name = models.CharField(max_length=100, default='')
+    base_url = models.CharField("Datasette URL", help_text="Base URL of spatial Datasette including database name slug", max_length=255, default='')
+    queries = models.JSONField(help_text="List of canned queries objects to fetch from datasette in JSON format, e.g. [{name:'zonal_stats_bmz',summary_stat:'avg',title:'Baumassenziffer',description:'Durchschnittliche Baumassenziffer gemäss amtlicher Statistik.'}]", default=list)
+
+    def __str__(self):
+        return f'{self.name}'
+
 class Workspace(TranslatableModel):
     class Meta:
         ordering = ['-created']
@@ -426,6 +442,8 @@ class Workspace(TranslatableModel):
     annotations_contact_email = models.EmailField(default='', verbose_name='Contact email address')
 
     findme_enabled = models.BooleanField(default=False, help_text="Enable 'Find Me'", verbose_name="Find me enabled")
+
+    spatial_datasettes = SortedManyToManyField(SpatialDatasette)
 
     translations = TranslatedFields(
         title = models.CharField(max_length=150, default=''),

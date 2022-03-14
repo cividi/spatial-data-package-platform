@@ -237,6 +237,11 @@ export default {
                 hideInList
                 icon
               }
+              spatialdatasette {
+                name
+                baseUrl
+                queries
+              }
               usergroups {
                 key
                 name(languageCode: $lang)
