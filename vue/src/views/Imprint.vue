@@ -18,7 +18,7 @@
             Datenschutzerklärung
           </h2>
           <p>
-            campusbochum.de und beteiligung.campusbochum.de (nachfolgend Plattform) und
+            parti.dfour.io (nachfolgend Plattform) und
             ihr Inhalt wird durch cividi GmbH gestellt. Der Schutz Ihrer persönlichen
             Daten ist uns wichtig und wir behandeln personenbezogenen Daten vertraulich
             und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser
@@ -48,33 +48,33 @@
           </h3>
           <p>
             Die Plattform greift auf Produkte und Dienstleistungen von Drittanbietern zurück,
-            was der Nutzer mit seinem Besuch und seiner Teilnahme anerkennt. Mehr Information
-            über die aktuell angewandte Datenschutzkonzepte der verwendeten Anbieter finden
-            Sie unter:
-            <ul>
-              <li>Analytics: <a href="https://usefathom.com/privacy">
-                usefathom.com/privacy</a></li>
-              <li>Hosting (Standort: Frankfurt):
-                <a href="https://www.linode.com/legal-privacy/">
-                  linode.com/legal-privacy/</a></li>
-              <li>Daten (Standort: Frankfurt):
-                <a href="https://www.elephantsql.com/legal/privacy_policy.html">
-                  elephantsql.com/legal/privacy_policy.html</a></li>
-              <li>Logs:
-                <a href="https://www.datadoghq.com/legal/privacy/">
-                  datadoghq.com/legal/privacy/</a></li>
-              <li>Email Versand:
-                <a href="https://www.mailgun.com/privacy-policy/">
-                  mailgun.com/privacy-policy/</a></li>
-            </ul>
-
+            was der Nutzer mit seinem Besuch und seiner Teilnahme anerkennt. Zur Nutzung der
+            Platfform werden nicht technisch notwendigen Cookies (z.B. zum Schutz vor Cross Site
+            Request Forgery Angriffen) eingesetzt. Mehr Information über die aktuell angewandte
+            Datenschutzkonzepte der verwendeten Anbieter finden Sie unter:
           </p>
-
+          <ul>
+            <li>Analytics: <a href="https://usefathom.com/privacy">
+              usefathom.com/privacy</a></li>
+            <li>Hosting (Standort: Frankfurt):
+              <a href="https://www.linode.com/legal-privacy/">
+                linode.com/legal-privacy/</a></li>
+            <li>Daten (Standort: Frankfurt):
+              <a href="https://www.elephantsql.com/legal/privacy_policy.html">
+                elephantsql.com/legal/privacy_policy.html</a></li>
+            <li>Logs:
+              <a href="https://www.datadoghq.com/legal/privacy/">
+                datadoghq.com/legal/privacy/</a></li>
+            <li>Email Versand:
+              <a href="https://www.mailgun.com/privacy-policy/">
+                mailgun.com/privacy-policy/</a></li>
+          </ul>
+          <p></p>
           <h3>
             TLS-Verschlüsselung
           </h3>
           <p>
-            Um die Sicherheit eurer Daten bei der Übertragung zu schützen,
+            Um die Sicherheit der Daten bei der Übertragung zu schützen,
             verwenden wir dem aktuellen Stand der Technik entsprechende Verschlüsselungsverfahren
             (z.B. TLS) über HTTPS.
           </p>
@@ -87,14 +87,14 @@
             Es gilt die jeweils aktuelle, auf dieser Website publizierte Fassung.
           </p>
           <p>
-            Für datenschutzrelevante Anliegen könnt ihr euch wenden an:<br>
+            Für datenschutzrelevante Anliegen:<br>
             Viktoria Molnar<br>
             Flüelastrasse 10<br>
             8048 Zürich<br>
             <a href="mailto:legal@cividi.ch">legal@cividi.ch</a>
           </p>
           <p>
-            Zürich, 25.10.2021
+            Zürich, 31.03.2022
           </p>
           <h2>Lizenz</h2>
           <p>
