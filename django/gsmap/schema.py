@@ -115,7 +115,7 @@ class MunicipalityNode(DjangoObjectType):
 class CategoryNode(DjangoObjectType):
     class Meta:
         model = Category
-        fields = ['name', 'icon', 'color', 'hide_in_list']
+        fields = ['name', 'icon', 'color', 'hide_in_list', 'comments_enabled']
         filter_fields = {
             'hide_in_list': ['exact'],
         }

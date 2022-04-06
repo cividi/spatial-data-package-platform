@@ -342,6 +342,8 @@ class Category(TranslatableModel):
     icon = models.FileField(_("icon"), upload_to='category-icons', null=True, blank=True)
     color = models.CharField(_("color"), max_length=7, default='#cccccc')
 
+    comments_enabled = models.BooleanField(_("comments"), default=False)
+
     group = models.ForeignKey(
         Group, default=None, blank=True,
         null=True, on_delete=models.SET_NULL
