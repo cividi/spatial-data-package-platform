@@ -138,6 +138,7 @@
           :predecessor="predecessor"
           :hash="hash"
           :legend="legend"
+          :legendAnnotations="legendAnnotations"
           :sources="sources"
         />
       </v-card>
@@ -257,7 +258,7 @@
                         :label="$t('email')"
                         :rules="[
                           v => !!v || $t('mandatory'),
-                          v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/.test(v) || $t('inv')]"
+                          v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/.test(v) || $t('inv')]"
                         required
                       />
                       <v-select
@@ -703,6 +704,7 @@ p.rating {
 <script>
 import Vue from 'vue';
 import L from 'mapbox.js';
+import _ from 'lodash';
 import geoViewport from '@mapbox/geo-viewport';
 import SnapshotMeta from './SnapshotMeta.vue';
 
@@ -745,6 +747,7 @@ export default {
       title: '',
       description: '',
       legend: [],
+      legendAnnotations: [],
       sources: [],
       layers: [],
       geobounds: [],
@@ -895,6 +898,9 @@ export default {
               // },
               // { maxWidth: 450, maxHeight: 600 });
               curfeature.on('click', this.showPopup);
+              if ('openOnLoad' in feature.properties && feature.properties.openOnLoad) {
+                window.setTimeout(() => { curfeature.fire('click'); }, 500);
+              }
             }
             return curfeature;
           }
@@ -1010,32 +1016,29 @@ export default {
       this.description = this.geojson.views[0].spec.description;
       this.legend = this.geojson.views[0].spec.legend;
       if (this.annotations.mode !== 'OFF') {
-        let extraItems = [];
-        if (this.annotations.mode === 'PAR') {
-          extraItems = this.annotations.categories
-            .map(c => ({
-              svg: `/media/${c.icon}`,
-              label: c.name,
-              primary: !c.hideInList
-            }));
-        } else if (this.annotations.mode === 'MGT') {
-          extraItems = this.annotations.categories
-            .map(c => ({
+        const extraItems = this.annotations.categories
+          .filter(c => !c.hideInLegend)
+          .map((c) => {
+            if (c.icon !== '') {
+              return {
+                svg: `/media/${c.icon}`,
+                label: c.name,
+                primary: !c.hideInList
+              };
+            }
+            return {
               label: c.name,
               primary: !c.hideInList,
-              shape: 'square',
+              shape: 'circle',
               size: 1.0,
               fillColor: c.color,
               fillOpacity: 0.4,
               strokeColor: c.color,
               strokeOpacity: 0.9,
               strokeWidth: 2
-            }));
-        }
-        this.legend = [
-          ...this.legend,
-          ...extraItems
-        ];
+            };
+          });
+        this.legendAnnotations = [...extraItems];
       }
       this.sources = this.geojson.sources;
     },
@@ -1102,32 +1105,42 @@ export default {
           }
         }
         if (this.annotations.items) {
-          this.annotations.items = this.annotations.items.map((a, i) => {
-            a.data.kind = a.kind;
-            a.data.index = i;
-            if (a.category) {
-              a.data.properties.icon = { iconUrl: `/media/${a.category.icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
-              if (a.kind === 'PLY') {
-                const area = this.geodesicArea(
-                  a.data.geometry.coordinates[0].map(
-                    c => L.latLng([c[1], c[0]])
-                  )
-                );
-                a.data.properties = {
-                  ...a.data.properties,
-                  color: a.category.color,
-                  opacity: 0.9,
-                  weight: 3,
-                  dashArray: '8 6',
-                  dashOffset: '8',
-                  fillColor: a.category.color,
-                  fillOpacity: 0.4,
-                  area
-                };
+          if ('transform' in this.geojson.views[0].spec) {
+            this.geojson.views[0].spec.transform.forEach((t) => {
+              if ('filter' in t && 'oneOf' in t.filter && t.filter.from === 'annotations') {
+                this.annotations.items = this.annotations.items.filter(i => t.filter.oneOf.includes(
+                  _.get(i, t.filter.key, '')
+                ));
               }
-            }
-            return a;
-          });
+            });
+          }
+          this.annotations.items = this.annotations.items
+            .map((a, i) => {
+              a.data.kind = a.kind;
+              a.data.index = i;
+              if (a.category) {
+                a.data.properties.icon = { iconUrl: `/media/${a.category.icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
+                if (a.kind === 'PLY') {
+                  const area = this.geodesicArea(
+                    a.data.geometry.coordinates[0].map(
+                      c => L.latLng([c[1], c[0]])
+                    )
+                  );
+                  a.data.properties = {
+                    ...a.data.properties,
+                    color: a.category.color,
+                    opacity: 0.9,
+                    weight: 3,
+                    dashArray: '8 6',
+                    dashOffset: '8',
+                    fillColor: a.category.color,
+                    fillOpacity: 0.4,
+                    area
+                  };
+                }
+              }
+              return a;
+            });
           const annotationsdata = this.annotations.items.map(a => a.data);
           this.layerContainer.addLayer(this.createFeatureLayer(
             annotationsdata.filter(a => a.kind === 'COM'), ''

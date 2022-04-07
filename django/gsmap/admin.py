@@ -332,7 +332,7 @@ class CategoryAdmin(TranslatableAdmin): # admin.OSMGeoAdmin,
     readonly_fields = ('id', 'created', 'modified')
     fieldsets = (
         (_('Meta'), {
-            'fields': ('deleted', 'hide_in_list'),
+            'fields': ('deleted', 'hide_in_list', 'hide_in_legend'),
         }),
         (_('Category'), {
             'fields': ('group', 'name', 'icon', 'color', 'comments_enabled'),
@@ -344,10 +344,11 @@ class CategoryAdmin(TranslatableAdmin): # admin.OSMGeoAdmin,
         'group',
         'color',
         'hide_in_list',
+        'hide_in_legend',
         'comments_enabled'
     )
 
-    list_filter = (CategoryGroupFilter, 'hide_in_list', 'color')
+    list_filter = (CategoryGroupFilter, 'hide_in_list', 'hide_in_legend', 'comments_enabled', 'color')
     search_fields = ('id', 'translations__name')
 
     def get_queryset(self, request):

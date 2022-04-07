@@ -115,9 +115,10 @@ class MunicipalityNode(DjangoObjectType):
 class CategoryNode(DjangoObjectType):
     class Meta:
         model = Category
-        fields = ['name', 'icon', 'color', 'hide_in_list', 'comments_enabled']
+        fields = ['name', 'icon', 'color', 'hide_in_list', 'hide_in_legend', 'comments_enabled']
         filter_fields = {
             'hide_in_list': ['exact'],
+            'hide_in_legend': ['exact'],
         }
         interfaces = [graphene.relay.Node]
 

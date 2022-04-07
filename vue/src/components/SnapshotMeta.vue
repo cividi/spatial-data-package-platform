@@ -5,19 +5,22 @@
     "sources": "Quellenangaben",
     "expandlegend": "mehr",
     "collapslegend": "weniger",
-    "predecessor": "Vorgängerversion"
+    "predecessor": "Vorgängerversion",
+    "comments": "Kommentare"
   },
   "fr": {
     "sources": "Source",
     "expandlegend": "plus",
     "collapslegend": "moin",
-    "predecessor": "version prédécesseuse"
+    "predecessor": "version prédécesseuse",
+    "comments": "Commentaires"
   },
   "en": {
     "sources": "Sources",
     "expandlegend": "more",
     "collapslegend": "less",
-    "predecessor": "Previous version"
+    "predecessor": "Previous version",
+    "comments": "Comments"
   }
 }
 </i18n>
@@ -84,6 +87,35 @@
           {{ $t('expandlegend') }}
         </template>
     </v-btn>
+    <div class="smaller" v-if="legendAnnotations.length > 0">
+      <h5 class="mr-4">{{ $t('comments') }}</h5>
+    </div>
+    <v-list
+      dense class="legend pt-0"
+      v-if="legendAnnotations.length > 0"
+      >
+      <v-list-item
+        v-for="(item, i) in legendAnnotations"
+        :key="i"
+        class="pa-0 isPrimary"
+        >
+        <v-list-item-icon class="my-0 mr-2">
+          <img
+            width="20" height="20"
+            v-if="item.svg"
+            :src="item.svg">
+          <legend-icon v-else
+            :shape="item.shape"
+            :isPrimary="item.primary"
+            :attr="item" />
+        </v-list-item-icon>
+        <v-list-item-content class="py-0">
+          <v-list-item-title>
+            {{ item.label }}
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
     <div class="smaller"
       style="margin: 5px 0 -10px 2px;">
       <v-expand-transition>
@@ -211,6 +243,7 @@ export default {
     description: String,
     predecessor: Object,
     legend: Array,
+    legendAnnotations: Array,
     sources: Array
   },
 
