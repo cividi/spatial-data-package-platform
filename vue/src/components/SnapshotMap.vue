@@ -704,6 +704,7 @@ p.rating {
 <script>
 import Vue from 'vue';
 import L from 'mapbox.js';
+import _ from 'lodash';
 import geoViewport from '@mapbox/geo-viewport';
 import SnapshotMeta from './SnapshotMeta.vue';
 
@@ -897,6 +898,9 @@ export default {
               // },
               // { maxWidth: 450, maxHeight: 600 });
               curfeature.on('click', this.showPopup);
+              if ('openOnLoad' in feature.properties && feature.properties.openOnLoad) {
+                window.setTimeout(() => { curfeature.fire('click'); }, 500);
+              }
             }
             return curfeature;
           }
