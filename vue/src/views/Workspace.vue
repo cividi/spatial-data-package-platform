@@ -226,6 +226,7 @@ export default {
                   name(languageCode: $lang)
                   icon
                   color
+                  commentsEnabled
                 }
                 attachements{
                   document

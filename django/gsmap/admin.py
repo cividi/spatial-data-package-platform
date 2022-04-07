@@ -335,7 +335,7 @@ class CategoryAdmin(TranslatableAdmin): # admin.OSMGeoAdmin,
             'fields': ('deleted', 'hide_in_list'),
         }),
         (_('Category'), {
-            'fields': ('group', 'name', 'icon', 'color'),
+            'fields': ('group', 'name', 'icon', 'color', 'comments_enabled'),
         }),
     )
 
@@ -343,7 +343,8 @@ class CategoryAdmin(TranslatableAdmin): # admin.OSMGeoAdmin,
         'name',
         'group',
         'color',
-        'hide_in_list'
+        'hide_in_list',
+        'comments_enabled'
     )
 
     list_filter = (CategoryGroupFilter, 'hide_in_list', 'color')

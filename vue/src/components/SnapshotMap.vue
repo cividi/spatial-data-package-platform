@@ -354,7 +354,7 @@
       </div>
 
       <div id="commentholder">
-        <div id="currentComment">
+        <div id="currentComment" :class="{withComments: withComments}">
           <div v-if="currentComment"
             :class="currentComment.attachements.length ? 'maxW': ''">
             <b>{{currentComment.data.properties.title}}</b><br>
@@ -405,6 +405,10 @@
                 color="primary"
                 :style="cssVars"
                 >mdi-heart</v-icon>
+              </div>
+              <div v-if="currentComment.category.commentsEnabled">
+                <h3>Kommentare</h3>
+                <div id="commento"></div>
               </div>
           </div>
         </div>
@@ -580,9 +584,15 @@ span.statusLabel {
 }
 
 #currentComment {
-  min-width: 200px;
+  width: 200px;
   max-width: calc(90vw - 20px);
+  overflow: scroll;
 }
+#currentComment.withComments {
+  width: 380px !important;
+  max-height: 40vh;
+}
+
 #currentComment .maxW {
   width: calc(100vw - 40px);
   max-width: 430px;
@@ -750,7 +760,8 @@ export default {
       setMapMyLocation: false,
       locationWatcher: null,
       myLocationMarker: null,
-      escListener: null
+      escListener: null,
+      commentoUrl: process.env.VUE_APP_COMMENTO_URL || null
     };
   },
 
@@ -798,6 +809,13 @@ export default {
         return this.annotations.items[this.currentCommentIndex];
       }
       return null;
+    },
+
+    withComments() {
+      if (this.currentComment) {
+        return this.currentComment.category.commentsEnabled;
+      }
+      return false;
     },
 
     cssVars() {
@@ -932,12 +950,39 @@ export default {
 
       myPopup.on('remove', (e) => {
         // console.log('remove'); // eslint-disable-line no-console
+        document.head.getElementsByTagName('script').forEach((el) => {
+          if (el.hasAttribute('data-page-id')) {
+            document.head.removeChild(el);
+          }
+        });
         document.getElementById('commentholder').append(e.target.getContent());
         this.statisticPanelOpen = false;
         this.resetSpatialData();
       });
       this.mapinfoopen = false;
-      window.setTimeout(() => { myPopup.openOn(this.map); }, 100);
+      window.setTimeout(() => {
+        myPopup.openOn(this.map);
+        if (this.commentoUrl !== null && this.currentComment.category.commentsEnabled) {
+          console.log(window); // eslint-disable-line no-console
+          console.log(window.commento); // eslint-disable-line no-console
+          console.log(window.commento.main); // eslint-disable-line no-console
+          if (typeof window !== 'undefined' && window.commento.main === undefined) {
+            const commentoScript = document.createElement('script');
+            commentoScript.setAttribute('src', `${this.commentoUrl}/js/commento.js`);
+            commentoScript.setAttribute('data-auto-init', false);
+            commentoScript.setAttribute('data-page-id', `${this.currentComment.pk}-${this.currentComment.id}`);
+            commentoScript.setAttribute('defer', true);
+            document.head.appendChild(commentoScript);
+            window.setTimeout(() => {
+              window.commento.main();
+            }, 100);
+          } else if (typeof window !== 'undefined' && window.commento) {
+            window.commento.reInit({
+              pageId: `${this.currentComment.pk}-${this.currentComment.id}`
+            });
+          }
+        }
+      }, 100);
 
       if (this.spatialDatasettes && e.target.feature.kind === 'PLY') {
         this.statisticPanelOpen = true;
