@@ -238,6 +238,7 @@ export default {
                 color
                 name(languageCode: $lang)
                 hideInList
+                hideInLegend
                 icon
               }
               spatialDatasettes {

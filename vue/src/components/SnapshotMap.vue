@@ -138,6 +138,7 @@
           :predecessor="predecessor"
           :hash="hash"
           :legend="legend"
+          :legendAnnotations="legendAnnotations"
           :sources="sources"
         />
       </v-card>
@@ -745,6 +746,7 @@ export default {
       title: '',
       description: '',
       legend: [],
+      legendAnnotations: [],
       sources: [],
       layers: [],
       geobounds: [],
@@ -1010,32 +1012,29 @@ export default {
       this.description = this.geojson.views[0].spec.description;
       this.legend = this.geojson.views[0].spec.legend;
       if (this.annotations.mode !== 'OFF') {
-        let extraItems = [];
-        if (this.annotations.mode === 'PAR') {
-          extraItems = this.annotations.categories
-            .map(c => ({
-              svg: `/media/${c.icon}`,
-              label: c.name,
-              primary: !c.hideInList
-            }));
-        } else if (this.annotations.mode === 'MGT') {
-          extraItems = this.annotations.categories
-            .map(c => ({
+        const extraItems = this.annotations.categories
+          .filter(c => !c.hideInLegend)
+          .map((c) => {
+            if (c.icon !== '') {
+              return {
+                svg: `/media/${c.icon}`,
+                label: c.name,
+                primary: !c.hideInList
+              };
+            }
+            return {
               label: c.name,
               primary: !c.hideInList,
-              shape: 'square',
+              shape: 'circle',
               size: 1.0,
               fillColor: c.color,
               fillOpacity: 0.4,
               strokeColor: c.color,
               strokeOpacity: 0.9,
               strokeWidth: 2
-            }));
-        }
-        this.legend = [
-          ...this.legend,
-          ...extraItems
-        ];
+            };
+          });
+        this.legendAnnotations = [...extraItems];
       }
       this.sources = this.geojson.sources;
     },

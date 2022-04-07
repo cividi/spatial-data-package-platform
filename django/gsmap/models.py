@@ -337,6 +337,7 @@ class Category(TranslatableModel):
 
     # my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
     hide_in_list = models.BooleanField(_("hide in list"), default=False)
+    hide_in_legend = models.BooleanField(_("hide in legend"), default=False)
 
     namespace = models.CharField(max_length=255, default='core/beteiligung')
     icon = models.FileField(_("icon"), upload_to='category-icons', null=True, blank=True)
