@@ -1101,32 +1101,42 @@ export default {
           }
         }
         if (this.annotations.items) {
-          this.annotations.items = this.annotations.items.map((a, i) => {
-            a.data.kind = a.kind;
-            a.data.index = i;
-            if (a.category) {
-              a.data.properties.icon = { iconUrl: `/media/${a.category.icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
-              if (a.kind === 'PLY') {
-                const area = this.geodesicArea(
-                  a.data.geometry.coordinates[0].map(
-                    c => L.latLng([c[1], c[0]])
-                  )
-                );
-                a.data.properties = {
-                  ...a.data.properties,
-                  color: a.category.color,
-                  opacity: 0.9,
-                  weight: 3,
-                  dashArray: '8 6',
-                  dashOffset: '8',
-                  fillColor: a.category.color,
-                  fillOpacity: 0.4,
-                  area
-                };
+          if ('transform' in this.geojson.views[0].spec) {
+            this.geojson.views[0].spec.transform.forEach((t) => {
+              if ('filter' in t && 'oneOf' in t.filter && t.filter.from === 'annotations') {
+                this.annotations.items = this.annotations.items.filter(i => t.filter.oneOf.includes(
+                  _.get(i, t.filter.key, '')
+                ));
               }
-            }
-            return a;
-          });
+            });
+          }
+          this.annotations.items = this.annotations.items
+            .map((a, i) => {
+              a.data.kind = a.kind;
+              a.data.index = i;
+              if (a.category) {
+                a.data.properties.icon = { iconUrl: `/media/${a.category.icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
+                if (a.kind === 'PLY') {
+                  const area = this.geodesicArea(
+                    a.data.geometry.coordinates[0].map(
+                      c => L.latLng([c[1], c[0]])
+                    )
+                  );
+                  a.data.properties = {
+                    ...a.data.properties,
+                    color: a.category.color,
+                    opacity: 0.9,
+                    weight: 3,
+                    dashArray: '8 6',
+                    dashOffset: '8',
+                    fillColor: a.category.color,
+                    fillOpacity: 0.4,
+                    area
+                  };
+                }
+              }
+              return a;
+            });
           const annotationsdata = this.annotations.items.map(a => a.data);
           this.layerContainer.addLayer(this.createFeatureLayer(
             annotationsdata.filter(a => a.kind === 'COM'), ''
