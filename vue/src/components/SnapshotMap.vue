@@ -258,7 +258,7 @@
                         :label="$t('email')"
                         :rules="[
                           v => !!v || $t('mandatory'),
-                          v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/.test(v) || $t('inv')]"
+                          v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/.test(v) || $t('inv')]"
                         required
                       />
                       <v-select
