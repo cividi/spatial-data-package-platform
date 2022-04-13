@@ -328,7 +328,6 @@ def resave(sender, instance, created, **kwargs):
 class Category(TranslatableModel):
     class Meta:
         verbose_name_plural = _('categories')
-        ordering = ['namespace']
         verbose_name = _("category")
 
     created = models.DateTimeField(_("created"), auto_now_add=True)
@@ -339,7 +338,6 @@ class Category(TranslatableModel):
     hide_in_list = models.BooleanField(_("hide in list"), default=False)
     hide_in_legend = models.BooleanField(_("hide in legend"), default=False)
 
-    namespace = models.CharField(max_length=255, default='core/beteiligung')
     icon = models.FileField(_("icon"), upload_to='category-icons', null=True, blank=True)
     color = models.CharField(_("color"), max_length=7, default='#cccccc')
 
@@ -354,6 +352,33 @@ class Category(TranslatableModel):
         name=models.CharField(_("name"), max_length=255),
     )
     # workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
+
+    def __str__(self):
+        if self.group:
+            return f'{self.group.name}/{self.name}'
+        return f'{self.name}'
+
+class State(TranslatableModel):
+    class Meta:
+        verbose_name_plural = _('States')
+        verbose_name = _("State")
+
+    created = models.DateTimeField(_("created"), auto_now_add=True)
+    modified = models.DateTimeField(_("modified"), auto_now=True)
+    deleted = models.BooleanField(_("deleted"), default=False)
+
+    # my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
+    hide_in_list = models.BooleanField(_("hide in list"), default=False)
+    hide_in_legend = models.BooleanField(_("hide in legend"), default=False)
+
+    group = models.ForeignKey(
+        Group, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+
+    translations = TranslatedFields(
+        name=models.CharField(_("name"), max_length=255),
+    )
 
     def __str__(self):
         if self.group:
@@ -421,6 +446,7 @@ class Workspace(TranslatableModel):
     snapshots = SortedManyToManyField(Snapshot)
 
     categories = SortedManyToManyField(Category)
+    states = SortedManyToManyField(State)
     usergroups = SortedManyToManyField(Usergroup)
 
     MODE_CHOICES = [
@@ -501,11 +527,16 @@ class Annotation(models.Model):
     KIND_CHOICES = [
         ('COM', _('Comment')),
         ('PLY', _('Polygon')),
+        ('OBJ', _('Object')),
     ]
     kind = models.CharField(_("kind"), max_length=3, choices=KIND_CHOICES)
     data = models.JSONField(_("data"), default=dict)
     category = models.ForeignKey(
         Category, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+    state = models.ForeignKey(
+        State, default=None, blank=True,
         null=True, on_delete=models.SET_NULL
     )
     usergroup = models.ForeignKey(
@@ -584,14 +615,14 @@ class Attachement(models.Model):
 
 @receiver(post_save, sender=Annotation)
 def send_new_annotation_email(sender, instance, created, **kwargs):
-
-      if created and instance.author_email:
+    if created and instance.author_email:
         recipient = instance.author_email
-        subject = _('Kommentar freischalten')
-        message = _('Besten Dank für Ihren Kommentar!\n')
+        subject = _('Beitrag freischalten')
+        message = _('Besten Dank für Ihren Beitrag!\n')
 
         website = get_website(Site.objects.get_current())
 
+        # todo: check with instance KIND and related workspace permission
         if instance.workspace.annotations_open or instance.workspace.polygon_open:
             idstr = str(instance.id)
 
@@ -604,7 +635,7 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
             message += '--' * 30
         else:
             message += _("Leider ist die Beteiligung nun abgeschlossen.\n")
-            message += _(f"Zur Karte mit allen öffentlichen Kommentaren: {website['base']}/de/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/")
+            message += _(f"Zur Karte mit allen öffentlichen Beiträgen: {website['base']}/de/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/")
             message += '--' * 30
 
         send_mail(
