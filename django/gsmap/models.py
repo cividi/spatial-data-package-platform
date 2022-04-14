@@ -445,9 +445,9 @@ class Workspace(TranslatableModel):
 
     snapshots = SortedManyToManyField(Snapshot)
 
-    categories = SortedManyToManyField(Category)
-    states = SortedManyToManyField(State)
-    usergroups = SortedManyToManyField(Usergroup)
+    categories = SortedManyToManyField(Category, blank=True)
+    states = SortedManyToManyField(State, blank=True)
+    usergroups = SortedManyToManyField(Usergroup, blank=True)
 
     MODE_CHOICES = [
         ("", _("Default")),

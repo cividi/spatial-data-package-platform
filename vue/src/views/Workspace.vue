@@ -133,6 +133,7 @@ export default {
       annotations: {
         items: null,
         categories: null,
+        states: null,
         usergroups: null,
         mode: '',
         findme: false,
@@ -222,27 +223,27 @@ export default {
                   fullname
                 }
               }
-              annotations{
+              annotations {
                 id
                 pk
                 kind
                 rating
                 data
-                category{
+                category {
                   name(languageCode: $lang)
                   icon
                   color
                   commentsEnabled
                 }
-                state{
+                state {
                   name(languageCode: $lang)
                 }
-                attachements{
+                attachements {
                   document
                   myOrder
                 }
               }
-              categories(showAll:true){
+              categories {
                 pk
                 color
                 name(languageCode: $lang)
@@ -250,7 +251,7 @@ export default {
                 hideInLegend
                 icon
               }
-              states(showAll:true){
+              states {
                 pk
                 name(languageCode: $lang)
                 hideInList
@@ -311,6 +312,7 @@ export default {
       this.snapshotsWorkspace = workspace.snapshots;
       this.annotations.items = workspace.annotations;
       this.annotations.categories = workspace.categories;
+      this.annotations.states = workspace.states;
       this.annotations.usergroups = workspace.usergroups;
       this.annotations.mode = workspace.mode;
       this.annotations.findme = workspace.findmeEnabled;

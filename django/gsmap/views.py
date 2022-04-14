@@ -86,6 +86,7 @@ class AnnotationCreateView(StaffBrowsableMixin, generics.CreateAPIView):
     queryset = Annotation.objects.all()
     serializer_class = AnnotationSerializer
     http_method_names = ['post',]
+    # parser_classes = [parsers.MultiPartParser]
 
 class AnnotationRateUpView(StaffBrowsableMixin, generics.UpdateAPIView):
     queryset = Annotation.objects.all()

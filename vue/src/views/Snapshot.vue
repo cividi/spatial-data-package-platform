@@ -196,7 +196,7 @@ export default {
       screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail'),
       errorsettings: {},
       annotations: {
-        items: null, categories: null, states: null, open: false, likes: false
+        items: null, categories: null, annotations: null, states: null, open: false, likes: false
       }
     };
   },

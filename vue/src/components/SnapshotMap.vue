@@ -3,62 +3,85 @@
 {
   "de": {
     "categoryLabel": "Kategorie",
+    "stateLabel": "Status",
+    "emailhintEnd": "schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
+    "savedEnd": "Klicken Sie zur Freischaltung den Link in der Email an.",
     "comment": {
-      "add": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
+      "add": "Klicken Sie auf die Stelle in Karte, an der Sie einen Kommentar hinzufügen möchten.",
       "new": "Neuer Kommentar",
-      "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
-      "saved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+      "emailhint": "Um Ihren Kommentar freizuschalten, @:emailhintEnd",
+      "saved": "Ihr Kommentar wurde gespeichert. @:savedEnd"
     },
     "polygon": {
-      "add": "Klicken Sie auf die Stelle in Karte an der Sie eine Fläche hinzufügen möchten.",
+      "add": "Klicken Sie auf die Stelle in Karte, an der die erste Ecke der hinzuzufügenden Fläche sein soll.",
       "editing": {
         "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
         "unfinished": "Klicken Sie erneut auf den Startpunkt, um die Fläche abzuschliessen",
         "closable": "Klicken Sie hier, um die Fläche abzuschliessen."
       },
       "new": "Neue Fläche",
-      "emailhint": "Um Ihre Fläche freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
-      "saved": "Ihre Fläche wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+      "emailhint": "Um Ihre Fläche freizuschalten, @:emailhintEnd",
+      "saved": "Ihre Fläche wurde gespeichert. @:savedEnd"
+    },
+    "object": {
+      "add": "Klicken Sie auf die Stelle in Karte, an der Sie ein Objekt hinzufügen möchten.",
+      "new": "Neues Objekt",
+      "emailhint": "Um Ihre Objekt freizuschalten, @:emailhintEnd",
+      "saved": "Ihr Objekt wurde gespeichert. @:savedEnd"
     },
     "PAR": {
       "categoryLabel": "@:categoryLabel",
+      "stateLabel": "@:stateLabel",
       "comment": {
-        "add": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
-        "new": "Neuer Kommentar",
-        "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
-        "saved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+        "add": "@:comment.add",
+        "new": "@:comment.new",
+        "emailhint": "@:comment.emailhint",
+        "saved": "@:comment.saved"
       },
       "polygon": {
-        "add": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
+        "add": "@:polygon.add",
         "editing": {
-          "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
-          "unfinished": "Klicken Sie erneut auf den Startpunkt, um den Kommentar abzuschliessen",
-          "closable": "Klicken Sie hier, um den Kommentar abzuschliessen."
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
         },
-        "new": "Neue Fläche",
-        "emailhint": "Um Ihren Fläche freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
-        "saved": "Ihre Fläche wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
       }
     },
 
     "MGT": {
       "categoryLabel": "Status",
+      "stateLabel": "Gruppe",
       "comment": {
-        "add": "Klicken Sie auf die Stelle in Karte an der Sie eine Notiz hinzufügen möchten.",
+        "add": "Klicken Sie auf die Stelle in Karte, an der Sie eine Notiz hinzufügen möchten.",
         "new": "Neue Notiz",
-        "emailhint": "Um Ihren Notiz freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
-        "saved": "Ihre Notiz wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+        "emailhint": "Um Ihre Notiz freizuschalten, @:emailhintEnd",
+        "saved": "Ihre Notiz wurde gespeichert. @:savedEnd"
       },
       "polygon": {
-        "add": "Klicken Sie auf die Stelle in Karte an der Sie eine Fläche hinzufügen möchten.",
+        "add": "@:polygon.add",
         "editing": {
-          "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
-          "unfinished": "Klicken Sie erneut auf den Startpunkt, um die Fläche abzuschliessen",
-          "closable": "Klicken Sie hier, um die Fläche abzuschliessen."
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
         },
-        "new": "Neue Fläche",
-        "emailhint": "Um Ihren Fläche freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
-        "saved": "Ihre Fläche wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
       }
     },
     "title": "Titel",
@@ -236,6 +259,7 @@
                 <v-stepper-items>
                   <v-stepper-content step="1" class="pa-0">
                     <v-select
+                      v-if="categoriesList"
                       :items="categoriesList"
                       item-text="name"
                       item-value="pk"
@@ -251,6 +275,16 @@
                         /><p>{{data.item.name}}</p>
                       </template>
                     </v-select>
+                    <v-select
+                      v-if="statesList"
+                      :items="statesList"
+                      item-text="name"
+                      item-value="pk"
+                      v-model="newAnnotation.state"
+                      :label="c$t('stateLabel')"
+                      :rules="[v => !!v || $t('mandatory')]"
+                      required
+                    ></v-select>
                     <v-text-field
                       v-model="newAnnotation.title"
                       :label="$t('title')"
@@ -295,6 +329,7 @@
                       required
                     />
                     <v-select
+                      v-if="annotations.usergroups"
                       :items="annotations.usergroups"
                       item-text="name"
                       item-value="key"
@@ -417,6 +452,7 @@
 
             <div
               v-if="(annotations.marker.likes && currentComment.kind == 'COM') ||
+                (annotations.object.likes && currentComment.kind == 'OBJ') ||
                 (annotations.polygon.likes && currentComment.kind == 'PLY')"
               class="d-flex align-center justify-end primary--text">
               <p class="rating">
@@ -781,6 +817,10 @@ export default {
       commentLockedIconUrl: require('@/assets/images/icons/comment_locked_36.svg'),
       // eslint-disable-next-line global-require
       locationIconUrl: require('@/assets/images/icons/location.svg'),
+      // eslint-disable-next-line global-require
+      objectIconUrl: require('@/assets/images/icons/object.svg'),
+      // eslint-disable-next-line global-require
+      objectLockedIconUrl: require('@/assets/images/icons/object_locked.svg'),
       setMapMyLocation: false,
       locationWatcher: null,
       myLocationMarker: null,
@@ -863,6 +903,13 @@ export default {
         return this.annotations.categories;
       }
       return this.annotations.categories.filter(a => !a.hideInList);
+    },
+
+    statesList() {
+      if (this.$store.state.isUserLoggedIn) {
+        return this.annotations.states;
+      }
+      return this.annotations.states.filter(a => !a.hideInList);
     },
 
     queries() {
@@ -955,6 +1002,10 @@ export default {
         this.currentCommentIndex = e.target.feature.index;
         content = document.getElementById('currentComment');
         latlng = e.target._latlng; // eslint-disable-line no-underscore-dangle
+      } else if (e.target.feature.kind === 'OBJ') {
+        this.currentCommentIndex = e.target.feature.index;
+        content = document.getElementById('currentComment');
+        latlng = e.target._latlng; // eslint-disable-line no-underscore-dangle
       } else if (e.target.feature.kind === 'PLY') {
         this.currentCommentIndex = e.target.feature.index;
         content = document.getElementById('currentComment');
@@ -1036,30 +1087,31 @@ export default {
       this.description = this.geojson.views[0].spec.description;
       this.legend = this.geojson.views[0].spec.legend;
 
-      const extraItems = this.annotations.categories
-        .filter(c => !c.hideInLegend)
-        .map((c) => {
-          if (c.icon !== '') {
+      if (this.annotations.categories) {
+        const extraItems = this.annotations.categories
+          .filter(c => !c.hideInLegend)
+          .map((c) => {
+            if (c.icon !== '') {
+              return {
+                svg: `/media/${c.icon}`,
+                label: c.name,
+                primary: !c.hideInList
+              };
+            }
             return {
-              svg: `/media/${c.icon}`,
               label: c.name,
-              primary: !c.hideInList
+              primary: !c.hideInList,
+              shape: 'circle',
+              size: 1.0,
+              fillColor: c.color,
+              fillOpacity: 0.4,
+              strokeColor: c.color,
+              strokeOpacity: 0.9,
+              strokeWidth: 2
             };
-          }
-          return {
-            label: c.name,
-            primary: !c.hideInList,
-            shape: 'circle',
-            size: 1.0,
-            fillColor: c.color,
-            fillOpacity: 0.4,
-            strokeColor: c.color,
-            strokeOpacity: 0.9,
-            strokeWidth: 2
-          };
-        });
-      this.legendAnnotations = [...extraItems];
-
+          });
+        this.legendAnnotations = [...extraItems];
+      }
       this.sources = this.geojson.sources;
     },
 
@@ -1166,6 +1218,9 @@ export default {
             annotationsdata.filter(a => a.kind === 'COM'), ''
           ));
           this.layerContainer.addLayer(this.createFeatureLayer(
+            annotationsdata.filter(a => a.kind === 'OBJ'), ''
+          ));
+          this.layerContainer.addLayer(this.createFeatureLayer(
             annotationsdata.filter(a => a.kind === 'PLY'), '', false
           ));
         }
@@ -1186,6 +1241,21 @@ export default {
                   draggable: true
                 });
                 newMarker.on('click', this.newComment);
+                newMarker.addTo(this.map);
+                this.map.setView(event.latlng);
+                window.setTimeout(() => { newMarker.fire('click'); }, 500);
+                this.addingAnnotation = null;
+                break;
+              }
+              case 'OBJ': {
+                const newMarker = L.marker(event.latlng, {
+                  icon: new L.Icon({
+                    iconUrl: this.objectIconUrl,
+                    iconSize: [36, 36]
+                  }),
+                  draggable: true
+                });
+                newMarker.on('click', this.newObject);
                 newMarker.addTo(this.map);
                 this.map.setView(event.latlng);
                 window.setTimeout(() => { newMarker.fire('click'); }, 500);
@@ -1432,6 +1502,16 @@ export default {
       };
     },
 
+    newObject(e) {
+      this.commentstepper = 1;
+      this.newAnnotation = {
+        kind: 'OBJ',
+        title: '',
+        text: '',
+        marker: e.target
+      };
+    },
+
     validateStepOne() {
       const myform = this.$refs.commentform;
       if (myform.inputs[0].validate()) {
@@ -1471,6 +1551,26 @@ export default {
       formData.append('workspace', this.wshash);
       switch (this.newAnnotation.kind) {
         case 'COM': {
+          const latlng = this.newAnnotation.marker.getLatLng();
+          const data = {
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [latlng.lng, latlng.lat]
+            },
+            properties: {
+              fill: true,
+              title: this.newAnnotation.title,
+              description: this.newAnnotation.text
+            }
+          };
+          formData.append('category', this.newAnnotation.category);
+          formData.append('author_email', this.newAnnotation.email);
+          formData.append('usergroup', this.newAnnotation.usergroup);
+          formData.append('data', JSON.stringify(data));
+          break;
+        }
+        case 'OBJ': {
           const latlng = this.newAnnotation.marker.getLatLng();
           const data = {
             type: 'Feature',
@@ -1542,6 +1642,15 @@ export default {
               fillOpacity: 0.2
             });
             labelPath = 'polygon';
+          } else if (this.newAnnotation.kind === 'OBJ') {
+            marker.setIcon(
+              new L.Icon({
+                iconUrl: this.objectLockedIconUrl,
+                iconSize: [36, 36],
+                popupAnchor: [0, -16]
+              })
+            );
+            labelPath = 'object';
           }
           marker.off();
           marker.bindPopup(this.$t('saved'));
