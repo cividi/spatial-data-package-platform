@@ -1045,10 +1045,16 @@ export default {
 
     setupMapbox() {
       try {
-        this.geobounds = [
-          geostring2array(this.geojson.views[0].spec.bounds[0]),
-          geostring2array(this.geojson.views[0].spec.bounds[1])
-        ];
+        if (this.$store.state.mapBounds) {
+          console.log('bounds setup from store'); // eslint-disable-line no-console
+          this.geobounds = this.$store.state.mapBounds;
+        } else {
+          console.log('bounds setup from snapshot'); // eslint-disable-line no-console
+          this.geobounds = [
+            geostring2array(this.geojson.views[0].spec.bounds[0]),
+            geostring2array(this.geojson.views[0].spec.bounds[1])
+          ];
+        }
 
         const lookupResources = {}; // name -> index
         this.geojson.resources.forEach((resource, index) => {
@@ -1153,6 +1159,27 @@ export default {
 
         this.drawnItems = new L.FeatureGroup();
         this.drawnItems.addTo(this.map);
+
+        this.map.on('zoomend', (event) => {
+          this.$store.commit('setMapZoomLevel', event.target.getZoom());
+          console.log(event.target.getZoom()); // eslint-disable-line no-console
+        });
+
+        this.map.on('moveend', (event) => {
+          // console.log(event.target.getBounds()); // eslint-disable-line no-console
+          const bounds = [
+            [
+              event.target.getBounds().getSouthWest().lat,
+              event.target.getBounds().getSouthWest().lng
+            ],
+            [
+              event.target.getBounds().getNorthEast().lat,
+              event.target.getBounds().getNorthEast().lng
+            ]
+          ];
+          this.$store.commit('setMapBounds', bounds);
+          console.log(bounds); // eslint-disable-line no-console
+        });
 
         this.map.on('click', (event) => {
           if (this.addingAnnotation !== null) {

@@ -10,7 +10,9 @@ export default new Vuex.Store({
     bfsname: '',
     snapshotnav: false,
     isUserLoggedIn: false,
-    workspacesInfo: {}
+    workspacesInfo: {},
+    mapZoomLevel: null,
+    mapBounds: null
   },
   mutations: {
     setBfsnumber(state, nr) {
@@ -35,6 +37,14 @@ export default new Vuex.Store({
 
     setIsLoggedOut(state) {
       state.isUserLoggedIn = false;
+    },
+
+    setMapZoomLevel(state, value) {
+      state.mapZoomLevel = value;
+    },
+
+    setMapBounds(state, value) {
+      state.mapBounds = value;
     }
   },
   getters: {
