@@ -1046,10 +1046,10 @@ export default {
     setupMapbox() {
       try {
         if (this.$store.state.mapBounds) {
-          console.log('bounds setup from store'); // eslint-disable-line no-console
+          // setup bounds from store
           this.geobounds = this.$store.state.mapBounds;
         } else {
-          console.log('bounds setup from snapshot'); // eslint-disable-line no-console
+          // setup bounds from snapshot bounds
           this.geobounds = [
             geostring2array(this.geojson.views[0].spec.bounds[0]),
             geostring2array(this.geojson.views[0].spec.bounds[1])
