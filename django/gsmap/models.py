@@ -467,6 +467,9 @@ class Workspace(TranslatableModel):
     polygon_open = models.BooleanField(default=False, help_text="Enable polygon annotation", verbose_name="Polygon annotations enabled")
     polygon_likes_enabled = models.BooleanField(default=False, help_text="Enable like buttons on polygon annotations", verbose_name="Polygon Likes enabled")
 
+    object_open = models.BooleanField(default=False, help_text="Enable Object annotation", verbose_name="Object annotations enabled")
+    object_likes_enabled = models.BooleanField(default=False, help_text="Enable like buttons on Object annotations", verbose_name="Object Likes enabled")
+
     annotations_contact_name = models.CharField(max_length=100, default='', verbose_name="Contact first & lastname")
     annotations_contact_email = models.EmailField(default='', verbose_name='Contact email address')
 

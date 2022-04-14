@@ -587,11 +587,11 @@ span.statusLabel {
 #currentComment {
   width: 200px;
   max-width: calc(90vw - 20px);
-  overflow: scroll;
 }
 #currentComment.withComments {
   width: 380px !important;
   max-height: 40vh;
+  overflow: auto;
 }
 
 #currentComment .maxW {
