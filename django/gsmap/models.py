@@ -450,11 +450,11 @@ class Workspace(TranslatableModel):
     usergroups = SortedManyToManyField(Usergroup)
 
     MODE_CHOICES = [
-        ("OFF", _("Off")),
+        ("", _("Default")),
         ("MGT", _("Portfolio-/Flächenmanagement")),
         ("PAR", _("Beteiligung")),
     ]
-    mode = models.CharField(max_length=3, choices=MODE_CHOICES, default="OFF")
+    mode = models.CharField(max_length=3, choices=MODE_CHOICES, default="", blank=True, null=True, verbose_name="Context")
 
     group = models.ForeignKey(
         Group, default=None, blank=True,

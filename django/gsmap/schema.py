@@ -11,7 +11,7 @@ from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
-from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, Annotation, Category, SpatialDatasette, Usergroup, Attachement
+from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, Annotation, Category, State, SpatialDatasette, Usergroup, Attachement
 from graphene_django.rest_framework.mutation import SerializerMutation
 import graphene_django_optimizer as gql_optimizer
 
@@ -131,6 +131,25 @@ class CategoryNode(DjangoObjectType):
         lang = Q_LANGUAGE.get(language_code).name
         return self.safe_translation_getter("name", language_code=lang)
 
+class StateNode(DjangoObjectType):
+    class Meta:
+        model = State
+        fields = ['name', 'hide_in_list', 'hide_in_legend']
+        filter_fields = {
+            'hide_in_list': ['exact'],
+            'hide_in_legend': ['exact'],
+        }
+        interfaces = [graphene.relay.Node]
+
+    name = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
+    pk = graphene.Int(source='id')
+
+    def resolve_name(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("name", language_code=lang)
+
 class UsergroupNode(DjangoObjectType):
     class Meta:
         model = Usergroup
@@ -163,6 +182,7 @@ class AnnotationNode(gql_optimizer.OptimizedDjangoObjectType):
         interfaces = [graphene.relay.Node]
     
     category = graphene.Field(CategoryNode)
+    state = graphene.Field(StateNode)
     attachements = graphene.List(AttachementNode)
     data = generic.GenericScalar(source='data')
     pk = graphene.Int(source='id')
@@ -186,6 +206,7 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
             'mode', 'findme_enabled',
             'annotations_open', 'annotations_likes_enabled',
             'polygon_open', 'polygon_likes_enabled',
+            'object_open', 'object_likes_enabled',
             'annotations_contact_name', 'annotations_contact_email',
             'spatial_datasettes',
         ]
@@ -207,6 +228,10 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
 
     categories = graphene.List(
         CategoryNode,
+        show_all=graphene.Argument(graphene.Boolean, default_value=False),
+    )
+    states = graphene.List(
+        StateNode,
         show_all=graphene.Argument(graphene.Boolean, default_value=False),
     )
     
@@ -235,6 +260,12 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
         else:
             return gql_optimizer.query(self.categories.filter(Q(hide_in_list=0)),info)
     
+    def resolve_states(self, info, show_all):
+        if show_all:
+            return gql_optimizer.query(self.states.all(),info)
+        else:
+            return gql_optimizer.query(self.states.filter(Q(hide_in_list=0)),info)
+
     def resolve_usergroups(self, info):
         return gql_optimizer.query(self.usergroups.all(), info)
 

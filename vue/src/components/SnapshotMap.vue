@@ -2,30 +2,52 @@
 <i18n>
 {
   "de": {
-    "participation": {
-      "categoryLabel": "Kategorie",
-      "annotation": {
+    "categoryLabel": "Kategorie",
+    "comment": {
+      "add": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
+      "new": "Neuer Kommentar",
+      "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
+      "saved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+    },
+    "polygon": {
+      "add": "Klicken Sie auf die Stelle in Karte an der Sie eine Fläche hinzufügen möchten.",
+      "editing": {
+        "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
+        "unfinished": "Klicken Sie erneut auf den Startpunkt, um die Fläche abzuschliessen",
+        "closable": "Klicken Sie hier, um die Fläche abzuschliessen."
+      },
+      "new": "Neue Fläche",
+      "emailhint": "Um Ihre Fläche freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
+      "saved": "Ihre Fläche wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+    },
+    "PAR": {
+      "categoryLabel": "@:categoryLabel",
+      "comment": {
         "add": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
         "new": "Neuer Kommentar",
         "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
-        "commentSaved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+        "saved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
       },
-       "polygon": {
+      "polygon": {
         "add": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
         "editing": {
           "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
           "unfinished": "Klicken Sie erneut auf den Startpunkt, um den Kommentar abzuschliessen",
           "closable": "Klicken Sie hier, um den Kommentar abzuschliessen."
-        }
+        },
+        "new": "Neue Fläche",
+        "emailhint": "Um Ihren Fläche freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
+        "saved": "Ihre Fläche wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
       }
     },
-    "areamanagement": {
+
+    "MGT": {
       "categoryLabel": "Status",
-      "note": {
+      "comment": {
         "add": "Klicken Sie auf die Stelle in Karte an der Sie eine Notiz hinzufügen möchten.",
         "new": "Neue Notiz",
         "emailhint": "Um Ihren Notiz freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
-        "commentSaved": "Ihre Notiz wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+        "saved": "Ihre Notiz wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
       },
       "polygon": {
         "add": "Klicken Sie auf die Stelle in Karte an der Sie eine Fläche hinzufügen möchten.",
@@ -36,7 +58,7 @@
         },
         "new": "Neue Fläche",
         "emailhint": "Um Ihren Fläche freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
-        "commentSaved": "Ihre Fläche wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+        "saved": "Ihre Fläche wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
       }
     },
     "title": "Titel",
@@ -64,7 +86,7 @@
     <v-main :class="{navopen : snapshotnav}">
       <v-slide-x-reverse-transition>
         <v-btn fab absolute small
-          style="top:1.2em; right:1.3em;"
+          style="top:13px; right:16px;"
           color="primary"
           v-if="!snapshotnav"
           @click="snapshotnav=!snapshotnav;">
@@ -83,28 +105,22 @@
 
       <v-slide-y-transition>
         <p class="addHint elevation-6" v-if="addingAnnotation">
-          <span v-if="annotations.mode == 'PAR'">
-            <span v-if="polygonEditingState.invalid">
-              {{ $t('participation.polygon.editing.invalid') }}</span>
-            <span v-else-if="polygonEditingState.closable">
-              {{ $t('participation.polygon.editing.closable') }}</span>
-            <span v-else-if="polygonEditingState.active">
-              {{ $t('participation.polygon.editing.unfinished') }}</span>
-            <span v-else>
-              {{ $t('participation.annotation.add') }}</span>
+          <span v-if="addingAnnotation == 'COM'">
+             {{ c$t('comment.add') }}
           </span>
-          <span v-else-if="annotations.mode == 'MGT' && addingAnnotation == 'PLY'">
+          <template v-else-if="addingAnnotation == 'PLY'">
             <span v-if="polygonEditingState.invalid">
-              {{ $t('areamanagement.polygon.editing.invalid') }}</span>
+              {{ c$t('polygon.editing.invalid') }}</span>
             <span v-else-if="polygonEditingState.closable">
-              {{ $t('areamanagement.polygon.editing.closable') }}</span>
+              {{ c$t('polygon.editing.closable') }}</span>
             <span v-else-if="polygonEditingState.active">
-              {{ $t('areamanagement.polygon.editing.unfinished') }}</span>
+              {{ c$t('polygon.editing.unfinished') }}</span>
             <span v-else>
-              {{ $t('areamanagement.polygon.add') }}</span>
+              {{ c$t('polygon.add') }}</span>
+          </template>
+          <span v-else-if="addingAnnotation == 'OBJ'">
+            {{ c$t('object.add') }}
           </span>
-          <span v-else-if="annotations.mode == 'MGT' && addingAnnotation == 'COM'">
-            {{ $t('areamanagement.note.add') }}</span>
         </p>
       </v-slide-y-transition>
 
@@ -143,181 +159,198 @@
         />
       </v-card>
 
-      <v-btn
-        v-if="!screenshotMode && annotations.findme"
-        fab absolute small
-        id="myLocation"
-        color="primary"
-        @click="myLocation">
-        <v-icon>mdi-crosshairs-gps</v-icon>
-      </v-btn>
-
-      <div v-if="wshash && !screenshotMode">
+      <div id="buttons" v-if="!screenshotMode">
 
         <v-btn
-          fab absolute small
-          id="addingAnnotationPt"
+          v-if="annotations.findme"
+          fab small
+          id="myLocation"
           color="primary"
-          v-if="annotations.marker.open"
-          @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM';">
-          <v-icon v-if="!addingAnnotation || addingAnnotation != 'COM'">
-            mdi-comment-plus-outline
-          </v-icon>
-          <v-icon v-if="addingAnnotation && addingAnnotation == 'COM'">mdi-close-thick</v-icon>
+          @click="myLocation">
+          <v-icon>mdi-crosshairs-gps</v-icon>
         </v-btn>
 
-        <v-btn
-          fab absolute small
-          id="addingAnnotationPly"
-          color="primary"
-          v-if="annotations.polygon.open"
-          @click="addingAnnotation ? addingAnnotation = null : addingAnnotation = 'PLY';">
-          <v-icon v-if="!addingAnnotation || addingAnnotation != 'PLY'">
-            mdi-shape-polygon-plus
-          </v-icon>
-          <v-icon v-if="addingAnnotation && addingAnnotation == 'PLY'">mdi-close-thick</v-icon>
-        </v-btn>
+        <template v-if="wshash">
 
-        <v-scale-transition origin="center">
-          <div class="commentanimation" v-if="newAnnotation">
-            <v-card
-              id="commentedit"
-              light width="400" class="pa-4 elevation-6"
-            >
-              <h3>
-                <span v-if="annotations.mode == 'PAR'">
-                  {{ $t('participation.annotation.new') }}</span>
-                <span v-else-if="annotations.mode == 'MGT' && newAnnotation.kind == 'PLY'">
-                  {{ $t('areamanagement.polygon.new') }}</span>
-                <span v-else-if="annotations.mode == 'MGT' && newAnnotation.kind == 'COM'">
-                  {{ $t('areamanagement.note.new') }}</span>
-              </h3>
-              <v-form
-                class="pt-4"
-                ref="commentform"
-                lazy-validation
-                @submit.prevent="saveAnnotation"
-              >
-                <v-stepper v-model="commentstepper" class="elevation-0">
-                  <v-stepper-items>
-                    <v-stepper-content step="1" class="pa-0">
-                      <v-select
-                        :items="categoriesList"
-                        item-text="name"
-                        item-value="pk"
-                        v-model="newAnnotation.category"
-                        :label="formLabel('categoryLabel')"
-                        :rules="[v => !!v || $t('mandatory')]"
-                        required
-                      >
-                        <template slot="item" slot-scope="data">
-                          <img
-                            v-if="annotations.mode === 'PAR'"
-                            :src="djangobaseurl + '/media/' + data.item.icon"
-                            height="24px"
-                          /><p>{{data.item.name}}</p>
-                        </template>
-                      </v-select>
-                      <v-text-field
-                        v-model="newAnnotation.title"
-                        :label="$t('title')"
-                        :rules="[v => !!v || $t('mandatory')]"
-                        required
-                      />
-                      <v-textarea
-                        outlined
-                        v-model="newAnnotation.text"
-                        :label="$t('text')"
-                        :rules="[v => !!v || $t('mandatory')]"
-                        required
-                      />
-                      <div class="d-flex justify-space-between">
-                        <v-btn
-                        @click="cancelAnnotation">
-                          {{ $t('cancel') }}
-                        </v-btn>
-                        <v-btn
-                          color="primary"
-                          @click="validateStepOne"
-                        >
-                          {{ $t('next') }}
-                        </v-btn>
-                      </div>
-                    </v-stepper-content>
-                    <v-stepper-content
-                      step="2"
-                      class="pa-0">
-                      <p v-if="annotations.mode == 'PAR'">
-                        {{ $t('participation.annotation.emailhint') }}</p>
-                      <p v-else-if="annotations.mode == 'MGT' && newAnnotation.kind == 'PLY'">
-                        {{ $t('areamanagement.polygon.emailhint') }}</p>
-                      <p v-else-if="annotations.mode == 'MGT' && newAnnotation.kind == 'COM'">
-                        {{ $t('areamanagement.note.emailhint') }}</p>
-                      <v-text-field
-                        v-model="newAnnotation.email"
-                        :label="$t('email')"
-                        :rules="[
-                          v => !!v || $t('mandatory'),
-                          v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/.test(v) || $t('inv')]"
-                        required
-                      />
-                      <v-select
-                        :items="annotations.usergroups"
-                        item-text="name"
-                        item-value="key"
-                        v-model="newAnnotation.usergroup"
-                        label="Personengruppe"
-                        :rules="[v => !!v || $t('mandatory')]"
-                        required
-                      ></v-select>
-                      <p class="small">{{ $t('notpublic')}}</p>
-                      <div class="d-flex justify-space-between">
-                        <v-btn
-                        @click="commentstepper = 1">
-                          {{ $t('prev') }}
-                        </v-btn>
-                        <v-btn
-                          type="submit"
-                          color="primary"
-                        >
-                          {{ $t('save') }}
-                        </v-btn>
-                      </div>
-                    </v-stepper-content>
-                  </v-stepper-items>
-                </v-stepper>
-              </v-form>
-            </v-card>
-          </div>
-        </v-scale-transition>
+          <v-btn
+            fab small
+            id="addingAnnotationPt"
+            color="primary"
+            v-if="annotations.marker.open"
+            @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM';">
+            <v-icon v-if="!addingAnnotation || addingAnnotation != 'COM'">
+              mdi-comment-plus-outline
+            </v-icon>
+            <v-icon v-if="addingAnnotation && addingAnnotation == 'COM'">mdi-close-thick</v-icon>
+          </v-btn>
 
-        <v-dialog
-          v-model="dialog"
-          :hide-overlay="true"
-          width="320"
-        >
-          <v-card>
-            <v-card-title class="smalltitle">
-              {{ dialogcontent.title }}
-            </v-card-title>
+          <v-btn
+            fab small
+            id="addingAnnotationPly"
+            color="primary"
+            v-if="annotations.polygon.open"
+            @click="addingAnnotation ? addingAnnotation = null : addingAnnotation = 'PLY';">
+            <v-icon v-if="!addingAnnotation || addingAnnotation != 'PLY'">
+              mdi-shape-polygon-plus
+            </v-icon>
+            <v-icon v-if="addingAnnotation && addingAnnotation == 'PLY'">mdi-close-thick</v-icon>
+          </v-btn>
 
-            <v-card-text>
-              {{ dialogcontent.text }}
-            </v-card-text>
+          <v-btn
+            fab small
+            id="addingAnnotationObj"
+            color="primary"
+            v-if="annotations.object.open"
+            @click="addingAnnotation ? addingAnnotation = null : addingAnnotation = 'OBJ';">
+            <v-icon v-if="!addingAnnotation || addingAnnotation != 'OBJ'">
+              mdi-home-city-outline
+            </v-icon>
+            <v-icon v-if="addingAnnotation && addingAnnotation == 'OBJ'">mdi-close-thick</v-icon>
+          </v-btn>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="primary"
-                text
-                @click="dialog = false"
-              >
-                OK
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        </template>
+
       </div>
+
+      <v-scale-transition origin="center">
+        <div class="commentanimation" v-if="newAnnotation">
+          <v-card
+            id="commentedit"
+            light width="400" class="pa-4 elevation-6"
+          >
+            <h3>
+              <span v-if="newAnnotation.kind == 'COM'">
+                {{ c$t('comment.new') }}</span>
+              <span v-else-if="newAnnotation.kind == 'PLY'">
+                {{ c$t('polygon.new') }}</span>
+              <span v-else-if="newAnnotation.kind == 'OBJ'">
+                {{ c$t('object.new') }}</span>
+            </h3>
+            <v-form
+              class="pt-4"
+              ref="commentform"
+              lazy-validation
+              @submit.prevent="saveAnnotation"
+            >
+              <v-stepper v-model="commentstepper" class="elevation-0">
+                <v-stepper-items>
+                  <v-stepper-content step="1" class="pa-0">
+                    <v-select
+                      :items="categoriesList"
+                      item-text="name"
+                      item-value="pk"
+                      v-model="newAnnotation.category"
+                      :label="c$t('categoryLabel')"
+                      :rules="[v => !!v || $t('mandatory')]"
+                      required
+                    >
+                      <template slot="item" slot-scope="data">
+                        <img
+                          :src="djangobaseurl + '/media/' + data.item.icon"
+                          height="24px"
+                        /><p>{{data.item.name}}</p>
+                      </template>
+                    </v-select>
+                    <v-text-field
+                      v-model="newAnnotation.title"
+                      :label="$t('title')"
+                      :rules="[v => !!v || $t('mandatory')]"
+                      required
+                    />
+                    <v-textarea
+                      outlined
+                      v-model="newAnnotation.text"
+                      :label="$t('text')"
+                      :rules="[v => !!v || $t('mandatory')]"
+                      required
+                    />
+                    <div class="d-flex justify-space-between">
+                      <v-btn
+                      @click="cancelAnnotation">
+                        {{ $t('cancel') }}
+                      </v-btn>
+                      <v-btn
+                        color="primary"
+                        @click="validateStepOne"
+                      >
+                        {{ $t('next') }}
+                      </v-btn>
+                    </div>
+                  </v-stepper-content>
+                  <v-stepper-content
+                    step="2"
+                    class="pa-0">
+                    <p v-if="newAnnotation.kind == 'COM'">
+                      {{ c$t('comment.emailhint') }}</p>
+                    <p v-else-if="newAnnotation.kind == 'PLY'">
+                      {{ c$t('polygon.emailhint') }}</p>
+                    <p v-else-if="newAnnotation.kind == 'OBJ'">
+                      {{ c$t('object.emailhint') }}</p>
+                    <v-text-field
+                      v-model="newAnnotation.email"
+                      :label="$t('email')"
+                      :rules="[
+                        v => !!v || $t('mandatory'),
+                        v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/.test(v) || $t('inv')]"
+                      required
+                    />
+                    <v-select
+                      :items="annotations.usergroups"
+                      item-text="name"
+                      item-value="key"
+                      v-model="newAnnotation.usergroup"
+                      label="Personengruppe"
+                      :rules="[v => !!v || $t('mandatory')]"
+                      required
+                    ></v-select>
+                    <p class="small">{{ $t('notpublic')}}</p>
+                    <div class="d-flex justify-space-between">
+                      <v-btn
+                      @click="commentstepper = 1">
+                        {{ $t('prev') }}
+                      </v-btn>
+                      <v-btn
+                        type="submit"
+                        color="primary"
+                      >
+                        {{ $t('save') }}
+                      </v-btn>
+                    </div>
+                  </v-stepper-content>
+                </v-stepper-items>
+              </v-stepper>
+            </v-form>
+          </v-card>
+        </div>
+      </v-scale-transition>
+
+      <v-dialog
+        v-model="dialog"
+        :hide-overlay="true"
+        width="320"
+      >
+        <v-card>
+          <v-card-title class="smalltitle">
+            {{ dialogcontent.title }}
+          </v-card-title>
+
+          <v-card-text>
+            {{ dialogcontent.text }}
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              text
+              @click="dialog = false"
+            >
+              OK
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
 
       <div id="polygonstatisticsholder" v-if="statisticPanelOpen">
         <div v-for="(statistic, key) in spatialData" :key="key">
@@ -371,7 +404,7 @@
               ></v-carousel-item>
             </v-carousel>
             <div
-              v-if="annotations.mode == 'MGT' && currentComment.kind == 'PLY'">
+              v-if="currentComment.kind == 'PLY'">
               Status:
               <span
                 class="statusLabel"
@@ -478,23 +511,18 @@ body,
   clip-path: circle(100% at center);
 }
 
-#myLocation,
-#addingAnnotationPt,
-#addingAnnotationPly {
+#buttons {
+  position: absolute;
   top: 5.6em;
-  right: 1.3em;
+  right: 1.6em;
   transition: top 0.3s;
   transition-timing-function: ease-in-out;
 }
-#myLocation {
-  transition-delay: 0.1s;
+#buttons > button {
+  display: block;
+  margin-top: 1em;
 }
-#addingAnnotationPt {
-  top: 10em;
-}
-#addingAnnotationPly {
-  top: 14.4em;
-}
+
 
 span.statusLabel {
   padding: 1px 4px;
@@ -502,18 +530,11 @@ span.statusLabel {
   border-radius: 4px;
 }
 
-.navopen #myLocation {
-  top: 1.2em;
-  transition-delay: 0.3s;
-}
-.navopen #addingAnnotationPt {
-  top: 5.6em;
+.navopen #buttons {
+  top: 0.6em;
   transition-delay: 0.4s;
 }
-.navopen #addingAnnotationPly {
-  top: 10em;
-  transition-delay: 0.4s;
-}
+
 
 .addHint {
   position: absolute;
@@ -923,7 +944,6 @@ export default {
             return poly;
           })
         );
-        console.log(features); // eslint-disable-line no-console
       }
       return features;
     },
@@ -990,7 +1010,7 @@ export default {
         }
       }, 100);
 
-      if (this.spatialDatasettes && e.target.feature.kind === 'PLY') {
+      if (this.spatialDatasettes.length > 0 && e.target.feature.kind === 'PLY') {
         this.statisticPanelOpen = true;
         const coordinates = this.currentComment.data.geometry.coordinates[0].map(i => `${i[0]} ${i[1]}`).join(', ');
         const wkt = `Polygon ((${coordinates}))`;
@@ -1015,31 +1035,31 @@ export default {
       this.title = this.geojson.views[0].spec.title;
       this.description = this.geojson.views[0].spec.description;
       this.legend = this.geojson.views[0].spec.legend;
-      if (this.annotations.mode !== 'OFF') {
-        const extraItems = this.annotations.categories
-          .filter(c => !c.hideInLegend)
-          .map((c) => {
-            if (c.icon !== '') {
-              return {
-                svg: `/media/${c.icon}`,
-                label: c.name,
-                primary: !c.hideInList
-              };
-            }
+
+      const extraItems = this.annotations.categories
+        .filter(c => !c.hideInLegend)
+        .map((c) => {
+          if (c.icon !== '') {
             return {
+              svg: `/media/${c.icon}`,
               label: c.name,
-              primary: !c.hideInList,
-              shape: 'circle',
-              size: 1.0,
-              fillColor: c.color,
-              fillOpacity: 0.4,
-              strokeColor: c.color,
-              strokeOpacity: 0.9,
-              strokeWidth: 2
+              primary: !c.hideInList
             };
-          });
-        this.legendAnnotations = [...extraItems];
-      }
+          }
+          return {
+            label: c.name,
+            primary: !c.hideInList,
+            shape: 'circle',
+            size: 1.0,
+            fillColor: c.color,
+            fillOpacity: 0.4,
+            strokeColor: c.color,
+            strokeOpacity: 0.9,
+            strokeWidth: 2
+          };
+        });
+      this.legendAnnotations = [...extraItems];
+
       this.sources = this.geojson.sources;
     },
 
@@ -1506,7 +1526,7 @@ export default {
         });
         if (save.status === 201) {
           const marker = this.newAnnotation.marker;
-          let labelPath = 'participation.annotation';
+          let labelPath = '';
           if (this.newAnnotation.kind === 'COM') {
             marker.setIcon(
               new L.Icon({
@@ -1515,22 +1535,21 @@ export default {
                 popupAnchor: [0, -16]
               })
             );
-            marker.off();
-            labelPath = this.annotations.mode === 'MGT' ? 'areamanagement.note' : labelPath;
+            labelPath = 'comment';
           } else if (this.newAnnotation.kind === 'PLY') {
             marker.setStyle({
               opacity: 0.6,
               fillOpacity: 0.2
             });
-            marker.off();
-            labelPath = this.annotations.mode === 'MGT' ? 'areamanagement.polygon' : labelPath;
+            labelPath = 'polygon';
           }
-          marker.bindPopup(this.$t('commentSaved'));
+          marker.off();
+          marker.bindPopup(this.$t('saved'));
           this.newAnnotation = null;
 
           this.dialogcontent = {
             title: this.$t('saved'),
-            text: this.$t(`${labelPath}.commentSaved`)
+            text: this.c$t(`${labelPath}.saved`)
           };
           this.dialog = true;
         }
@@ -1677,17 +1696,19 @@ export default {
     },
 
     resetSpatialData() {
-      const facets = { all: {}, neighbourhood: {}, polygon: {} };
-      // eslint-disable-next-line no-return-assign
-      const filled = {};
-      this.queries.forEach((q) => {
-        filled[q] = { ...facets };
-      });
-      this.spatialData = filled;
+      if (this.spatialDatasettes.length > 0) {
+        const facets = { all: {}, neighbourhood: {}, polygon: {} };
+        // eslint-disable-next-line no-return-assign
+        const filled = {};
+        this.queries.forEach((q) => {
+          filled[q] = { ...facets };
+        });
+        this.spatialData = filled;
+      }
     },
 
-    formLabel(label) {
-      return this.annotations.mode === 'PAR' ? this.$t(`participation.${label}`) : this.$t(`areamanagement.${label}`);
+    c$t(path) {
+      return this.annotations.mode ? this.$t(`${this.annotations.mode}.${path}`) : this.$t(path);
     }
   },
 

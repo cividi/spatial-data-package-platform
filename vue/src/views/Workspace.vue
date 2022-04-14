@@ -134,13 +134,17 @@ export default {
         items: null,
         categories: null,
         usergroups: null,
-        mode: 'OFF',
+        mode: '',
         findme: false,
         marker: {
           open: false,
           likes: false
         },
         polygon: {
+          open: false,
+          likes: false
+        },
+        object: {
           open: false,
           likes: false
         }
@@ -203,6 +207,8 @@ export default {
               annotationsLikesEnabled
               polygonOpen
               polygonLikesEnabled
+              objectOpen
+              objectLikesEnabled
               snapshots {
                 id
                 pk
@@ -228,6 +234,9 @@ export default {
                   color
                   commentsEnabled
                 }
+                state{
+                  name(languageCode: $lang)
+                }
                 attachements{
                   document
                   myOrder
@@ -240,6 +249,12 @@ export default {
                 hideInList
                 hideInLegend
                 icon
+              }
+              states(showAll:true){
+                pk
+                name(languageCode: $lang)
+                hideInList
+                hideInLegend
               }
               spatialDatasettes {
                 name
@@ -286,6 +301,7 @@ export default {
           }
         }
       }
+
       const workspace = workspaceInfo.workspace;
       const snapshot = workspaceInfo.snapshot;
       if (!workspace.snapshots.map(s => s.pk).includes(snapshot.pk)) {
@@ -302,6 +318,8 @@ export default {
       this.annotations.marker.likes = workspace.annotationsLikesEnabled;
       this.annotations.polygon.open = workspace.polygonOpen;
       this.annotations.polygon.likes = workspace.polygonLikesEnabled;
+      this.annotations.object.open = workspace.objectOpen;
+      this.annotations.object.likes = workspace.objectLikesEnabled;
       this.spatialDatasettes = workspace.spatialDatasettes;
       this.title = workspace.title;
       this.description = workspace.description;

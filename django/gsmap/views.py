@@ -10,7 +10,7 @@ from django.views.generic import DetailView
 from rest_framework import generics, parsers, renderers
 from rest_framework.response import Response
 
-from gsmap.models import Workspace, Snapshot, Annotation, Category, Attachement
+from gsmap.models import Workspace, Snapshot, Annotation, Category, State, Attachement
 
 from .permissions import IsUser
 from .serializers import SnapshotDataUploadSerializer, AnnotationSerializer, AnnotationRateUpSerializer

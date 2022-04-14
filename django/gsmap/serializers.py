@@ -16,11 +16,12 @@ class AnnotationSerializer(serializers.ModelSerializer):
             'kind',
             'data',
             'category',
+            'state',
             'author_email',
             'usergroup',
             'workspace',
         )
-    
+    # todo: compare annotation KIND to workspace settings
     def validate(self, data):
         if not (data.get("workspace").annotations_open or data.get("workspace").polygon_open):
             raise serializers.ValidationError('Rating annotations is not allowed currently for this workspace.')

@@ -13,7 +13,7 @@ import requests
 from parler.admin import TranslatableAdmin
 from parler.forms import TranslatableModelForm
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
-from gsmap.models import Municipality, Snapshot, Workspace, Category, SpatialDatasette, Usergroup, Attachement, Annotation
+from gsmap.models import Municipality, Snapshot, Workspace, Category, State, SpatialDatasette, Usergroup, Attachement, Annotation
 from django.http import HttpResponse
 import csv
 from django.utils.timezone import localtime
@@ -142,19 +142,19 @@ class WorkspaceAdmin(TranslatableAdmin):
         (_('Annotations'), {
             'fields': (
                 ('mode'),
-                ('findme_enabled', 'annotations_open', 'annotations_likes_enabled', 'polygon_open', 'polygon_likes_enabled'),
+                ('findme_enabled', 'annotations_open', 'annotations_likes_enabled', 'polygon_open', 'polygon_likes_enabled', 'object_open', 'object_likes_enabled'),
                 ('annotations_contact_name', 'annotations_contact_email'),
-                'categories', 'usergroups',
+                'categories', 'states', 'usergroups',
                 ('spatial_datasettes'),
             )
         }),
     )
-    list_display = ('title', 'group', 'get_absolute_link', 'mode', 'annotations_contact_name', 'annotations_contact_email', 'findme_enabled', 'annotations_open', 'annotations_likes_enabled', 'polygon_open', 'polygon_likes_enabled', 'created', 'modified')
+    list_display = ('title', 'group', 'get_absolute_link', 'mode', 'annotations_contact_name', 'annotations_contact_email', 'findme_enabled', 'annotations_open', 'annotations_likes_enabled', 'polygon_open', 'polygon_likes_enabled', 'object_open', 'object_likes_enabled', 'created', 'modified')
     list_filter = ['mode']
     search_fields = ['title', 'description']
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if db_field.name in ['snapshots', 'categories', 'usergroups', 'spatial_datasettes']:
+        if db_field.name in ['snapshots', 'categories', 'states', 'usergroups', 'spatial_datasettes']:
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super().formfield_for_manytomany(db_field, request, **kwargs)
     
@@ -191,6 +191,18 @@ class CategoryGroupFilter(SimpleListFilter):
             return queryset.filter(category__id=self.value())
         return queryset
 
+class StateGroupFilter(SimpleListFilter):
+    title = _('State')
+    parameter_name = 'state'
+
+    def lookups(self, request, model_admin):
+        return [(x.id, f'{x.group.name}/{x.name}') for x in State.objects.all() if request.user.is_superuser or x.group in request.user.groups.all()]
+    
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(state__id=self.value())
+        return queryset
+
 class UsergroupGroupFilter(SimpleListFilter):
     title = _('Usergroup')
     parameter_name = 'usergroup'
@@ -213,7 +225,7 @@ class AnnotationAdmin(admin.ModelAdmin):
             )
         }),
         (_('Main'), {
-            'fields': ('kind', 'data', 'category', 'usergroup', 'rating', 'workspace','deleted', 'public'),
+            'fields': ('kind', 'data', 'category', 'state', 'usergroup', 'rating', 'workspace','deleted', 'public'),
         }),
     )
     list_display = (
@@ -225,6 +237,7 @@ class AnnotationAdmin(admin.ModelAdmin):
         'description',
         'usergroup',
         'category',
+        'state',
         'email_domain',
         'email_hash_short',
         'kind',
@@ -357,6 +370,34 @@ class CategoryAdmin(TranslatableAdmin): # admin.OSMGeoAdmin,
             return qs.select_related('group').filter(group__in=request.user.groups.all())
         return qs
 
+class StateAdmin(TranslatableAdmin):
+
+    readonly_fields = ('id', 'created', 'modified')
+    fieldsets = (
+        (_('Meta'), {
+            'fields': ('deleted', 'hide_in_list', 'hide_in_legend'),
+        }),
+        (_('State'), {
+            'fields': ('group','name'),
+        }),
+    )
+
+    list_display = (
+        'name',
+        'group',
+        'hide_in_list',
+        'hide_in_legend',
+    )
+
+    list_filter = ('hide_in_list', 'hide_in_legend')
+    search_fields = ('id', 'translations__name')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if not request.user.is_superuser:
+            return qs.select_related('group').filter(group__in=request.user.groups.all())
+        return qs
+
 class UsergroupAdmin(TranslatableAdmin): # admin.OSMGeoAdmin, 
     readonly_fields = ('created', 'modified')
     fieldsets = (
@@ -411,6 +452,7 @@ admin.site.register(Municipality, MunicipalityAdmin)
 admin.site.register(Snapshot, SnapshotAdmin)
 admin.site.register(Workspace, WorkspaceAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(State, StateAdmin)
 admin.site.register(Usergroup, UsergroupAdmin)
 admin.site.register(SpatialDatasette, SpatialDatasetteAdmin)
 admin.site.register(Annotation, AnnotationAdmin)
