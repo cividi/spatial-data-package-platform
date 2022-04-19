@@ -21,13 +21,16 @@ class AnnotationSerializer(serializers.ModelSerializer):
             'usergroup',
             'workspace',
         )
-    # todo: compare annotation KIND to workspace settings
     def validate(self, data):
-        if not (data.get("workspace").annotations_open or data.get("workspace").polygon_open):
-            raise serializers.ValidationError('Rating annotations is not allowed currently for this workspace.')
+        if data.get("kind") == 'COM' and not data.get("workspace").annotations_open:
+            raise serializers.ValidationError('Adding Comments is currently not allowed for this workspace.')
+        if data.get("kind") == 'PLY' and not data.get("workspace").polygon_open:
+            raise serializers.ValidationError('Adding Polygons is currently not allowed for this workspace.')
+        if data.get("kind") == 'OBJ' and not data.get("workspace").object_open:
+            raise serializers.ValidationError('Adding Objects is currently not allowed for this workspace.')
         if not data.get("author_email"):
             raise serializers.ValidationError('Adding annotations to this workspace requires an email.')
-        if not data.get("usergroup"):
+        if data.get("workspace").usergroups.all() and not data.get("usergroup"):
             raise serializers.ValidationError('Adding annotations to this workspace requires a usergroup.')
         
         return data

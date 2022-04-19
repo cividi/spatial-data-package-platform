@@ -2,17 +2,24 @@
 <i18n>
 {
   "de": {
+    "title": "Titel",
+    "subtitle": "Untertitel",
+    "text":"Text",
     "categoryLabel": "Kategorie",
     "stateLabel": "Status",
     "emailhintEnd": "schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
     "savedEnd": "Klicken Sie zur Freischaltung den Link in der Email an.",
     "comment": {
+      "title": "@:title",
+      "text":"@:text",
       "add": "Klicken Sie auf die Stelle in Karte, an der Sie einen Kommentar hinzufügen möchten.",
       "new": "Neuer Kommentar",
       "emailhint": "Um Ihren Kommentar freizuschalten, @:emailhintEnd",
       "saved": "Ihr Kommentar wurde gespeichert. @:savedEnd"
     },
     "polygon": {
+      "title": "@:title",
+      "text":"Beschrieb",
       "add": "Klicken Sie auf die Stelle in Karte, an der die erste Ecke der hinzuzufügenden Fläche sein soll.",
       "editing": {
         "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
@@ -24,6 +31,11 @@
       "saved": "Ihre Fläche wurde gespeichert. @:savedEnd"
     },
     "object": {
+      "title": "Strasse / Nr.",
+      "subtitle": "PLZ Ort",
+      "text":"Architektur",
+      "constructionYear": "Baujahr",
+      "demolitionYear": "Abrissjahr",
       "add": "Klicken Sie auf die Stelle in Karte, an der Sie ein Objekt hinzufügen möchten.",
       "new": "Neues Objekt",
       "emailhint": "Um Ihre Objekt freizuschalten, @:emailhintEnd",
@@ -33,12 +45,16 @@
       "categoryLabel": "@:categoryLabel",
       "stateLabel": "@:stateLabel",
       "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
         "add": "@:comment.add",
         "new": "@:comment.new",
         "emailhint": "@:comment.emailhint",
         "saved": "@:comment.saved"
       },
       "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
         "add": "@:polygon.add",
         "editing": {
           "invalid": "@:polygon.editing.invalid",
@@ -50,6 +66,11 @@
         "saved": "@:polygon.saved"
       },
       "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "text":"@:object.text",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
         "add": "@:object.add",
         "new": "@:object.new",
         "emailhint": "@:object.emailhint",
@@ -61,12 +82,16 @@
       "categoryLabel": "Status",
       "stateLabel": "Gruppe",
       "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
         "add": "Klicken Sie auf die Stelle in Karte, an der Sie eine Notiz hinzufügen möchten.",
         "new": "Neue Notiz",
         "emailhint": "Um Ihre Notiz freizuschalten, @:emailhintEnd",
         "saved": "Ihre Notiz wurde gespeichert. @:savedEnd"
       },
       "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
         "add": "@:polygon.add",
         "editing": {
           "invalid": "@:polygon.editing.invalid",
@@ -78,14 +103,17 @@
         "saved": "@:polygon.saved"
       },
       "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "text":"@:object.text",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
         "add": "@:object.add",
         "new": "@:object.new",
         "emailhint": "@:object.emailhint",
         "saved": "@:object.saved"
       }
     },
-    "title": "Titel",
-    "text":"Text",
     "cancel": "abbrechen",
     "next": "weiter",
     "prev": "zurück",
@@ -242,12 +270,7 @@
             light width="400" class="pa-4 elevation-6"
           >
             <h3>
-              <span v-if="newAnnotation.kind == 'COM'">
-                {{ c$t('comment.new') }}</span>
-              <span v-else-if="newAnnotation.kind == 'PLY'">
-                {{ c$t('polygon.new') }}</span>
-              <span v-else-if="newAnnotation.kind == 'OBJ'">
-                {{ c$t('object.new') }}</span>
+              <span>{{ c$t(annotationKindKey[newAnnotation.kind]+'.new') }}</span>
             </h3>
             <v-form
               class="pt-4"
@@ -276,7 +299,7 @@
                       </template>
                     </v-select>
                     <v-select
-                      v-if="statesList"
+                      v-if="statesList.length > 0"
                       :items="statesList"
                       item-text="name"
                       item-value="pk"
@@ -287,14 +310,31 @@
                     ></v-select>
                     <v-text-field
                       v-model="newAnnotation.title"
-                      :label="$t('title')"
+                      :label="c$t(annotationKindKey[newAnnotation.kind] + '.title')"
                       :rules="[v => !!v || $t('mandatory')]"
                       required
+                    />
+                    <v-text-field
+                      v-if="newAnnotation.kind === 'OBJ'"
+                      v-model="newAnnotation.subtitle"
+                      :label="c$t(annotationKindKey[newAnnotation.kind] + '.subtitle')"
+                      :rules="[v => !!v || $t('mandatory')]"
+                      required
+                    />
+                    <v-text-field
+                      v-if="newAnnotation.kind === 'OBJ'"
+                      v-model="newAnnotation.constructionYear"
+                      :label="c$t(annotationKindKey[newAnnotation.kind] + '.constructionYear')"
+                    />
+                    <v-text-field
+                      v-if="newAnnotation.kind === 'OBJ'"
+                      v-model="newAnnotation.demolitionYear"
+                      :label="c$t(annotationKindKey[newAnnotation.kind] + '.demolitionYear')"
                     />
                     <v-textarea
                       outlined
                       v-model="newAnnotation.text"
-                      :label="$t('text')"
+                      :label="c$t(annotationKindKey[newAnnotation.kind] + '.text')"
                       :rules="[v => !!v || $t('mandatory')]"
                       required
                     />
@@ -314,12 +354,7 @@
                   <v-stepper-content
                     step="2"
                     class="pa-0">
-                    <p v-if="newAnnotation.kind == 'COM'">
-                      {{ c$t('comment.emailhint') }}</p>
-                    <p v-else-if="newAnnotation.kind == 'PLY'">
-                      {{ c$t('polygon.emailhint') }}</p>
-                    <p v-else-if="newAnnotation.kind == 'OBJ'">
-                      {{ c$t('object.emailhint') }}</p>
+                    <p>{{ c$t(annotationKindKey[newAnnotation.kind] +'.emailhint') }}</p>
                     <v-text-field
                       v-model="newAnnotation.email"
                       :label="$t('email')"
@@ -329,7 +364,7 @@
                       required
                     />
                     <v-select
-                      v-if="annotations.usergroups"
+                      v-if="annotations.usergroups.length > 0"
                       :items="annotations.usergroups"
                       item-text="name"
                       item-value="key"
@@ -559,7 +594,6 @@ body,
   margin-top: 1em;
 }
 
-
 span.statusLabel {
   padding: 1px 4px;
   border: 1px solid #000;
@@ -570,7 +604,6 @@ span.statusLabel {
   top: 0.6em;
   transition-delay: 0.4s;
 }
-
 
 .addHint {
   position: absolute;
@@ -825,7 +858,12 @@ export default {
       locationWatcher: null,
       myLocationMarker: null,
       escListener: null,
-      commentoUrl: process.env.VUE_APP_COMMENTO_URL || null
+      commentoUrl: process.env.VUE_APP_COMMENTO_URL || null,
+      annotationKindKey: {
+        COM: 'comment',
+        PLY: 'polygon',
+        OBJ: 'object'
+      }
     };
   },
 
@@ -1507,6 +1545,9 @@ export default {
       this.newAnnotation = {
         kind: 'OBJ',
         title: '',
+        subtitle: '',
+        constructionYear: 0,
+        demolitionYear: 0,
         text: '',
         marker: e.target
       };
@@ -1546,13 +1587,15 @@ export default {
       }
       const csrftoken = this.$cookies.get('csrftoken', '');
       const formData = new FormData();
+      let data = {};
 
       formData.append('kind', this.newAnnotation.kind);
       formData.append('workspace', this.wshash);
+
       switch (this.newAnnotation.kind) {
         case 'COM': {
           const latlng = this.newAnnotation.marker.getLatLng();
-          const data = {
+          data = {
             type: 'Feature',
             geometry: {
               type: 'Point',
@@ -1564,15 +1607,12 @@ export default {
               description: this.newAnnotation.text
             }
           };
-          formData.append('category', this.newAnnotation.category);
-          formData.append('author_email', this.newAnnotation.email);
-          formData.append('usergroup', this.newAnnotation.usergroup);
-          formData.append('data', JSON.stringify(data));
+
           break;
         }
         case 'OBJ': {
           const latlng = this.newAnnotation.marker.getLatLng();
-          const data = {
+          data = {
             type: 'Feature',
             geometry: {
               type: 'Point',
@@ -1581,17 +1621,16 @@ export default {
             properties: {
               fill: true,
               title: this.newAnnotation.title,
+              subtitle: this.newAnnotation.subtitle,
+              constructionYear: this.newAnnotation.constructionYear,
+              demolitionYear: this.newAnnotation.demolitionYear,
               description: this.newAnnotation.text
             }
           };
-          formData.append('category', this.newAnnotation.category);
-          formData.append('author_email', this.newAnnotation.email);
-          formData.append('usergroup', this.newAnnotation.usergroup);
-          formData.append('data', JSON.stringify(data));
           break;
         }
         case 'PLY': {
-          const data = {
+          data = {
             type: 'Feature',
             geometry: {
               type: 'Polygon',
@@ -1606,10 +1645,6 @@ export default {
               description: this.newAnnotation.text
             }
           };
-          formData.append('category', this.newAnnotation.category);
-          formData.append('author_email', this.newAnnotation.email);
-          formData.append('usergroup', this.newAnnotation.usergroup);
-          formData.append('data', JSON.stringify(data));
           break;
         }
         default: {
@@ -1617,6 +1652,18 @@ export default {
           return false;
         }
       }
+
+      formData.append('category', this.newAnnotation.category);
+      if (this.statesList.length > 0) {
+        formData.append('state', this.newAnnotation.state);
+      }
+      formData.append('author_email', this.newAnnotation.email);
+
+      if (this.annotations.usergroups.length > 0) {
+        formData.append('usergroup', this.newAnnotation.usergroup);
+      }
+      formData.append('data', JSON.stringify(data));
+
       try {
         const save = await this.$restApi.post('annotations/', formData, {
           headers: {
