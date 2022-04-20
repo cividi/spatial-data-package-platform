@@ -52,7 +52,13 @@
     "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben",
     "failed": "Speichern fehlgeschlagen",
     "failedText": "Bitte prüfen Sie Ihre Eingaben oder versuchen Sie es später nochmals.",
-    "saved": "Speichern erfolgreich"
+    "saved": "Speichern erfolgreich",
+    "tooltip": {
+      "resetZoom": "Ansicht zurücksetzen",
+      "findMe": "Meinen Standort anzeigen",
+      "addAnnotationMarker": "Kommentar hinzufügen",
+      "addAnnotationPolygon": "Fläche hinzufügen"
+    }
   },
   "fr": {
   }
@@ -143,40 +149,89 @@
         />
       </v-card>
 
-      <v-btn
-        v-if="!screenshotMode && annotations.findme"
-        fab absolute small
-        id="myLocation"
-        color="primary"
-        @click="myLocation">
-        <v-icon>mdi-crosshairs-gps</v-icon>
-      </v-btn>
-
       <div v-if="wshash && !screenshotMode">
 
-        <v-btn
-          fab absolute small
-          id="addingAnnotationPt"
-          color="primary"
-          v-if="annotations.marker.open"
-          @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM';">
-          <v-icon v-if="!addingAnnotation || addingAnnotation != 'COM'">
-            mdi-comment-plus-outline
-          </v-icon>
-          <v-icon v-if="addingAnnotation && addingAnnotation == 'COM'">mdi-close-thick</v-icon>
-        </v-btn>
+        <div id="btnContainer" absolute>
+          <v-tooltip
+            v-if="!screenshotMode && annotations.findme"
+            left>
+            <template v-slot:activator="{ on: tooltip }">
+              <v-btn
+                fab small
+                id="myLocation"
+                color="primary"
+                v-bind="attrs"
+                v-on="{ ...tooltip }"
+                @click="myLocation">
+                <v-icon>mdi-crosshairs-gps</v-icon>
+              </v-btn>
+              </template>
+            <span>{{ $t('tooltip.findMe') }}</span>
+          </v-tooltip>
 
-        <v-btn
-          fab absolute small
-          id="addingAnnotationPly"
-          color="primary"
-          v-if="annotations.polygon.open"
-          @click="addingAnnotation ? addingAnnotation = null : addingAnnotation = 'PLY';">
-          <v-icon v-if="!addingAnnotation || addingAnnotation != 'PLY'">
-            mdi-shape-polygon-plus
-          </v-icon>
-          <v-icon v-if="addingAnnotation && addingAnnotation == 'PLY'">mdi-close-thick</v-icon>
-        </v-btn>
+          <v-tooltip
+            v-if="annotations.marker.open"
+            left>
+            <template v-slot:activator="{ on: tooltip }">
+              <v-btn
+                fab small
+                id="addingAnnotationPt"
+                color="primary"
+                v-bind="attrs"
+                v-on="{ ...tooltip }"
+                @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM';">
+                <v-icon v-if="!addingAnnotation || addingAnnotation != 'COM'">
+                  mdi-comment-plus-outline
+                </v-icon>
+                <v-icon v-if="addingAnnotation && addingAnnotation == 'COM'">
+                  mdi-close-thick
+                </v-icon>
+              </v-btn>
+              </template>
+            <span>{{ $t('tooltip.addAnnotationMarker') }}</span>
+          </v-tooltip>
+
+          <v-tooltip
+            v-if="annotations.polygon.open"
+            left>
+            <template v-slot:activator="{ on: tooltip }">
+              <v-btn
+                fab small
+                id="addingAnnotationPly"
+                color="primary"
+                v-bind="attrs"
+                v-on="{ ...tooltip }"
+                @click="addingAnnotation ? addingAnnotation = null : addingAnnotation = 'PLY';">
+                <v-icon v-if="!addingAnnotation || addingAnnotation != 'PLY'">
+                  mdi-shape-polygon-plus
+                </v-icon>
+                <v-icon v-if="addingAnnotation && addingAnnotation == 'PLY'">
+                  mdi-close-thick
+                </v-icon>
+              </v-btn>
+              </template>
+            <span>{{ $t('tooltip.addAnnotationPolygon') }}</span>
+          </v-tooltip>
+
+          <v-tooltip
+            v-if="zoomStateModified"
+            left>
+            <template v-slot:activator="{ on: tooltip }">
+              <v-btn
+                fab small
+                id="resetZoom"
+                color="primary"
+                v-bind="attrs"
+                v-on="{ ...tooltip }"
+                @click="resetZoom">
+                <v-icon>
+                  mdi-backup-restore
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('tooltip.resetZoom') }}</span>
+          </v-tooltip>
+        </div>
 
         <v-scale-transition origin="center">
           <div class="commentanimation" v-if="newAnnotation">
@@ -478,22 +533,24 @@ body,
   clip-path: circle(100% at center);
 }
 
-#myLocation,
-#addingAnnotationPt,
-#addingAnnotationPly {
+#btnContainer {
   top: 5.6em;
-  right: 1.3em;
+  right: 1.6em;
+  width: 40px;
+  position: absolute;
   transition: top 0.3s;
   transition-timing-function: ease-in-out;
-}
-#myLocation {
   transition-delay: 0.1s;
 }
-#addingAnnotationPt {
-  top: 10em;
-}
-#addingAnnotationPly {
-  top: 14.4em;
+
+#myLocation,
+#addingAnnotationPt,
+#addingAnnotationPly,
+#resetZoom {
+  transition: top 0.3s;
+  transition-timing-function: ease-in-out;
+  margin-top: 0.5em;
+  transition-delay: 0.1s;
 }
 
 span.statusLabel {
@@ -502,17 +559,9 @@ span.statusLabel {
   border-radius: 4px;
 }
 
-.navopen #myLocation {
+.navopen #btnContainer {
   top: 1.2em;
   transition-delay: 0.3s;
-}
-.navopen #addingAnnotationPt {
-  top: 5.6em;
-  transition-delay: 0.4s;
-}
-.navopen #addingAnnotationPly {
-  top: 10em;
-  transition-delay: 0.4s;
 }
 
 .addHint {
@@ -764,7 +813,9 @@ export default {
       locationWatcher: null,
       myLocationMarker: null,
       escListener: null,
-      commentoUrl: process.env.VUE_APP_COMMENTO_URL || null
+      commentoUrl: process.env.VUE_APP_COMMENTO_URL || null,
+      zoomIsUserModified: false,
+      zoomStateModified: false
     };
   },
 
@@ -923,7 +974,6 @@ export default {
             return poly;
           })
         );
-        console.log(features); // eslint-disable-line no-console
       }
       return features;
     },
@@ -969,9 +1019,6 @@ export default {
       window.setTimeout(() => {
         myPopup.openOn(this.map);
         if (this.commentoUrl !== null && this.currentComment.category.commentsEnabled) {
-          console.log(window); // eslint-disable-line no-console
-          console.log(window.commento); // eslint-disable-line no-console
-          console.log(window.commento.main); // eslint-disable-line no-console
           if (typeof window !== 'undefined' && window.commento.main === undefined) {
             const commentoScript = document.createElement('script');
             commentoScript.setAttribute('src', `${this.commentoUrl}/js/commento.js`);
@@ -1045,6 +1092,7 @@ export default {
 
     setupMapbox() {
       try {
+        // setup bounds from snapshot bounds
         this.geobounds = [
           geostring2array(this.geojson.views[0].spec.bounds[0]),
           geostring2array(this.geojson.views[0].spec.bounds[1])
@@ -1070,8 +1118,18 @@ export default {
       try {
         L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN
           || process.env.VUE_APP_MAPBOX_ACCESSTOKEN_DEV;
-        const boxSize = 800;
-        const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
+        let bounds = null;
+        if (this.$store.state.mapCenter !== null) {
+          // setup bounds from store
+          bounds = {
+            center: this.$store.state.mapCenter,
+            zoom: this.$store.state.mapZoomLevel
+          };
+          this.zoomStateModified = true;
+        } else {
+          const boxSize = 800;
+          bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
+        }
         this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
         this.layerContainer = new L.LayerGroup();
         // default test layer // this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/light-v10'));
@@ -1153,6 +1211,26 @@ export default {
 
         this.drawnItems = new L.FeatureGroup();
         this.drawnItems.addTo(this.map);
+
+        this.map.on('movestart', () => {
+          this.zoomIsUserModified = true;
+        });
+
+        this.map.on('zoomend', (event) => {
+          if (this.zoomIsUserModified) {
+            this.$store.commit('setMapZoomLevel', event.target.getZoom());
+            this.$store.commit('setMapCenter', Object.values(event.target.getCenter()));
+            this.zoomStateModified = true;
+          }
+        });
+
+        this.map.on('moveend', (event) => {
+          if (this.zoomIsUserModified) {
+            this.$store.commit('setMapCenter', Object.values(event.target.getCenter()));
+            this.$store.commit('setMapZoomLevel', event.target.getZoom());
+            this.zoomStateModified = true;
+          }
+        });
 
         this.map.on('click', (event) => {
           if (this.addingAnnotation !== null) {
@@ -1279,6 +1357,27 @@ export default {
       }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
+    },
+
+    resetZoom() {
+      this.geobounds = [
+        geostring2array(this.geojson.views[0].spec.bounds[0]),
+        geostring2array(this.geojson.views[0].spec.bounds[1])
+      ];
+      const boxSize = 800;
+      const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
+      this.map.flyTo(
+        bounds.center,
+        bounds.zoom,
+        {
+          noMoveStart: true,
+          duration: 0.1
+        }
+      );
+      this.zoomIsUserModified = false;
+      this.$store.commit('setMapZoomLevel', null);
+      this.$store.commit('setMapCenter', null);
+      this.zoomStateModified = false;
     },
 
     geodesicArea(latLngs) {
