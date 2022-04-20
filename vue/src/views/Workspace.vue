@@ -11,8 +11,8 @@
 
 <template>
   <div id="snapshotview">
+    <!-- v-if="$store.state.notIframe" -->
     <v-navigation-drawer
-      v-if="$store.state.notIframe"
       id="snapshotnav"
       clipped="clipped"
       app
