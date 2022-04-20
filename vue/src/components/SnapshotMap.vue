@@ -273,6 +273,9 @@
                           /><p>{{data.item.name}}</p>
                         </template>
                       </v-select>
+                      <div v-if="newAnnotationCategory && newAnnotationCategory.helpText !== ''">
+                        <p class="helpText">{{ newAnnotationCategory.helpText }}</p>
+                      </div>
                       <v-text-field
                         v-model="newAnnotation.title"
                         :label="$t('title')"
@@ -657,6 +660,11 @@ p.rating {
   padding-right: 1em;
   user-select: none;
 }
+p.helpText {
+  overflow: scroll;
+  max-height: 120px;
+}
+
 #addHeart {
   position: absolute;
   right: 1.2em;
@@ -916,6 +924,15 @@ export default {
 
     isRated() {
       return this.$store.getters.IsRated(this.currentComment.pk);
+    },
+
+    newAnnotationCategory() {
+      if (this.newAnnotation.category) {
+        return this.annotations.categories.filter(
+          item => item.pk === this.newAnnotation.category
+        )[0];
+      }
+      return false;
     }
   },
 
