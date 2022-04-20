@@ -12,7 +12,8 @@ export default new Vuex.Store({
     isUserLoggedIn: false,
     workspacesInfo: {},
     mapCenter: null,
-    mapZoomLevel: null
+    mapZoomLevel: null,
+    rated: []
   },
   mutations: {
     setBfsnumber(state, nr) {
@@ -45,6 +46,10 @@ export default new Vuex.Store({
 
     setMapCenter(state, value) {
       state.mapCenter = value;
+    },
+
+    addRated(state, value) {
+      state.rated = [...state.rated, value];
     }
   },
   getters: {
@@ -53,7 +58,9 @@ export default new Vuex.Store({
         return state.workspacesInfo[hash];
       }
       return false;
-    }
+    },
+
+    IsRated: state => commentPk => state.rated.includes(commentPk)
   },
   actions: {
   },
