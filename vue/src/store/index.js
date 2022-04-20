@@ -11,8 +11,8 @@ export default new Vuex.Store({
     snapshotnav: false,
     isUserLoggedIn: false,
     workspacesInfo: {},
-    mapZoomLevel: null,
-    mapBounds: null
+    mapCenter: null,
+    mapZoomLevel: null
   },
   mutations: {
     setBfsnumber(state, nr) {
@@ -43,8 +43,8 @@ export default new Vuex.Store({
       state.mapZoomLevel = value;
     },
 
-    setMapBounds(state, value) {
-      state.mapBounds = value;
+    setMapCenter(state, value) {
+      state.mapCenter = value;
     }
   },
   getters: {
