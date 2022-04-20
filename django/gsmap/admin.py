@@ -335,7 +335,7 @@ class CategoryAdmin(TranslatableAdmin): # admin.OSMGeoAdmin,
             'fields': ('deleted', 'hide_in_list', 'hide_in_legend'),
         }),
         (_('Category'), {
-            'fields': ('group', 'name', 'icon', 'color', 'comments_enabled'),
+            'fields': ('group', 'name', 'help_text', 'icon', 'color', 'comments_enabled'),
         }),
     )
 

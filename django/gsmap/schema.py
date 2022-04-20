@@ -115,7 +115,7 @@ class MunicipalityNode(DjangoObjectType):
 class CategoryNode(DjangoObjectType):
     class Meta:
         model = Category
-        fields = ['name', 'icon', 'color', 'hide_in_list', 'hide_in_legend', 'comments_enabled']
+        fields = ['name', 'help_text', 'icon', 'color', 'hide_in_list', 'hide_in_legend', 'comments_enabled']
         filter_fields = {
             'hide_in_list': ['exact'],
             'hide_in_legend': ['exact'],
@@ -125,11 +125,18 @@ class CategoryNode(DjangoObjectType):
     name = graphene.String(
         language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
     )
+    help_text = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
     pk = graphene.Int(source='id')
 
     def resolve_name(self, info, language_code=None):
         lang = Q_LANGUAGE.get(language_code).name
         return self.safe_translation_getter("name", language_code=lang)
+    
+    def resolve_help_text(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("help_text", language_code=lang)
 
 class UsergroupNode(DjangoObjectType):
     class Meta:

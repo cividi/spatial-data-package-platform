@@ -237,6 +237,7 @@ export default {
                 pk
                 color
                 name(languageCode: $lang)
+                helpText(languageCode: $lang)
                 hideInList
                 hideInLegend
                 icon

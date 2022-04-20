@@ -352,6 +352,7 @@ class Category(TranslatableModel):
 
     translations = TranslatedFields(
         name=models.CharField(_("name"), max_length=255),
+        help_text=models.TextField(_("help_text"), default='', blank=True),
     )
     # workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
 
