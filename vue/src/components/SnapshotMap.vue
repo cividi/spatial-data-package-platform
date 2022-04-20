@@ -449,7 +449,7 @@
               </p>
               <v-btn
                 fab x-small color="white"
-                :disabled="ratingpause"
+                :disabled="isRated"
                 class="primary--text"
                 ref="rateupBtn"
                 @click="rateUp(currentComment.pk)"
@@ -791,6 +791,7 @@ export default {
       commentstepper: 1,
       currentCommentIndex: null,
       ratingpause: false,
+      rated: [],
       dialog: false,
       dialogcontent: {},
       title: '',
@@ -911,6 +912,10 @@ export default {
 
     token() {
       return `${process.env.VUE_APP_SPATIALDATASETTE_TOKEN}` || null;
+    },
+
+    isRated() {
+      return this.$store.getters.IsRated(this.currentComment.pk);
     }
   },
 
@@ -1651,27 +1656,31 @@ export default {
 
     async rateUp(annotationPk) {
       this.ratingpause = true;
+      if (!this.$store.getters.IsRated(annotationPk)) {
+        console.log(`${annotationPk} ${this.rated} ${annotationPk in this.rated}`); // eslint-disable-line no-console
+        this.$store.commit('addRated', annotationPk);
 
-      if (this.annotations.polygon.likes || this.annotations.marker.likes) {
-        const csrftoken = this.$cookies.get('csrftoken', '');
-        const formData = new FormData();
+        if (this.annotations.polygon.likes || this.annotations.marker.likes) {
+          const csrftoken = this.$cookies.get('csrftoken', '');
+          const formData = new FormData();
 
-        const save = await this.$restApi.patch(`rateupannotation/${annotationPk}/`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'X-CSRFToken': csrftoken
+          const save = await this.$restApi.patch(`rateupannotation/${annotationPk}/`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'X-CSRFToken': csrftoken
+            }
+          });
+          if (save.status === 200) {
+            window.setTimeout(() => {
+              this.currentComment.rating = parseInt(save.data.rating, 10);
+            }, 1400);
+          } else {
+            console.log('Speichern fehlgeschlagen'); // eslint-disable-line no-console
           }
-        });
-        if (save.status === 200) {
-          window.setTimeout(() => {
-            this.currentComment.rating = parseInt(save.data.rating, 10);
-          }, 1400);
-        } else {
-          console.log('Speichern fehlgeschlagen'); // eslint-disable-line no-console
-        }
 
-        this.$refs.rateupBtn.$el.blur();
-        window.setTimeout(() => { this.ratingpause = false; }, 1800);
+          this.$refs.rateupBtn.$el.blur();
+          window.setTimeout(() => { this.ratingpause = false; }, 1800);
+        }
       }
     },
 
