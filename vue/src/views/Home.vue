@@ -29,10 +29,10 @@
       <div v-if="searchEnabled" class="gmdscn">
           <img :alt="$t('img.1.alt')" class="" width="100%"
             src="@/assets/images/gmdscn-ch-map.svg"/>
-          <search :autofocus=true />
+          <search :autofocus="true" />
       </div>
       <v-row justify="center" >
-        <v-col class="introtxt text-center pt-12" v-html=homepageSnippet>
+        <v-col class="introtxt text-center pt-12" v-html="homepageSnippet">
         </v-col>
       </v-row>
   </v-container>

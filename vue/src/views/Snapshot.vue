@@ -130,7 +130,7 @@
           <user-actions noLogin="1" />
         </div>
         <v-spacer/>
-        <!-- <language-switch/> -->
+        <language-switch />
       </v-toolbar>
     </v-navigation-drawer>
 

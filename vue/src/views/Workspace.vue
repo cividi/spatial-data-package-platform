@@ -18,12 +18,9 @@
       app
       width="320"
       v-model="snapshotnav">
-      <!-- <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block"> -->
-      <a id="logo" class="px-4 py-4 d-block"
-        href="https://campusbochum.de">
+      <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block">
         <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
-      </a>
-      <!-- </router-link> -->
+      </router-link>
 
       <v-divider />
 
@@ -58,17 +55,27 @@
         <div class="useractions">
           <user-actions noLogin="1" />
         </div>
-        <v-spacer/>
-        <!-- <language-switch/> -->
+        <v-spacer />
+        <language-switch />
       </v-toolbar>
     </v-navigation-drawer>
 
     <snapshot-map ref="map"
+      v-if="hash"
       :geojson="geojson"
       :annotations="annotations"
       :spatialDatasettes="spatialDatasettes"
       :geoboundsIn="geobounds"
     />
+
+    <annotations-list ref="map"
+      v-if="annokind"
+      :annotations="annotations.items"
+      :kind="annokind"
+      :categories="annotations.categories"
+      :states="annotations.states"
+    />
+
     <v-overlay
       absolute="absolute"
       opacity="0.2"
@@ -114,11 +121,14 @@ h4 {
 <script>
 import Vue from 'vue';
 import gql from 'graphql-tag';
+import AnnotationsList from '../components/AnnotationsList.vue';
 import SnapshotList from '../components/SnapshotList.vue';
 import SnapshotMap from '../components/SnapshotMap.vue';
 import SnapshotEdit from '../components/SnapshotEdit.vue';
 import ErrorMessage from '../components/ErrorMessage.vue';
 
+
+Vue.component('annotations-list', AnnotationsList);
 Vue.component('snapshot-list', SnapshotList);
 Vue.component('snapshot-map', SnapshotMap);
 Vue.component('snapshot-edit', SnapshotEdit);
@@ -129,9 +139,10 @@ export default {
     return {
       hash: this.$route.params.hash,
       wshash: this.$route.params.wshash,
+      annokind: this.$route.params.annokind,
       geojson: null,
       annotations: {
-        items: null,
+        items: [],
         categories: null,
         states: null,
         usergroups: null,
@@ -163,7 +174,9 @@ export default {
 
   async mounted() {
     await this.getWorkspaceInfo();
-    await this.getWorkspaceData();
+    if (this.hash) {
+      await this.getWorkspaceData();
+    }
     if (this.geojson) {
       this.$refs.map.setupMeta();
       this.$refs.map.setupMapbox();
@@ -304,11 +317,16 @@ export default {
       }
 
       const workspace = workspaceInfo.workspace;
-      const snapshot = workspaceInfo.snapshot;
-      if (!workspace.snapshots.map(s => s.pk).includes(snapshot.pk)) {
-        this.$router.push({ name: 'home' });
+      if (workspaceInfo.snapshot) {
+        const snapshot = workspaceInfo.snapshot;
+        if (!workspace.snapshots.map(s => s.pk).includes(snapshot.pk)) {
+          this.$router.push({ name: 'home' });
+        }
+        this.municipalityName = snapshot.municipality.fullname;
+        this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);
+        this.$store.commit('setBfsname', snapshot.municipality.fullname);
       }
-      this.municipalityName = snapshot.municipality.fullname;
+
       this.snapshotsWorkspace = workspace.snapshots;
       this.annotations.items = workspace.annotations;
       this.annotations.categories = workspace.categories;
@@ -325,8 +343,6 @@ export default {
       this.spatialDatasettes = workspace.spatialDatasettes;
       this.title = workspace.title;
       this.description = workspace.description;
-      this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);
-      this.$store.commit('setBfsname', snapshot.municipality.fullname);
     },
 
     async getWorkspaceData() {

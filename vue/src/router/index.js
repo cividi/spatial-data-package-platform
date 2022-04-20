@@ -112,6 +112,15 @@ const routes = [
         meta: {
           layout: () => import('@/layouts/LayoutSnapshot.vue')
         }
+      },
+      {
+        path: ':wshash([0-9A-Z]{5})/annotations/:annokind/',
+        pathToRegexpOptions: { sensitive: true, strict: true },
+        name: 'annotationsList',
+        component: () => import('@/views/Workspace.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutSnapshot.vue')
+        }
       }
     ]
   },

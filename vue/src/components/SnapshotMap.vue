@@ -5,6 +5,7 @@
     "title": "Titel",
     "subtitle": "Untertitel",
     "text":"Text",
+    "moreinfo":"Bemerkungen",
     "categoryLabel": "Kategorie",
     "stateLabel": "Status",
     "emailhintEnd": "schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
@@ -34,6 +35,7 @@
       "title": "Strasse / Nr.",
       "subtitle": "PLZ Ort",
       "text":"Architektur",
+      "moreinfo":"Abrissgrund",
       "constructionYear": "Baujahr",
       "demolitionYear": "Abrissjahr",
       "add": "Klicken Sie auf die Stelle in Karte, an der Sie ein Objekt hinzufügen möchten.",
@@ -69,6 +71,7 @@
         "title": "@:object.title",
         "subtitle": "@:object.subtitle",
         "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
         "constructionYear": "@:object.constructionYear",
         "demolitionYear": "@:object.demolitionYear",
         "add": "@:object.add",
@@ -106,6 +109,7 @@
         "title": "@:object.title",
         "subtitle": "@:object.subtitle",
         "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
         "constructionYear": "@:object.constructionYear",
         "demolitionYear": "@:object.demolitionYear",
         "add": "@:object.add",
@@ -263,18 +267,19 @@
 
       </div>
 
-      <v-scale-transition origin="center">
+      <v-scale-transition origin="center" :duration="{ enter: 5000, leave: 800 }">
         <div class="commentanimation" v-if="newAnnotation">
           <v-card
             id="commentedit"
-            light width="400" class="pa-4 elevation-6"
+            light width="400" class="pt-2 elevation-6"
           >
-            <h3>
+            <h3 class="py-2 px-4">
               <span>{{ c$t(annotationKindKey[newAnnotation.kind]+'.new') }}</span>
             </h3>
             <v-form
-              class="pt-4"
+              class="pa-4 pt-0"
               ref="commentform"
+              id="commentform"
               lazy-validation
               @submit.prevent="saveAnnotation"
             >
@@ -321,22 +326,45 @@
                       :rules="[v => !!v || $t('mandatory')]"
                       required
                     />
-                    <v-text-field
+                    <v-container
                       v-if="newAnnotation.kind === 'OBJ'"
-                      v-model="newAnnotation.constructionYear"
-                      :label="c$t(annotationKindKey[newAnnotation.kind] + '.constructionYear')"
-                    />
-                    <v-text-field
-                      v-if="newAnnotation.kind === 'OBJ'"
-                      v-model="newAnnotation.demolitionYear"
-                      :label="c$t(annotationKindKey[newAnnotation.kind] + '.demolitionYear')"
-                    />
+                      class="pa-0"
+                    >
+                      <v-row>
+                        <v-col>
+                          <v-text-field
+                            type="number"
+                            v-model="newAnnotation.constructionYear"
+                            :label="
+                              c$t(annotationKindKey[newAnnotation.kind] + '.constructionYear')
+                            "
+                          />
+                        </v-col>
+                        <v-col>
+                          <v-text-field
+                            type="number"
+                            v-model="newAnnotation.demolitionYear"
+                            :label="
+                              c$t(annotationKindKey[newAnnotation.kind] + '.demolitionYear')
+                            "
+                          />
+                        </v-col>
+                      </v-row>
+                    </v-container>
                     <v-textarea
                       outlined
+                      rows="4"
                       v-model="newAnnotation.text"
                       :label="c$t(annotationKindKey[newAnnotation.kind] + '.text')"
-                      :rules="[v => !!v || $t('mandatory')]"
-                      required
+                      :rules="newAnnotation.kind === 'OBJ' ? [] : [v => !!v || $t('mandatory')]"
+                      :required="newAnnotation.kind === 'OBJ' ? null : true"
+                    />
+                    <v-textarea
+                      v-if="newAnnotation.kind === 'OBJ'"
+                      outlined
+                      rows="4"
+                      v-model="newAnnotation.moreinfo"
+                      :label="c$t(annotationKindKey[newAnnotation.kind] + '.moreinfo')"
                     />
                     <div class="d-flex justify-space-between">
                       <v-btn
@@ -655,8 +683,9 @@ span.statusLabel {
     border-radius: 0;
   }
 }
+
 .scale-transition-enter-active #commentedit {
-  animation: fromcircle 0.3s 0.1s ease-out;
+  animation: fromcircle 0.3s ease-out;
   animation-fill-mode: both;
 }
 .scale-transition-leave-active #commentedit {
@@ -672,6 +701,10 @@ span.statusLabel {
   z-index: 510;
   overflow: hidden;
   max-width: 90vw;
+}
+#commentform {
+  max-height: calc(100vh - 100px);
+  overflow:auto;
 }
 
 #currentComment {
@@ -1546,9 +1579,10 @@ export default {
         kind: 'OBJ',
         title: '',
         subtitle: '',
-        constructionYear: 0,
-        demolitionYear: 0,
+        constructionYear: '',
+        demolitionYear: '',
         text: '',
+        text2: '',
         marker: e.target
       };
     },
@@ -1624,7 +1658,8 @@ export default {
               subtitle: this.newAnnotation.subtitle,
               constructionYear: this.newAnnotation.constructionYear,
               demolitionYear: this.newAnnotation.demolitionYear,
-              description: this.newAnnotation.text
+              description: this.newAnnotation.text,
+              moreinfo: this.newAnnotation.moreinfo
             }
           };
           break;
