@@ -1070,17 +1070,18 @@ export default {
       if (this.annotations.mode !== 'OFF') {
         const extraItems = this.annotations.categories
           .filter(c => !c.hideInLegend)
-          .map((c) => {
+          .map((c, i) => {
+            const isPrimary = i === 0;
             if (c.icon !== '') {
               return {
                 svg: `/media/${c.icon}`,
                 label: c.name,
-                primary: !c.hideInList
+                primary: isPrimary
               };
             }
             return {
               label: c.name,
-              primary: !c.hideInList,
+              primary: isPrimary,
               shape: 'circle',
               size: 1.0,
               fillColor: c.color,
