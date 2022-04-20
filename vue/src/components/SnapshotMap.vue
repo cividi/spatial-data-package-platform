@@ -974,7 +974,6 @@ export default {
             return poly;
           })
         );
-        console.log(features); // eslint-disable-line no-console
       }
       return features;
     },
@@ -1020,9 +1019,6 @@ export default {
       window.setTimeout(() => {
         myPopup.openOn(this.map);
         if (this.commentoUrl !== null && this.currentComment.category.commentsEnabled) {
-          console.log(window); // eslint-disable-line no-console
-          console.log(window.commento); // eslint-disable-line no-console
-          console.log(window.commento.main); // eslint-disable-line no-console
           if (typeof window !== 'undefined' && window.commento.main === undefined) {
             const commentoScript = document.createElement('script');
             commentoScript.setAttribute('src', `${this.commentoUrl}/js/commento.js`);
@@ -1134,7 +1130,6 @@ export default {
           const boxSize = 800;
           bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
         }
-        console.log(bounds); // eslint-disable-line no-console
         this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
         this.layerContainer = new L.LayerGroup();
         // default test layer // this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/light-v10'));
