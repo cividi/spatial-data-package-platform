@@ -58,7 +58,9 @@
           <img
             width="20" height="20"
             v-if="item.svg"
-            :src="item.svg">
+            :src="item.svg"
+            :isPrimary="item.primary"
+            :attr="item">
           <legend-icon v-else
             :shape="item.shape"
             :isPrimary="item.primary"
@@ -93,17 +95,21 @@
     <v-list
       dense class="legend pt-0"
       v-if="legendAnnotations.length > 0"
+      :class="{showAll: showWholeAnnotationsLegend}"
       >
       <v-list-item
         v-for="(item, i) in legendAnnotations"
         :key="i"
-        class="pa-0 isPrimary"
+        class="pa-0"
+        :class="{isPrimary: item.primary}"
         >
         <v-list-item-icon class="my-0 mr-2">
           <img
             width="20" height="20"
             v-if="item.svg"
-            :src="item.svg">
+            :src="item.svg"
+            :isPrimary="item.primary"
+            :attr="item">
           <legend-icon v-else
             :shape="item.shape"
             :isPrimary="item.primary"
@@ -116,6 +122,22 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
+    <v-btn
+      v-if="hasSecondaryAnnotationsLegend"
+      v-show="!screenshotMode"
+      text x-small
+      @click="showWholeAnnotationsLegend=!showWholeAnnotationsLegend"
+      class="moreLegendToggle"
+      :class="{legendsvisible: showWholeAnnotationsLegend}"
+      style="margin:-1.5em 0 0 -8px; text-transform:none;">
+        <v-icon small color="primary">mdi-chevron-right</v-icon>
+        <template v-if="showWholeAnnotationsLegend">
+          {{ $t('collapslegend') }}
+        </template>
+        <template v-else>
+          {{ $t('expandlegend') }}
+        </template>
+    </v-btn>
     <div class="smaller"
       style="margin: 5px 0 -10px 2px;">
       <v-expand-transition>
@@ -232,6 +254,7 @@ export default {
     return {
       djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
       showWholeLegend: false,
+      showWholeAnnotationsLegend: false,
       showSources: false,
       screenshotMode: this.$route.query.hasOwnProperty('screenshot')
     };
@@ -250,6 +273,10 @@ export default {
   computed: {
     hasSecondaryLegend() {
       return this.legend.some(item => item.primary === false);
+    },
+
+    hasSecondaryAnnotationsLegend() {
+      return this.legendAnnotations.some(item => item.primary === false);
     },
 
     djangobaseurlDisplay() {
