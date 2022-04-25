@@ -5,10 +5,10 @@
     "participation": {
       "categoryLabel": "Kategorie",
       "annotation": {
-        "add": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
+        "add": "Klicke auf die Stelle in Karte an der Du einen Kommentar hinzufügen möchten.",
         "new": "Neuer Kommentar",
-        "emailhint": "Um Ihren Kommentar freizuschalten, schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
-        "commentSaved": "Ihr Kommentar wurde gespeichert. Klicken Sie den Link in der Email um ihn freizuschalten."
+        "emailhint": "Du erhältst einen Aktivierungslink per Mail, um Deinen Kommentar für alle sichtbar zu machen.",
+        "commentSaved": "Der Kommentar wurde gespeichert. Klicke auf den Link in der Mail um ihn für alle sichtbar zu machen."
       },
        "polygon": {
         "add": "Klicken Sie auf die Stelle in Karte an der Sie einen Kommentar hinzufügen möchten.",
@@ -51,7 +51,7 @@
     "inv": "Dies ist keine gültige E-Mail Adresse",
     "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben",
     "failed": "Speichern fehlgeschlagen",
-    "failedText": "Bitte prüfen Sie Ihre Eingaben oder versuchen Sie es später nochmals.",
+    "failedText": "Bitte prüfe Deine Eingaben oder versuche es später nochmals.",
     "saved": "Speichern erfolgreich",
     "tooltip": {
       "resetZoom": "Ansicht zurücksetzen",
@@ -663,8 +663,9 @@ p.rating {
   user-select: none;
 }
 p.helpText {
-  overflow: scroll;
+  overflow: auto;
   max-height: 120px;
+  color: #666666;
 }
 
 #addHeart {
