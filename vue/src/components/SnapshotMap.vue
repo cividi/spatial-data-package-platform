@@ -511,6 +511,7 @@ body,
 #map.leaflet-container {
   background: #dedede;
   animation: none;
+  font-family: 'Open Sans', sans-serif;
 }
 .leaflet-popup-content {
   padding: 10px;
@@ -639,15 +640,16 @@ span.statusLabel {
 #currentComment {
   width: 200px;
   max-width: calc(90vw - 20px);
-  overflow: scroll;
+  /* overflow: scroll; */
 }
 #currentComment.withComments {
   width: 380px !important;
-  max-height: 40vh;
+  max-height: 75vh;
+  overflow: auto;
 }
 
 #currentComment .maxW {
-  width: calc(100vw - 40px);
+  /* width: calc(100vw - 40px); */
   max-width: 430px;
 }
 .v-list-item img {
@@ -1045,12 +1047,14 @@ export default {
             const commentoScript = document.createElement('script');
             commentoScript.setAttribute('src', `${this.commentoUrl}/js/commento.js`);
             commentoScript.setAttribute('data-auto-init', false);
+            commentoScript.setAttribute('data-no-fonts', true);
+            commentoScript.setAttribute('data-css-override', '/commento.css');
             commentoScript.setAttribute('data-page-id', `${this.currentComment.pk}-${this.currentComment.id}`);
-            commentoScript.setAttribute('defer', true);
+            // commentoScript.setAttribute('defer', true);
             document.head.appendChild(commentoScript);
             window.setTimeout(() => {
               window.commento.main();
-            }, 100);
+            }, 500);
           } else if (typeof window !== 'undefined' && window.commento) {
             window.commento.reInit({
               pageId: `${this.currentComment.pk}-${this.currentComment.id}`
