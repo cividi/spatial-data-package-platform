@@ -267,7 +267,7 @@
 
       </div>
 
-      <v-scale-transition origin="center" :duration="{ enter: 5000, leave: 800 }">
+      <v-scale-transition origin="center">
         <div class="commentanimation" v-if="newAnnotation">
           <v-card
             id="commentedit"

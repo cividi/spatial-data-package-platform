@@ -243,12 +243,14 @@ export default {
                 rating
                 data
                 category {
+                  pk
                   name(languageCode: $lang)
                   icon
                   color
                   commentsEnabled
                 }
                 state {
+                  pk
                   name(languageCode: $lang)
                 }
                 attachements {
