@@ -1092,8 +1092,17 @@ export default {
       if (this.annotations.mode !== 'OFF') {
         const extraItems = this.annotations.categories
           .filter(c => !c.hideInLegend)
-          .map((c, i) => {
-            const isPrimary = i === 0;
+          .map((c) => {
+            let isPrimary = false;
+            if ('transform' in this.geojson.views[0].spec) {
+              this.geojson.views[0].spec.transform.forEach((t) => {
+                if ('filter' in t && 'oneOf' in t.filter && t.filter.from === 'annotations') {
+                  isPrimary = t.filter.oneOf.includes(c.name);
+                }
+              });
+            } else {
+              isPrimary = true;
+            }
             if (c.icon !== '') {
               return {
                 svg: `/media/${c.icon}`,
