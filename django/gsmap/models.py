@@ -469,6 +469,7 @@ class Workspace(TranslatableModel):
 
     object_open = models.BooleanField(default=False, help_text="Enable Object annotation", verbose_name="Object annotations enabled")
     object_likes_enabled = models.BooleanField(default=False, help_text="Enable like buttons on Object annotations", verbose_name="Object Likes enabled")
+    objects_page_link = models.BooleanField(default=False, help_text="Show a Link to the Objects List/Grid Page in Sidebar", verbose_name="Show Objectslist Link")
 
     annotations_contact_name = models.CharField(max_length=100, default='', verbose_name="Contact first & lastname")
     annotations_contact_email = models.EmailField(default='', verbose_name='Contact email address')

@@ -206,7 +206,7 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
             'mode', 'findme_enabled',
             'annotations_open', 'annotations_likes_enabled',
             'polygon_open', 'polygon_likes_enabled',
-            'object_open', 'object_likes_enabled',
+            'object_open', 'object_likes_enabled', 'objects_page_link',
             'annotations_contact_name', 'annotations_contact_email',
             'spatial_datasettes',
         ]

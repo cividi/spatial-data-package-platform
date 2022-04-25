@@ -2,6 +2,13 @@
 <i18n>
 {
   "de": {
+    "objectslink": "Alle Objekte",
+    "PAR": {
+      "objectslink": "@:objectslink"
+    },
+    "MGT": {
+      "objectslink": "@:objectslink"
+    }
   },
   "fr": {
   }
@@ -30,6 +37,17 @@
           <div class="smaller hint">
             <h4>{{ title }}</h4>
             <p class="show-linebreaks">{{ description }}</p>
+            <v-btn
+              v-if="annotations.object.showlink"
+              :to="'/' + $i18n.locale + '/' + wshash + '/annotations/OBJ/'"
+              class="listlink elevation-0"
+              block
+            >
+              <v-icon left>
+                mdi-view-grid
+              </v-icon>
+              {{ $t('objectslink') }}
+            </v-btn>
           </div>
         </div>
 
@@ -115,6 +133,17 @@
 
 h4 {
   margin-bottom: 0.8em;
+}
+
+.listlink {
+  text-transform: initial;
+  font-weight: 700;
+  font-size: 13px;
+  opacity: 1;
+  letter-spacing: 0;
+}
+.listlink span {
+  justify-content: flex-start;
 }
 </style>
 
@@ -223,6 +252,7 @@ export default {
               polygonLikesEnabled
               objectOpen
               objectLikesEnabled
+              objectsPageLink
               snapshots {
                 id
                 pk
@@ -342,6 +372,8 @@ export default {
       this.annotations.polygon.likes = workspace.polygonLikesEnabled;
       this.annotations.object.open = workspace.objectOpen;
       this.annotations.object.likes = workspace.objectLikesEnabled;
+      this.annotations.object.showlink = workspace.objectsPageLink;
+
       this.spatialDatasettes = workspace.spatialDatasettes;
       this.title = workspace.title;
       this.description = workspace.description;
