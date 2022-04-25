@@ -199,6 +199,10 @@
   min-width: auto;
 }
 
+.v-list-item img {
+  margin-right: 0;
+}
+
 .legend .v-list-item__content {
   padding-bottom: 4px !important;
 }
