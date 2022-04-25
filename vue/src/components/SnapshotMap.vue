@@ -486,66 +486,75 @@
       </div>
 
       <div id="commentholder">
-        <div id="currentComment" :class="{withComments: withComments}">
-          <div v-if="currentComment"
-            :class="currentComment.attachements.length ? 'maxW': ''">
-            <b>{{currentComment.data.properties.title}}</b><br>
-            <v-carousel
-              v-if="currentComment.attachements.length > 0"
-              height="auto"
-              hide-delimiters
-              class="my-1">
-              <v-carousel-item
-                v-for="(item,i) in currentComment.attachements"
-                :key="i"
-                :src="djangobaseurl + '/media/' + item.document"
-              ></v-carousel-item>
-            </v-carousel>
-            <div
-              v-if="currentComment.kind == 'PLY'">
-              Status:
-              <span
-                class="statusLabel"
-                :style="{ 'background-color': currentComment.category.color }">
-                {{currentComment.category.name}}
-              </span><br>
-              Fläche: ca. {{currentComment.data.properties.area}}
-            </div>
-            {{currentComment.data.properties.description}}<br>
-
-            <div
-              v-if="(annotations.marker.likes && currentComment.kind == 'COM') ||
-                (annotations.object.likes && currentComment.kind == 'OBJ') ||
-                (annotations.polygon.likes && currentComment.kind == 'PLY')"
-              class="d-flex align-center justify-end primary--text">
-              <p class="rating">
-                <v-icon color="primary" small>mdi-heart-outline</v-icon>
-                <b
-                  style="vertical-align: middle;"
-                > {{currentComment.rating}}</b>
-              </p>
-              <v-btn
-                fab x-small color="white"
-                :disabled="ratingpause"
-                class="primary--text"
-                ref="rateupBtn"
-                @click="rateUp(currentComment.pk)"
-                ><v-icon small>mdi-heart-plus</v-icon></v-btn>
-              <v-icon
-                id="addHeart"
-                v-if="ratingpause"
-                small
-                color="primary"
-                :style="cssVars"
-                >mdi-heart</v-icon>
-              </div>
-              <div v-if="currentComment.category.commentsEnabled">
-                <h3>Kommentare</h3>
-                <div id="commento"></div>
-              </div>
+        <div id="currentComment"
+          :class="{
+            withComments: withComments,
+            maxW: currentCommentHasAttachements
+          }"
+        >
+        <template v-if="currentComment">
+          <b>{{currentComment.data.properties.title}}</b><br>
+          <v-carousel
+            v-if="currentComment.attachements.length > 0"
+            height="auto"
+            hide-delimiters
+            class="my-1">
+            <v-carousel-item
+              v-for="(item,i) in currentComment.attachements"
+              :key="i"
+              :src="djangobaseurl + '/media/' + item.document"
+            ></v-carousel-item>
+          </v-carousel>
+          <div
+            v-if="currentComment.kind == 'PLY'">
+            Status:
+            <span
+              class="statusLabel"
+              :style="{ 'background-color': currentComment.category.color }">
+              {{currentComment.category.name}}
+            </span><br>
+            Fläche: ca. {{currentComment.data.properties.area}}
           </div>
+          {{currentComment.data.properties.description}}<br>
+
+          <div
+            v-if="(annotations.marker.likes && currentComment.kind == 'COM') ||
+              (annotations.object.likes && currentComment.kind == 'OBJ') ||
+              (annotations.polygon.likes && currentComment.kind == 'PLY')"
+            class="d-flex align-center justify-end primary--text">
+            <p class="rating">
+              <v-icon color="primary" small>mdi-heart-outline</v-icon>
+              <b
+                style="vertical-align: middle;"
+              > {{currentComment.rating}}</b>
+            </p>
+            <v-btn
+              fab x-small color="white"
+              :disabled="ratingpause"
+              class="primary--text"
+              ref="rateupBtn"
+              @click="rateUp(currentComment.pk)"
+              ><v-icon small>mdi-heart-plus</v-icon></v-btn>
+            <v-icon
+              id="addHeart"
+              v-if="ratingpause"
+              small
+              color="primary"
+              :style="cssVars"
+              >mdi-heart</v-icon>
+          </div>
+          <div v-if="currentComment.category.commentsEnabled">
+            <h3>Kommentare</h3>
+            <div id="commento"></div>
+          </div>
+        </template>
         </div>
       </div>
+
+      <object-detail
+        :object="currentObject"
+        :enableLikes="annotations.object.likes"
+      />
     </v-main>
 </template>
 
@@ -717,7 +726,7 @@ span.statusLabel {
   overflow: auto;
 }
 
-#currentComment .maxW {
+#currentComment.maxW {
   width: calc(100vw - 40px);
   max-width: 430px;
 }
@@ -830,8 +839,10 @@ import L from 'mapbox.js';
 import _ from 'lodash';
 import geoViewport from '@mapbox/geo-viewport';
 import SnapshotMeta from './SnapshotMeta.vue';
+import ObjectDetail from './ObjectDetail.vue';
 
 Vue.component('snapshot-meta', SnapshotMeta);
+Vue.component('object-detail', ObjectDetail);
 
 function geostring2array(s) {
   const array = s.split(':')[1].split(',');
@@ -940,8 +951,18 @@ export default {
       }
     },
     currentComment() {
-      if (this.annotations.items) {
-        return this.annotations.items[this.currentCommentIndex];
+      if (this.annotations.items && this.currentCommentIndex) {
+        if (this.annotations.items[this.currentCommentIndex].kind !== 'OBJ') {
+          return this.annotations.items[this.currentCommentIndex];
+        }
+      }
+      return null;
+    },
+    currentObject() {
+      if (this.annotations.items && this.currentCommentIndex) {
+        if (this.annotations.items[this.currentCommentIndex].kind === 'OBJ') {
+          return this.annotations.items[this.currentCommentIndex];
+        }
       }
       return null;
     },
@@ -999,6 +1020,15 @@ export default {
 
     token() {
       return `${process.env.VUE_APP_SPATIALDATASETTE_TOKEN}` || null;
+    },
+
+    currentCommentHasAttachements() {
+      if (this.currentComment) {
+        if (this.currentComment.attachements.length > 0) {
+          return true;
+        }
+      }
+      return false;
     }
   },
 
