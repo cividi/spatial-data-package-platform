@@ -2,6 +2,9 @@
 <i18n>
 {
   "de": {
+    "filter":"Filter:",
+    "categories": "Kategorien",
+    "states": "Stati"
   },
   "fr": {
   },
@@ -12,8 +15,9 @@
 <!-- eslint-enable -->
 
 <template>
-  <v-main :class="{navopen : snapshotnav}">
+  <v-main id="annotationsview" :class="{navopen : snapshotnav}">
 
+    <!--
     <v-app-bar
       color="transparent"
       elevation="0"
@@ -24,7 +28,7 @@
         offset-y
         content-class="elevation-0"
       >
-        <!-- open-on-hover -->
+        <!- - open-on-hover - ->
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             v-bind="attrs"
@@ -41,7 +45,7 @@
 
         <v-list
         >
-        <!-- flat -->
+        <!- - flat - ->
           <v-list-item
             v-for="(item, i) in categoryList"
             :key="i"
@@ -78,8 +82,11 @@
         </v-list>
       </v-menu>
     </v-app-bar>
+    -->
+
     <!-- pre>{{annotationList[0]}}</pre>
-    <p>{{disabledCatPks}}</p -->
+    <pre>{{disabledCatPks}}</pre>
+    <pre>{{disabledStatePks}}</pre -->
 
     <v-slide-x-reverse-transition>
       <v-btn fab fixed small
@@ -118,10 +125,80 @@
         </header>
       </li>
     </transition-group>
+
+    <v-btn
+        fab absolute small
+        style="bottom:2.2em; right:1.3em;"
+        :elevation="filterinfoopen ? 0 : 6"
+        color="white"
+        @click="filterinfoopen=!filterinfoopen">
+        <v-icon>mdi-filter</v-icon>
+      </v-btn>
+
+      <v-card
+        id="filterinfo"
+        class="px-4 py-2"
+        :style="'width:' + legendWidth"
+        v-bind:class="{open: filterinfoopen}"
+        >
+        <v-icon
+          style="position: absolute; top:0; right:0;"
+          class="pa-2"
+          @click="filterinfoopen=!filterinfoopen">
+          mdi-close-circle-outline
+        </v-icon>
+        <div class="smaller">
+          <h3>{{$t('filter')}}</h3>
+          <p><strong>{{$t('categories')}}</strong></p>
+          <v-list
+            dense
+            class="legend pt-0"
+          >
+            <v-list-item
+              v-for="(item, i) in categoryList"
+              :key="i"
+              @click="toggleCat(item.pk)"
+              class="pa-0 isPrimary"
+            >
+              <v-list-item-icon class="my-0 mr-2">
+                <v-icon v-if="disabledCatPks.includes(item.pk)">mdi-eye-off</v-icon>
+                <v-icon v-else>mdi-eye</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content class="py-0">
+                <v-list-item-title>{{ item.name }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+
+          <p><strong>{{$t('states')}}</strong></p>
+          <v-list
+            dense
+            class="legend pt-0"
+          >
+            <v-list-item
+              v-for="(item, i) in statesList"
+              :key="i"
+              @click="toggleState(item.pk)"
+              class="pa-0 isPrimary"
+            >
+              <v-list-item-icon class="my-0 mr-2">
+                <v-icon v-if="disabledStatePks.includes(item.pk)">mdi-eye-off</v-icon>
+                <v-icon v-else>mdi-eye</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content class="py-0">
+                <v-list-item-title>{{ item.name }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </div>
+      </v-card>
   </v-main>
 </template>
 
 <style >
+#annotationsview {
+  min-height: 100vh;
+}
 .annotationslist {
   list-style: none;
   display: grid;
@@ -179,6 +256,22 @@
 .navopen .filterbar {
   left: 320px !important;
 }
+
+#filterinfo {
+  position: absolute;
+  bottom: 2.5em;
+  right: 1.6em;
+  min-width: 240px;
+  clip-path: circle(0% at 95% 90%);
+  transition: clip-path 0.3s ease-out;
+  pointer-events: none;
+  z-index: 500; /* must be above mapbox icons */
+}
+
+#filterinfo.open {
+  pointer-events: auto;
+  clip-path: circle(100% at center);
+}
 </style>
 
 
@@ -188,7 +281,9 @@ export default {
   data() {
     return {
       djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
-      disabledCatPks: []
+      disabledCatPks: [],
+      disabledStatePks: [],
+      filterinfoopen: true
     };
   },
 
@@ -207,9 +302,15 @@ export default {
         this.disabledCatPks.push(pk);
       }
     },
+    toggleState(pk) {
+      if (this.disabledStatePks.includes(pk)) {
+        this.disabledStatePks.splice(this.disabledStatePks.indexOf(pk), 1);
+      } else {
+        this.disabledStatePks.push(pk);
+      }
+    },
     // beforeLeave(el) {
     afterEnter(el) {
-      console.log(el);
       const {
         marginLeft, marginTop, width, height
       } = window.getComputedStyle(el);
@@ -230,11 +331,36 @@ export default {
       }
       return [];
     },
-    filteredAnnotationList() {
-      if (this.annotationList) {
-        return this.annotationList.filter(a => !this.disabledCatPks.includes(a.category.pk));
+    statesList() {
+      if (this.states) {
+        return this.states.filter(s => !s.hideInList);
       }
       return [];
+    },
+    filteredAnnotationList() {
+      if (this.annotationList) {
+        return this.annotationList.filter((a) => {
+          let pass = true;
+          if (this.categoryList && a.category) {
+            if (this.disabledCatPks.includes(a.category.pk)) {
+              pass = false;
+            }
+          }
+          if (this.statesList && a.state) {
+            if (this.disabledStatePks.includes(a.category.pk)) {
+              pass = false;
+            }
+          }
+          return pass;
+        });
+      }
+      return [];
+    },
+    legendWidth() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '280px';
+        default: return '320px';
+      }
     },
     snapshotnav: {
       get() {

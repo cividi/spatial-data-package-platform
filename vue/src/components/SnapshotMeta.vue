@@ -173,7 +173,7 @@
   margin-top: 4px;
 }
 
-.v-list-item__icon {
+.legend .v-list-item__icon {
   min-width: auto;
 }
 
