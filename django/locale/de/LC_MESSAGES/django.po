@@ -247,10 +247,10 @@ msgstr "Leider ist die Beteiligung nun abgeschlossen.\n"
 
 #: gsmap/models.py:586
 msgid ""
-"Zur Karte mit allen öffentlichen Kommentaren: {website['base']}/de/{instance."
+"Zur Karte mit allen öffentlichen Kommentaren: {website['base']}/{instance."
 "workspace.pk}/{instance.workspace.snapshots.first().pk}/"
 msgstr ""
-"Zur Karte mit allen öffentlichen Kommentaren: {website['base']}/de/{instance."
+"Zur Karte mit allen öffentlichen Kommentaren: {website['base']}/{instance."
 "workspace.pk}/{instance.workspace.snapshots.first().pk}/"
 
 #: gsmap/templates/annotation_publish.html:6
@@ -259,25 +259,25 @@ msgstr "Kommentar publizieren"
 
 #: gsmap/templates/annotation_publish.html:54
 msgid "Annotation published"
-msgstr "Kommentar publiziert"
+msgstr "Kommentar freigegeben"
 
 #: gsmap/templates/annotation_publish.html:55
 msgid ""
 "Thank you for your participation. Your comment was successfully published."
-msgstr "Danke für ihr Interesse. Ihr Kommentar wurde erfolreich publiziert."
+msgstr "Danke für Deine Teilnahme. Dein Kommentar wurde erfolgreich freigegeben."
 
 #: gsmap/templates/annotation_publish.html:57
 msgid "Annotation already published"
-msgstr "Der Kommentar ist bereits publiziert."
+msgstr "Der Kommentar ist bereits freigegeben."
 
 #: gsmap/templates/annotation_publish.html:58
 msgid ""
 "This comment has already been published. If you have made another comment, "
 "please check your mailbox for a new activation link."
 msgstr ""
-"Dieser Kommentar ist bereits publiziert. Wenn Sie einen weiteren Kommentar "
-"eingereicht haben, prüfen Sie bitte ihr E-Mail Postfach für den zugehörigen "
-"Aktivierungslink."
+"Dieser Kommentar ist bereits publiziert. Wenn Du einen weiteren Kommentar "
+"eingereicht hast, prüfe bitte Dein E-Mail Postfach für den zugehörigen "
+"Freischaltungslink."
 
 #: gsmap/templates/annotation_publish.html:60
 msgid "Invalid activation link"
@@ -288,8 +288,8 @@ msgid ""
 "Your comment could not be published. Please make sure that you have copied "
 "the whole URL from the email."
 msgstr ""
-"Ihr Kommentar konnte nicht publiziert werden. Bitte prüfen Sie, ob Sie den "
-"vollständigen Aktivierungslink aus der E-Mail verwendet haben."
+"Dein Kommentar konnte nicht freigegeben werden. Bitte prüfe, ob Du den "
+"vollständigen Aktivierungslink aus der E-Mail verwendest hast."
 
 #: gsmap/templates/annotation_publish.html:64
 #, python-format
@@ -297,7 +297,7 @@ msgid ""
 "For questions and feedback, please contact %(contactName)s at "
 "%(contactEmail)s"
 msgstr ""
-"Für Fragen und Anregungen kontaktieren Sie bitte %(contactName)s per E-Mail "
+"Für Fragen und Anregungen kontaktiere bitte %(contactName)s per E-Mail "
 "an %(contactEmail)s"
 
 #: gsmap/templates/annotation_publish.html:68

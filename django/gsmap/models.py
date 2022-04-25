@@ -600,12 +600,12 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
             publishKeyHex = hashlib.md5(uniquestr.encode()).hexdigest()
             publish_url = reverse('annotation-publish', args=[idstr, publishKeyHex])
 
-            message += _('Sie können ihn unter folgender URL freischalten:\n')
+            message += _('Du kannst ihn unter folgender URL freischalten:\n')
             message += _(f'{website["base"]}{publish_url}\n')
             message += '--' * 30
         else:
             message += _("Leider ist die Beteiligung nun abgeschlossen.\n")
-            message += _(f"Zur Karte mit allen öffentlichen Kommentaren: {website['base']}/de/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/")
+            message += _(f"Zur Karte mit allen öffentlichen Kommentaren: {website['base']}/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/")
             message += '--' * 30
 
         send_mail(
