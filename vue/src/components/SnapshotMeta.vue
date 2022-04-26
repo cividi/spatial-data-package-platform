@@ -200,7 +200,7 @@
 }
 
 .v-list-item img {
-  margin-right: 0;
+  margin-right: 0 !important;
 }
 
 .legend .v-list-item__content {
