@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from gsmap.models import Workspace, Snapshot, Annotation, Category, State, Attachement
 
 from .permissions import IsUser
-from .serializers import SnapshotDataUploadSerializer, AnnotationSerializer, AnnotationRateUpSerializer
+from .serializers import SnapshotDataUploadSerializer, AnnotationSerializer, AnnotationRateUpSerializer, AttachmentsDataUploadSerializer
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv(
     'DJANGO_SECRET_KEY_DEV')

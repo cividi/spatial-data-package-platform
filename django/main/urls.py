@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
 # from django.contrib.auth.views import LoginView
-from gsmap.views import CustomLoginView, logout, SnapshotFileUploadView, AnnotationCreateView, AnnotationRateUpView, AnnotationPublishView
+from gsmap.views import CustomLoginView, logout, SnapshotFileUploadView, AnnotationCreateView, AnnotationRateUpView, AnnotationPublishView, AnnotationAttachmentsUploadView
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from graphene_django.views import GraphQLView
@@ -30,11 +30,6 @@ if settings.DEBUG:
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
     urlpatterns += staticfiles_urlpatterns()
-    urlpatterns += static(
-        settings.MEDIA_URL,
-        document_root=settings.MEDIA_ROOT
-    )
-    urlpatterns += static(
-        '/downloads',
-        document_root=settings.MEDIA_ROOT
-    )
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static('/downloads', document_root=settings.MEDIA_ROOT)
