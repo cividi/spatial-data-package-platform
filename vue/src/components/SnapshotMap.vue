@@ -1951,8 +1951,7 @@ export default {
       return this.annotations.mode ? this.$t(`${this.annotations.mode}.${path}`) : this.$t(path);
     },
 
-
-    uploadAnnotationAttachments(files) {
+    uploadAnnotationAttachments() {
       this.uploadProgress = 0;
     },
 
