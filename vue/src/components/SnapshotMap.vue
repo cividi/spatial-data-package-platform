@@ -446,7 +446,7 @@
             <div
               v-if="(annotations.marker.likes && currentComment.kind == 'COM') ||
                 (annotations.polygon.likes && currentComment.kind == 'PLY')"
-              class="d-flex align-center justify-end primary--text">
+              class="d-flex align-center justify-end primary--text mr-2">
               <p class="rating">
                 <v-icon color="primary" small>mdi-heart-outline</v-icon>
                 <b
@@ -468,7 +468,7 @@
                 :style="cssVars"
                 >mdi-heart</v-icon>
               </div>
-              <div v-if="currentComment.category.commentsEnabled">
+              <div v-if="currentComment.category.commentsEnabled" class="mr-4">
                 <h3>Kommentare</h3>
                 <div id="commento"></div>
               </div>
@@ -1028,7 +1028,7 @@ export default {
         }
         latlng = e.target._latlng; // eslint-disable-line no-underscore-dangle
       }
-      const myPopup = new L.Popup({ maxWidth: 450, maxHeight: 600 })
+      const myPopup = new L.Popup({ maxWidth: 460 }) // { maxWidth: 450, maxHeight: 600 }
         .setLatLng(latlng)
         .setContent(content);
 
