@@ -10,6 +10,8 @@ urlpatterns = [
     path('api/v1/snapshots/<str:snapshot_id>/',
          csrf_exempt(SnapshotFileUploadView.as_view())),
     path('api/v1/annotations/', AnnotationCreateView.as_view()),
+    path('api/v1/annotations/<str:annotation_id>/attachments/',
+         csrf_exempt(AnnotationAttachmentsUploadView.as_view())),
     path('api/v1/rateupannotation/<str:annotation_id>/',
          AnnotationRateUpView.as_view()),
     path('annotation/publish/<int:pk>/<str:publishKeyHex>',
