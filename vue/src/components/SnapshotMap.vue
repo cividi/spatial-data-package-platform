@@ -420,6 +420,7 @@
             <v-carousel
               v-if="currentComment.attachements.length > 0"
               height="auto"
+              :show-arrows="currentComment.attachements.length > 1"
               hide-delimiters
               class="my-1">
               <v-carousel-item
