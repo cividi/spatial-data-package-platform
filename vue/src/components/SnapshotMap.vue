@@ -426,6 +426,8 @@
               <v-carousel-item
                 v-for="(item,i) in currentComment.attachements"
                 :key="i"
+                position="center bottom"
+                :contain="false"
                 :src="djangobaseurl + '/media/' + item.document"
               ></v-carousel-item>
             </v-carousel>
