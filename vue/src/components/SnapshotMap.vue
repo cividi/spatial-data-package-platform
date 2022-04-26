@@ -713,7 +713,7 @@ span.statusLabel {
 }
 #commentform {
   max-height: calc(100vh - 100px);
-  overflow:auto;
+  overflow: auto;
 }
 
 #currentComment {
@@ -875,6 +875,7 @@ export default {
       guides: null,
       commentstepper: 1,
       currentCommentIndex: null,
+      currentObjectIndex: null,
       ratingpause: false,
       dialog: false,
       dialogcontent: {},
@@ -951,18 +952,14 @@ export default {
       }
     },
     currentComment() {
-      if (this.annotations.items && this.currentCommentIndex) {
-        if (this.annotations.items[this.currentCommentIndex].kind !== 'OBJ') {
-          return this.annotations.items[this.currentCommentIndex];
-        }
+      if (this.annotations.items && this.currentCommentIndex !== null) {
+        return this.annotations.items[this.currentCommentIndex];
       }
       return null;
     },
     currentObject() {
-      if (this.annotations.items && this.currentCommentIndex) {
-        if (this.annotations.items[this.currentCommentIndex].kind === 'OBJ') {
-          return this.annotations.items[this.currentCommentIndex];
-        }
+      if (this.annotations.items && this.currentObjectIndex !== null) {
+        return this.annotations.items[this.currentObjectIndex];
       }
       return null;
     },
@@ -1104,9 +1101,8 @@ export default {
         content = document.getElementById('currentComment');
         latlng = e.target._latlng; // eslint-disable-line no-underscore-dangle
       } else if (e.target.feature.kind === 'OBJ') {
-        this.currentCommentIndex = e.target.feature.index;
-        content = document.getElementById('currentComment');
-        latlng = e.target._latlng; // eslint-disable-line no-underscore-dangle
+        this.currentObjectIndex = e.target.feature.index;
+        return true;
       } else if (e.target.feature.kind === 'PLY') {
         this.currentCommentIndex = e.target.feature.index;
         content = document.getElementById('currentComment');
@@ -1177,6 +1173,7 @@ export default {
           );
         });
       }
+      return true;
     },
 
     setupEmpty() {

@@ -12,71 +12,89 @@
 <!-- eslint-enable -->
 
 <template>
-  <div
-    id="objectDetail"
-    v-if="curObj"
-    transition="slide-x-transition"
-  >
-    <b>{{curObj.data.properties.title}}</b><br>
-    <v-carousel
-      v-if="curObj.attachements.length > 0"
-      height="auto"
-      hide-delimiters
-      class="my-1">
-      <v-carousel-item
-        v-for="(item,i) in curObj.attachements"
-        :key="i"
-        :src="djangobaseurl + '/media/' + item.document"
-      ></v-carousel-item>
-    </v-carousel>
-    <div>
-      Kategorie:
-      <span>
-        {{curObj.category.name}}
-      </span><br>
-    </div>
+  <v-slide-x-transition>
     <div
-      v-if="curObj.state">
-      Status:
-      <span>
-        {{curObj.state.name}}
-      </span><br>
-    </div>
-    {{curObj.data.properties.description}}<br>
+      id="objectDetail"
+      v-if="curObj !== null"
+      class="pa-4 elevation-6"
+    >
+      <div class="smaller">
+        <v-carousel
+          v-if="curObj.attachements.length > 0"
+          height="auto"
+          hide-delimiters
+          :show-arrows="curObj.attachements.length > 1"
+          class="my-1">
+          <v-carousel-item
+            v-for="(item,i) in curObj.attachements"
+            :key="i"
+            :src="djangobaseurl + '/media/' + item.document"
+          ></v-carousel-item>
+        </v-carousel>
 
-    <div
-      v-if="enableLikes"
-      class="d-flex align-center justify-end primary--text">
-      <p class="rating">
-        <v-icon color="primary" small>mdi-heart-outline</v-icon>
-        <b
-          style="vertical-align: middle;"
-        > {{curObj.rating}}</b>
-      </p>
-      <v-btn
-        fab x-small color="white"
-        :disabled="ratingpause"
-        class="primary--text"
-        ref="rateupBtn"
-        @click="rateUp(curObj.pk)"
-        ><v-icon small>mdi-heart-plus</v-icon></v-btn>
-      <v-icon
-        id="addHeart"
-        v-if="ratingpause"
-        small
-        color="primary"
-        :style="cssVars"
-        >mdi-heart</v-icon>
+        <h3>{{curObj.data.properties.title}}</h3>
+        <h4>{{curObj.data.properties.subtitle}}</h4>
+
+        <p>
+          Kategorie:
+          <span>
+            {{curObj.category.name}}
+          </span><br>
+        </p>
+        <p
+          v-if="curObj.state">
+          Status:
+          <span>
+            {{curObj.state.name}}
+          </span><br>
+        </p>
+        <p>{{curObj.data.properties.description}}<p>
+        <p>{{curObj.data.properties.moreinfo}}<p>
+
+        <div
+          v-if="enableLikes"
+          class="d-flex align-center justify-end primary--text">
+          <p class="rating">
+            <v-icon color="primary" small>mdi-heart-outline</v-icon>
+            <b
+              style="vertical-align: middle;"
+            > {{curObj.rating}}</b>
+          </p>
+          <v-btn
+            fab x-small color="white"
+            :disabled="ratingpause"
+            class="primary--text"
+            ref="rateupBtn"
+            @click="rateUp(curObj.pk)"
+            ><v-icon small>mdi-heart-plus</v-icon></v-btn>
+          <v-icon
+            id="addHeart"
+            v-if="ratingpause"
+            small
+            color="primary"
+            :style="cssVars"
+            >mdi-heart</v-icon>
+        </div>
+        <div v-if="curObj.category.commentsEnabled">
+          <h3>Kommentare</h3>
+          <div id="commento"></div>
+        </div>
+      </div>
     </div>
-    <div v-if="curObj.category.commentsEnabled">
-      <h3>Kommentare</h3>
-      <div id="commento"></div>
-    </div>
-  </div>
+  </v-slide-x-transition>
 </template>
 
 <style>
-
+#objectDetail {
+  position: absolute;
+  top: 0em;
+  left: -32em;
+  width: 40em;
+  height: 100vh;
+  background: #fff;
+  z-index: 1100;
+  overflow: auto;
+}
 </style>
 
 <script>
