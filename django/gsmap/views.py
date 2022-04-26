@@ -13,9 +13,11 @@ from rest_framework.response import Response
 from gsmap.models import Workspace, Snapshot, Annotation, Category, State, Attachement
 
 from .permissions import IsUser
-from .serializers import SnapshotDataUploadSerializer, AnnotationSerializer, AnnotationRateUpSerializer
+from .serializers import SnapshotDataUploadSerializer, AnnotationSerializer, AnnotationRateUpSerializer, AttachmentsDataUploadSerializer
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv(
+    'DJANGO_SECRET_KEY_DEV')
+
 
 class StaffBrowsableMixin(object):
     def get_renderers(self):
@@ -27,6 +29,7 @@ class StaffBrowsableMixin(object):
             rends.append(renderers.BrowsableAPIRenderer)
         return [renderer() for renderer in rends]
 
+
 class CustomLoginView(LoginView):
     """
     Customized to include Workspace data in the request cookie
@@ -35,9 +38,7 @@ class CustomLoginView(LoginView):
         """
         Retrieves last user Workspace.
         """
-        workspace = Workspace.objects.filter(
-            snapshots__user=user
-        ).last()
+        workspace = Workspace.objects.filter(snapshots__user=user).last()
         if workspace:
             return workspace.get_relative_url()
         return None
@@ -62,16 +63,22 @@ def logout(request):
 
 
 class SnapshotFileUploadView(StaffBrowsableMixin, generics.UpdateAPIView):
-    permission_classes = [IsUser,]
+    permission_classes = [
+        IsUser,
+    ]
     queryset = Snapshot.objects.all()
     serializer_class = SnapshotDataUploadSerializer
     lookup_url_kwarg = 'snapshot_id'
-    http_method_names = ['patch',]
+    http_method_names = [
+        'patch',
+    ]
     parser_classes = [parsers.MultiPartParser]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)  # Enable PATCH
+        serializer = self.get_serializer(instance,
+                                         data=request.data,
+                                         partial=True)  # Enable PATCH
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
@@ -82,17 +89,23 @@ class SnapshotFileUploadView(StaffBrowsableMixin, generics.UpdateAPIView):
 
         return Response(serializer.data)
 
+
 class AnnotationCreateView(StaffBrowsableMixin, generics.CreateAPIView):
     queryset = Annotation.objects.all()
     serializer_class = AnnotationSerializer
-    http_method_names = ['post',]
+    http_method_names = [
+        'post',
+    ]
     # parser_classes = [parsers.MultiPartParser]
+
 
 class AnnotationRateUpView(StaffBrowsableMixin, generics.UpdateAPIView):
     queryset = Annotation.objects.all()
     serializer_class = AnnotationRateUpSerializer
     lookup_url_kwarg = 'annotation_id'
-    http_method_names = ['patch',]
+    http_method_names = [
+        'patch',
+    ]
 
     def patch(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -102,6 +115,7 @@ class AnnotationRateUpView(StaffBrowsableMixin, generics.UpdateAPIView):
         self.perform_update(serializer)
 
         return Response(serializer.data)
+
 
 class AnnotationPublishView(DetailView):
     model = Annotation
@@ -117,7 +131,8 @@ class AnnotationPublishView(DetailView):
         context['workspaceHash'] = self.object.workspace.pk
         context['snapshotHash'] = self.object.workspace.snapshots.first().pk
         context['contactName'] = self.object.workspace.annotations_contact_name
-        context['contactEmail'] = self.object.workspace.annotations_contact_email
+        context[
+            'contactEmail'] = self.object.workspace.annotations_contact_email
 
         if self.object.public:
             context['nochange'] = True
@@ -135,3 +150,32 @@ class AnnotationPublishView(DetailView):
             self.object.refresh_from_db()
             context['success'] = True
         return context
+
+
+class AnnotationAttachmentsUploadView(StaffBrowsableMixin,
+                                      generics.UpdateAPIView):
+    queryset = Attachement.objects.all()
+    serializer_class = AttachmentsDataUploadSerializer
+    lookup_url_kwarg = 'annotation_id'
+    http_method_names = [
+        'patch',
+    ]
+    parser_classes = [parsers.MultiPartParser]
+
+    def update(self, request, *args, **kwargs):
+
+        data = [{
+            'document': document,
+            'annotation': kwargs['annotation_id']
+        } for _, document in request.data.items()]
+
+        serializer = self.get_serializer(
+            None,
+            data=data,
+            partial=True,  # Enable PATCH
+            many=True)
+
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)

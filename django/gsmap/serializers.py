@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Snapshot, Annotation
+from .models import Snapshot, Annotation, Attachement
 
 
 class SnapshotDataUploadSerializer(serializers.ModelSerializer):
@@ -13,6 +13,7 @@ class AnnotationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Annotation
         fields = (
+            'id',
             'kind',
             'data',
             'category',
@@ -46,3 +47,9 @@ class AnnotationRateUpSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class AttachmentsDataUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attachement
+        fields = ('document', 'annotation')
