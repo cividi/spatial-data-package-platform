@@ -54,6 +54,7 @@
     "failedText": "Bitte prüfe Deine Eingaben oder versuche es später nochmals.",
     "saved": "Speichern erfolgreich",
     "tooltip": {
+      "openNav": "Sidebar öffnen",
       "resetZoom": "Ansicht zurücksetzen",
       "findMe": "Meinen Standort anzeigen",
       "addAnnotationMarker": "Kommentar hinzufügen",
@@ -67,15 +68,24 @@
 <!-- eslint-enable -->
 
 <template>
-    <v-main :class="{navopen : snapshotnav}">
+    <v-main :class="{navopen : (snapshotnav || onDesktop)}">
       <v-slide-x-reverse-transition>
-        <v-btn fab absolute small
-          style="top:1.2em; right:1.3em;"
-          color="primary"
-          v-if="!snapshotnav"
-          @click="snapshotnav=!snapshotnav;">
-          <v-icon>mdi-menu</v-icon>
-        </v-btn>
+        <v-tooltip
+            v-if="!snapshotnav && !onDesktop"
+            left>
+            <template v-slot:activator="{ on: tooltip }">
+              <v-btn fab absolute small
+                style="top:1.2em; right:1.3em;"
+                v-if="!snapshotnav && !onDesktop"
+                color="primary"
+                v-bind="attrs"
+                v-on="{ ...tooltip }"
+                @click="snapshotnav=!snapshotnav;">
+                <v-icon>mdi-menu</v-icon>
+                </v-btn>
+            </template>
+          <span>{{ $t('tooltip.openNav') }}</span>
+        </v-tooltip>
       </v-slide-x-reverse-transition>
 
       <v-container fluid class="pa-0" ref="mapbox" @mousemove="onMouseMove">
@@ -873,6 +883,10 @@ export default {
         this.$store.commit('setSnapshotnav', val);
       }
     },
+    onDesktop() {
+      return this.$vuetify.breakpoint.mdAndUp;
+    },
+
     currentComment() {
       if (this.annotations.items) {
         return this.annotations.items[this.currentCommentIndex];
