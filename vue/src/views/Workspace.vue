@@ -17,6 +17,7 @@
       clipped="clipped"
       app
       width="320"
+      :permanent="$vuetify.breakpoint.mdAndUp"
       v-model="snapshotnav">
       <router-link
         id="logo" :to="'/' + $i18n.locale + '/' + wshash + '/' + hash"
