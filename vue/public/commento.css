@@ -143,12 +143,11 @@
     width: 45px;
     display: block;
     right: 0;
-    top: 130px;
-    position: relative;
     /* display: none; */
 }
 
 .commento-root .commento-login .commento-login-text {
+    margin-top: 20px;
     text-align: right;
     margin-right: 16px;
     height: 26px;
@@ -331,7 +330,6 @@
 }
 
 .commento-root .commento-textarea-container {
-    top: -30px;
     position: relative;
     display: flex;
     justify-content: center;
@@ -353,7 +351,6 @@
 }
 
 .commento-root .commento-submit-button {
-    margin-top: -25px;
     float: right;
     background: #543076;
     text-transform: uppercase;
@@ -382,7 +379,6 @@
 }
 
 .commento-root .commento-guest-details-container {
-    margin-top: -25px;
     float: left;
     /* margin: 6px 0; */
     width: 50%
@@ -1000,7 +996,7 @@
 }
 
 .commento-root .commento-footer {
-    margin: 36px 0 12px;
+    margin: 10px 0 12px;
     padding-right: 12px;
     clear: both
 }
