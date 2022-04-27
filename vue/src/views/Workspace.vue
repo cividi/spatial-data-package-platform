@@ -56,7 +56,10 @@
         absolute
         bottom>
         <div class="useractions">
-          <user-actions noLogin="1" />
+          <v-btn small text color="white">
+            <a @click="imprintopen=!imprintopen">Impressum</a>
+          </v-btn>
+          <!-- <user-actions noLogin="1" /> -->
         </div>
         <v-spacer/>
         <language-switch/>
@@ -87,6 +90,20 @@
      <error-message
       :settings="errorsettings"
     />
+    <v-overlay
+      z-index="1002"
+      opacity="0.6"
+      :absolute="true"
+      v-if="imprintopen">
+      <v-card light width="95vw" height="95vh" class="imprintOverlay">
+        <v-icon
+          style="position: absolute; top:6px; right:6px;"
+          @click="imprintopen=!imprintopen">
+          mdi-close-circle-outline
+        </v-icon>
+        <imprint></imprint>
+      </v-card>
+    </v-overlay>
 
   </div>
 </template>
@@ -100,6 +117,12 @@
   color: #000;
   opacity: 1;
   font-weight: 900;
+}
+
+.imprintOverlay {
+  width: 100%;
+  max-height: 100vh;
+  overflow-y: scroll;
 }
 
 .show-linebreaks {
@@ -118,6 +141,7 @@ import SnapshotList from '../components/SnapshotList.vue';
 import SnapshotMap from '../components/SnapshotMap.vue';
 import SnapshotEdit from '../components/SnapshotEdit.vue';
 import ErrorMessage from '../components/ErrorMessage.vue';
+import Imprint from './Imprint.vue';
 
 Vue.component('snapshot-list', SnapshotList);
 Vue.component('snapshot-map', SnapshotMap);
@@ -125,6 +149,7 @@ Vue.component('snapshot-edit', SnapshotEdit);
 Vue.component('error-message', ErrorMessage);
 
 export default {
+  components: { Imprint },
   data() {
     return {
       hash: this.$route.params.hash,
@@ -145,6 +170,7 @@ export default {
           likes: false
         }
       },
+      imprint: true,
       spatialDatasettes: null,
       geobounds: [],
       municipalityName: '',
@@ -152,7 +178,8 @@ export default {
       title: '',
       description: '',
       errorsettings: {},
-      editing: undefined
+      editing: undefined,
+      imprintopen: false
     };
   },
 

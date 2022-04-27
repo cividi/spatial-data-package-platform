@@ -25,8 +25,8 @@
             Datenschutzerklärung. Die Plattform verlangt von den Besuchern generell keine
             Angabe persönlicher Daten. Personenbezogene Daten wie E-Mail-Adressen werden als
             Teil des Beteiligungprozesses lediglich zur Vorbeugung von Missbrauch bis
-            Abschluss des Prozesses benötigt und werden nicht veröffentlicht oder an Dritte,
-            die nicht in dieser Datenschutzerklärung genannt werden weitergegeben. Die
+            Abschluss des Prozesses benötigt und werden nicht veröffentlicht oder an Dritte
+            weitergegeben, die nicht in dieser Datenschutzerklärung genannt werden. Die
             erhobenen E-Mail Adressen werden nach Abschluss der öffentlichen Beteiligung
             gelöscht. Bei Nutzung und besonders Einreichung eines Kommentars wird diese
             Datenschutzerklärung anerkannt.
@@ -100,8 +100,7 @@
           <p>
             Mehr über die Lizenz und die Lizenzen der verwendeten Softwarepakete
             finden Sie auf
-            <router-link
-              :to="'/' + $i18n.locale + '/notices/'">dieser Seite</router-link>.
+            <a :href="'/' + $i18n.locale + '/notices/'" target="_blank">dieser Seite</a>.
           </p>
         </v-flex>
     </v-layout>
