@@ -84,7 +84,7 @@
     </v-app-bar>
     -->
 
-    <!-- pre>{{annotationList[0]}}</pre>
+    <!-- pre>{{filteredAnnotationList}}</pre>
     <pre>{{disabledCatPks}}</pre>
     <pre>{{disabledStatePks}}</pre -->
 
@@ -110,7 +110,8 @@
       <li
         v-for="annotation in filteredAnnotationList"
         :key="annotation.pk"
-        class="pa-4">
+        class="pa-4"
+        @click="currentObject = annotation">
         <v-img
           v-if="annotation.attachements.length > 0"
           contain
@@ -127,71 +128,77 @@
     </transition-group>
 
     <v-btn
-        fab absolute small
-        style="bottom:2.2em; right:1.3em;"
-        :elevation="filterinfoopen ? 0 : 6"
-        color="white"
+      fab absolute small
+      style="bottom:2.2em; right:1.3em;"
+      :elevation="filterinfoopen ? 0 : 6"
+      color="white"
+      @click="filterinfoopen=!filterinfoopen">
+      <v-icon>mdi-filter</v-icon>
+    </v-btn>
+
+    <v-card
+      id="filterinfo"
+      class="px-4 py-2"
+      :style="'width:' + legendWidth"
+      v-bind:class="{open: filterinfoopen}"
+      >
+      <v-icon
+        style="position: absolute; top:0; right:0;"
+        class="pa-2"
         @click="filterinfoopen=!filterinfoopen">
-        <v-icon>mdi-filter</v-icon>
-      </v-btn>
-
-      <v-card
-        id="filterinfo"
-        class="px-4 py-2"
-        :style="'width:' + legendWidth"
-        v-bind:class="{open: filterinfoopen}"
+        mdi-close-circle-outline
+      </v-icon>
+      <div class="smaller">
+        <h3>{{$t('filter')}}</h3>
+        <p><strong>{{$t('categories')}}</strong></p>
+        <v-list
+          dense
+          class="legend pt-0"
         >
-        <v-icon
-          style="position: absolute; top:0; right:0;"
-          class="pa-2"
-          @click="filterinfoopen=!filterinfoopen">
-          mdi-close-circle-outline
-        </v-icon>
-        <div class="smaller">
-          <h3>{{$t('filter')}}</h3>
-          <p><strong>{{$t('categories')}}</strong></p>
-          <v-list
-            dense
-            class="legend pt-0"
+          <v-list-item
+            v-for="(item, i) in categoryList"
+            :key="i"
+            @click="toggleCat(item.pk)"
+            class="pa-0 isPrimary"
           >
-            <v-list-item
-              v-for="(item, i) in categoryList"
-              :key="i"
-              @click="toggleCat(item.pk)"
-              class="pa-0 isPrimary"
-            >
-              <v-list-item-icon class="my-0 mr-2">
-                <v-icon v-if="disabledCatPks.includes(item.pk)">mdi-eye-off</v-icon>
-                <v-icon v-else>mdi-eye</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content class="py-0">
-                <v-list-item-title>{{ item.name }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
+            <v-list-item-icon class="my-0 mr-2">
+              <v-icon v-if="disabledCatPks.includes(item.pk)">mdi-eye-off</v-icon>
+              <v-icon v-else>mdi-eye</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content class="py-0">
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
 
-          <p><strong>{{$t('states')}}</strong></p>
-          <v-list
-            dense
-            class="legend pt-0"
+        <p><strong>{{$t('states')}}</strong></p>
+        <v-list
+          dense
+          class="legend pt-0"
+        >
+          <v-list-item
+            v-for="(item, i) in statesList"
+            :key="i"
+            @click="toggleState(item.pk)"
+            class="pa-0 isPrimary"
           >
-            <v-list-item
-              v-for="(item, i) in statesList"
-              :key="i"
-              @click="toggleState(item.pk)"
-              class="pa-0 isPrimary"
-            >
-              <v-list-item-icon class="my-0 mr-2">
-                <v-icon v-if="disabledStatePks.includes(item.pk)">mdi-eye-off</v-icon>
-                <v-icon v-else>mdi-eye</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content class="py-0">
-                <v-list-item-title>{{ item.name }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </div>
-      </v-card>
+            <v-list-item-icon class="my-0 mr-2">
+              <v-icon v-if="disabledStatePks.includes(item.pk)">mdi-eye-off</v-icon>
+              <v-icon v-else>mdi-eye</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content class="py-0">
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </div>
+    </v-card>
+
+    <object-detail
+      :object="currentObject"
+      :enableLikes="false"
+      v-on:close="currentObject=null"
+    />
   </v-main>
 </template>
 
@@ -265,7 +272,7 @@
   clip-path: circle(0% at 95% 90%);
   transition: clip-path 0.3s ease-out;
   pointer-events: none;
-  z-index: 500; /* must be above mapbox icons */
+  z-index: 5;
 }
 
 #filterinfo.open {
@@ -276,6 +283,11 @@
 
 
 <script>
+import Vue from 'vue';
+import ObjectDetail from './ObjectDetail.vue';
+
+Vue.component('object-detail', ObjectDetail);
+
 export default {
   name: 'AnnotationsList',
   data() {
@@ -283,7 +295,9 @@ export default {
       djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
       disabledCatPks: [],
       disabledStatePks: [],
-      filterinfoopen: true
+      filterinfoopen: true,
+      currentIndex: null,
+      currentObject: null
     };
   },
 
@@ -356,6 +370,12 @@ export default {
       }
       return [];
     },
+    // currentObject() {
+    //   if (this.filteredAnnotationList.items && this.currentIndex !== null) {
+    //     return this.filteredAnnotationList.items[this.currentObjectIndex];
+    //   }
+    //   return null;
+    // },
     legendWidth() {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return '280px';

@@ -566,6 +566,7 @@
       <object-detail
         :object="currentObject"
         :enableLikes="annotations.object.likes"
+        v-on:close="currentObjectIndex=null"
       />
     </v-main>
 </template>
