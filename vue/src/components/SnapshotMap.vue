@@ -683,8 +683,9 @@ p.helpText {
 
 #addHeart {
   position: absolute;
-  right: 1.2em;
-  animation: addHeart 1.2s 0.4s ease-in-out both;
+  display: none;
+  right: 2.4em;
+  /* animation: addHeart 1.2s 0.4s ease-in-out both; */
 }
 @keyframes addHeart {
   0% {
