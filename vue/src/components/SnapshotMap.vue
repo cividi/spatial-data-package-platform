@@ -1066,6 +1066,7 @@ export default {
             commentoScript.setAttribute('src', `${this.commentoUrl}/js/commento.js`);
             commentoScript.setAttribute('data-auto-init', false);
             commentoScript.setAttribute('data-no-fonts', true);
+            commentoScript.setAttribute('data-locale', this.$route.params.lang);
             commentoScript.setAttribute('data-css-override', '/commento.css');
             commentoScript.setAttribute('data-page-id', `${this.currentComment.pk}-${this.currentComment.id}`);
             // commentoScript.setAttribute('defer', true);
