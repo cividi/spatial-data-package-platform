@@ -10,6 +10,8 @@
     "stateLabel": "Status",
     "emailhintEnd": "schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
     "savedEnd": "Klicken Sie zur Freischaltung den Link in der Email an.",
+    "files":"Dateien",
+    "filesHint":"Halten Sie die CTRL Taste gedrückt um mehrere Dateien auszuwählen.",
     "comment": {
       "title": "@:title",
       "text":"@:text",
@@ -351,6 +353,20 @@
                         </v-col>
                       </v-row>
                     </v-container>
+
+                    <div v-if="newAnnotation.kind !== 'PLY'">
+                      <v-file-input
+                        accept=".png,.jpg,.jpeg"
+                        multiple
+                        :label="$t('files')"
+                        truncate-length="20"
+                        v-model="uploadFiles"
+                        @change="uploadAnnotationAttachments"
+                      >
+                      </v-file-input>
+                      <p class="small">{{ $t('filesHint')}}</p>
+                    </div>
+
                     <v-textarea
                       outlined
                       rows="4"
@@ -366,17 +382,6 @@
                       v-model="newAnnotation.moreinfo"
                       :label="c$t(annotationKindKey[newAnnotation.kind] + '.moreinfo')"
                     />
-
-                    <v-file-input
-                      accept=".png,.jpg,.jpeg"
-                      multiple
-                      :label="$t('file')"
-                      truncate-length="20"
-                      :required="true"
-                      v-model="uploadFiles"
-                      @change="uploadAnnotationAttachments"
-                    >
-                    </v-file-input>
 
                     <div class="d-flex justify-space-between">
                       <v-btn

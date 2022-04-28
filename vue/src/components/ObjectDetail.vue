@@ -2,6 +2,10 @@
 <i18n>
 {
   "de": {
+    "category":"Kategorie:",
+    "state": "Status:",
+    "constructed": "Erbaut:",
+    "demolished": "Abgerissen:"
   },
   "fr": {
   },
@@ -14,12 +18,12 @@
 <template>
   <div>
     <v-fade-transition>
-    <v-overlay v-if="curObj !== null">
-      <div
-        @click="$emit('close')"
-        style="width: 100vw; height: 100vh; cursor: pointer;"
-      >close</div>
-    </v-overlay>
+      <v-overlay v-if="curObj !== null" z-index="505">
+        <div
+          @click="$emit('close')"
+          style="width: 100vw; height: 100vh; cursor: pointer;"
+        ></div>
+      </v-overlay>
     </v-fade-transition>
     <v-slide-x-transition>
       <div
@@ -38,13 +42,13 @@
           <h4>{{ curObj.data.properties.subtitle }}</h4>
 
           <p>
-            Kategorie:
+            {{ $t('category') }}
             <span>
               {{ curObj.category.name }}
             </span>
           </p>
           <p v-if="curObj.state">
-            Status:
+            {{ $t('state') }}
             <span>
               {{ curObj.state.name }}
             </span>
@@ -57,7 +61,7 @@
             <v-row>
               <v-col v-if="curObj.data.properties.constructionYear">
                 <p>
-                  Erbaut:
+                  {{ $t('constructed') }}
                   <span>
                     {{ curObj.data.properties.constructionYear }}
                   </span>
@@ -65,7 +69,7 @@
               </v-col>
               <v-col v-if="curObj.data.properties.demolitionYear">
                 <p>
-                  Abgerissen:
+                  {{ $t('demolished') }}
                   <span>
                     {{ curObj.data.properties.demolitionYear }}
                   </span>
@@ -110,6 +114,18 @@
   background: #fff;
   z-index: 1100;
   overflow: auto;
+}
+
+@media (max-width: 1263px) {
+  #objectDetail {
+    left: 0;
+  }
+}
+
+@media (max-width: 500px) {
+  #objectDetail {
+    width: calc(100vw - 7em);
+  }
 }
 </style>
 
