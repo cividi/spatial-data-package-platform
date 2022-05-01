@@ -17,36 +17,41 @@ def apply_migration(apps, schema_editor):
     for g in default_groups:
         Group.objects.using(db_alias).get_or_create(name=g.name)
 
-    permissions = [
-        Permission.objects.get(codename='view_workspace'),
-        Permission.objects.get(codename='view_annotation'),
-        Permission.objects.get(codename='view_category'),
-        # Permission.objects.get(codename='view_usergroup'),
-    ]
+    view_workspace = Permission.objects.filter(codename='view_workspace').first()
+    view_annotation = Permission.objects.filter(codename='view_annotation').first()
+    view_category = Permission.objects.filter(codename='view_category').first()
 
-    default = Group.objects.using(db_alias).get(name="default")
-    core_p_group = Group.objects.using(db_alias).get(name="core/participation")
-    core_a_group = Group.objects.using(db_alias).get(name="core/areamanagement")
+    if view_workspace and view_annotation and view_category:
+        permissions = [
+            view_workspace,
+            view_annotation,
+            view_category,
+            # Permission.objects.get(codename='view_usergroup'),
+        ]
 
-    default.permissions.set(permissions)
-    core_p_group.permissions.set(permissions)
-    core_a_group.permissions.set(permissions)
+        default = Group.objects.using(db_alias).get(name="default")
+        core_p_group = Group.objects.using(db_alias).get(name="core/participation")
+        core_a_group = Group.objects.using(db_alias).get(name="core/areamanagement")
+
+        default.permissions.set(permissions)
+        core_p_group.permissions.set(permissions)
+        core_a_group.permissions.set(permissions)
     
-    # Add all users to new groups
-    User = apps.get_model("gsuser", "User")
-    users = User.objects.using(db_alias)
-    default.user_set.add(*users)
-    core_p_group.user_set.add(*users)
-    core_a_group.user_set.add(*users)
+        # Add all users to new groups
+        User = apps.get_model("gsuser", "User")
+        users = User.objects.using(db_alias)
+        default.user_set.add(*users)
+        core_p_group.user_set.add(*users)
+        core_a_group.user_set.add(*users)
 
-    Category = apps.get_model("gsmap", "Category")
-    Category.objects.using(db_alias).filter(group=None).update(group=default)
+        Category = apps.get_model("gsmap", "Category")
+        Category.objects.using(db_alias).filter(group=None).update(group=default)
 
-    Workspace = apps.get_model("gsmap", "Workspace")
-    Workspace.objects.using(db_alias).filter(group=None).update(group=default)
+        Workspace = apps.get_model("gsmap", "Workspace")
+        Workspace.objects.using(db_alias).filter(group=None).update(group=default)
 
-    Usergroup = apps.get_model("gsmap", "Usergroup")
-    Usergroup.objects.using(db_alias).filter(group=None).update(group=default)
+        Usergroup = apps.get_model("gsmap", "Usergroup")
+        Usergroup.objects.using(db_alias).filter(group=None).update(group=default)
 
 def revert_migration(apps, schema_editor):
     Group = apps.get_model("auth", "Group")
