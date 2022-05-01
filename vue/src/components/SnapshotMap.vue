@@ -1059,7 +1059,7 @@ export default {
             feature.properties.interactive = false;
 
             if (feature.properties.title || feature.properties.description) {
-              feature.properties.className = 'popup-title-description';
+              feature.properties.icon.className += ' popup-title-description';
               feature.properties.interactive = true;
             }
 
@@ -1310,6 +1310,12 @@ export default {
               a.data.index = i;
               if (a.category) {
                 a.data.properties.icon = { iconUrl: `/media/${a.category.icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
+                if (a.state) {
+                  if (a.state.decoration) {
+                    a.data.properties.icon.className = ` state-${a.state.decoration.toLowerCase()}`;
+                  }
+                }
+
                 if (a.kind === 'PLY') {
                   const area = this.geodesicArea(
                     a.data.geometry.coordinates[0].map(

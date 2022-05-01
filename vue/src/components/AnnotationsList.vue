@@ -111,6 +111,7 @@
         v-for="annotation in filteredAnnotationList"
         :key="annotation.pk"
         class="pa-4"
+        :class="stateClass(annotation)"
         @click="currentObject = annotation">
         <v-img
           v-if="annotation.attachements.length > 0"
@@ -264,6 +265,10 @@
   left: 320px !important;
 }
 
+.state-gray {
+  filter: grayscale(1);
+}
+
 #filterinfo {
   position: absolute;
   bottom: 2.5em;
@@ -333,6 +338,14 @@ export default {
       el.style.top = `${el.offsetTop - parseFloat(marginTop, 10)}px`;
       el.style.width = width;
       el.style.height = height;
+    },
+    stateClass(a) {
+      if (a.state) {
+        if (a.state.decoration) {
+          return `state-${a.state.decoration.toLowerCase()}`;
+        }
+      }
+      return '';
     }
   },
   computed: {
@@ -361,7 +374,7 @@ export default {
             }
           }
           if (this.statesList && a.state) {
-            if (this.disabledStatePks.includes(a.category.pk)) {
+            if (this.disabledStatePks.includes(a.state.pk)) {
               pass = false;
             }
           }

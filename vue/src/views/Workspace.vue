@@ -282,6 +282,7 @@ export default {
                 state {
                   pk
                   name(languageCode: $lang)
+                  decoration
                 }
                 attachements {
                   document
@@ -299,6 +300,7 @@ export default {
               states {
                 pk
                 name(languageCode: $lang)
+                decoration
                 hideInList
                 hideInLegend
               }

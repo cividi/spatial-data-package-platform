@@ -378,7 +378,7 @@ class StateAdmin(TranslatableAdmin):
             'fields': ('deleted', 'hide_in_list', 'hide_in_legend'),
         }),
         (_('State'), {
-            'fields': ('group','name'),
+            'fields': ('group','name','decoration'),
         }),
     )
 

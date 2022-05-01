@@ -134,7 +134,7 @@ class CategoryNode(DjangoObjectType):
 class StateNode(DjangoObjectType):
     class Meta:
         model = State
-        fields = ['name', 'hide_in_list', 'hide_in_legend']
+        fields = ['name', 'decoration', 'hide_in_list', 'hide_in_legend']
         filter_fields = {
             'hide_in_list': ['exact'],
             'hide_in_legend': ['exact'],
@@ -145,6 +145,8 @@ class StateNode(DjangoObjectType):
         language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
     )
     pk = graphene.Int(source='id')
+
+
 
     def resolve_name(self, info, language_code=None):
         lang = Q_LANGUAGE.get(language_code).name

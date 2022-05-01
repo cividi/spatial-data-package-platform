@@ -371,6 +371,15 @@ class State(TranslatableModel):
     hide_in_list = models.BooleanField(_("hide in list"), default=False)
     hide_in_legend = models.BooleanField(_("hide in legend"), default=False)
 
+    DECORATION_CHOICES = [
+        ('', _('None')),
+        ('GRAY', _('Grayscale')),
+        # ('TRSP', _('Semi-Transparent')),
+        # ('LG', _('Bigger')),
+        # ('SM', _('Smaller')),
+    ]
+    decoration = models.CharField(_("decoration"), max_length=5, choices=DECORATION_CHOICES, default="", blank=True, null=True)
+
     group = models.ForeignKey(
         Group, default=None, blank=True,
         null=True, on_delete=models.SET_NULL
