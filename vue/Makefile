@@ -36,3 +36,7 @@ build-dev-watch:
 
 build-prod-watch:
 	$(DOCKER_EXEC) yarn build --mode production --watch
+
+build-vercel:
+	git fetch --tags
+	yarn build --mode production
