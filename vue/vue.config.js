@@ -1,17 +1,11 @@
-const { exec } = require('child_process');
+const { execSync } = require('child_process');
+
+const gitCommand = 'printf "%s\t%s" "$(git describe --abbrev=0 --tags)" "$(git rev-parse --short HEAD)"';
 
 process.env.VUE_APP_GIT_VERSION = 'NaN.NaN.NaN\tNaN';
 
 try {
-  exec('printf "%s\t%s" "$(git describe --abbrev=0 --tags)" "$(git rev-parse --short HEAD)"', (err, stdout, stderr) => {
-    if (err) {
-      //  some err occurred
-      console.error(err);
-    } else {
-      // the *entire* stdout and stderr (buffered)
-      process.env.VUE_APP_GIT_VERSION = stdout;
-    }
-  });
+  process.env.VUE_APP_GIT_VERSION = execSync(gitCommand).toString().trim();
 } catch (err) {
   // pass
 }
