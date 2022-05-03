@@ -65,14 +65,14 @@ module.exports = {
       ],
       useRenderEvent: true,
       headless: true,
-      onlyProduction: true,
-      customRendererConfig: {
-        executablePath: '/usr/bin/chromium-browser',
-        args: [
-          '--no-sandbox',
-          '--disable-dev-shm-usage'
-        ]
-      }
+      onlyProduction: true
+      // customRendererConfig: {
+      //   executablePath: '/usr/bin/chromium-browser',
+      //   args: [
+      //     '--no-sandbox',
+      //     '--disable-dev-shm-usage'
+      //   ]
+      // }
     }
   }
 };
