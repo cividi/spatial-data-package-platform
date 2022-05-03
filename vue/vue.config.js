@@ -1,11 +1,17 @@
-const fs = require('fs');
+const { exec } = require('child_process');
 
 process.env.VUE_APP_GIT_VERSION = 'NaN.NaN.NaN\tNaN';
 
 try {
-  if (fs.existsSync('VERSION')) {
-    process.env.VUE_APP_GIT_VERSION = fs.readFileSync('VERSION', 'utf8');
-  }
+  exec('printf "%s\t%s" "$(git describe --abbrev=0 --tags)" "$(git rev-parse --short HEAD)"', (err, stdout, stderr) => {
+    if (err) {
+      //  some err occurred
+      console.error(err);
+    } else {
+      // the *entire* stdout and stderr (buffered)
+      process.env.VUE_APP_GIT_VERSION = stdout;
+    }
+  });
 } catch (err) {
   // pass
 }
