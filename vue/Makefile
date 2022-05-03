@@ -38,7 +38,4 @@ build-prod-watch:
 	$(DOCKER_EXEC) yarn build --mode production --watch
 
 build-vercel:
-	git fetch --prune --unshallow
-	git fetch --tags
-	bash -c 'printf "%s\t%s" "$$(git describe --abbrev=0 --tags)" "$$(git rev-parse --short HEAD)"'
 	yarn build --mode production

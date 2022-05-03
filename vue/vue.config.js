@@ -1,11 +1,12 @@
 const { execSync } = require('child_process');
+const fs = require('fs');
 
-const gitCommand = 'printf "%s\t%s" "$(git describe --abbrev=0 --tags)" "$(git rev-parse --short HEAD)"';
+const gitCommand = 'git rev-parse --short HEAD';
 
 process.env.VUE_APP_GIT_VERSION = 'NaN.NaN.NaN\tNaN';
 
 try {
-  process.env.VUE_APP_GIT_VERSION = execSync(gitCommand).toString().trim();
+  process.env.VUE_APP_GIT_VERSION = `${fs.readFileSync('VERSION', 'utf8')}\t${execSync(gitCommand).toString().trim()}`;
 } catch (err) {
   // pass
 }

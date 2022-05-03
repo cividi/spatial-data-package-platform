@@ -90,6 +90,6 @@ tests:
 
 deploy_version:
 	bash -c 'printf "%s\t%s" "$$(git describe --abbrev=0 --tags)" "$$(git rev-parse --short HEAD)" > django/VERSION'
-	cp django/VERSION vue/VERSION
+	bash -c 'printf "%s" "$$(git describe --abbrev=0 --tags)" > vue/VERSION'
 
 -include deploy_version
