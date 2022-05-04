@@ -46,7 +46,7 @@ ARG S6_OVERLAY_VERSION=v2.2.0.3
 RUN curl -Ls https://github.com/just-containers/s6-overlay/releases/download/$S6_OVERLAY_VERSION/s6-overlay-amd64.tar.gz | tar xz -C /
 
 # python requirements 00 layer
-COPY ./docker/django/requirements/00/requirements.txt /tmp/requirements.txt
+COPY docker/django/requirements/00/requirements.txt /tmp/requirements.txt
 RUN apk add --no-cache \
         libjpeg-turbo-dev \
         freetype-dev \
