@@ -10,7 +10,7 @@ services:
     hostname: vue
 
   django:
-    image: smartuse/gemeindescan-webui-django:3.2.0
+    image: ghcr.io/cividi/dfour-hub:dev
     hostname: django
 
   www:
