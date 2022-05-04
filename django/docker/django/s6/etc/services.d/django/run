@@ -4,6 +4,26 @@ mkdir -p /var/services/run
 mkdir -p /var/services/django/log
 
 cd /opt/app
+
+# Make Symlinks
+bash -c "mkdir -p /var/services/django/media && cd /var/services/django; [ ! -e /var/services/django/downloads ] && ln -s media downloads" || true
+
+# Make Migrate
+python3 manage.py migrate
+python3 manage.py collectstatic --noinput
+
+# Make Createcachetable
+python3 manage.py createcachetable
+
+# Make No-Input Adminuser
+python3 manage.py createsuperuser --noinput --username admin --email admin@localhost.local
+
+# Import Gemeinde GeoJSON
+# mkdir -p $(dir ./tmp/)
+curl -o /tmp/gemeinden.geojson -Ls ${DJANGO_MUNICIAPLITIES}
+python3 manage.py import-municipality /tmp/gemeinden.geojson
+rm /tmp/gemeinden.geojson
+
 # uvicorn main.asgi:application --port 8081 --host 0.0.0.0
 gunicorn \
 -w 4 -b 0.0.0.0:8081 \

@@ -46,7 +46,7 @@ ARG S6_OVERLAY_VERSION=v2.2.0.3
 RUN curl -Ls https://github.com/just-containers/s6-overlay/releases/download/$S6_OVERLAY_VERSION/s6-overlay-amd64.tar.gz | tar xz -C /
 
 # python requirements 00 layer
-COPY ./requirements/00/requirements.txt /tmp/requirements.txt
+COPY ./docker/django/requirements/00/requirements.txt /tmp/requirements.txt
 RUN apk add --no-cache \
         libjpeg-turbo-dev \
         freetype-dev \
@@ -66,8 +66,19 @@ RUN apk add --no-cache \
 
 RUN apk add --update tzdata
 
-COPY s6/etc/services.d /etc/services.d
-COPY s6/etc/cont-init.d /etc/cont-init.d
+COPY fixtures-tests     /opt/app/fixtures-tests/
+COPY gsmap              /opt/app/gsmap/
+COPY gsuser             /opt/app/gsuser/
+COPY locale             /opt/app/locale/
+COPY main               /opt/app/main/
+COPY __init__.py        /opt/app/__init__.py
+COPY conftest.py        /opt/app/conftest.py
+COPY manage.py          /opt/app/manage.py
+COPY pytest.ini         /opt/app/pytest.ini
+COPY VERSION            /opt/app/VERSION
+
+COPY docker/django/s6/etc/services.d /etc/services.d
+COPY docker/django/s6/etc/cont-init.d /etc/cont-init.d
 ENTRYPOINT ["/init"]
 
 EXPOSE 8081

@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
 DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
 USE_HTTPS = os.getenv('DJANGO_HTTPS') == 'True'
+DB_SEARCH_PATH = os.getenv('DJANGO_DB_SEARCH_PATH', 'public')
 
 
 if USE_HTTPS:
@@ -123,6 +124,9 @@ DATABASES = {
         'HOST': os.getenv('DJANGO_DB_HOST', 'pdb'),
         'PORT': '5432',
         'CONN_MAX_AGE': 600,
+        'OPTIONS': {
+            'options': f"-c search_path={DB_SEARCH_PATH}",
+        }
         # 'OPTIONS': {'autocommit': True}
     }
 }
