@@ -451,8 +451,7 @@
               </span><br>
               Fläche: ca. {{currentComment.data.properties.area}}
             </div>
-            {{currentComment.data.properties.description}}<br>
-
+            <div v-html="currentComment.data.properties.description"></div>
             <div
               v-if="(annotations.marker.likes && currentComment.kind == 'COM') ||
                 (annotations.polygon.likes && currentComment.kind == 'PLY')"
@@ -524,7 +523,7 @@ body,
 #map.leaflet-container {
   background: #dedede;
   animation: none;
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 .leaflet-popup-content {
   padding: 10px;

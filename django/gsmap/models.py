@@ -519,7 +519,11 @@ class Annotation(models.Model):
 
     def save(self, *args, **kwargs):
         if self.data['properties']['description']:
-            self.data['properties']['description'] = bleach.clean(self.data['properties']['description'])
+            self.data['properties']['description'] = bleach.clean(
+                self.data['properties']['description'],
+                tags=['br','a','b','i','em','h3'],
+                attributes={'*': [], 'a': ['href','title']}
+            )
 
         if self.data['properties']['title']:
             self.data['properties']['title'] = bleach.clean(self.data['properties']['title'])
