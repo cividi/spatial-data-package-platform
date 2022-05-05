@@ -2,6 +2,30 @@
   "trailingSlash": true,
   "redirects": [
     { 
+      "source": "/new-municipality/:id([0-9]{1,4})/", 
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "(?<lang>(de|fr|it|en)),?.*"
+        }
+      ],
+      "destination": "/:lang/new-municipality/:id",
+      "permanent": false 
+    },
+    { 
+      "source": "/new-municipality/:id([0-9]{1,4})/", 
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "[a-z]{2},?.*"
+        }
+      ],
+      "destination": "/en/new-municipality/:id",
+      "permanent": false 
+    },
+    { 
       "source": "/:wshash([0-9a-z]{5})/:hash([0-9a-z]{6})/", 
       "has": [
         {
@@ -76,6 +100,7 @@
   ],
   "rewrites": [
     { "source": "/(de|fr|it|en)/[0-9A-Z]{6}/", "destination": "/app.html"},
-    { "source": "/(de|fr|it|en)/[0-9A-Z]{5}/[0-9A-Z]{6}/", "destination": "/app.html"}
+    { "source": "/(de|fr|it|en)/[0-9A-Z]{5}/[0-9A-Z]{6}/", "destination": "/app.html"},
+    { "source": "/(de|fr|it|en)/new-municipality/[0-9]{1,4}/", "destination": "/app.html"}
     ]
   }
