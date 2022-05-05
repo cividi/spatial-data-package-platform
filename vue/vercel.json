@@ -2,7 +2,7 @@
   "trailingSlash": true,
   "redirects": [
     { 
-      "source": "/:wshash(?[0-9a-z]{5})/:hash(?[0-9a-z]{6})/", 
+      "source": "/:wshash([0-9a-z]{5})/:hash([0-9a-z]{6})/", 
       "has": [
         {
           "type": "header",
@@ -14,7 +14,7 @@
       "permanent": false 
     },
     { 
-      "source": "/:wshash(?[0-9a-z]{5})/:hash(?[0-9a-z]{6})/", 
+      "source": "/:wshash([0-9a-z]{5})/:hash([0-9a-z]{6})/", 
       "has": [
         {
           "type": "header",
@@ -26,7 +26,7 @@
       "permanent": false 
     },
     { 
-      "source": "/:hash(?[0-9a-z]{6})/", 
+      "source": "/:hash([0-9a-z]{6})/", 
       "has": [
         {
           "type": "header",
@@ -38,7 +38,7 @@
       "permanent": false 
     },
     { 
-      "source": "/:hash(?[0-9a-z]{6})/", 
+      "source": "/:hash([0-9a-z]{6})/", 
       "has": [
         {
           "type": "header",
