@@ -19,7 +19,7 @@
         {
           "type": "header",
           "key": "Accept-Language",
-          "value": "(?<lang>(de|fr|it|en)),?.*"
+          "value": "[a-z]{2},?.*"
         }
       ],
       "destination": "/en/:wshash/:hash",
@@ -43,7 +43,7 @@
         {
           "type": "header",
           "key": "Accept-Language",
-          "value": "(?<lang>(de|fr|it|en)),?.*"
+          "value": "[a-z]{2},?.*"
         }
       ],
       "destination": "/en/:hash",
@@ -55,7 +55,7 @@
         {
           "type": "header",
           "key": "Accept-Language",
-          "value": "[a-z]{2},?.*"
+          "value": "(?<lang>(de|fr|it|en)),?.*"
         }
       ],
       "destination": "/:lang", 
