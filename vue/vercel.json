@@ -99,8 +99,8 @@
     }
   ],
   "rewrites": [
-    { "source": "/(de|fr|it|en)/[0-9A-Z]{6}/", "destination": "/app.html"},
-    { "source": "/(de|fr|it|en)/[0-9A-Z]{5}/[0-9A-Z]{6}/", "destination": "/app.html"},
-    { "source": "/(de|fr|it|en)/new-municipality/[0-9]{1,4}/", "destination": "/app.html"}
+    { "source": "/(de|fr|it|en)/([0-9A-Z]{6})/", "destination": "/app.html"},
+    { "source": "/(de|fr|it|en)/([0-9A-Z]{5})/([0-9A-Z]{6})/", "destination": "/app.html"},
+    { "source": "/(de|fr|it|en)/new-municipality/([0-9]{1,4})/", "destination": "/app.html"}
     ]
   }
