@@ -74,7 +74,7 @@
       "permanent": false 
     },
     { 
-      "source": "/:hash([0-9a-z]{6})/annotations/:type([A-Z]{3})/", 
+      "source": "/:hash([0-9a-z]{5})/annotations/:type([A-Z]{3})/", 
       "has": [
         {
           "type": "header",
@@ -86,7 +86,7 @@
       "permanent": false 
     },
     { 
-      "source": "/:hash([0-9a-z]{6})/annotations/:type([A-Z]{3})/", 
+      "source": "/:hash([0-9a-z]{5})/annotations/:type([A-Z]{3})/", 
       "has": [
         {
           "type": "header",
@@ -125,7 +125,7 @@
   "rewrites": [
       { "source": "/(de|fr|it|en)/([0-9A-Z]{6})/", "destination": "/app.html"},
       { "source": "/(de|fr|it|en)/([0-9A-Z]{5})/([0-9A-Z]{6})/", "destination": "/app.html"},
-      { "source": "/(de|fr|it|en)/([0-9A-Z]{6})/annotations/([A-Z]{3})/", "destination": "/app.html"},
+      { "source": "/(de|fr|it|en)/([0-9A-Z]{5})/annotations/([A-Z]{3})/", "destination": "/app.html"},
       { "source": "/(de|fr|it|en)/new-municipality/([0-9]{1,4})/", "destination": "/app.html"}
     ]
   }
