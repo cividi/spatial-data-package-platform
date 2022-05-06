@@ -74,6 +74,30 @@
       "permanent": false 
     },
     { 
+      "source": "/:hash([0-9a-z]{6})/annotations/:type([A-Z]{3})/", 
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "(?<lang>(de|fr|it|en)),?.*"
+        }
+      ],
+      "destination": "/:lang/:hash/annotations/:type",
+      "permanent": false 
+    },
+    { 
+      "source": "/:hash([0-9a-z]{6})/annotations/:type([A-Z]{3})/", 
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "[a-z]{2},?.*"
+        }
+      ],
+      "destination": "/en/:hash/annotations/:type",
+      "permanent": false 
+    },
+    { 
       "source": "/", 
       "has": [
         {
@@ -99,8 +123,9 @@
     }
   ],
   "rewrites": [
-    { "source": "/(de|fr|it|en)/([0-9A-Z]{6})/", "destination": "/app.html"},
-    { "source": "/(de|fr|it|en)/([0-9A-Z]{5})/([0-9A-Z]{6})/", "destination": "/app.html"},
-    { "source": "/(de|fr|it|en)/new-municipality/([0-9]{1,4})/", "destination": "/app.html"}
+      { "source": "/(de|fr|it|en)/([0-9A-Z]{6})/", "destination": "/app.html"},
+      { "source": "/(de|fr|it|en)/([0-9A-Z]{5})/([0-9A-Z]{6})/", "destination": "/app.html"},
+      { "source": "/(de|fr|it|en)/([0-9A-Z]{6})/annotations/([A-Z]{3})/", "destination": "/app.html"},
+      { "source": "/(de|fr|it|en)/new-municipality/([0-9]{1,4})/", "destination": "/app.html"}
     ]
   }
