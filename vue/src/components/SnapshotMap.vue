@@ -1211,7 +1211,7 @@ export default {
           .map((c) => {
             if (c.icon !== '') {
               return {
-                svg: `/media/${c.icon}`,
+                svg: `${this.djangobaseurl}/media/${c.icon}`,
                 label: c.name,
                 primary: !c.hideInList
               };
@@ -1309,7 +1309,7 @@ export default {
               a.data.kind = a.kind;
               a.data.index = i;
               if (a.category) {
-                a.data.properties.icon = { iconUrl: `/media/${a.category.icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
+                a.data.properties.icon = { iconUrl: `${this.djangobaseurl}/media/${a.category.icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
                 if (a.state) {
                   if (a.state.decoration) {
                     a.data.properties.icon.className = ` state-${a.state.decoration.toLowerCase()}`;
