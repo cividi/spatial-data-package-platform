@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 # use your own secret_key, default for testing and dev
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
+HOST = os.getenv('DJANGO_HOST', 'www.local:8000')
 DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
 USE_HTTPS = os.getenv('DJANGO_HTTPS') == 'True'
 DB_SEARCH_PATH = os.getenv('DJANGO_DB_SEARCH_PATH', 'public')
@@ -200,6 +201,13 @@ CORS_ORIGIN_WHITELIST = [
     "http://www:8000",
     "http://www.local:8000",
 ]
+if os.environ.get('DJANGO_ALLOWED_HOSTS'):
+    CORS_ORIGIN_WHITELIST += [
+        f"http://{h}" for h in ALLOWED_HOSTS
+    ]
+    CORS_ORIGIN_WHITELIST += [
+        f"https://{h}" for h in ALLOWED_HOSTS
+    ]
 CORS_ALLOW_CREDENTIALS = True
 CACHES = {
     'default': {
@@ -212,3 +220,17 @@ SESSION_COOKIE_HTTPONLY = False
 THUMBNAIL_BACKEND = 'main.utils.PermalinkThumbnailBackend'
 THUMBNAIL_PREFIX = 'cache/'
 SCREENSHOT_SCHEDULER_CRON_MINUTES = os.environ.get('DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES', '*')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}

@@ -26,3 +26,7 @@ def context_processor(request):
 def get_website(current):
     proto = 'https' if settings.USE_HTTPS else 'http'
     return {'domain': current.domain, 'proto': proto, 'base': f'{proto}://{current.domain}'}
+
+def get_backend():
+    proto = 'https' if settings.USE_HTTPS else 'http'
+    return {'domain': settings.HOST, 'proto': proto, 'base': f'{proto}://{settings.HOST}'}

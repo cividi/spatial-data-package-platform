@@ -64,7 +64,7 @@
             {% blocktranslate %}For questions and feedback, please contact {{ contactName }} at {{ contactEmail }}{% endblocktranslate %}
           </p>
           <p>
-            <a href="{{ request.META.HTTP_X_FORWARDED_PROTO }}://{{ request.META.HTTP_HOST }}/{{ workspaceHash }}/{{ snapshotHash }}/">
+            <a href="{{ base }}/{{ workspaceHash }}/{{ snapshotHash }}/">
               {% translate "Back to the map" %}
             </a>
           </p>

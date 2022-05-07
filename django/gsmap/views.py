@@ -3,12 +3,14 @@ import os
 
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login as auth_login
+from django.contrib.sites.models import Site
 from django.http import HttpResponseRedirect
 
 from django.views.generic import DetailView
 
 from rest_framework import generics, parsers, renderers
 from rest_framework.response import Response
+from main.utils import get_website
 
 from gsmap.models import Workspace, Snapshot, Annotation, Category, State, Attachement
 
@@ -126,8 +128,11 @@ class AnnotationPublishView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        base = get_website(Site.objects.first())
+
         context['nochange'] = False
 
+        context['base'] = base['base']
         context['workspaceHash'] = self.object.workspace.pk
         context['snapshotHash'] = self.object.workspace.snapshots.first().pk
         context['contactName'] = self.object.workspace.annotations_contact_name
