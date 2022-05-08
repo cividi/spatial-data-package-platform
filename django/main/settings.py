@@ -6,8 +6,8 @@ from django.utils.translation import gettext_lazy as _
 # use your own secret_key, default for testing and dev
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
 HOST = os.getenv('DJANGO_HOST', 'www.local:8000')
-DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
-USE_HTTPS = os.getenv('DJANGO_HTTPS') == 'True'
+DEBUG = os.getenv('DJANGO_DEBUG') == 'true'
+USE_HTTPS = os.getenv('DJANGO_HTTPS') == 'true'
 DB_SEARCH_PATH = os.getenv('DJANGO_DB_SEARCH_PATH', 'public')
 OIDC_ACTIVE = os.getenv('DJANGO_OIDC_LOGIN', False) == 'True'
 
