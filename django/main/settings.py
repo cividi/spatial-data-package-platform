@@ -9,7 +9,7 @@ HOST = os.getenv('DJANGO_HOST', 'www.local:8000')
 DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
 USE_HTTPS = os.getenv('DJANGO_HTTPS') == 'True'
 DB_SEARCH_PATH = os.getenv('DJANGO_DB_SEARCH_PATH', 'public')
-OIDC_ACTIVE = os.getenv('DJANGO_OIDC_LOGIN', False) == 'True'
+OIDC_ACTIVE = os.getenv('DJANGO_OIDC_LOGIN', False) == 'true'
 
 
 if USE_HTTPS:
