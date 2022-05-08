@@ -9,6 +9,7 @@ HOST = os.getenv('DJANGO_HOST', 'www.local:8000')
 DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
 USE_HTTPS = os.getenv('DJANGO_HTTPS') == 'True'
 DB_SEARCH_PATH = os.getenv('DJANGO_DB_SEARCH_PATH', 'public')
+OIDC_ACTIVE = os.getenv('DJANGO_OIDC_LOGIN', False) == 'True'
 
 
 if USE_HTTPS:
@@ -87,6 +88,38 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+if OIDC_ACTIVE:
+    OIDC_OP_LOGOUT_URL_METHOD = 'main.utils.oidc_op_logout'
+    OIDC_USERNAME_ALGO = 'main.utils.generate_username'
+    OIDC_RP_SIGN_ALGO = 'RS256'
+    OIDC_RP_SCOPES = 'openid email'
+
+    LOGIN_URL = 'oidc_authentication_init'
+    LOGIN_REDIRECT_URL = '/gmanage'
+    LOGOUT_REDIRECT_URL = '/gmanage'
+
+    INSTALLED_APPS += [ 'mozilla_django_oidc', ]
+    MIDDLEWARE += [ 'mozilla_django_oidc.middleware.SessionRefresh', ]
+    AUTHENTICATION_BACKENDS = [
+        'gsuser.auth.OIDCAuthenticationBackend',
+        'django.contrib.auth.backends.ModelBackend',
+    ]
+
+    OIDC_RP_CLIENT_ID = os.getenv('OIDC_RP_CLIENT_ID', None)
+    OIDC_RP_CLIENT_SECRET = os.getenv('OIDC_RP_CLIENT_SECRET', None)
+
+    OIDC_OP_AUTHORIZATION_ENDPOINT = os.getenv('OIDC_OP_AUTHORIZATION_ENDPOINT',
+        'https://auth.dfour.io/auth/realms/dfour/protocol/openid-connect/auth')
+    OIDC_OP_TOKEN_ENDPOINT = os.getenv('OIDC_OP_TOKEN_ENDPOINT',
+        'https://auth.dfour.io/auth/realms/dfour/protocol/openid-connect/token')
+    OIDC_OP_USER_ENDPOINT = os.getenv('OIDC_OP_USER_ENDPOINT',
+        'https://auth.dfour.io/auth/realms/dfour/protocol/openid-connect/userinfo')
+    OIDC_OP_JWKS_ENDPOINT = os.getenv('OIDC_OP_JWKS_ENDPOINT',
+        'https://auth.dfour.io/auth/realms/dfour/protocol/openid-connect/certs')
+    OIDC_OP_LOGOUT_ENDPOINT = os.getenv('OIDC_OP_LOGOUT_ENDPOINT',
+        'https://auth.dfour.io/auth/realms/dfour/protocol/openid-connect/logout')
 
 REST_FRAMEWORK = {
     # Only enable JSON renderer by default.
@@ -233,4 +266,10 @@ LOGGING = {
         'handlers': ['console'],
         'level': 'WARNING',
     },
+    'loggers': {
+        'mozilla_django_oidc': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
+        },
+    }
 }

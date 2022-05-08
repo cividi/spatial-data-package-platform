@@ -4,7 +4,10 @@ from django.contrib import admin
 from gsmap.views import CustomLoginView, logout, SnapshotFileUploadView, AnnotationCreateView, AnnotationRateUpView, AnnotationPublishView, AnnotationAttachmentsUploadView
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
+from django.urls import include
 from graphene_django.views import GraphQLView
+from gsuser.views import OIDCLogoutView
+from mozilla_django_oidc.views import OIDCAuthenticationRequestView
 
 urlpatterns = [
     path('api/v1/snapshots/<str:snapshot_id>/',
@@ -24,6 +27,15 @@ urlpatterns = [
     path('gmanage/', admin.site.urls),
     path('graphql/', csrf_exempt(GraphQLView.as_view(graphiql=True))),
 ]
+
+if settings.OIDC_ACTIVE:
+     urlpatterns = [
+          path('gmanage/login/', OIDCAuthenticationRequestView.as_view(), name='oidc_login'),
+          path('gmanage/logout/', OIDCLogoutView.as_view(), name='oidc_logout'),
+     ] + urlpatterns
+     urlpatterns += [
+          path('oidc/', include('mozilla_django_oidc.urls')),
+     ]
 
 if settings.DEBUG:
     from django.conf.urls.static import static
