@@ -10,8 +10,8 @@
     "stateLabel": "Status",
     "emailhintEnd": "schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
     "savedEnd": "Klicken Sie zur Freischaltung den Link in der Email an.",
-    "files":"Dateien",
-    "filesHint":"Halten Sie die CTRL Taste gedrückt um mehrere Dateien auszuwählen.",
+    "files":"Bilder",
+    "filesHint":"Halten Sie die CTRL/CMD Taste gedrückt um mehrere Bilder auszuwählen.",
     "comment": {
       "title": "@:title",
       "text":"@:text",
@@ -38,12 +38,40 @@
       "subtitle": "PLZ Ort",
       "text":"Architektur",
       "moreinfo":"Abrissgrund",
+      "comment":"Kommentar",
       "constructionYear": "Baujahr",
       "demolitionYear": "Abrissjahr",
       "add": "Klicken Sie auf die Stelle in Karte, an der Sie ein Objekt hinzufügen möchten.",
       "new": "Neues Objekt",
       "emailhint": "Um Ihre Objekt freizuschalten, @:emailhintEnd",
-      "saved": "Ihr Objekt wurde gespeichert. @:savedEnd"
+      "saved": "Ihr Objekt wurde gespeichert. @:savedEnd",
+      "constVal": {
+        "na":"unbekannt",
+        "v1":"ca. 1940er",
+        "v2":"ca. 1950er",
+        "v3":"ca. 1960er",
+        "v4":"ca. 1970er",
+        "v5":"ca. 1980er",
+        "v6":"ca. 1990er",
+        "v7":"ca. 2000er",
+        "v8":"ca. 2010er",
+        "v9":"ca. 2020er"
+      },
+      "demoVal": {
+        "na":"unbekannt",
+        "v1":"2020",
+        "v2":"2021",
+        "v3":"2022",
+        "v4":"2023",
+        "v5":"2024",
+        "v6":"2025",
+        "v7":"2026",
+        "v8":"2027",
+        "v9":"2028",
+        "v10":"2029",
+        "v11":"2030",
+        "v12":"nach 2030"
+      },
     },
     "PAR": {
       "categoryLabel": "@:categoryLabel",
@@ -74,6 +102,7 @@
         "subtitle": "@:object.subtitle",
         "text":"@:object.text",
         "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
         "constructionYear": "@:object.constructionYear",
         "demolitionYear": "@:object.demolitionYear",
         "add": "@:object.add",
@@ -112,6 +141,7 @@
         "subtitle": "@:object.subtitle",
         "text":"@:object.text",
         "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
         "constructionYear": "@:object.constructionYear",
         "demolitionYear": "@:object.demolitionYear",
         "add": "@:object.add",
@@ -357,6 +387,7 @@
                     <div v-if="newAnnotation.kind !== 'PLY'">
                       <v-file-input
                         accept=".png,.jpg,.jpeg"
+                        capture="user"
                         multiple
                         :label="$t('files')"
                         truncate-length="20"
@@ -381,6 +412,13 @@
                       rows="4"
                       v-model="newAnnotation.moreinfo"
                       :label="c$t(annotationKindKey[newAnnotation.kind] + '.moreinfo')"
+                    />
+                    <v-textarea
+                      v-if="newAnnotation.kind === 'OBJ'"
+                      outlined
+                      rows="4"
+                      v-model="newAnnotation.comment"
+                      :label="c$t(annotationKindKey[newAnnotation.kind] + '.comment')"
                     />
 
                     <div class="d-flex justify-space-between">
@@ -1362,7 +1400,7 @@ export default {
                     iconUrl: this.commentIconUrl,
                     iconSize: [36, 36]
                   }),
-                  draggable: true
+                  draggable: false
                 });
                 newMarker.on('click', this.newComment);
                 newMarker.addTo(this.map);
@@ -1377,7 +1415,7 @@ export default {
                     iconUrl: this.objectIconUrl,
                     iconSize: [36, 36]
                   }),
-                  draggable: true
+                  draggable: false
                 });
                 newMarker.on('click', this.newObject);
                 newMarker.addTo(this.map);
@@ -1665,6 +1703,7 @@ export default {
       this.polygonString = [];
       this.drawnItems.clearLayers();
       this.addingAnnotation = null;
+      this.uploadFiles = null;
     },
 
     async saveAnnotation() {
@@ -1712,7 +1751,8 @@ export default {
               constructionYear: this.newAnnotation.constructionYear,
               demolitionYear: this.newAnnotation.demolitionYear,
               description: this.newAnnotation.text,
-              moreinfo: this.newAnnotation.moreinfo
+              moreinfo: this.newAnnotation.moreinfo,
+              comment: this.newAnnotation.comment
             }
           };
           break;
