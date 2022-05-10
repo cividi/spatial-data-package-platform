@@ -5,7 +5,10 @@
     "category":"Kategorie:",
     "state": "Status:",
     "constructed": "Erbaut:",
-    "demolished": "Abgerissen:"
+    "demolished": "Abgerissen:",
+    "description": "Architektur",
+    "moreinfo": "Abrissgrund",
+    "comment": "Kommentar"
   },
   "fr": {
   },
@@ -78,8 +81,18 @@
             </v-row>
           </v-container>
 
-          <p>{{ curObj.data.properties.description }}</p>
-          <p>{{ curObj.data.properties.moreinfo }}</p>
+          <div v-if="curObj.data.properties.description">
+            <h5>{{ $t('description') }}</h5>
+            <p>{{ curObj.data.properties.description }}</p>
+          </div>
+          <div v-if="curObj.data.properties.moreinfo">
+            <h5>{{ $t('moreinfo') }}</h5>
+            <p>{{ curObj.data.properties.moreinfo }}</p>
+          </div>
+          <div v-if="curObj.data.properties.comment">
+            <h5>{{ $t('comment') }}</h5>
+            <p>{{ curObj.data.properties.comment }}</p>
+          </div>
 
           <div v-if="enableLikes" class="d-flex align-center justify-end primary--text">
             <p class="rating">

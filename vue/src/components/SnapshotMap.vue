@@ -71,7 +71,7 @@
         "v10":"2029",
         "v11":"2030",
         "v12":"nach 2030"
-      },
+      }
     },
     "PAR": {
       "categoryLabel": "@:categoryLabel",
@@ -364,22 +364,36 @@
                     >
                       <v-row>
                         <v-col>
-                          <v-text-field
+                          <v-select
+                            :items="constVals"
+                            v-model="newAnnotation.constructionYear"
+                            :label="
+                              c$t(annotationKindKey[newAnnotation.kind] + '.constructionYear')
+                            "
+                          ></v-select>
+                          <!-- v-text-field
                             type="number"
                             v-model="newAnnotation.constructionYear"
                             :label="
                               c$t(annotationKindKey[newAnnotation.kind] + '.constructionYear')
                             "
-                          />
+                          / -->
                         </v-col>
                         <v-col>
-                          <v-text-field
+                          <v-select
+                            :items="demoVals"
+                            v-model="newAnnotation.demolitionYear"
+                            :label="
+                              c$t(annotationKindKey[newAnnotation.kind] + '.demolitionYear')
+                            "
+                          ></v-select>
+                          <!-- v-text-field
                             type="number"
                             v-model="newAnnotation.demolitionYear"
                             :label="
                               c$t(annotationKindKey[newAnnotation.kind] + '.demolitionYear')
                             "
-                          />
+                          / -->
                         </v-col>
                       </v-row>
                     </v-container>
@@ -619,273 +633,273 @@ html,
 body,
 #app .v-application--wrap,
 #map {
-    min-height: calc(100vh - var(--vh-offset, 0px));
-    height: calc(100vh - var(--vh-offset, 0px));
+  min-height: calc(100vh - var(--vh-offset, 0px));
+  height: calc(100vh - var(--vh-offset, 0px));
 }
 
 #map {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    background: #dedede
-        linear-gradient(90deg, #dedede 0%, #f2f2f2 17%, #dedede 23%) repeat-y;
-    background-size: 125% 10%;
-    animation: BGani 2s ease infinite;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #dedede
+    linear-gradient(90deg, #dedede 0%, #f2f2f2 17%, #dedede 23%) repeat-y;
+  background-size: 125% 10%;
+  animation: BGani 2s ease infinite;
 }
 .addingAnnotation + #map {
-    cursor: crosshair;
+  cursor: crosshair;
 }
 
 @keyframes BGani {
-    0% {
-        background-position: 110% 0%;
-    }
-    66% {
-        background-position: -410% 0%;
-    }
-    100% {
-        background-position: -410% 0%;
-    }
+  0% {
+    background-position: 110% 0%;
+  }
+  66% {
+    background-position: -410% 0%;
+  }
+  100% {
+    background-position: -410% 0%;
+  }
 }
 #map.leaflet-container {
-    background: #dedede;
-    animation: none;
+  background: #dedede;
+  animation: none;
 }
 .leaflet-popup-content {
-    padding: 10px;
+  padding: 10px;
 }
 .leaflet-popup-content img {
-    max-width: 100%;
-    min-width: 260px;
+  max-width: 100%;
+  min-width: 260px;
 }
 
 #mapinfo {
-    position: absolute;
-    bottom: 2.5em;
-    right: 1.6em;
-    min-width: 240px;
-    clip-path: circle(0% at 95% 90%);
-    transition: clip-path 0.3s ease-out;
-    pointer-events: none;
-    z-index: 500; /* must be above mapbox icons */
+  position: absolute;
+  bottom: 2.5em;
+  right: 1.6em;
+  min-width: 240px;
+  clip-path: circle(0% at 95% 90%);
+  transition: clip-path 0.3s ease-out;
+  pointer-events: none;
+  z-index: 500; /* must be above mapbox icons */
 }
 
 #mapinfo.open {
-    pointer-events: auto;
-    clip-path: circle(100% at center);
+  pointer-events: auto;
+  clip-path: circle(100% at center);
 }
 
 #buttons {
-    position: absolute;
-    top: 5.6em;
-    right: 1.6em;
-    transition: top 0.3s;
-    transition-timing-function: ease-in-out;
+  position: absolute;
+  top: 5.6em;
+  right: 1.6em;
+  transition: top 0.3s;
+  transition-timing-function: ease-in-out;
 }
 #buttons > button {
-    display: block;
-    margin-top: 1em;
+  display: block;
+  margin-top: 1em;
 }
 
 span.statusLabel {
-    padding: 1px 4px;
-    border: 1px solid #000;
-    border-radius: 4px;
+  padding: 1px 4px;
+  border: 1px solid #000;
+  border-radius: 4px;
 }
 
 .navopen #buttons {
-    top: 0.6em;
-    transition-delay: 0.4s;
+  top: 0.6em;
+  transition-delay: 0.4s;
 }
 
 .addHint {
-    position: absolute;
-    top: -4px;
-    left: 50%;
-    width: 680px;
-    margin-left: -340px;
-    text-align: center;
-    text-shadow: 0 0 2px #fff, 0 0 5px #fff;
-    background: #ffffff;
-    padding: 14px 1em 10px 1em;
-    border-radius: 4px;
-    font-size: 16px;
-    line-height: 1.2em;
-    z-index: 1001; /* above [+/-] map zoom button */
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 680px;
+  margin-left: -340px;
+  text-align: center;
+  text-shadow: 0 0 2px #fff, 0 0 5px #fff;
+  background: #ffffff;
+  padding: 14px 1em 10px 1em;
+  border-radius: 4px;
+  font-size: 16px;
+  line-height: 1.2em;
+  z-index: 1001; /* above [+/-] map zoom button */
 }
 
 @media (max-width: 700px) {
-    .addHint {
-        width: 90%;
-        left: 5%;
-        margin-left: 0;
-    }
+  .addHint {
+    width: 90%;
+    left: 5%;
+    margin-left: 0;
+  }
 }
 #commentholder {
-    position: absolute;
-    display: none;
+  position: absolute;
+  display: none;
 }
 .commentanimation {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 400px;
-    height: 400px;
-    max-width: 90vw;
-    margin: -200px 0 0 -200px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  max-width: 90vw;
+  margin: -200px 0 0 -200px;
 }
 @media (max-width: 420px) {
-    .commentanimation {
-        width: 90vw;
-        margin: -200px 0 0 -45vw;
-    }
+  .commentanimation {
+    width: 90vw;
+    margin: -200px 0 0 -45vw;
+  }
 }
 @keyframes fromcircle {
-    0% {
-        border-radius: 30em;
-    }
-    100% {
-        border-radius: 0;
-    }
+  0% {
+    border-radius: 30em;
+  }
+  100% {
+    border-radius: 0;
+  }
 }
 
 .scale-transition-enter-active #commentedit {
-    animation: fromcircle 0.3s ease-out;
-    animation-fill-mode: both;
+  animation: fromcircle 0.3s ease-out;
+  animation-fill-mode: both;
 }
 .scale-transition-leave-active #commentedit {
-    animation: fromcircle reverse 0.2s ease-out;
-    animation-fill-mode: both;
+  animation: fromcircle reverse 0.2s ease-out;
+  animation-fill-mode: both;
 }
 
 #commentedit {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 510;
-    overflow: hidden;
-    max-width: 90vw;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 510;
+  overflow: hidden;
+  max-width: 90vw;
 }
 #commentform {
-    max-height: calc(100vh - 100px);
-    overflow: auto;
+  max-height: calc(100vh - 100px);
+  overflow: auto;
 }
 
 #currentComment {
-    width: 200px;
-    max-width: calc(90vw - 20px);
+  width: 200px;
+  max-width: calc(90vw - 20px);
 }
 #currentComment.withComments {
-    width: 380px !important;
-    max-height: 40vh;
-    overflow: auto;
+  width: 380px !important;
+  max-height: 40vh;
+  overflow: auto;
 }
 
 #currentComment.maxW {
-    width: calc(100vw - 40px);
-    max-width: 430px;
+  width: calc(100vw - 40px);
+  max-width: 430px;
 }
 .v-list-item img {
-    margin-right: 1em;
+  margin-right: 1em;
 }
 p.rating {
-    color: primary;
-    font-size: 13px;
-    margin-bottom: 0;
-    padding-right: 1em;
-    user-select: none;
+  color: primary;
+  font-size: 13px;
+  margin-bottom: 0;
+  padding-right: 1em;
+  user-select: none;
 }
 #addHeart {
-    position: absolute;
-    right: 1.2em;
-    animation: addHeart 1.2s 0.4s ease-in-out both;
+  position: absolute;
+  right: 1.2em;
+  animation: addHeart 1.2s 0.4s ease-in-out both;
 }
 @keyframes addHeart {
-    0% {
-        right: 1.2em;
-        scale: 0.6;
-        opacity: 0;
-    }
-    13% {
-        opacity: 1;
-        scale: 2;
-    }
-    25% {
-        scale: 1.6;
-        right: 1.2em;
-    }
-    70% {
-        scale: 1.6;
-        right: var(--endpos);
-        opacity: 1;
-    }
-    95% {
-        scale: 0.3;
-        right: var(--endpos);
-    }
-    100% {
-        opacity: 0;
-    }
+  0% {
+    right: 1.2em;
+    scale: 0.6;
+    opacity: 0;
+  }
+  13% {
+    opacity: 1;
+    scale: 2;
+  }
+  25% {
+    scale: 1.6;
+    right: 1.2em;
+  }
+  70% {
+    scale: 1.6;
+    right: var(--endpos);
+    opacity: 1;
+  }
+  95% {
+    scale: 0.3;
+    right: var(--endpos);
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .smalltitle {
-    font-size: 16px !important;
+  font-size: 16px !important;
 }
 
 .leaflet-control-attribution.leaflet-compact-attribution::after {
-    content: none;
-    display: none;
+  content: none;
+  display: none;
 }
 .leaflet-container .leaflet-control-attribution.leaflet-compact-attribution {
-    margin: 0;
-    visibility: visible;
-    padding: 0;
-    padding-right: 5px;
+  margin: 0;
+  visibility: visible;
+  padding: 0;
+  padding-right: 5px;
 }
 
 #polygonstatisticsholder {
-    width: 320px;
-    height: 96vh;
-    z-index: 500;
-    display: block;
-    top: 15px;
-    right: 15px;
-    position: fixed;
-    background: white;
-    border-radius: 4px;
-    padding: 10px 8px;
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
-        0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-    overflow-y: scroll;
+  width: 320px;
+  height: 96vh;
+  z-index: 500;
+  display: block;
+  top: 15px;
+  right: 15px;
+  position: fixed;
+  background: white;
+  border-radius: 4px;
+  padding: 10px 8px;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  overflow-y: scroll;
 }
 
 #polygonstatisticsholder h2 {
-    font-size: 2.2em;
-    padding-top: 5px;
-    padding-bottom: 5px;
+  font-size: 2.2em;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 #polygonstatisticsholder h3 {
-    font-size: 1.5em;
+  font-size: 1.5em;
 }
 
 .progress-container {
-    width: 100%;
-    max-width: 300px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+  width: 100%;
+  max-width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
 }
 
 .progress-indicator {
-    background: black;
-    border-radius: 10px;
-    min-height: 20px;
-    text-align: center;
-    color: white;
-    font-size: 12px;
-    padding: 1px 0;
-    min-width: 50px;
+  background: black;
+  border-radius: 10px;
+  min-height: 20px;
+  text-align: center;
+  color: white;
+  font-size: 12px;
+  padding: 1px 0;
+  min-width: 50px;
 }
 </style>
 
@@ -966,7 +980,34 @@ export default {
         OBJ: 'object'
       },
       uploadProgress: 0,
-      uploadFiles: undefined
+      uploadFiles: undefined,
+      constVals: [
+        this.$t('object.constVal.na'),
+        this.$t('object.constVal.v1'),
+        this.$t('object.constVal.v2'),
+        this.$t('object.constVal.v3'),
+        this.$t('object.constVal.v4'),
+        this.$t('object.constVal.v5'),
+        this.$t('object.constVal.v6'),
+        this.$t('object.constVal.v7'),
+        this.$t('object.constVal.v8'),
+        this.$t('object.constVal.v9')
+      ],
+      demoVals: [
+        this.$t('object.demoVal.na'),
+        this.$t('object.demoVal.v1'),
+        this.$t('object.demoVal.v2'),
+        this.$t('object.demoVal.v3'),
+        this.$t('object.demoVal.v4'),
+        this.$t('object.demoVal.v5'),
+        this.$t('object.demoVal.v6'),
+        this.$t('object.demoVal.v7'),
+        this.$t('object.demoVal.v8'),
+        this.$t('object.demoVal.v9'),
+        this.$t('object.demoVal.v10'),
+        this.$t('object.demoVal.v11'),
+        this.$t('object.demoVal.v12')
+      ]
     };
   },
 
