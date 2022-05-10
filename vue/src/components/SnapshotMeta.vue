@@ -98,6 +98,7 @@
         v-for="(item, i) in legendAnnotations"
         :key="i"
         class="pa-0 isPrimary"
+        @click="$emit('toggleCat', item.pk)"
         >
         <v-list-item-icon class="my-0 mr-2">
           <img
