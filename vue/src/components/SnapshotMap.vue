@@ -187,8 +187,10 @@
           waiting: !isMapLoaded,
           addingAnnotation: addingAnnotation!==null
         }"></span>
-        <div id="map"></div>
+        <div id="map" :class="filterClasses"></div>
       </v-container>
+
+      <div v-html="filterStyle"></div>
 
       <v-slide-y-transition>
         <p class="addHint elevation-6" v-if="addingAnnotation">
@@ -243,6 +245,7 @@
           :legend="legend"
           :legendAnnotations="legendAnnotations"
           :sources="sources"
+          v-on:toggleCat="(...args) => toggleCat(...args)"
         />
       </v-card>
 
@@ -1007,7 +1010,9 @@ export default {
         this.$t('object.demoVal.v10'),
         this.$t('object.demoVal.v11'),
         this.$t('object.demoVal.v12')
-      ]
+      ],
+      disabledCatPks: [],
+      disabledStatePks: []
     };
   },
 
@@ -1125,10 +1130,43 @@ export default {
         }
       }
       return false;
+    },
+    filterClasses() {
+      let classes = '';
+      this.disabledCatPks.forEach((c) => {
+        classes += `hide-c${c}`;
+      });
+      this.disabledStatePks.forEach((s) => {
+        classes += `hide-s${s}`;
+      });
+      return classes;
+    },
+    filterStyle() {
+      let styles = '';
+      this.legendAnnotations.forEach((a) => {
+        styles += `.hide-c${a.pk} .c${a.pk}{ display:none; }`;
+      });
+      return `<style>${styles}</style>`;
     }
   },
 
   methods: {
+    toggleCat(pk) {
+      console.log('toggleCat');
+      console.log(pk);
+      if (this.disabledCatPks.includes(pk)) {
+        this.disabledCatPks.splice(this.disabledCatPks.indexOf(pk), 1);
+      } else {
+        this.disabledCatPks.push(pk);
+      }
+    },
+    toggleState(pk) {
+      if (this.disabledStatePks.includes(pk)) {
+        this.disabledStatePks.splice(this.disabledStatePks.indexOf(pk), 1);
+      } else {
+        this.disabledStatePks.push(pk);
+      }
+    },
     createFeatureLayer(geojson, attribution, points = true) {
       let features;
       if (points) {
@@ -1141,7 +1179,9 @@ export default {
               feature.properties.icon.className += ' popup-title-description';
               feature.properties.interactive = true;
             }
-
+            if (feature.category) {
+              feature.properties.icon.className += ` c${feature.category.id}`;
+            }
             let curfeature;
             if (feature.properties.radius) {
               // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
@@ -1285,17 +1325,20 @@ export default {
       this.legend = this.geojson.views[0].spec.legend;
 
       if (this.annotations.categories) {
+        console.log(this.annotations.categories);
         const extraItems = this.annotations.categories
           .filter(c => !c.hideInLegend)
           .map((c) => {
             if (c.icon !== '') {
               return {
+                pk: c.pk,
                 svg: `/media/${c.icon}`,
                 label: c.name,
                 primary: !c.hideInList
               };
             }
             return {
+              pk: c.pk,
               label: c.name,
               primary: !c.hideInList,
               shape: 'circle',
@@ -1389,9 +1432,11 @@ export default {
               a.data.index = i;
               if (a.category) {
                 a.data.properties.icon = { iconUrl: `/media/${a.category.icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
+                a.data.properties.icon.className = ` c${a.category.pk}`;
                 if (a.state) {
+                  a.data.properties.icon.className += ` s${a.state.pk}`;
                   if (a.state.decoration) {
-                    a.data.properties.icon.className = ` state-${a.state.decoration.toLowerCase()}`;
+                    a.data.properties.icon.className += ` state-${a.state.decoration.toLowerCase()}`;
                   }
                 }
 
