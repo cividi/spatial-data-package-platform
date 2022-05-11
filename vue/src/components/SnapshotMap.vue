@@ -751,7 +751,7 @@ span.statusLabel {
   max-width: 90vw;
   margin: -200px 0 0 -200px;
 }
-@media (max-width: 420px) {
+@media (max-width: 420px) { 
   .commentanimation {
     width: 90vw;
     margin: -200px 0 0 -45vw;
