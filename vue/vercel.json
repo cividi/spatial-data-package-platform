@@ -2,60 +2,12 @@
   "trailingSlash": true,
   "redirects": [
     { 
-      "source": "/(?<wshash>[0-9a-z]{5})/(?<hash>[0-9a-z]{6})/", 
-      "has": [
-        {
-          "type": "header",
-          "key": "Accept-Language",
-          "value": "(?<lang>(de|fr|it|en)),?.*"
-        }
-      ],
-      "destination": "/:lang/:wshash/:hash",
-      "permanent": false 
-    },
-    { 
-      "source": "/(?<wshash>[0-9a-z]{5})/(?<hash>[0-9a-z]{6})/", 
-      "has": [
-        {
-          "type": "header",
-          "key": "Accept-Language",
-          "value": "(?<lang>(de|fr|it|en)),?.*"
-        }
-      ],
-      "destination": "/en/:wshash/:hash",
-      "permanent": false 
-    },
-    { 
-      "source": "/(?<hash>[0-9a-z]{6})/", 
-      "has": [
-        {
-          "type": "header",
-          "key": "Accept-Language",
-          "value": "(?<lang>(de|fr|it|en)),?.*"
-        }
-      ],
-      "destination": "/:lang/:hash",
-      "permanent": false 
-    },
-    { 
-      "source": "/(?<hash>[0-9a-z]{6})/", 
-      "has": [
-        {
-          "type": "header",
-          "key": "Accept-Language",
-          "value": "(?<lang>(de|fr|it|en)),?.*"
-        }
-      ],
-      "destination": "/en/:hash",
-      "permanent": false 
-    },
-    { 
       "source": "/", 
       "has": [
         {
           "type": "header",
           "key": "Accept-Language",
-          "value": "[a-z]{2},?.*"
+          "value": "(?<lang>(de|fr|it|en)),?.*"
         }
       ],
       "destination": "/:lang", 
@@ -75,7 +27,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/(de|fr|it|en)/(?[0-9A-Z]{6})/", "destination": "/app.html"},
-    { "source": "/(de|fr|it|en)/(?[0-9A-Z]{5})/(?[0-9A-Z]{6})/", "destination": "/app.html"}
+    { "source": "/:lang/:hash/", "destination": "/app.html"},
+    { "source": "/:lang/:wshash/:hash/", "destination": "/app.html"} 
     ]
   }
