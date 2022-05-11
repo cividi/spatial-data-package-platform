@@ -751,7 +751,7 @@ span.statusLabel {
   max-width: 90vw;
   margin: -200px 0 0 -200px;
 }
-@media (max-width: 420px) { 
+@media (max-width: 420px) {
   .commentanimation {
     width: 90vw;
     margin: -200px 0 0 -45vw;
@@ -1152,8 +1152,8 @@ export default {
 
   methods: {
     toggleCat(pk) {
-      console.log('toggleCat');
-      console.log(pk);
+      console.log('toggleCat'); // eslint-disable-line no-console
+      console.log(pk); // eslint-disable-line no-console
       if (this.disabledCatPks.includes(pk)) {
         this.disabledCatPks.splice(this.disabledCatPks.indexOf(pk), 1);
       } else {
@@ -1325,7 +1325,7 @@ export default {
       this.legend = this.geojson.views[0].spec.legend;
 
       if (this.annotations.categories) {
-        console.log(this.annotations.categories);
+        console.log(this.annotations.categories); // eslint-disable-line no-console
         const extraItems = this.annotations.categories
           .filter(c => !c.hideInLegend)
           .map((c) => {
