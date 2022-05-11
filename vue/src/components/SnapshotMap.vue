@@ -762,7 +762,7 @@ span.statusLabel {
     border-radius: 30em;
   }
   100% {
-    border-radius: 0;
+    border-radius: 0; 
   }
 }
 
