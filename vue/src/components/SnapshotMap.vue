@@ -1441,11 +1441,16 @@ export default {
                 }
 
                 if (a.kind === 'PLY') {
-                  const area = this.geodesicArea(
-                    a.data.geometry.coordinates[0].map(
-                      c => L.latLng([c[1], c[0]])
-                    )
-                  );
+                  let area = null;
+                  try {
+                    area = this.geodesicArea(
+                      a.data.geometry.coordinates[0].map(
+                        c => L.latLng([c[1], c[0]])
+                      )
+                    );
+                  } catch {
+                    console.log('malformed polygon object:', a); // eslint-disable-line no-console
+                  }
                   a.data.properties = {
                     ...a.data.properties,
                     color: a.category.color,
