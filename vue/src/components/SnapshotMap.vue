@@ -521,42 +521,6 @@
         </v-card>
       </v-dialog>
 
-
-      <div id="polygonstatisticsholder" v-if="statisticPanelOpen">
-        <div v-for="(statistic, key) in spatialData" :key="key">
-          <h2>{{ queriesData[key].title }}</h2>
-          <div>
-            <h3>Polygon</h3>
-            <div class="progress-container">
-              <div class="progress-indicator"
-                :style="{ width: statistic.polygon.progress + '%'
-                  }">
-                {{ statistic.polygon.label }}</div>
-            </div>
-          </div>
-          <!-- <div>
-            <h3>Quartier</h3>
-            <div class="progress-container">
-              <div class="progress-indicator"
-                :style="{ width:
-                  statistic.neighbourhood.progress + '%'
-                  }">
-                {{ statistic.neighbourhood.label }}</div>
-            </div>
-          </div> -->
-          <div>
-            <h3>Stadt</h3>
-            <div class="progress-container">
-              <div class="progress-indicator"
-                :style="{ width:
-                  statistic.all.progress + '%'
-                  }">
-                {{ statistic.all.label }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div id="commentholder">
         <div id="currentComment"
           :class="{
@@ -627,6 +591,12 @@
         :object="currentObject"
         :enableLikes="annotations.object.likes"
         v-on:close="currentObjectIndex=null"
+      />
+
+      <polygon-detail
+        :polygon="currentPolygon"
+        :spatialDatasettes="spatialDatasettes"
+        v-on:close="currentPolygonIndex=null"
       />
     </v-main>
 </template>
@@ -886,24 +856,6 @@ p.rating {
 #polygonstatisticsholder h3 {
   font-size: 1.5em;
 }
-
-.progress-container {
-  width: 100%;
-  max-width: 300px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-}
-
-.progress-indicator {
-  background: black;
-  border-radius: 10px;
-  min-height: 20px;
-  text-align: center;
-  color: white;
-  font-size: 12px;
-  padding: 1px 0;
-  min-width: 50px;
-}
 </style>
 
 <script>
@@ -913,9 +865,11 @@ import _ from 'lodash';
 import geoViewport from '@mapbox/geo-viewport';
 import SnapshotMeta from './SnapshotMeta.vue';
 import ObjectDetail from './ObjectDetail.vue';
+import PolygonDetail from './PolygonDetail.vue';
 
 Vue.component('snapshot-meta', SnapshotMeta);
 Vue.component('object-detail', ObjectDetail);
+Vue.component('polygon-detail', PolygonDetail);
 
 function geostring2array(s) {
   const array = s.split(':')[1].split(',');
@@ -941,14 +895,13 @@ export default {
       },
       polygonString: [],
       drawnItems: null,
-      spatialData: {},
-      statisticPanelOpen: false,
       tooltipContainer: null,
       timeout: null,
       guides: null,
       commentstepper: 1,
       currentCommentIndex: null,
       currentObjectIndex: null,
+      currentPolygonIndex: null,
       ratingpause: false,
       dialog: false,
       dialogcontent: {},
@@ -1067,6 +1020,12 @@ export default {
       }
       return null;
     },
+    currentPolygon() {
+      if (this.annotations.items && this.currentPolygonIndex !== null) {
+        return this.annotations.items[this.currentPolygonIndex];
+      }
+      return null;
+    },
 
     withComments() {
       if (this.currentComment) {
@@ -1103,24 +1062,6 @@ export default {
         return this.annotations.states;
       }
       return this.annotations.states.filter(a => !a.hideInList);
-    },
-
-    queries() {
-      return this.spatialDatasettes[0].queries.map(
-        item => item.name
-      );
-    },
-
-    queriesData() {
-      const qd = {};
-      this.spatialDatasettes[0].queries.forEach((i) => {
-        qd[i.name] = { ...i };
-      });
-      return qd;
-    },
-
-    token() {
-      return `${process.env.VUE_APP_SPATIALDATASETTE_TOKEN}` || null;
     },
 
     currentCommentHasAttachements() {
@@ -1243,9 +1184,10 @@ export default {
         this.currentObjectIndex = e.target.feature.index;
         return true;
       } else if (e.target.feature.kind === 'PLY') {
-        this.currentCommentIndex = e.target.feature.index;
-        content = document.getElementById('currentComment');
-        latlng = e.target.getCenter(); // eslint-disable-line no-underscore-dangle
+        this.currentPolygonIndex = e.target.feature.index;
+        return true;
+        // content = document.getElementById('currentComment');
+        // latlng = e.target.getCenter(); // eslint-disable-line no-underscore-dangle
         // content = e.target.feature.properties.description;
         // if (e.target.feature.properties.title) {
         //   content = `<b>${e.target.feature.properties.title}</b><br />${content}`;
@@ -1269,8 +1211,6 @@ export default {
           }
         });
         document.getElementById('commentholder').append(e.target.getContent());
-        this.statisticPanelOpen = false;
-        this.resetSpatialData();
       });
       this.mapinfoopen = false;
       window.setTimeout(() => {
@@ -1297,21 +1237,6 @@ export default {
         }
       }, 100);
 
-      if (this.spatialDatasettes.length > 0 && e.target.feature.kind === 'PLY') {
-        this.statisticPanelOpen = true;
-        const coordinates = this.currentComment.data.geometry.coordinates[0].map(i => `${i[0]} ${i[1]}`).join(', ');
-        const wkt = `Polygon ((${coordinates}))`;
-        this.queries.forEach((q) => {
-          this.fetchPolygonStats(
-            this.spatialDatasettes[0], q,
-            wkt, '', 'all'
-          );
-          this.fetchPolygonStats(
-            this.spatialDatasettes[0], q,
-            wkt, '', 'polygon'
-          );
-        });
-      }
       return true;
     },
 
@@ -2023,73 +1948,6 @@ export default {
       this.isMapLoaded = false;
     },
 
-    fetchPolygonStats(db, query, polygon, neighbourhood, scope) {
-      if (scope === 'all') {
-        polygon = '';
-        neighbourhood = '';
-      } else if (scope === 'neighbourhood') {
-        polygon = '';
-      } else {
-        neighbourhood = '';
-      }
-      return fetch(`${db.baseUrl}/${query}.json?_shape=objects&polygon=${polygon}&neighbourhood=${neighbourhood}`, {
-        method: 'get',
-        headers: {
-          'content-type': 'application/json',
-          Authorization: `Bearer ${this.token}`
-        }
-      })
-        .then((res) => {
-          // a non-200 response code
-          if (!res.ok) {
-            // create error instance with HTTP status text
-            const error = new Error(res.statusText);
-            error.json = res.json();
-            throw error;
-          }
-          return res.json();
-        })
-        .then((json) => {
-          // set the response data
-          this.spatialData[query][scope] = json.rows[0];
-          this.spatialData[query][scope].progress = Math.round(
-            this.spatialData[query][scope][
-              this.queriesData[
-                query
-              ].summary_stat
-            ] / this.queriesData[query].summary_compare * 100
-          );
-          this.spatialData[query][scope].label = Math.round(
-            this.spatialData[query][scope][
-              this.queriesData[
-                query
-              ].summary_stat
-            ] * 100
-          ) / 100;
-        })
-        .catch((err) => {
-          // error.value = err;
-          if (err.json) {
-            return err.json; // .then((json) => {
-            // error.value.message = json.message;
-            // });
-          }
-          return null;
-        });
-    },
-
-    resetSpatialData() {
-      if (this.spatialDatasettes.length > 0) {
-        const facets = { all: {}, neighbourhood: {}, polygon: {} };
-        // eslint-disable-next-line no-return-assign
-        const filled = {};
-        this.queries.forEach((q) => {
-          filled[q] = { ...facets };
-        });
-        this.spatialData = filled;
-      }
-    },
-
     c$t(path) {
       return this.annotations.mode ? this.$t(`${this.annotations.mode}.${path}`) : this.$t(path);
     },
@@ -2115,12 +1973,6 @@ export default {
           this.uploadProgress = Math.floor(100 * event.loaded / event.total);
         }
       });
-    }
-  },
-
-  watch: {
-    spatialDatasettes() {
-      this.resetSpatialData();
     }
   }
 };
