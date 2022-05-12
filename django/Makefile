@@ -11,13 +11,13 @@ default: dev
 enter:
 	$(DOCKER_EXEC) ash
 
-build_docker_kubernetes_latest:
+build_docker_gh:
 	DOCKER_BUILDKIT=1 \
 	docker buildx build \
 		-t ghcr.io/cividi/dfour-hub:dev \
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
-		--load \
-		--no-cache \
+		--platform linux/amd64,linux/arm64 \
+		--push \
 		.
 	# --cache-from ghcr.io/cividi/dfour-hub:$(DJANGO_VERSION) \
 

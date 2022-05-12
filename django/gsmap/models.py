@@ -34,7 +34,7 @@ from parler.models import TranslatableModel, TranslatedFields
 
 from django.contrib.auth.models import Group
 from gsuser.models import User
-from main.utils import get_website
+from main.utils import get_website, get_backend
 
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
@@ -633,10 +633,10 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
         subject = _('Beitrag freischalten')
         message = _('Besten Dank für Ihren Beitrag!\n')
 
-        website = get_website(Site.objects.get_current())
+        base = get_backend()
 
         # todo: check with instance KIND and related workspace permission
-        if instance.workspace.annotations_open or instance.workspace.polygon_open:
+        if instance.workspace.annotations_open or instance.workspace.polygon_open or instance.workspace.object_open:
             idstr = str(instance.id)
 
             uniquestr = recipient + idstr + SECRET_KEY
@@ -644,11 +644,11 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
             publish_url = reverse('annotation-publish', args=[idstr, publishKeyHex])
 
             message += _('Sie können ihn unter folgender URL freischalten:\n')
-            message += _(f'{website["base"]}{publish_url}\n')
+            message += _(f'{base["base"]}{publish_url}\n')
             message += '--' * 30
         else:
             message += _("Leider ist die Beteiligung nun abgeschlossen.\n")
-            message += _(f"Zur Karte mit allen öffentlichen Beiträgen: {website['base']}/de/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/")
+            message += _(f"Zur Karte mit allen öffentlichen Beiträgen: {base['base']}/de/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/\n")
             message += '--' * 30
 
         send_mail(

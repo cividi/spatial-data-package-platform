@@ -49,6 +49,8 @@ RUN curl -Ls https://github.com/just-containers/s6-overlay/releases/download/$S6
 COPY docker/django/requirements/00/requirements.txt /tmp/requirements.txt
 RUN apk add --no-cache \
         libjpeg-turbo-dev \
+        libffi \
+        py3-cffi \
         freetype-dev \
         lcms2-dev \
         openjpeg-dev \

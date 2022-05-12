@@ -214,7 +214,7 @@
   grid-template-rows: auto;
   position: relative;
 }
-.annotationslist li{
+.annotationslist li {
   font-size: inherit;
   text-align: center;
   display: flex;

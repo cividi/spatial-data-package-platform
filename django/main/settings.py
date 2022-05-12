@@ -5,9 +5,11 @@ from django.utils.translation import gettext_lazy as _
 
 # use your own secret_key, default for testing and dev
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
+HOST = os.getenv('DJANGO_HOST', 'www.local:8000')
 DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
 USE_HTTPS = os.getenv('DJANGO_HTTPS') == 'True'
 DB_SEARCH_PATH = os.getenv('DJANGO_DB_SEARCH_PATH', 'public')
+OIDC_ACTIVE = os.getenv('DJANGO_OIDC_LOGIN', False) == 'true'
 
 
 if USE_HTTPS:
@@ -86,6 +88,38 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+if OIDC_ACTIVE:
+    OIDC_OP_LOGOUT_URL_METHOD = 'main.utils.oidc_op_logout'
+    OIDC_USERNAME_ALGO = 'main.utils.generate_username'
+    OIDC_RP_SIGN_ALGO = 'RS256'
+    OIDC_RP_SCOPES = 'openid email'
+
+    LOGIN_URL = 'oidc_authentication_init'
+    LOGIN_REDIRECT_URL = '/gmanage'
+    LOGOUT_REDIRECT_URL = '/gmanage'
+
+    INSTALLED_APPS += [ 'mozilla_django_oidc', ]
+    MIDDLEWARE += [ 'mozilla_django_oidc.middleware.SessionRefresh', ]
+    AUTHENTICATION_BACKENDS = [
+        'gsuser.auth.OIDCAuthenticationBackend',
+        'django.contrib.auth.backends.ModelBackend',
+    ]
+
+    OIDC_RP_CLIENT_ID = os.getenv('OIDC_RP_CLIENT_ID', None)
+    OIDC_RP_CLIENT_SECRET = os.getenv('OIDC_RP_CLIENT_SECRET', None)
+
+    OIDC_OP_AUTHORIZATION_ENDPOINT = os.getenv('OIDC_OP_AUTHORIZATION_ENDPOINT',
+        'https://auth.dfour.io/auth/realms/dfour/protocol/openid-connect/auth')
+    OIDC_OP_TOKEN_ENDPOINT = os.getenv('OIDC_OP_TOKEN_ENDPOINT',
+        'https://auth.dfour.io/auth/realms/dfour/protocol/openid-connect/token')
+    OIDC_OP_USER_ENDPOINT = os.getenv('OIDC_OP_USER_ENDPOINT',
+        'https://auth.dfour.io/auth/realms/dfour/protocol/openid-connect/userinfo')
+    OIDC_OP_JWKS_ENDPOINT = os.getenv('OIDC_OP_JWKS_ENDPOINT',
+        'https://auth.dfour.io/auth/realms/dfour/protocol/openid-connect/certs')
+    OIDC_OP_LOGOUT_ENDPOINT = os.getenv('OIDC_OP_LOGOUT_ENDPOINT',
+        'https://auth.dfour.io/auth/realms/dfour/protocol/openid-connect/logout')
 
 REST_FRAMEWORK = {
     # Only enable JSON renderer by default.
@@ -200,6 +234,13 @@ CORS_ORIGIN_WHITELIST = [
     "http://www:8000",
     "http://www.local:8000",
 ]
+if os.environ.get('DJANGO_ALLOWED_HOSTS'):
+    CORS_ORIGIN_WHITELIST += [
+        f"http://{h}" for h in ALLOWED_HOSTS
+    ]
+    CORS_ORIGIN_WHITELIST += [
+        f"https://{h}" for h in ALLOWED_HOSTS
+    ]
 CORS_ALLOW_CREDENTIALS = True
 CACHES = {
     'default': {
@@ -212,3 +253,23 @@ SESSION_COOKIE_HTTPONLY = False
 THUMBNAIL_BACKEND = 'main.utils.PermalinkThumbnailBackend'
 THUMBNAIL_PREFIX = 'cache/'
 SCREENSHOT_SCHEDULER_CRON_MINUTES = os.environ.get('DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES', '*')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        'mozilla_django_oidc': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
+        },
+    }
+}
