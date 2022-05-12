@@ -1152,8 +1152,8 @@ export default {
 
   methods: {
     toggleCat(pk) {
-      console.log('toggleCat');
-      console.log(pk);
+      // console.log('toggleCat');
+      // console.log(pk);
       if (this.disabledCatPks.includes(pk)) {
         this.disabledCatPks.splice(this.disabledCatPks.indexOf(pk), 1);
       } else {
