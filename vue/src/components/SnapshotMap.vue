@@ -190,7 +190,8 @@
         <div id="map" :class="filterClasses"></div>
       </v-container>
 
-      <div v-html="filterStyle"></div>
+      <div v-html="filterCatStyle"></div>
+      <div v-html="filterStatStyle"></div>
 
       <v-slide-y-transition>
         <p class="addHint elevation-6" v-if="addingAnnotation">
@@ -243,9 +244,11 @@
           :predecessor="predecessor"
           :hash="hash"
           :legend="legend"
-          :legendAnnotations="legendAnnotations"
+          :legendCategories="legendCategories"
+          :legendStates="legendStates"
           :sources="sources"
           v-on:toggleCat="(...args) => toggleCat(...args)"
+          v-on:toggleState="(...args) => toggleState(...args)"
         />
       </v-card>
 
@@ -904,6 +907,10 @@ p.rating {
   padding: 1px 0;
   min-width: 50px;
 }
+
+.leaflet-interactive {
+  transition: opacity 0.3s;
+}
 </style>
 
 <script>
@@ -955,7 +962,8 @@ export default {
       title: '',
       description: '',
       legend: [],
-      legendAnnotations: [],
+      legendCategories: [],
+      legendStates: [],
       sources: [],
       layers: [],
       geobounds: [],
@@ -1141,10 +1149,17 @@ export default {
       });
       return classes;
     },
-    filterStyle() {
+    filterCatStyle() {
       let styles = '';
-      this.legendAnnotations.forEach((a) => {
-        styles += `.hide-c${a.pk} .c${a.pk}{ display:none; }`;
+      this.legendCategories.forEach((a) => {
+        styles += `.hide-c${a.pk} .c${a.pk}{ opacity: 0; pointer-events: none; }`;
+      });
+      return `<style>${styles}</style>`;
+    },
+    filterStatStyle() {
+      let styles = '';
+      this.legendStates.forEach((a) => {
+        styles += `.hide-s${a.pk} .s${a.pk}{ opacity: 0; pointer-events: none; }`;
       });
       return `<style>${styles}</style>`;
     }
@@ -1333,13 +1348,15 @@ export default {
                 pk: c.pk,
                 svg: `${this.djangobaseurl}/media/${c.icon}`,
                 label: c.name,
-                primary: !c.hideInList
+                primary: !c.hideInList,
+                hidden: false
               };
             }
             return {
               pk: c.pk,
               label: c.name,
               primary: !c.hideInList,
+              hidden: false,
               shape: 'circle',
               size: 1.0,
               fillColor: c.color,
@@ -1349,7 +1366,29 @@ export default {
               strokeWidth: 2
             };
           });
-        this.legendAnnotations = [...extraItems];
+        this.legendCategories = [...extraItems];
+      }
+      if (this.annotations.states) {
+        const extraItems = this.annotations.states
+          .filter(c => !c.hideInLegend)
+          .map((c) => {
+            if (c.icon) {
+              return {
+                pk: c.pk,
+                svg: `${this.djangobaseurl}/media/${c.icon}`,
+                label: c.name,
+                primary: !c.hideInList,
+                hidden: false
+              };
+            }
+            return {
+              pk: c.pk,
+              label: c.name,
+              primary: !c.hideInList,
+              hidden: false
+            };
+          });
+        this.legendStates = [...extraItems];
       }
       this.sources = this.geojson.sources;
     },

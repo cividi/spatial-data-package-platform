@@ -6,7 +6,9 @@
     "expandlegend": "mehr",
     "collapslegend": "weniger",
     "predecessor": "Vorgängerversion",
-    "comments": "Kommentare"
+    "comments": "Kommentare",
+    "categories": "Kategorien",
+    "states": "Stati"
   },
   "fr": {
     "sources": "Source",
@@ -87,20 +89,20 @@
           {{ $t('expandlegend') }}
         </template>
     </v-btn>
-    <div class="smaller" v-if="legendAnnotations.length > 0">
-      <h5 class="mr-4">{{ $t('comments') }}</h5>
+    <div class="smaller" v-if="legendCategories.length > 0">
+      <h5 class="mr-4">{{ $t('categories') }}</h5>
     </div>
     <v-list
       dense class="legend pt-0"
-      v-if="legendAnnotations.length > 0"
+      v-if="legendCategories.length > 0"
       >
       <v-list-item
-        v-for="(item, i) in legendAnnotations"
+        v-for="(item, i) in legendCategories"
         :key="i"
         class="pa-0 isPrimary"
-        @click="$emit('toggleCat', item.pk)"
+        @click="$emit('toggleCat', item.pk);item.hidden=!item.hidden;"
         >
-        <v-list-item-icon class="my-0 mr-2">
+        <v-list-item-icon class="ma-0">
           <img
             width="20" height="20"
             v-if="item.svg"
@@ -110,11 +112,43 @@
             :isPrimary="item.primary"
             :attr="item" />
         </v-list-item-icon>
-        <v-list-item-content class="py-0">
+        <v-list-item-content class="py-0" :class="{'grey--text': item.hidden}">
           <v-list-item-title>
             {{ item.label }}
           </v-list-item-title>
         </v-list-item-content>
+        <v-list-item-action>
+          <v-btn icon>
+            <v-icon v-if="item.hidden" color="grey lighten-1">mdi-eye-off</v-icon>
+            <v-icon v-else color="grey lighten-1">mdi-eye</v-icon>
+          </v-btn>
+        </v-list-item-action>
+      </v-list-item>
+    </v-list>
+    <div class="smaller" v-if="legendStates.length > 0">
+      <h5 class="mr-4">{{ $t('states') }}</h5>
+    </div>
+    <v-list
+      dense class="legend pt-0"
+      v-if="legendStates.length > 0"
+      >
+      <v-list-item
+        v-for="(item, i) in legendStates"
+        :key="i"
+        class="pa-0 isPrimary"
+        @click="$emit('toggleState', item.pk);item.hidden=!item.hidden;"
+        >
+        <v-list-item-content class="py-0" :class="{'grey--text': item.hidden}">
+          <v-list-item-title>
+            {{ item.label }}
+          </v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-btn icon>
+            <v-icon v-if="item.hidden" color="grey lighten-1">mdi-eye-off</v-icon>
+            <v-icon v-else color="grey lighten-1">mdi-eye</v-icon>
+          </v-btn>
+        </v-list-item-action>
       </v-list-item>
     </v-list>
     <div class="smaller"
@@ -244,7 +278,8 @@ export default {
     description: String,
     predecessor: Object,
     legend: Array,
-    legendAnnotations: Array,
+    legendCategories: Array,
+    legendStates: Array,
     sources: Array
   },
 
