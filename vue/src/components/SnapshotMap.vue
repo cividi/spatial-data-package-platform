@@ -1142,10 +1142,10 @@ export default {
     filterClasses() {
       let classes = '';
       this.disabledCatPks.forEach((c) => {
-        classes += `hide-c${c}`;
+        classes += `hide-c${c} `;
       });
       this.disabledStatePks.forEach((s) => {
-        classes += `hide-s${s}`;
+        classes += `hide-s${s} `;
       });
       return classes;
     },
