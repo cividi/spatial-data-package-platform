@@ -228,18 +228,24 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = int(15 * 1024 * 1024)  # 15 MB
 GRAPHENE = {'SCHEMA': 'main.schema.schema'}
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = [
+CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://localhost:8081",
     "http://www:8000",
     "http://www.local:8000",
 ]
 if os.environ.get('DJANGO_ALLOWED_HOSTS'):
-    CORS_ORIGIN_WHITELIST += [
-        f"http://{h}" for h in ALLOWED_HOSTS
+    CORS_ALLOWED_ORIGINS += [
+        f"http://{h}" for h in ALLOWED_HOSTS if not h.startswith('.')
     ]
-    CORS_ORIGIN_WHITELIST += [
-        f"https://{h}" for h in ALLOWED_HOSTS
+    CORS_ALLOWED_ORIGINS += [
+        f"https://{h}" for h in ALLOWED_HOSTS if not h.startswith('.')
+    ]
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        f"^http://[a-z0-9-]+{h}$".replace(".","\.") for h in ALLOWED_HOSTS if h.startswith('.')
+    ]
+    CORS_ALLOWED_ORIGIN_REGEXES += [
+        f"^https://[a-z0-9-]+{h}$".replace(".","\.") for h in ALLOWED_HOSTS if h.startswith('.')
     ]
 CORS_ALLOW_CREDENTIALS = True
 CACHES = {
