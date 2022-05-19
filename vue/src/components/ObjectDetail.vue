@@ -164,7 +164,7 @@ export default {
         const commentoScript = document.createElement('script');
         commentoScript.setAttribute('src', `${this.commentoUrl}/js/commento.js`);
         commentoScript.setAttribute('data-auto-init', false);
-        commentoScript.setAttribute('data-page-id', `${this.curObj.pk}-${this.curObj.id}`);
+        commentoScript.setAttribute('data-page-id', `/${this.$route.params.wshash}/${this.curObj.pk}/`);
         commentoScript.setAttribute('defer', true);
         document.head.appendChild(commentoScript);
         window.setTimeout(() => {
@@ -172,7 +172,7 @@ export default {
         }, 100);
       } else if (typeof window !== 'undefined' && window.commento) {
         window.commento.reInit({
-          pageId: `${this.curObj.pk}-${this.curObj.id}`
+          pageId: `/${this.$route.params.wshash}/${this.curObj.pk}/`
         });
       }
     }
