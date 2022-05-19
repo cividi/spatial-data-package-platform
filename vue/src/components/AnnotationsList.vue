@@ -104,15 +104,15 @@
     <transition-group
       name="list" tag="ul"
       class="annotationslist pa-0 smaller"
-      @afterEnter="afterEnter"
       appear
+      :after-appear="afterAppear"
     >
       <li
         v-for="annotation in filteredAnnotationList"
         :key="annotation.pk"
         class="pa-4"
         :class="stateClass(annotation)"
-        @click="currentObject = annotation">
+        @click="$router.push({ name: 'annotationsListDetail', params: { annoid: annotation.pk } })">
         <v-img
           v-if="annotation.attachements.length > 0"
           contain
@@ -198,7 +198,7 @@
     <object-detail
       :object="currentObject"
       :enableLikes="false"
-      v-on:close="currentObject=null"
+      v-on:close="$router.push({ name: 'annotationsList' })"
     />
   </v-main>
 </template>
@@ -301,9 +301,14 @@ export default {
       disabledCatPks: [],
       disabledStatePks: [],
       filterinfoopen: true,
-      currentIndex: null,
-      currentObject: null
+      currentIndex: null
     };
+  },
+
+  updated() {
+    if (!this.currentObject) {
+      this.$router.push({ name: 'annotationsList' });
+    }
   },
 
   props: {
@@ -329,7 +334,7 @@ export default {
       }
     },
     // beforeLeave(el) {
-    afterEnter(el) {
+    afterAppear(el) {
       const {
         marginLeft, marginTop, width, height
       } = window.getComputedStyle(el);
@@ -402,6 +407,12 @@ export default {
       set(val) {
         this.$store.commit('setSnapshotnav', val);
       }
+    },
+    currentObject() {
+      if (this.$route.params.annoid) {
+        return this.annotations.filter(a => a.pk === parseInt(this.$route.params.annoid, 10)).pop();
+      }
+      return null;
     }
   },
   watch: {
