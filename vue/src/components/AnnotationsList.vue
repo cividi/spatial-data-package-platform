@@ -104,8 +104,8 @@
     <transition-group
       name="list" tag="ul"
       class="annotationslist pa-0 smaller"
-      @afterEnter="afterEnter"
       appear
+      :after-appear="afterAppear"
     >
       <li
         v-for="annotation in filteredAnnotationList"
@@ -334,7 +334,7 @@ export default {
       }
     },
     // beforeLeave(el) {
-    afterEnter(el) {
+    afterAppear(el) {
       const {
         marginLeft, marginTop, width, height
       } = window.getComputedStyle(el);
