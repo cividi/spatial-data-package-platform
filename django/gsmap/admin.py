@@ -149,8 +149,8 @@ class WorkspaceAdmin(TranslatableAdmin):
             )
         }),
     )
-    list_display = ('title', 'group', 'get_absolute_link', 'mode', 'annotations_contact_name', 'annotations_contact_email', 'findme_enabled', 'annotations_open', 'annotations_likes_enabled', 'polygon_open', 'polygon_likes_enabled', 'object_open', 'object_likes_enabled', 'objects_page_link', 'created', 'modified')
-    list_filter = ['mode']
+    list_display = ('title', 'group', 'get_absolute_link', 'mode', 'permission', 'annotations_contact_name', 'annotations_contact_email', 'findme_enabled', 'annotations_open', 'annotations_likes_enabled', 'polygon_open', 'polygon_likes_enabled', 'object_open', 'object_likes_enabled', 'objects_page_link', 'created', 'modified')
+    list_filter = ['mode','permission','group','findme_enabled','annotations_open','polygon_open','object_open']
     search_fields = ['title', 'description']
 
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
