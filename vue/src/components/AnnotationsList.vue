@@ -116,8 +116,6 @@
         <v-img
           v-if="annotation.attachements.length > 0"
           contain
-          max-height="250"
-          max-width="250"
           aspect-ratio="1"
           :src="djangobaseurl + '/media/' + annotation.attachements[0].document"
         />
@@ -210,9 +208,19 @@
 .annotationslist {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 250px);
+  grid-template-columns: repeat(auto-fill, 25vw);
   grid-template-rows: auto;
   position: relative;
+}
+@media (max-width: 500px) {
+  .annotationslist {
+    grid-template-columns: repeat(auto-fill, 50vw);
+  }
+}
+@media (min-width: 1024px) {
+  .annotationslist {
+    grid-template-columns: repeat(auto-fill, 250px);
+  }
 }
 .annotationslist li {
   font-size: inherit;
