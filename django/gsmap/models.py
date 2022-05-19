@@ -114,6 +114,11 @@ class SnapshotPermission(IntFlag):
     PUBLIC = 0
     NOT_LISTED = 10
 
+class WorkspacePermission(IntFlag):
+    PUBLIC = 0
+    NOT_LISTED = 10
+    PRIVATE = 20
+
 
 class Snapshot(models.Model):
     class Meta:
@@ -451,6 +456,12 @@ class Workspace(TranslatableModel):
     )
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    permission = models.IntegerField(
+        choices=[(perm.value, perm.name)
+                 for perm in WorkspacePermission],
+        default=WorkspacePermission.PRIVATE
+    )
 
     snapshots = SortedManyToManyField(Snapshot)
 
