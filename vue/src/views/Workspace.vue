@@ -169,6 +169,7 @@ export default {
       hash: this.$route.params.hash,
       wshash: this.$route.params.wshash,
       annokind: this.$route.params.annokind,
+      annoid: this.$route.params.annoid,
       geojson: null,
       annotations: {
         items: [],
@@ -211,6 +212,10 @@ export default {
       this.$refs.map.setupMapbox();
       this.$refs.map.displayMapbox();
       document.title = `dføur – ${this.title}`;
+      if (this.annoid) {
+        const index = this.annotations.items.findIndex(a => a.pk === parseInt(this.annoid, 10));
+        this.$refs.map.showPopup({ target: { feature: { kind: 'OBJ', index } } });
+      }
     }
   },
 
