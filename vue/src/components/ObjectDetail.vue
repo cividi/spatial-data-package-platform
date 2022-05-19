@@ -159,6 +159,7 @@ export default {
   },
 
   mounted() {
+    console.dir(this.curObj); // eslint-disable-line no-console
     if (this.commentoUrl !== null && this.curObj.category.commentsEnabled) {
       if (typeof window !== 'undefined' && window.commento.main === undefined) {
         const commentoScript = document.createElement('script');
