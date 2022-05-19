@@ -26,7 +26,7 @@
       "permanent": false 
     },
     { 
-      "source": "/:wshash([0-9a-z]{5})/:hash([0-9a-z]{6})/", 
+      "source": "/:wshash([0-9A-Z]{5})/:hash([0-9A-Z]{6})/", 
       "has": [
         {
           "type": "header",
@@ -38,7 +38,7 @@
       "permanent": false 
     },
     { 
-      "source": "/:wshash([0-9a-z]{5})/:hash([0-9a-z]{6})/", 
+      "source": "/:wshash([0-9A-Z]{5})/:hash([0-9A-Z]{6})/", 
       "has": [
         {
           "type": "header",
@@ -50,7 +50,7 @@
       "permanent": false 
     },
     { 
-      "source": "/:hash([0-9a-z]{6})/", 
+      "source": "/:hash([0-9A-Z]{6})/", 
       "has": [
         {
           "type": "header",
@@ -62,7 +62,7 @@
       "permanent": false 
     },
     { 
-      "source": "/:hash([0-9a-z]{6})/", 
+      "source": "/:hash([0-9A-Z]{6})/", 
       "has": [
         {
           "type": "header",
@@ -74,7 +74,7 @@
       "permanent": false 
     },
     { 
-      "source": "/:hash([0-9a-z]{5})/annotations/:type([A-Z]{3})/", 
+      "source": "/:hash([0-9A-Z]{5})/annotations/:type([A-Z]{3})/", 
       "has": [
         {
           "type": "header",
@@ -86,7 +86,7 @@
       "permanent": false 
     },
     { 
-      "source": "/:hash([0-9a-z]{5})/annotations/:type([A-Z]{3})/", 
+      "source": "/:hash([0-9A-Z]{5})/annotations/:type([A-Z]{3})/", 
       "has": [
         {
           "type": "header",

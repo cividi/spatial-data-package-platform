@@ -634,6 +634,7 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
         message = _('Besten Dank für Ihren Beitrag!\n')
 
         base = get_backend()
+        frontend = get_website(Site.objects.first())
 
         # todo: check with instance KIND and related workspace permission
         if instance.workspace.annotations_open or instance.workspace.polygon_open or instance.workspace.object_open:
@@ -648,7 +649,7 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
             message += '--' * 30
         else:
             message += _("Leider ist die Beteiligung nun abgeschlossen.\n")
-            message += _(f"Zur Karte mit allen öffentlichen Beiträgen: {base['base']}/de/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/\n")
+            message += _(f"Zur Karte mit allen öffentlichen Beiträgen: {frontend['base']}/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/\n")
             message += '--' * 30
 
         send_mail(

@@ -27,7 +27,7 @@ python3 manage.py createsuperuser --noinput --username admin --email admin@local
 # uvicorn main.asgi:application --port 8081 --host 0.0.0.0
 gunicorn \
 -w 4 -b 0.0.0.0:8081 \
---error-logfile /var/services/django/log/gunicorn.error.log \
+--error-logfile /dev/stdout \
 --access-logfile /var/services/django/log/gunicorn.access.log \
 -k uvicorn.workers.UvicornWorker \
 main.asgi:application

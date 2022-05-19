@@ -17,9 +17,9 @@ build_docker_gh:
 		-t ghcr.io/cividi/dfour-hub:dev \
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
 		--platform linux/amd64,linux/arm64 \
+		--cache-from ghcr.io/cividi/dfour-hub:$(DJANGO_VERSION) \
 		--push \
 		.
-	# --cache-from ghcr.io/cividi/dfour-hub:$(DJANGO_VERSION) \
 
 build_docker:
 	cd docker && DOCKER_BUILDKIT=1 \
