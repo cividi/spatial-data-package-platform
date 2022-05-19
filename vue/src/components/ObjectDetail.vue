@@ -158,8 +158,7 @@ export default {
     enableLikes: Boolean
   },
 
-  mounted() {
-    console.dir(this.curObj); // eslint-disable-line no-console
+  updated() {
     if (this.commentoUrl !== null && this.curObj.category.commentsEnabled) {
       if (typeof window !== 'undefined' && window.commento.main === undefined) {
         const commentoScript = document.createElement('script');
