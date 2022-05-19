@@ -640,7 +640,7 @@
       <object-detail
         :object="currentObject"
         :enableLikes="annotations.object.likes"
-        v-on:close="currentObjectIndex=null"
+        v-on:close="$router.push({ name: 'workspace' })"
       />
     </v-main>
 </template>
@@ -1060,6 +1060,12 @@ export default {
     document.removeEventListener(this.escListener);
   },
 
+  updated() {
+    if (!this.currentObject) {
+      this.$router.push({ name: 'workspace' });
+    }
+  },
+
   computed: {
     legendWidth() {
       switch (this.$vuetify.breakpoint.name) {
@@ -1083,8 +1089,10 @@ export default {
       return null;
     },
     currentObject() {
-      if (this.annotations.items && this.currentObjectIndex !== null) {
-        return this.annotations.items[this.currentObjectIndex];
+      if (this.$route.params.annoid) {
+        return this.annotations.items.filter(
+          a => a.pk === parseInt(this.$route.params.annoid, 10)
+        ).pop();
       }
       return null;
     },
@@ -1268,7 +1276,8 @@ export default {
         content = document.getElementById('currentComment');
         latlng = e.target._latlng; // eslint-disable-line no-underscore-dangle
       } else if (e.target.feature.kind === 'OBJ') {
-        this.currentObjectIndex = e.target.feature.index;
+        const annoid = this.annotations.items[e.target.feature.index].pk;
+        this.$router.push({ name: 'annotationDetail', params: { annoid } });
         return true;
       } else if (e.target.feature.kind === 'PLY') {
         this.currentCommentIndex = e.target.feature.index;
