@@ -118,20 +118,14 @@
 
 <style>
 #objectDetail {
-  position: absolute;
+  position: fixed;
   top: 0em;
-  left: -32em;
+  left: 0;
   width: 48em;
   height: 100vh;
   background: #fff;
   z-index: 1100;
   overflow: auto;
-}
-
-@media (max-width: 1263px) {
-  #objectDetail {
-    left: 0;
-  }
 }
 
 @media (max-width: 500px) {
