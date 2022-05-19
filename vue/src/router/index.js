@@ -93,21 +93,18 @@ const routes = [
         }
       },
       {
-        path: ':hash([0-9a-z]{6})/',
-        pathToRegexpOptions: { sensitive: true, strict: true },
-        name: 'snapshotRedirect',
-        redirect: to => `/${to.params.lang}/${to.params.hash.toUpperCase()}/`
-      },
-      {
-        path: ':wshash([0-9a-z]{5})/:hash([0-9a-z]{6})/',
-        pathToRegexpOptions: { sensitive: true, strict: true },
-        name: 'workspace',
-        redirect: to => `/${to.params.lang}/${to.params.wshash.toUpperCase()}/${to.params.hash.toUpperCase()}/`
-      },
-      {
         path: ':wshash([0-9A-Z]{5})/:hash([0-9A-Z]{6})/',
         pathToRegexpOptions: { sensitive: true, strict: true },
-        name: 'workspaceRedirect',
+        name: 'workspace',
+        component: () => import('@/views/Workspace.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutSnapshot.vue')
+        }
+      },
+      {
+        path: ':wshash([0-9A-Z]{5})/:hash([0-9A-Z]{6})/:annoid([0-9]+)/',
+        pathToRegexpOptions: { sensitive: true, strict: true },
+        name: 'annotationDetail',
         component: () => import('@/views/Workspace.vue'),
         meta: {
           layout: () => import('@/layouts/LayoutSnapshot.vue')
@@ -121,8 +118,47 @@ const routes = [
         meta: {
           layout: () => import('@/layouts/LayoutSnapshot.vue')
         }
+      },
+      {
+        path: ':wshash([0-9A-Z]{5})/annotations/:annokind/:annoid([0-9]+)/',
+        pathToRegexpOptions: { sensitive: true, strict: true },
+        name: 'annotationsListDetail',
+        component: () => import('@/views/Workspace.vue'),
+        meta: {
+          layout: () => import('@/layouts/LayoutSnapshot.vue')
+        }
       }
     ]
+  },
+  {
+    path: ':hash([0-9a-z]{6})/',
+    pathToRegexpOptions: { sensitive: true, strict: true },
+    name: 'snapshotRedirect',
+    redirect: to => `/${to.params.lang}/${to.params.hash.toUpperCase()}/`
+  },
+  {
+    path: ':wshash([0-9A-Z]{5})/:hash([0-9A-Z]{6})/',
+    pathToRegexpOptions: { sensitive: true, strict: true },
+    name: 'workspaceRedirect',
+    redirect: to => `/${to.params.lang}/${to.params.wshash.toUpperCase()}/${to.params.hash.toUpperCase()}/`
+  },
+  {
+    path: ':wshash([0-9A-Z]{5})/:hash([0-9A-Z]{6})/:annoid([0-9])+/',
+    pathToRegexpOptions: { sensitive: true, strict: true },
+    name: 'workspaceAnnoDetailRedirect',
+    redirect: to => `/${to.params.lang}/${to.params.wshash.toUpperCase()}/${to.params.hash.toUpperCase()}/${to.params.annoid}/`
+  },
+  {
+    path: ':wshash([0-9A-Z]{5})/annotations/:annokind/',
+    pathToRegexpOptions: { sensitive: true, strict: true },
+    name: 'annotationsListRedirect',
+    redirect: to => `/${to.params.lang}/${to.params.wshash.toUpperCase()}/annotations/${to.params.annokind}/${to.params.annoid}/`
+  },
+  {
+    path: ':wshash([0-9A-Z]{5})/annotations/:annokind/:annoid([0-9])+/',
+    pathToRegexpOptions: { sensitive: true, strict: true },
+    name: 'annotationsListDetailRedirect',
+    redirect: to => `/${to.params.lang}/${to.params.wshash.toUpperCase()}/annotations/${to.params.annokind}/${to.params.annoid}/`
   },
   {
     path: '*',

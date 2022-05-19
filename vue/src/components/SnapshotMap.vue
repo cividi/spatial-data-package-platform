@@ -190,7 +190,8 @@
         <div id="map" :class="filterClasses"></div>
       </v-container>
 
-      <div v-html="filterStyle"></div>
+      <div v-html="filterCatStyle"></div>
+      <div v-html="filterStatStyle"></div>
 
       <v-slide-y-transition>
         <p class="addHint elevation-6" v-if="addingAnnotation">
@@ -243,9 +244,11 @@
           :predecessor="predecessor"
           :hash="hash"
           :legend="legend"
-          :legendAnnotations="legendAnnotations"
+          :legendCategories="legendCategories"
+          :legendStates="legendStates"
           :sources="sources"
           v-on:toggleCat="(...args) => toggleCat(...args)"
+          v-on:toggleState="(...args) => toggleState(...args)"
         />
       </v-card>
 
@@ -296,6 +299,17 @@
               mdi-home-city-outline
             </v-icon>
             <v-icon v-if="addingAnnotation && addingAnnotation == 'OBJ'">mdi-close-thick</v-icon>
+          </v-btn>
+
+          <v-btn
+            fab small
+            id="resetZoom"
+            color="primary"
+            v-if="zoomStateModified"
+            @click="resetZoom">
+            <v-icon>
+              mdi-backup-restore
+            </v-icon>
           </v-btn>
 
         </template>
@@ -626,7 +640,7 @@
       <object-detail
         :object="currentObject"
         :enableLikes="annotations.object.likes"
-        v-on:close="currentObjectIndex=null"
+        v-on:close="$router.push({ name: 'workspace' })"
       />
     </v-main>
 </template>
@@ -904,6 +918,10 @@ p.rating {
   padding: 1px 0;
   min-width: 50px;
 }
+
+.leaflet-interactive {
+  transition: opacity 0.3s;
+}
 </style>
 
 <script>
@@ -955,7 +973,8 @@ export default {
       title: '',
       description: '',
       legend: [],
-      legendAnnotations: [],
+      legendCategories: [],
+      legendStates: [],
       sources: [],
       layers: [],
       geobounds: [],
@@ -977,6 +996,8 @@ export default {
       myLocationMarker: null,
       escListener: null,
       commentoUrl: process.env.VUE_APP_COMMENTO_URL || null,
+      zoomIsUserModified: false,
+      zoomStateModified: false,
       annotationKindKey: {
         COM: 'comment',
         PLY: 'polygon',
@@ -1039,6 +1060,12 @@ export default {
     document.removeEventListener(this.escListener);
   },
 
+  updated() {
+    if (!this.currentObject) {
+      this.$router.push({ name: 'workspace' });
+    }
+  },
+
   computed: {
     legendWidth() {
       switch (this.$vuetify.breakpoint.name) {
@@ -1062,8 +1089,10 @@ export default {
       return null;
     },
     currentObject() {
-      if (this.annotations.items && this.currentObjectIndex !== null) {
-        return this.annotations.items[this.currentObjectIndex];
+      if (this.$route.params.annoid) {
+        return this.annotations.items.filter(
+          a => a.pk === parseInt(this.$route.params.annoid, 10)
+        ).pop();
       }
       return null;
     },
@@ -1134,17 +1163,24 @@ export default {
     filterClasses() {
       let classes = '';
       this.disabledCatPks.forEach((c) => {
-        classes += `hide-c${c}`;
+        classes += `hide-c${c} `;
       });
       this.disabledStatePks.forEach((s) => {
-        classes += `hide-s${s}`;
+        classes += `hide-s${s} `;
       });
       return classes;
     },
-    filterStyle() {
+    filterCatStyle() {
       let styles = '';
-      this.legendAnnotations.forEach((a) => {
-        styles += `.hide-c${a.pk} .c${a.pk}{ display:none; }`;
+      this.legendCategories.forEach((a) => {
+        styles += `.hide-c${a.pk} .c${a.pk}{ opacity: 0; pointer-events: none; }`;
+      });
+      return `<style>${styles}</style>`;
+    },
+    filterStatStyle() {
+      let styles = '';
+      this.legendStates.forEach((a) => {
+        styles += `.hide-s${a.pk} .s${a.pk}{ opacity: 0; pointer-events: none; }`;
       });
       return `<style>${styles}</style>`;
     }
@@ -1240,7 +1276,8 @@ export default {
         content = document.getElementById('currentComment');
         latlng = e.target._latlng; // eslint-disable-line no-underscore-dangle
       } else if (e.target.feature.kind === 'OBJ') {
-        this.currentObjectIndex = e.target.feature.index;
+        const annoid = this.annotations.items[e.target.feature.index].pk;
+        this.$router.push({ name: 'annotationDetail', params: { annoid } });
         return true;
       } else if (e.target.feature.kind === 'PLY') {
         this.currentCommentIndex = e.target.feature.index;
@@ -1333,13 +1370,15 @@ export default {
                 pk: c.pk,
                 svg: `${this.djangobaseurl}/media/${c.icon}`,
                 label: c.name,
-                primary: !c.hideInList
+                primary: !c.hideInList,
+                hidden: false
               };
             }
             return {
               pk: c.pk,
               label: c.name,
               primary: !c.hideInList,
+              hidden: false,
               shape: 'circle',
               size: 1.0,
               fillColor: c.color,
@@ -1349,7 +1388,29 @@ export default {
               strokeWidth: 2
             };
           });
-        this.legendAnnotations = [...extraItems];
+        this.legendCategories = [...extraItems];
+      }
+      if (this.annotations.states) {
+        const extraItems = this.annotations.states
+          .filter(c => !c.hideInLegend)
+          .map((c) => {
+            if (c.icon) {
+              return {
+                pk: c.pk,
+                svg: `${this.djangobaseurl}/media/${c.icon}`,
+                label: c.name,
+                primary: !c.hideInList,
+                hidden: false
+              };
+            }
+            return {
+              pk: c.pk,
+              label: c.name,
+              primary: !c.hideInList,
+              hidden: false
+            };
+          });
+        this.legendStates = [...extraItems];
       }
       this.sources = this.geojson.sources;
     },
@@ -1381,8 +1442,18 @@ export default {
       try {
         L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN
           || process.env.VUE_APP_MAPBOX_ACCESSTOKEN_DEV;
-        const boxSize = 800;
-        const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
+        let bounds = null;
+        if (this.$store.state.mapCenter !== null) {
+          // setup bounds from store
+          bounds = {
+            center: this.$store.state.mapCenter,
+            zoom: this.$store.state.mapZoomLevel
+          };
+          this.zoomStateModified = true;
+        } else {
+          const boxSize = 800;
+          bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
+        }
         this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
         this.layerContainer = new L.LayerGroup();
         // default test layer // this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/light-v10'));
@@ -1475,6 +1546,26 @@ export default {
 
         this.drawnItems = new L.FeatureGroup();
         this.drawnItems.addTo(this.map);
+
+        this.map.on('movestart', () => {
+          this.zoomIsUserModified = true;
+        });
+
+        this.map.on('zoomend', (event) => {
+          if (this.zoomIsUserModified) {
+            this.$store.commit('setMapZoomLevel', event.target.getZoom());
+            this.$store.commit('setMapCenter', Object.values(event.target.getCenter()));
+            this.zoomStateModified = true;
+          }
+        });
+
+        this.map.on('moveend', (event) => {
+          if (this.zoomIsUserModified) {
+            this.$store.commit('setMapCenter', Object.values(event.target.getCenter()));
+            this.$store.commit('setMapZoomLevel', event.target.getZoom());
+            this.zoomStateModified = true;
+          }
+        });
 
         this.map.on('click', (event) => {
           if (this.addingAnnotation !== null) {
@@ -1616,6 +1707,27 @@ export default {
       }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
+    },
+
+    resetZoom() {
+      this.geobounds = [
+        geostring2array(this.geojson.views[0].spec.bounds[0]),
+        geostring2array(this.geojson.views[0].spec.bounds[1])
+      ];
+      const boxSize = 800;
+      const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
+      this.map.flyTo(
+        bounds.center,
+        bounds.zoom,
+        {
+          noMoveStart: true,
+          duration: 0.1
+        }
+      );
+      this.zoomIsUserModified = false;
+      this.$store.commit('setMapZoomLevel', null);
+      this.$store.commit('setMapCenter', null);
+      this.zoomStateModified = false;
     },
 
     geodesicArea(latLngs) {

@@ -89,10 +89,6 @@
             <h5>{{ $t('moreinfo') }}</h5>
             <p>{{ curObj.data.properties.moreinfo }}</p>
           </div>
-          <div v-if="curObj.data.properties.comment">
-            <h5>{{ $t('comment') }}</h5>
-            <p>{{ curObj.data.properties.comment }}</p>
-          </div>
 
           <div v-if="enableLikes" class="d-flex align-center justify-end primary--text">
             <p class="rating">
@@ -108,7 +104,10 @@
               :style="cssVars">mdi-heart</v-icon>
           </div>
           <div v-if="curObj.category.commentsEnabled">
-            <h3>Kommentare</h3>
+            <h3>{{ $t('comment') }}</h3>
+            <div v-if="curObj.data.properties.comment">
+              <p>{{ curObj.data.properties.comment }}</p>
+            </div>
             <div id="commento"></div>
           </div>
         </div>
@@ -119,20 +118,14 @@
 
 <style>
 #objectDetail {
-  position: absolute;
+  position: fixed;
   top: 0em;
-  left: -32em;
+  left: 0;
   width: 48em;
   height: 100vh;
   background: #fff;
   z-index: 1100;
   overflow: auto;
-}
-
-@media (max-width: 1263px) {
-  #objectDetail {
-    left: 0;
-  }
 }
 
 @media (max-width: 500px) {
@@ -149,13 +142,34 @@ export default {
   name: 'ObjectDetail',
   data() {
     return {
-      djangobaseurl: process.env.VUE_APP_DJANGOBASEURL
+      djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
+      commentoUrl: process.env.VUE_APP_COMMENTO_URL || null
     };
   },
 
   props: {
     object: Object,
     enableLikes: Boolean
+  },
+
+  updated() {
+    if (this.commentoUrl !== null && this.curObj.category.commentsEnabled) {
+      if (typeof window !== 'undefined' && window.commento.main === undefined) {
+        const commentoScript = document.createElement('script');
+        commentoScript.setAttribute('src', `${this.commentoUrl}/js/commento.js`);
+        commentoScript.setAttribute('data-auto-init', false);
+        commentoScript.setAttribute('data-page-id', `/${this.$route.params.wshash}/${this.curObj.pk}/`);
+        commentoScript.setAttribute('defer', true);
+        document.head.appendChild(commentoScript);
+        window.setTimeout(() => {
+          window.commento.main();
+        }, 100);
+      } else if (typeof window !== 'undefined' && window.commento) {
+        window.commento.reInit({
+          pageId: `/${this.$route.params.wshash}/${this.curObj.pk}/`
+        });
+      }
+    }
   },
 
   computed: {

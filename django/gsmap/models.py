@@ -114,6 +114,11 @@ class SnapshotPermission(IntFlag):
     PUBLIC = 0
     NOT_LISTED = 10
 
+class WorkspacePermission(IntFlag):
+    PUBLIC = 0
+    NOT_LISTED = 10
+    PRIVATE = 20
+
 
 class Snapshot(models.Model):
     class Meta:
@@ -452,6 +457,12 @@ class Workspace(TranslatableModel):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    permission = models.IntegerField(
+        choices=[(perm.value, perm.name)
+                 for perm in WorkspacePermission],
+        default=WorkspacePermission.PRIVATE
+    )
+
     snapshots = SortedManyToManyField(Snapshot)
 
     categories = SortedManyToManyField(Category, blank=True)
@@ -634,6 +645,7 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
         message = _('Besten Dank für Ihren Beitrag!\n')
 
         base = get_backend()
+        frontend = get_website(Site.objects.first())
 
         # todo: check with instance KIND and related workspace permission
         if instance.workspace.annotations_open or instance.workspace.polygon_open or instance.workspace.object_open:
@@ -648,7 +660,7 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
             message += '--' * 30
         else:
             message += _("Leider ist die Beteiligung nun abgeschlossen.\n")
-            message += _(f"Zur Karte mit allen öffentlichen Beiträgen: {base['base']}/de/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/\n")
+            message += _(f"Zur Karte mit allen öffentlichen Beiträgen: {frontend['base']}/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/\n")
             message += '--' * 30
 
         send_mail(
