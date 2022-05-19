@@ -11,7 +11,7 @@ from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
-from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, Annotation, Category, State, SpatialDatasette, Usergroup, Attachement
+from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, WorkspacePermission, Annotation, Category, State, SpatialDatasette, Usergroup, Attachement
 from graphene_django.rest_framework.mutation import SerializerMutation
 import graphene_django_optimizer as gql_optimizer
 
@@ -32,6 +32,7 @@ def convert_field_to_geojson(field, registry=None):
 
 Q_SNAPSHOT_ONLY_PUBLIC = Q(permission__exact=SnapshotPermission.PUBLIC)
 Q_SNAPSHOT_WITH_NOT_LISTED = Q(permission__lte=SnapshotPermission.NOT_LISTED)
+Q_WORKSPACE_ONLY_PUBLIC = Q(permission__exact=WorkspacePermission.PUBLIC)
 Q_LANGUAGE = graphene.Enum(
     "LanguageCodeEnum",
     [(lang[0], lang[1]) for lang in settings.LANGUAGES],
@@ -200,6 +201,15 @@ class SpatialDatasetteNode(DjangoObjectType):
     
     queries = generic.GenericScalar(source='queries')
 
+class WorkspaceOnlyPublicFilter(FilterSet):
+    class Meta:
+        model = Snapshot
+        fields = []
+
+    @property
+    def qs(self):
+        return super().qs.filter(Q_WORKSPACE_ONLY_PUBLIC)
+
 class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
     class Meta:
         model = Workspace
@@ -238,6 +248,10 @@ class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
     )
     
     usergroups = graphene.List(UsergroupNode)
+
+    @classmethod
+    def get_queryset(cls, queryset, info):
+        return queryset.filter(Q_WORKSPACE_ONLY_PUBLIC)
     
     def resolve_title(self, info, language_code=None):
         lang = Q_LANGUAGE.get(language_code).name
@@ -310,6 +324,8 @@ class Query(object):
         SnapshotNode, filterset_class=SnapshotOnlyPublicFilter)
 
     workspace = graphene.relay.Node.Field(WorkspaceNode)
+    workspaces = DjangoFilterConnectionField(
+        WorkspaceNode, filterset_class=WorkspaceOnlyPublicFilter)
 
 
 class Mutation(graphene.ObjectType):

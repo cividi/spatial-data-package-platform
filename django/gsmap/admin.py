@@ -137,7 +137,7 @@ class WorkspaceAdmin(TranslatableAdmin):
             )
         }),
         (_('Main'), {
-            'fields': ('group', 'title', 'description', 'snapshots'),
+            'fields': ('group', 'permission', 'title', 'description', 'snapshots'),
         }),
         (_('Annotations'), {
             'fields': (
