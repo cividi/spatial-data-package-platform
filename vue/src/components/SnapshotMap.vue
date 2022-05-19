@@ -301,6 +301,17 @@
             <v-icon v-if="addingAnnotation && addingAnnotation == 'OBJ'">mdi-close-thick</v-icon>
           </v-btn>
 
+          <v-btn
+            fab small
+            id="resetZoom"
+            color="primary"
+            v-if="zoomStateModified"
+            @click="resetZoom">
+            <v-icon>
+              mdi-backup-restore
+            </v-icon>
+          </v-btn>
+
         </template>
 
       </div>
@@ -985,6 +996,8 @@ export default {
       myLocationMarker: null,
       escListener: null,
       commentoUrl: process.env.VUE_APP_COMMENTO_URL || null,
+      zoomIsUserModified: false,
+      zoomStateModified: false,
       annotationKindKey: {
         COM: 'comment',
         PLY: 'polygon',
@@ -1420,8 +1433,18 @@ export default {
       try {
         L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN
           || process.env.VUE_APP_MAPBOX_ACCESSTOKEN_DEV;
-        const boxSize = 800;
-        const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
+        let bounds = null;
+        if (this.$store.state.mapCenter !== null) {
+          // setup bounds from store
+          bounds = {
+            center: this.$store.state.mapCenter,
+            zoom: this.$store.state.mapZoomLevel
+          };
+          this.zoomStateModified = true;
+        } else {
+          const boxSize = 800;
+          bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
+        }
         this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
         this.layerContainer = new L.LayerGroup();
         // default test layer // this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/light-v10'));
@@ -1514,6 +1537,26 @@ export default {
 
         this.drawnItems = new L.FeatureGroup();
         this.drawnItems.addTo(this.map);
+
+        this.map.on('movestart', () => {
+          this.zoomIsUserModified = true;
+        });
+
+        this.map.on('zoomend', (event) => {
+          if (this.zoomIsUserModified) {
+            this.$store.commit('setMapZoomLevel', event.target.getZoom());
+            this.$store.commit('setMapCenter', Object.values(event.target.getCenter()));
+            this.zoomStateModified = true;
+          }
+        });
+
+        this.map.on('moveend', (event) => {
+          if (this.zoomIsUserModified) {
+            this.$store.commit('setMapCenter', Object.values(event.target.getCenter()));
+            this.$store.commit('setMapZoomLevel', event.target.getZoom());
+            this.zoomStateModified = true;
+          }
+        });
 
         this.map.on('click', (event) => {
           if (this.addingAnnotation !== null) {
@@ -1655,6 +1698,27 @@ export default {
       }
       // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
       // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
+    },
+
+    resetZoom() {
+      this.geobounds = [
+        geostring2array(this.geojson.views[0].spec.bounds[0]),
+        geostring2array(this.geojson.views[0].spec.bounds[1])
+      ];
+      const boxSize = 800;
+      const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
+      this.map.flyTo(
+        bounds.center,
+        bounds.zoom,
+        {
+          noMoveStart: true,
+          duration: 0.1
+        }
+      );
+      this.zoomIsUserModified = false;
+      this.$store.commit('setMapZoomLevel', null);
+      this.$store.commit('setMapCenter', null);
+      this.zoomStateModified = false;
     },
 
     geodesicArea(latLngs) {
