@@ -3,11 +3,9 @@
     <v-btn
       v-for="lang in $i18n.availableLocales"
       :key="lang"
-      fab
-      small
-      text
+      text plain
       elevation="0"
-      class="mx-1 px-0"
+      class="mx-1 px-0 main"
       @click="changeLanguage(lang)">{{ lang }}</v-btn>
 </div>
 <div v-else>
@@ -36,6 +34,12 @@
   </v-speed-dial>
 </div>
 </template>
+
+<style scoped>
+.main {
+  font-weight: bold;
+}
+</style>
 
 <script>
 export default {

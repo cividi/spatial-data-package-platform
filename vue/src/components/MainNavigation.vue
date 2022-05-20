@@ -2,16 +2,22 @@
 <i18n>
 {
   "de": {
-    "mainnav.imprint": "Impressum",
-    "mainnav.contact": "Kontakt"
+    "mainnav.home": "Projekt",
+    "mainnav.map": "Karte",
+    "mainnav.gallery": "Galerie",
+    "mainnav.add": "Eintragen"
   },
   "fr": {
-    "mainnav.imprint": "Impressum",
-    "mainnav.contact": "Contact"
+    "mainnav.home": "Projekt",
+    "mainnav.map": "Karte",
+    "mainnav.gallery": "Galerie",
+    "mainnav.add": "Eintragen"
   },
   "en": {
-    "mainnav.imprint": "Imprint",
-    "mainnav.contact": "Contact"
+    "mainnav.home": "Project",
+    "mainnav.map": "Map",
+    "mainnav.gallery": "Galery",
+    "mainnav.add": "Add an entry"
   }
 }
 </i18n>
@@ -19,27 +25,31 @@
 
 <template>
   <div>
-    <v-app-bar app flat id="topbar">
-      <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block">
-        <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
-      </router-link>
-      <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
-      <!-- <div class="d-none d-md-block"><language-switch/></div>
-      <div class="useractions d-none d-sm-block">
-        <user-actions />
-      </div>-->
-      <nav id="mainnav" class="d-none d-md-block">
-        <router-link
-          v-for="item in mainnav"
-          :key="item.textKey"
-          :to="'/' + $i18n.locale + item.route + '/'">{{ $t(item.textKey) }}</router-link>
-      </nav>
-      <v-app-bar-nav-icon @click="mobnav=!mobnav" class="d-md-none"></v-app-bar-nav-icon>
+    <v-app-bar app flat fixed id="topbar">
+      <v-row no-gutters>
+        <v-col cols="4" sm="4">
+          <v-app-bar-nav-icon @click="mobnav=!mobnav" class="d-md-none"></v-app-bar-nav-icon>
+        </v-col>
+        <v-col cols="12" sm="4" class="text-center">
+          <language-switch expanded="1" />
+        </v-col>
+        <!-- <div class="d-none d-md-block"><language-switch/></div>
+        <div class="useractions d-none d-sm-block">
+          <user-actions />
+        </div>-->
+        <v-col cols="4" sm="4" class="text-right">
+          <nav id="mainnav" class="d-none d-md-block">
+            <router-link
+              v-for="item in mainnav"
+              :key="item.textKey"
+              :to="'/' + $i18n.locale + item.route + '/'">{{ $t(item.textKey) }}</router-link>
+          </nav>
+        </v-col>
+      </v-row>
     </v-app-bar>
 
     <v-navigation-drawer
-      right app dark color="primary" class="mobnav" v-model="mobnav" disable-resize-watcher>
+      left app dark color="primary" class="mobnav" v-model="mobnav" disable-resize-watcher>
       <v-toolbar flat color="primary" class="mx-2">
         <v-spacer></v-spacer>
         <v-btn icon large @click="mobnav=!mobnav">
@@ -58,7 +68,6 @@
       </v-list>
       <v-flex class="useractions d-sm-none center">
         <v-divider></v-divider>
-        <user-actions vertical="1" />
       </v-flex>
     </v-navigation-drawer>
   </div>
@@ -66,9 +75,14 @@
 
 <style>
 #mainnav a {
-  color: #000;
   margin: 0 0.5em;
   font-size: 1.6em;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+#topbar {
+  background-color: transparent;
 }
 
 .v-application .mobnav a {
@@ -83,8 +97,10 @@ export default {
     return {
       mobnav: false,
       mainnav: [
-        { route: '/imprint', textKey: 'mainnav.imprint' }
-        // { route: '/contact', textKey: 'mainnav.contact' }
+        { route: '/', textKey: 'mainnav.home' },
+        { route: '/map', textKey: 'mainnav.map' },
+        { route: '/gallery', textKey: 'mainnav.gallery' },
+        { route: '/add', textKey: 'mainnav.add' }
       ]
     };
   }

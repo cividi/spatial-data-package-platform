@@ -170,7 +170,7 @@
 <!-- eslint-enable -->
 
 <template>
-    <v-main :class="{navopen : snapshotnav}">
+  <div>
       <v-slide-x-reverse-transition>
         <v-btn fab absolute small
           style="top:13px; right:16px;"
@@ -196,7 +196,7 @@
       <v-slide-y-transition>
         <p class="addHint elevation-6" v-if="addingAnnotation">
           <span v-if="addingAnnotation == 'COM'">
-             {{ c$t('comment.add') }}
+              {{ c$t('comment.add') }}
           </span>
           <template v-else-if="addingAnnotation == 'PLY'">
             <span v-if="polygonEditingState.invalid">
@@ -264,42 +264,6 @@
         </v-btn>
 
         <template v-if="wshash">
-
-          <v-btn
-            fab small
-            id="addingAnnotationPt"
-            color="primary"
-            v-if="annotations.marker.open"
-            @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM';">
-            <v-icon v-if="!addingAnnotation || addingAnnotation != 'COM'">
-              mdi-comment-plus-outline
-            </v-icon>
-            <v-icon v-if="addingAnnotation && addingAnnotation == 'COM'">mdi-close-thick</v-icon>
-          </v-btn>
-
-          <v-btn
-            fab small
-            id="addingAnnotationPly"
-            color="primary"
-            v-if="annotations.polygon.open"
-            @click="addingAnnotation ? addingAnnotation = null : addingAnnotation = 'PLY';">
-            <v-icon v-if="!addingAnnotation || addingAnnotation != 'PLY'">
-              mdi-shape-polygon-plus
-            </v-icon>
-            <v-icon v-if="addingAnnotation && addingAnnotation == 'PLY'">mdi-close-thick</v-icon>
-          </v-btn>
-
-          <v-btn
-            fab small
-            id="addingAnnotationObj"
-            color="primary"
-            v-if="annotations.object.open"
-            @click="addingAnnotation ? addingAnnotation = null : addingAnnotation = 'OBJ';">
-            <v-icon v-if="!addingAnnotation || addingAnnotation != 'OBJ'">
-              mdi-home-city-outline
-            </v-icon>
-            <v-icon v-if="addingAnnotation && addingAnnotation == 'OBJ'">mdi-close-thick</v-icon>
-          </v-btn>
 
           <v-btn
             fab small
@@ -642,7 +606,7 @@
         :enableLikes="annotations.object.likes"
         v-on:close="$router.push({ name: 'workspace' })"
       />
-    </v-main>
+    </div>
 </template>
 
 <style>
@@ -943,8 +907,6 @@ function geostring2array(s) {
 export default {
   data() {
     return {
-      hash: this.$route.params.hash,
-      wshash: this.$route.params.wshash,
       bfsNumber: this.$route.params.bfsNumber,
       djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
       map: null,
@@ -1038,12 +1000,15 @@ export default {
   },
 
   props: {
+    hash: String,
+    wshash: String,
     snapshot: Object,
     geojson: Object,
     annotations: Object,
     spatialDatasettes: Array,
     geoboundsIn: Array,
-    predecessor: Object
+    predecessor: Object,
+    entryActive: String
   },
 
   created() {
@@ -1061,8 +1026,17 @@ export default {
   },
 
   updated() {
-    if (!this.currentObject) {
-      this.$router.push({ name: 'workspace' });
+    // if (!this.currentObject) {
+    //   this.$router.push({ name: 'workspace' });
+    // }
+    if (this.entryActive) {
+    //   if (this.entryActive === 'OBJ') {
+    //     if (this.addingAnnotation) {
+    //       this.addingAnnotation = null;
+    //     } else {
+      this.addingAnnotation = this.entryActive;
+    //     }
+    //   }
     }
   },
 
@@ -1361,6 +1335,8 @@ export default {
       this.description = this.geojson.views[0].spec.description;
       this.legend = this.geojson.views[0].spec.legend;
 
+      console.info('setting up meta', this.geojson); // eslint-disable-line no-console
+
       if (this.annotations.categories) {
         const extraItems = this.annotations.categories
           .filter(c => !c.hideInLegend)
@@ -1416,6 +1392,7 @@ export default {
     },
 
     setupMapbox() {
+      console.info('setting up mapboox'); // eslint-disable-line no-console
       try {
         this.geobounds = [
           geostring2array(this.geojson.views[0].spec.bounds[0]),
@@ -1433,12 +1410,13 @@ export default {
           );
         });
       } catch (error) {
-        console.log(error); // eslint-disable-line no-console
+        console.error(error); // eslint-disable-line no-console
         this.isMapLoaded = true;
       }
     },
 
     displayMapbox() {
+      console.info('showing mapbox'); // eslint-disable-line no-console
       try {
         L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN
           || process.env.VUE_APP_MAPBOX_ACCESSTOKEN_DEV;

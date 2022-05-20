@@ -18,7 +18,7 @@
 
 <template>
   <div id="snapshotview">
-    <v-navigation-drawer
+    <!-- <v-navigation-drawer
       v-if="$store.state.notIframe"
       id="snapshotnav"
       clipped="clipped"
@@ -76,12 +76,15 @@
         <v-spacer />
         <language-switch />
       </v-toolbar>
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
 
     <snapshot-map ref="map"
       v-if="hash"
+      :hash="hash"
+      :wshash="wshash"
       :geojson="geojson"
       :annotations="annotations"
+      :entry-active="entryActive"
       :spatialDatasettes="spatialDatasettes"
       :geoboundsIn="geobounds"
     />
@@ -166,10 +169,10 @@ Vue.component('error-message', ErrorMessage);
 export default {
   data() {
     return {
-      hash: this.$route.params.hash,
-      wshash: this.$route.params.wshash,
-      annokind: this.$route.params.annokind,
-      annoid: this.$route.params.annoid,
+      hash: this.$route.params.hash || this.$attrs.hash,
+      wshash: this.$route.params.wshash || this.$attrs.wshash,
+      annokind: this.$route.params.annokind || this.$attrs.annokind || null,
+      annoid: this.$route.params.annoid || null,
       geojson: null,
       annotations: {
         items: [],
@@ -200,6 +203,10 @@ export default {
       errorsettings: {},
       editing: undefined
     };
+  },
+
+  props: {
+    entryActive: String
   },
 
   async mounted() {
@@ -424,7 +431,7 @@ export default {
     abortEdit() {
       this.editing = undefined;
     },
-    async onSnapshotSaved({ snapshot }) {
+    async onSnapshotSaved() {
       const { data } = await this.$apollo.query({
         query: gql`query getworkspace($wshash: ID!) {
             workspace(id: $wshash) {
@@ -457,19 +464,19 @@ export default {
       );
       this.editing = undefined;
 
-      if (this.$route.params.hash === snapshot.pk) {
-        // current snapshot was updated, reload window
-        this.$router.go();
-      } else {
-        // co to edited snapshot
-        this.$router.push(`/${
-          this.$route.params.lang
-        }/${
-          this.$route.params.wshash
-        }/${
-          snapshot.pk
-        }/`);
-      }
+      // if (this.$route.params.hash === snapshot.pk) {
+      //   // current snapshot was updated, reload window
+      //   this.$router.go();
+      // } else {
+      //   // co to edited snapshot
+      //   this.$router.push(`/${
+      //     this.$route.params.lang
+      //   }/${
+      //     this.$route.params.wshash
+      //   }/${
+      //     snapshot.pk
+      //   }/`);
+      // }
     },
     newSnapshot() {
       this.editing = { isNew: true, snapshot: {} };
