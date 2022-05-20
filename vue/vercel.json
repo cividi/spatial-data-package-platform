@@ -74,7 +74,7 @@
       "permanent": false
     },
     {
-      "source": "/map/:gallery([0-9]+)/",
+      "source": "/gallery/:annoid([0-9]+)/",
       "has": [
         {
           "type": "header",
