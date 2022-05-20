@@ -39,41 +39,27 @@ module.exports = {
       .type('javascript/auto')
       .use('i18n')
       .loader('@intlify/vue-i18n-loader');
-  },
-
-  pluginOptions: {
-    prerenderSpa: {
-      registry: undefined,
-      renderRoutes: [
-        '/de/',
-        '/fr/',
-        '/en/',
-        '/de/login/',
-        '/de/signup/',
-        '/de/about/',
-        '/de/imprint/',
-        '/de/contact/',
-        '/fr/login/',
-        '/fr/signup/',
-        '/fr/about/',
-        '/fr/imprint/',
-        '/fr/contact/',
-        '/en/login/',
-        '/en/signup/',
-        '/en/about/',
-        '/en/imprint/',
-        '/en/contact/'
-      ],
-      useRenderEvent: true,
-      headless: true,
-      onlyProduction: true
-      // customRendererConfig: {
-      //   executablePath: '/usr/bin/chromium-browser',
-      //   args: [
-      //     '--no-sandbox',
-      //     '--disable-dev-shm-usage'
-      //   ]
-      // }
-    }
   }
+
+  // pluginOptions: {
+  // prerenderSpa: {
+  // registry: undefined,
+  // renderRoutes: [
+  //   '/de/',
+  //   '/fr/',
+  //   '/en/',
+  //   '/it/'
+  // ],
+  // useRenderEvent: true,
+  // headless: true,
+  // onlyProduction: true
+  // customRendererConfig: {
+  //   executablePath: '/usr/bin/chromium-browser',
+  //   args: [
+  //     '--no-sandbox',
+  //     '--disable-dev-shm-usage'
+  //   ]
+  // }
+  // }
+  // }
 };
