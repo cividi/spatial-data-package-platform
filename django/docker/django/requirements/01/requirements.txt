@@ -39,7 +39,7 @@ more-itertools==8.6.0
 olefile==0.46
 ordered-set==4.0.1
 packaging==20.9
-Pillow==8.3.1
+Pillow==9.1.1
 pluggy==0.13.1
 promise==2.3
 psycopg2==2.8.6
