@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'sortedm2m',
     'sortedm2m_filter_horizontal_widget',
-    'django_json_widget',
+    'django_jsonform',
     'rest_framework',
     'django_apscheduler',
     'solo',
