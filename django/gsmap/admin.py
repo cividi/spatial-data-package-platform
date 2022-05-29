@@ -5,7 +5,6 @@ from django.contrib.auth import get_permission_codename
 from django.contrib.postgres import fields
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext as __
-from django_json_widget.widgets import JSONEditorWidget
 from django.utils.html import mark_safe
 from django.contrib import messages
 from django.forms.widgets import Textarea, TextInput
@@ -67,12 +66,6 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         #     ('perimeter',),
         # }),
     )
-
-    formfield_overrides = {
-        fields.JSONField: {
-            'widget': JSONEditorWidget
-        },
-    }
 
     list_display = ('id', 'thumbnail_list_image', 'title', 'municipality',
                     'permission', 'is_showcase', 'created', 'modified', 'user', 'data_file')
