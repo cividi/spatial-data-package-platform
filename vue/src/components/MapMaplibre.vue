@@ -285,9 +285,9 @@ export default {
                   });
                   return json;
                 })
-                .catch(err => console.error(err));
+                .catch(err => console.error(err)); // eslint-disable-line no-console
             } catch (e) {
-              console.log(e);
+              console.log(e); // eslint-disable-line no-console
             }
             return null;
           }
@@ -351,7 +351,6 @@ export default {
     },
 
     addAnnotations(map) {
-      console.info('Map loaded');
       if (this.annotations.items) {
         const geojson = {
           type: 'FeatureCollection',
@@ -367,7 +366,6 @@ export default {
             })
           ]
         };
-        console.log('features', geojson);
         map.addSource('annotations', {
           type: 'geojson',
           data: geojson,
@@ -446,7 +444,6 @@ export default {
           });
           const selectedNode = features[0];
           this.$router.push({ name: 'annotationDetail', params: { annoid: selectedNode.id } });
-          console.info(selectedNode);
         });
         map.on('mouseenter', 'clusters', () => {
           map.getCanvas().style.cursor = 'pointer';
@@ -461,13 +458,12 @@ export default {
           map.getCanvas().style.cursor = '';
         });
       } else {
-        console.error('No annotations fetched yet!!');
+        console.error('No annotations fetched yet!!'); // eslint-disable-line no-console
       }
     },
 
     annotationHandlers() {
       this.map.on('click', (event) => {
-        console.info('map clicked', this.addingAnnotation, event);
         if (this.addingAnnotation !== null) {
           const svg = document.createElement('img');
           switch (this.addingAnnotation) {

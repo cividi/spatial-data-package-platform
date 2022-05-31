@@ -1259,7 +1259,6 @@ export default {
 
     cancelAnnotation() {
       if (this.newAnnotation && this.newAnnotation.marker) {
-        console.info('removing markers...');
         // TODO: move to map plugin
         // this.newAnnotation.marker.removeFrom(this.$refs.map.map);
         this.newAnnotation = null;
@@ -1276,7 +1275,6 @@ export default {
     },
 
     newComment(e) {
-      console.info(e);
       this.addingAnnotation = null;
       this.commentstepper = 1;
       this.newAnnotation = {

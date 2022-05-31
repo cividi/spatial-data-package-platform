@@ -95,13 +95,11 @@ export default {
           const boxSize = 800;
           bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
         }
-        console.info(`setting up ${bounds}`);
         this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
         this.layerContainer = new L.LayerGroup();
         // default test layer // this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/light-v10'));
         if (this.hash) { // full snapshot with hash
           this.layers.forEach((layer) => {
-            console.info('adding: ', layer);
             if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
               const tileLayer = L.mapbox.styleLayer(layer.path);
               tileLayer.on('load', () => { this.isMapLoaded = true; });
@@ -211,7 +209,6 @@ export default {
         });
 
         this.map.on('click', (event) => {
-          console.info('map clicked', this.addingAnnotation);
           if (this.addingAnnotation !== null) {
             switch (this.addingAnnotation) {
               case 'COM': {
