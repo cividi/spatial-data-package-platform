@@ -196,6 +196,7 @@
           :annotations="annotations"
           :addingAnnotation="addingAnnotation"
           :newAnnotation="newAnnotation"
+          :hash="hash"
           @new-comment="newComment"
           @new-object="newObject"
           @new-polygon="newPolygon"
@@ -231,7 +232,7 @@
         </p>
       </v-slide-y-transition>
 
-      <v-btn
+      <!-- <v-btn
         v-if="hash && !screenshotIsThumbnail"
         fab absolute small
         style="bottom:2.2em; right:1.3em;"
@@ -267,7 +268,7 @@
           v-on:toggleCat="(...args) => toggleCat(...args)"
           v-on:toggleState="(...args) => toggleState(...args)"
         />
-      </v-card>
+      </v-card> -->
 
       <div id="buttons" v-if="!screenshotMode">
 
@@ -995,7 +996,8 @@ export default {
     snapshot: Object,
     annotations: Object,
     spatialDatasettes: Array,
-    predecessor: Object
+    predecessor: Object,
+    entryActive: String
   },
 
   created() {
@@ -1004,6 +1006,12 @@ export default {
         this.cancelAnnotation();
       }
     });
+  },
+
+  mounted() {
+    if (this.entryActive) {
+      this.addingAnnotation = this.entryActive;
+    }
   },
 
   destroy() {
@@ -1235,9 +1243,11 @@ export default {
         this.newAnnotation = null;
       }
       this.$refs.map.polygonString = [];
-      this.$refs.map.drawnItems.clearLayers();
       this.addingAnnotation = null;
       this.uploadFiles = null;
+      if (this.entryActive) {
+        this.$router.push({ name: 'workspace' });
+      }
       // this.$refs.map.cancelAnnotation();
     },
 

@@ -18,6 +18,12 @@
       "dføur",
     "h2.2": "Examples",
     "networkerror": "The data is currently not available, please try again soon."
+  },
+  "it": {
+    "img.1.alt":
+      "dføur",
+    "h2.2": "Esempi",
+    "networkerror": "I dati non sono attualmente disponibili, riprovare al più presto."
   }
 }
 </i18n>
@@ -25,8 +31,13 @@
 
 <template>
 <div>
-  <v-container my-12 class="text-center" >
-      <h3>Under construction...</h3>
+  <v-container my-12>
+    <v-col cols="8">
+      <div
+        id="project"
+        v-html="homepageSnippet">
+      </div>
+    </v-col>
   </v-container>
 
   <v-snackbar color="primary" v-model="snackbar" :timeout="9000">
@@ -40,25 +51,30 @@
 </template>
 
 <style>
-.gmdscn {
-  position: relative;
-  max-width: 720px;
-  margin: 0 auto;
+#project h1,
+#project h2,
+#project h3,
+#project h4 {
+  text-transform: uppercase;
+  border-bottom: 6px solid black;
+  padding-bottom: 0;
+  line-height: 1.2em;
+  margin-bottom: 0.5em;
+  margin-top: 0.5em;
+  width: fit-content;
 }
-
-.gmdscn .gemeindesuche.v-select {
-  position: absolute;
-  top: calc(50% - 30px);
-  left: 50%;
-  transform: translateX(-50%);
+#project h2 {
+  font-weight: bolder;
 }
-
-.introtxt {
-  max-width: 660px;
+#project a {
+  border-bottom: 6px solid black;
+  font-weight: bold;
 }
-
-.quotetxt {
-  font-style: italic;
+#project ul {
+  padding-bottom: 1em;
+}
+#project ul li {
+  margin-bottom: 0.3em;
 }
 </style>
 
@@ -127,7 +143,7 @@ export default {
         if (config) {
           this.searchEnabled = config.searchEnabled;
           this.exampleGalleryEnabled = config.exampleGalleryEnabled;
-          this.homepageSnippet = config.homepageSnippet;
+          this.homepageSnippet = this.md(config.homepageSnippet);
         }
       }
     },

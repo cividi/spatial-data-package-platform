@@ -19,7 +19,6 @@ export default {
       map: null,
       layers: [],
       layerContainer: null,
-      hash: this.$route.params.hash,
       djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
       // eslint-disable-next-line global-require
       commentIconUrl: require('@/assets/images/icons/comment_36.svg'),
@@ -50,7 +49,8 @@ export default {
     filters: String,
     annotations: Object,
     addingAnnotation: String,
-    newAnnotation: Object
+    newAnnotation: Object,
+    hash: String
   },
 
   destroy() {
