@@ -70,6 +70,7 @@ export default {
     annotations: Object,
     filters: String,
     addingAnnotation: String,
+    newAnnotation: Object,
     searchControl: {
       type: Object,
       default() {
@@ -134,9 +135,9 @@ export default {
     }
   },
 
-  beforeDestroy() {
-    this.map.remove();
-  },
+  // beforeDestroy() {
+  //   this.map.remove();
+  // },
 
   methods: {
     mapInit() {
@@ -445,7 +446,7 @@ export default {
             layers: ['unclustered-points']
           });
           const selectedNode = features[0];
-          this.$router.push({ name: 'annotationDetail', params: { annoid: selectedNode.id } });
+          this.$router.push({ name: 'workspace', replace: true, params: { annoid: selectedNode.id } });
         });
         map.on('mouseenter', 'clusters', () => {
           map.getCanvas().style.cursor = 'pointer';
@@ -514,6 +515,24 @@ export default {
       this.map.on('moveend', (event) => {
         this.$emit('map-moveend', event);
       });
+    },
+
+    lockAnnotation() {
+      const svg = document.createElement('img');
+      svg.style.width = 36;
+      svg.style.height = 36;
+      if (this.newAnnotation.kind === 'COM') {
+        svg.src = this.commentLockedIconUrl;
+      } else if (this.newAnnotation.kind === 'OBJ') {
+        svg.src = this.objectLockedIconUrl;
+      }
+      this.newAnnotation.marker.element = svg;
+    },
+
+    markSaved(message) {
+      this.newAnnotation.marker.setPopup(
+        new maplibregl.Popup().setHTML(`${message}`)
+      );
     },
 
     cancelAddAnnotation() {

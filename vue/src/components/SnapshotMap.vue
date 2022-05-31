@@ -195,6 +195,7 @@
           :snapshot="snapshot"
           :annotations="annotations"
           :addingAnnotation="addingAnnotation"
+          :newAnnotation="newAnnotation"
           @new-comment="newComment"
           @new-object="newObject"
           @new-polygon="newPolygon"
@@ -658,7 +659,7 @@
       <object-detail
         :object="currentObject"
         :enableLikes="annotations.object.likes"
-        v-on:close="$router.push({ name: 'workspace' })"
+        v-on:close="$router.push({ replace: true, params: { annoid: null } })"
       />
     </v-main>
 </template>
@@ -944,7 +945,6 @@ p.rating {
 
 <script>
 import Vue from 'vue';
-import L from 'mapbox.js';
 import SnapshotMeta from './SnapshotMeta.vue';
 import ObjectDetail from './ObjectDetail.vue';
 import MapLeaflet from './MapLeaflet.vue';
@@ -1046,11 +1046,11 @@ export default {
     document.removeEventListener(this.escListener);
   },
 
-  updated() {
-    if (!this.currentObject) {
-      this.$router.push({ name: 'workspace' });
-    }
-  },
+  // updated() {
+  //   if (!this.currentObject) {
+  //     this.$router.push({ name: 'workspace' });
+  //   }
+  // },
 
   computed: {
     legendWidth() {
@@ -1385,7 +1385,12 @@ export default {
 
       switch (this.newAnnotation.kind) {
         case 'COM': {
-          const latlng = this.newAnnotation.marker.getLatLng();
+          let latlng = { lng: 0, lat: 0 };
+          if (this.mapType === 'map-maplibre') {
+            latlng = this.newAnnotation.marker.getLngLat();
+          } else {
+            latlng = this.newAnnotation.marker.getLatLng();
+          }
           data = {
             type: 'Feature',
             geometry: {
@@ -1402,7 +1407,12 @@ export default {
           break;
         }
         case 'OBJ': {
-          const latlng = this.newAnnotation.marker.getLatLng();
+          let latlng = { lng: 0, lat: 0 };
+          if (this.mapType === 'map-maplibre') {
+            latlng = this.newAnnotation.marker.getLngLat();
+          } else {
+            latlng = this.newAnnotation.marker.getLatLng();
+          }
           data = {
             type: 'Feature',
             geometry: {
@@ -1465,43 +1475,26 @@ export default {
           }
         });
         if (response.status === 201) {
-          const marker = this.newAnnotation.marker;
-          let labelPath = '';
-          if (this.newAnnotation.kind === 'COM') {
-            marker.setIcon(
-              new L.Icon({
-                iconUrl: this.commentLockedIconUrl,
-                iconSize: [36, 36],
-                popupAnchor: [0, -16]
-              })
-            );
-            labelPath = 'comment';
-          } else if (this.newAnnotation.kind === 'PLY') {
-            marker.setStyle({
-              opacity: 0.6,
-              fillOpacity: 0.2
-            });
-            labelPath = 'polygon';
-          } else if (this.newAnnotation.kind === 'OBJ') {
-            marker.setIcon(
-              new L.Icon({
-                iconUrl: this.objectLockedIconUrl,
-                iconSize: [36, 36],
-                popupAnchor: [0, -16]
-              })
-            );
-            labelPath = 'object';
-          }
-
-
+          this.$refs.map.lockAnnotation();
           if (this.uploadFiles && this.uploadFiles.length > 0) {
             // a file is selected an actual file, upload it
             // this.status = this.$t('status.sendingFile');
             await this.httpUpload(this.uploadFiles, response.data.id);
           }
 
+          const marker = this.newAnnotation.marker;
           marker.off();
-          marker.bindPopup(this.$t('saved'));
+          this.$refs.map.markSaved(this.$t('saved'));
+
+          let labelPath = '';
+          if (this.newAnnotation.kind === 'COM') {
+            labelPath = 'comment';
+          } else if (this.newAnnotation.kind === 'PLY') {
+            labelPath = 'polygon';
+          } else if (this.newAnnotation.kind === 'OBJ') {
+            labelPath = 'object';
+          }
+
           this.newAnnotation = null;
 
           this.dialogcontent = {
@@ -1517,6 +1510,7 @@ export default {
         // }
       } catch (error) {
         console.log(error); // eslint-disable-line no-console
+        this.newAnnotation = null;
         this.dialogcontent = {
           title: this.$t('failed'),
           text: this.$t('failedText')

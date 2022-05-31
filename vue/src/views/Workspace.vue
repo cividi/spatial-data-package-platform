@@ -77,7 +77,6 @@
         <language-switch />
       </v-toolbar>
     </v-navigation-drawer>
-
     <snapshot-map ref="snapshot"
       v-if="hash"
       :snapshot="snapshot"
@@ -212,8 +211,8 @@ export default {
       this.$refs.snapshot.setupMap();
       document.title = `dføur – ${this.title}`;
       if (this.annoid) {
-        const index = this.annotations.items.findIndex(a => a.pk === parseInt(this.annoid, 10));
-        this.$refs.snapshot.showPopup({ target: { feature: { kind: 'OBJ', index } } });
+        // const index = this.annotations.items.findIndex(a => a.pk === parseInt(this.annoid, 10));
+        // this.$refs.snapshot.showPopup({ target: { feature: { kind: 'OBJ', index } } });
       }
     }
   },

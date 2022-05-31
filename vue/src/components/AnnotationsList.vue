@@ -112,7 +112,7 @@
         :key="annotation.pk"
         class="pa-4"
         :class="stateClass(annotation)"
-        @click="$router.push({ name: 'annotationsListDetail', params: { annoid: annotation.pk } })">
+        @click="$router.push({ name: 'annotationsList', params: { annoid: annotation.pk } })">
         <v-img
           v-if="annotation.attachements.length > 0"
           contain

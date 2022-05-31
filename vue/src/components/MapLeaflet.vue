@@ -49,17 +49,20 @@ export default {
     snapshot: Object,
     filters: String,
     annotations: Object,
-    addingAnnotation: String
+    addingAnnotation: String,
+    newAnnotation: Object
   },
 
   destroy() {
-    this.destroyMap();
+    // this.destroyMap();
   },
 
   methods: {
     mapInit() {
-      this.setupMapbox();
-      this.displayMapbox();
+      if (this.map === null) {
+        this.setupMapbox();
+        this.displayMapbox();
+      }
     },
     setupMapbox() {
       try {
@@ -473,7 +476,7 @@ export default {
         latlng = e.target._latlng; // eslint-disable-line no-underscore-dangle
       } else if (e.target.feature.kind === 'OBJ') {
         const annoid = this.annotations.items[e.target.feature.index].pk;
-        this.$router.push({ name: 'annotationDetail', params: { annoid } });
+        this.$router.push({ replace: true, params: { annoid } });
         return true;
       } else if (e.target.feature.kind === 'PLY') {
         this.currentCommentIndex = e.target.feature.index;
@@ -657,6 +660,40 @@ export default {
         layer.redraw();
       }
       // console.log(e); // eslint-disable-line no-console
+    },
+
+    cancelAddAnnotation() {
+      this.newAnnotation.marker.removeFrom(this.map);
+    },
+
+    lockAnnotation() {
+      const marker = this.newAnnotation.marker;
+      if (this.newAnnotation.kind === 'COM') {
+        marker.setIcon(
+          new L.Icon({
+            iconUrl: this.commentLockedIconUrl,
+            iconSize: [36, 36],
+            popupAnchor: [0, -16]
+          })
+        );
+      } else if (this.newAnnotation.kind === 'PLY') {
+        marker.setStyle({
+          opacity: 0.6,
+          fillOpacity: 0.2
+        });
+      } else if (this.newAnnotation.kind === 'OBJ') {
+        marker.setIcon(
+          new L.Icon({
+            iconUrl: this.objectLockedIconUrl,
+            iconSize: [36, 36],
+            popupAnchor: [0, -16]
+          })
+        );
+      }
+    },
+
+    markSaved(message) {
+      this.newAnnotation.marker.bindPopup(message);
     }
   },
 
