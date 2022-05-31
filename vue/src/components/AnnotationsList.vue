@@ -19,7 +19,7 @@
   <div id="annotationsview">
     <transition-group
       name="list" tag="ul"
-      class="annotationslist pa-0 smaller"
+      class="annotationslist pa-0 pt-15 smaller"
       appear
       :after-appear="afterAppear"
     >
@@ -42,7 +42,7 @@
       </li>
     </transition-group>
 
-    <v-btn
+    <!-- <v-btn
       fab absolute small
       style="bottom:2.2em; right:1.3em;"
       :elevation="filterinfoopen ? 0 : 6"
@@ -107,7 +107,7 @@
           </v-list-item>
         </v-list>
       </div>
-    </v-card>
+    </v-card> -->
 
     <object-detail
       :object="currentObject"
@@ -306,6 +306,9 @@ export default {
             if (this.disabledStatePks.includes(a.state.pk)) {
               pass = false;
             }
+          }
+          if (a.attachements.length === 0) {
+            pass = false;
           }
           return pass;
         });

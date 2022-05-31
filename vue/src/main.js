@@ -7,6 +7,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import VueApollo from 'vue-apollo';
 import VueCookies from 'vue-cookies';
 import vhCheck from 'vh-check';
+import { marked } from 'marked';
 import vuetify from './plugins/vuetify';
 import router from './router';
 import store from './store';
@@ -49,7 +50,17 @@ const apolloProvider = new VueApollo({
   defaultClient: apolloClient
 });
 
+const markedMixin = {
+  methods: {
+    md(input) {
+      return marked.parse(input);
+    }
+  }
+};
+
 Vue.use(VueCookies);
+
+Vue.mixin(markedMixin);
 
 Vue.component('language-switch', LanguageSwitch);
 Vue.component('user-actions', UserActions);

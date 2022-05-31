@@ -8,16 +8,22 @@
     "mainnav.add": "Eintragen"
   },
   "fr": {
-    "mainnav.home": "Projekt",
-    "mainnav.map": "Karte",
+    "mainnav.home": "Projet",
+    "mainnav.map": "Carte",
     "mainnav.gallery": "Galerie",
-    "mainnav.add": "Eintragen"
+    "mainnav.add": "Soumettre un objet"
   },
   "en": {
     "mainnav.home": "Project",
     "mainnav.map": "Map",
     "mainnav.gallery": "Galery",
-    "mainnav.add": "Add an entry"
+    "mainnav.add": "Submit"
+  },
+  "it": {
+    "mainnav.home": "Progetto",
+    "mainnav.map": "Mappa",
+    "mainnav.gallery": "Galleria",
+    "mainnav.add": "Inserisci"
   }
 }
 </i18n>
@@ -25,20 +31,25 @@
 
 <template>
   <div>
-    <v-app-bar app flat fixed id="topbar">
+    <v-app-bar app flat absolute id="topbar" style="pointer-events: none;">
       <v-row no-gutters>
-        <v-col cols="4" sm="4">
-          <v-app-bar-nav-icon @click="mobnav=!mobnav" class="d-md-none"></v-app-bar-nav-icon>
-        </v-col>
-        <v-col cols="12" sm="4" class="text-center">
-          <language-switch expanded="1" />
+        <v-col cols="6" class="text-left">
+          <nav class="d-none d-sm-block">
+            <language-switch
+              expanded="1" v-if="$route.name == 'home'"
+              style="pointer-events: all;" />
+          </nav>
         </v-col>
         <!-- <div class="d-none d-md-block"><language-switch/></div>
         <div class="useractions d-none d-sm-block">
           <user-actions />
         </div>-->
-        <v-col cols="4" sm="4" class="text-right">
-          <nav id="mainnav" class="d-none d-md-block">
+        <v-col cols="6" class="text-right">
+          <v-app-bar-nav-icon
+            @click="mobnav=!mobnav" class="d-sm-none"
+            style="pointer-events: all;">
+          </v-app-bar-nav-icon>
+          <nav id="mainnav" class="d-none d-sm-block" style="pointer-events: all;">
             <router-link
               v-for="item in mainnav"
               :key="item.textKey"
@@ -49,7 +60,9 @@
     </v-app-bar>
 
     <v-navigation-drawer
-      left app dark color="primary" class="mobnav" v-model="mobnav" disable-resize-watcher>
+      left app dark color="primary"
+      class="mobnav" v-model="mobnav"
+      disable-resize-watcher width="320px">
       <v-toolbar flat color="primary" class="mx-2">
         <v-spacer></v-spacer>
         <v-btn icon large @click="mobnav=!mobnav">
@@ -97,10 +110,10 @@ export default {
     return {
       mobnav: false,
       mainnav: [
-        { route: '/', textKey: 'mainnav.home' },
         { route: '/map', textKey: 'mainnav.map' },
         { route: '/gallery', textKey: 'mainnav.gallery' },
-        { route: '/add', textKey: 'mainnav.add' }
+        { route: '/add', textKey: 'mainnav.add' },
+        { route: '/', textKey: 'mainnav.home' }
       ]
     };
   }

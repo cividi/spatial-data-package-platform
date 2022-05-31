@@ -196,6 +196,7 @@
           :annotations="annotations"
           :addingAnnotation="addingAnnotation"
           :newAnnotation="newAnnotation"
+          :hash="hash"
           @new-comment="newComment"
           @new-object="newObject"
           @new-polygon="newPolygon"
@@ -231,7 +232,7 @@
         </p>
       </v-slide-y-transition>
 
-      <v-btn
+      <!-- <v-btn
         v-if="hash && !screenshotIsThumbnail"
         fab absolute small
         style="bottom:2.2em; right:1.3em;"
@@ -267,7 +268,7 @@
           v-on:toggleCat="(...args) => toggleCat(...args)"
           v-on:toggleState="(...args) => toggleState(...args)"
         />
-      </v-card>
+      </v-card> -->
 
       <div id="buttons" v-if="!screenshotMode">
 
