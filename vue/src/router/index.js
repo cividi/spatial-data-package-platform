@@ -33,7 +33,7 @@ const routes = [
         }
       },
       {
-        path: 'map/',
+        path: 'map/:annoid([0-9]+)?/',
         // :wshash([0-9A-Z]{5})/:hash([0-9A-Z]{6})
         name: 'workspace',
         pathToRegexOptions: { strict: true },
@@ -47,38 +47,9 @@ const routes = [
         }
       },
       {
-        path: 'map/:annoid([0-9]+)/',
-        // :wshash([0-9A-Z]{5})/:hash([0-9A-Z]{6})
-        pathToRegexpOptions: { sensitive: true, strict: true },
-        name: 'annotationDetail',
-        component: () => import('@/views/Workspace.vue'),
-        props: {
-          wshash,
-          hash,
-          entryActive: null
-        },
-        meta: {
-          layout: () => import('@/layouts/LayoutSnapshot.vue')
-        }
-      },
-      {
-        path: 'gallery/',
+        path: 'gallery/:annoid([0-9]+)?/',
         // :wshash([0-9A-Z]{5})/annotations/:annokind/
         name: 'annotationsList',
-        component: () => import('@/views/Workspace.vue'),
-        props: {
-          wshash,
-          annokind: type
-        },
-        meta: {
-          layout: () => import('@/layouts/LayoutSnapshot.vue')
-        }
-      },
-      {
-        path: 'gallery/:annoid([0-9]+)/',
-        // :wshash([0-9A-Z]{5})/annotations/:annokind
-        pathToRegexpOptions: { sensitive: true, strict: true },
-        name: 'annotationsListDetail',
         component: () => import('@/views/Workspace.vue'),
         props: {
           wshash,
