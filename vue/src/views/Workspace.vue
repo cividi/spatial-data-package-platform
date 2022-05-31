@@ -77,16 +77,15 @@
         <language-switch />
       </v-toolbar>
     </v-navigation-drawer>
-
-    <snapshot-map ref="map"
+    <snapshot-map ref="snapshot"
       v-if="hash"
-      :geojson="geojson"
+      :snapshot="snapshot"
       :annotations="annotations"
       :spatialDatasettes="spatialDatasettes"
       :geoboundsIn="geobounds"
     />
 
-    <annotations-list ref="map"
+    <annotations-list ref="snapshot"
       v-if="annokind"
       :annotations="annotations.items"
       :kind="annokind"
@@ -170,7 +169,7 @@ export default {
       wshash: this.$route.params.wshash,
       annokind: this.$route.params.annokind,
       annoid: this.$route.params.annoid,
-      geojson: null,
+      snapshot: null,
       annotations: {
         items: [],
         categories: null,
@@ -207,14 +206,13 @@ export default {
     if (this.hash) {
       await this.getWorkspaceData();
     }
-    if (this.geojson) {
-      this.$refs.map.setupMeta();
-      this.$refs.map.setupMapbox();
-      this.$refs.map.displayMapbox();
+    if (this.snapshot) {
+      this.$refs.snapshot.setupMeta();
+      this.$refs.snapshot.setupMap();
       document.title = `dføur – ${this.title}`;
       if (this.annoid) {
-        const index = this.annotations.items.findIndex(a => a.pk === parseInt(this.annoid, 10));
-        this.$refs.map.showPopup({ target: { feature: { kind: 'OBJ', index } } });
+        // const index = this.annotations.items.findIndex(a => a.pk === parseInt(this.annoid, 10));
+        // this.$refs.snapshot.showPopup({ target: { feature: { kind: 'OBJ', index } } });
       }
     }
   },
@@ -412,7 +410,7 @@ export default {
       });
       if (result) {
         if (result.data.hasOwnProperty('workspace') && result.data.workspace) {
-          this.geojson = result.data.snapshot.data;
+          this.snapshot = result.data.snapshot.data;
         } else {
           this.$router.push({ name: 'home' });
         }
