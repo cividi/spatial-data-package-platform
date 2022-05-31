@@ -996,7 +996,8 @@ export default {
     snapshot: Object,
     annotations: Object,
     spatialDatasettes: Array,
-    predecessor: Object
+    predecessor: Object,
+    entryActive: String
   },
 
   created() {
@@ -1005,6 +1006,12 @@ export default {
         this.cancelAnnotation();
       }
     });
+  },
+
+  mounted() {
+    if (this.entryActive) {
+      this.addingAnnotation = this.entryActive;
+    }
   },
 
   destroy() {
@@ -1236,9 +1243,11 @@ export default {
         this.newAnnotation = null;
       }
       this.$refs.map.polygonString = [];
-      this.$refs.map.drawnItems.clearLayers();
       this.addingAnnotation = null;
       this.uploadFiles = null;
+      if (this.entryActive) {
+        this.$router.push({ name: 'workspace' });
+      }
       // this.$refs.map.cancelAnnotation();
     },
 
