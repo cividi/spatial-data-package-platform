@@ -50,6 +50,7 @@ export default {
   data() {
     return {
       map: maplibregl.Map,
+      newMarkers: [],
       mapstyle: process.env.VUE_APP_MAPTILER_DEFAULT_STYLE,
       mapstyleToken: process.env.VUE_APP_MAPTILER_TOKEN,
       // eslint-disable-next-line global-require
@@ -104,7 +105,7 @@ export default {
       default() {
         return {
           show: true,
-          position: 'bottom-left',
+          position: 'bottom-right',
           options: {}
         };
       }
@@ -414,6 +415,7 @@ export default {
           type: 'circle',
           source: 'annotations',
           filter: ['!', ['has', 'point_count']],
+          class: [],
           paint: {
             'circle-color': '#000000',
             'circle-radius': 10,
@@ -474,7 +476,9 @@ export default {
               const newMarker = new maplibregl.Marker({
                 element: svg,
                 draggable: false
-              }).setLngLat(event.lngLat).addTo(this.map);
+              }).setLngLat(event.lngLat);
+              this.newMarkers = [...this.newMarkers, newMarker];
+              newMarker.addTo(this.map);
               this.map.easeTo({ center: event.lngLat });
               this.$emit('new-comment', newMarker);
               break;
@@ -486,7 +490,9 @@ export default {
               const newMarker = new maplibregl.Marker({
                 element: svg,
                 draggable: false
-              }).setLngLat(event.lngLat).addTo(this.map);
+              }).setLngLat(event.lngLat);
+              this.newMarkers = [...this.newMarkers, newMarker];
+              newMarker.addTo(this.map);
               this.map.easeTo({ center: event.lngLat });
               this.$emit('new-object', newMarker);
               break;
@@ -497,6 +503,33 @@ export default {
           }
         }
       });
+      this.map.on('movestart', () => {
+        this.$emit('map-movestart');
+      });
+
+      this.map.on('zoomend', (event) => {
+        this.$emit('map-zoomed', event);
+      });
+
+      this.map.on('moveend', (event) => {
+        this.$emit('map-moveend', event);
+      });
+    },
+
+    cancelAddAnnotation() {
+      this.newMarkers[this.newMarkers.length - 1].remove();
+      this.newMarkers.pop();
+    },
+
+    resetZoom() {
+      this.map.flyTo(
+        {
+          center: this.snapshot.views[0].spec.projection.center || [0, 0],
+          zoom: this.snapshot.views[0].spec.projection.scale || 7,
+          noMoveStart: true,
+          speed: 5
+        }
+      );
     }
 
   },
@@ -506,10 +539,22 @@ export default {
       return '';
     },
     mapOptions() {
+      let center = [0, 0];
+      let zoom = 7;
+      if (this.$store.state.mapCenter !== null) {
+        // setup bounds from store
+        center = [this.$store.state.mapCenter[1], this.$store.state.mapCenter[0]];
+        zoom = this.$store.state.mapZoomLevel > 1
+          ? this.$store.state.mapZoomLevel - 1 : this.$store.state.mapZoomLevel;
+        this.$emit('zoomstate-changed', true);
+      } else {
+        center = this.snapshot.views[0].spec.projection.center || [0, 0];
+        zoom = this.snapshot.views[0].spec.projection.scale || 7;
+      }
       return {
         style: `${this.mapstyle}?key=${this.mapstyleToken}`,
-        center: this.snapshot.views[0].spec.projection.center || [0, 0],
-        zoom: 7.5,
+        center,
+        zoom,
         attributionControl: false,
         maxZoom: 19
       };

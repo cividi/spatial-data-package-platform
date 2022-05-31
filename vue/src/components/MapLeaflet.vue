@@ -90,7 +90,7 @@ export default {
             center: this.$store.state.mapCenter,
             zoom: this.$store.state.mapZoomLevel
           };
-          this.zoomStateModified = true;
+          this.$emit('zoomstate-changed', true);
         } else {
           const boxSize = 800;
           bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
@@ -189,23 +189,15 @@ export default {
         this.drawnItems.addTo(this.map);
 
         this.map.on('movestart', () => {
-          this.zoomIsUserModified = true;
+          this.$emit('map-movestart');
         });
 
         this.map.on('zoomend', (event) => {
-          if (this.zoomIsUserModified) {
-            this.$store.commit('setMapZoomLevel', event.target.getZoom());
-            this.$store.commit('setMapCenter', Object.values(event.target.getCenter()));
-            this.zoomStateModified = true;
-          }
+          this.$emit('map-zoomed', event);
         });
 
         this.map.on('moveend', (event) => {
-          if (this.zoomIsUserModified) {
-            this.$store.commit('setMapCenter', Object.values(event.target.getCenter()));
-            this.$store.commit('setMapZoomLevel', event.target.getZoom());
-            this.zoomStateModified = true;
-          }
+          this.$emit('map-moveend', event);
         });
 
         this.map.on('click', (event) => {
@@ -359,10 +351,6 @@ export default {
           duration: 0.1
         }
       );
-      this.zoomIsUserModified = false;
-      this.$store.commit('setMapZoomLevel', null);
-      this.$store.commit('setMapCenter', null);
-      this.zoomStateModified = false;
     },
 
     async destroyMap() {

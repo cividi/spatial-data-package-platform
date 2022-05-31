@@ -198,6 +198,10 @@
           @new-comment="newComment"
           @new-object="newObject"
           @new-polygon="newPolygon"
+          @map-movestart="mapMovestart"
+          @map-zoomed="mapZoomed"
+          @map-moveend="mapMoveend"
+          @zoomstate-changed="setZoomStateModified"
           >
         </component>
       </v-container>
@@ -1261,6 +1265,7 @@ export default {
       if (this.newAnnotation && this.newAnnotation.marker) {
         // TODO: move to map plugin
         // this.newAnnotation.marker.removeFrom(this.$refs.map.map);
+        this.$refs.map.cancelAddAnnotation();
         this.newAnnotation = null;
       }
       this.$refs.map.polygonString = [];
@@ -1309,6 +1314,44 @@ export default {
         text2: '',
         marker: e
       };
+    },
+
+    mapMovestart() {
+      this.zoomIsUserModified = true;
+    },
+
+    mapZoomed(event) {
+      if (this.zoomIsUserModified && event.target) {
+        this.$store.commit('setMapZoomLevel', event.target.getZoom());
+        this.$store.commit('setMapCenter', Object.values(event.target.getCenter()));
+        this.zoomStateModified = true;
+      }
+    },
+
+    mapMoveend(event) {
+      if (this.zoomIsUserModified && event.target) {
+        let newCenter = Object.values(event.target.getCenter());
+        let newZoom = event.target.getZoom();
+        if (this.mapType === 'map-maplibre') {
+          newCenter = [newCenter[1], newCenter[0]];
+          newZoom = newZoom < 20 ? newZoom + 1 : newZoom;
+        }
+        this.$store.commit('setMapCenter', newCenter);
+        this.$store.commit('setMapZoomLevel', newZoom);
+        this.zoomStateModified = true;
+      }
+    },
+
+    setZoomStateModified(newState) {
+      this.zoomStateModified = newState;
+    },
+
+    resetZoom() {
+      this.$refs.map.resetZoom();
+      this.zoomIsUserModified = false;
+      this.$store.commit('setMapZoomLevel', null);
+      this.$store.commit('setMapCenter', null);
+      this.zoomStateModified = false;
     },
 
     validateStepOne() {
