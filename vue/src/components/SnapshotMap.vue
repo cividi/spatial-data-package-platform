@@ -1412,6 +1412,10 @@ p.rating {
 .leaflet-interactive {
   transition: opacity 0.3s;
 }
+
+.maplibregl-ctrl-geocoder .suggestions li {
+  font-size: 1em !important;
+}
 </style>
 
 <script>
