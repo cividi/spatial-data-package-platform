@@ -8,11 +8,34 @@
     "demolished": "Abgerissen:",
     "description": "Architektur",
     "moreinfo": "Abrissgrund",
-    "comment": "Kommentar"
+    "comment": "Geschichten und Erinnerungen"
   },
   "fr": {
+    "category":"Catégorie:",
+    "state": "Statut:",
+    "constructed": "Construit:",
+    "demolished": "Arraché:",
+    "description": "Architecture",
+    "moreinfo": "Cause de la démolition",
+    "comment": "Histoires et souvenirs"
   },
   "en": {
+    "category":"Category:",
+    "state": "Status:",
+    "constructed": "Built:",
+    "demolished": "Demolished:",
+    "description": "Architecture",
+    "moreinfo": "Demolition reason",
+    "comment": "Stories and memories"
+  },
+  "it": {
+    "category":"Categoria:",
+    "state": "Stato:",
+    "constructed": "Costruito:",
+    "demolished": "Abbattuto:",
+    "description": "Architettura",
+    "moreinfo": "Motivo della demolizione",
+    "comment": "Storie e ricordi"
   }
 }
 </i18n>

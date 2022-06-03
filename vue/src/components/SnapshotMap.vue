@@ -38,7 +38,7 @@
       "subtitle": "PLZ Ort",
       "text":"Architektur",
       "moreinfo":"Abrissgrund",
-      "comment":"Kommentar",
+      "comment":"Geschichten und Erinnerungen",
       "constructionYear": "Baujahr",
       "demolitionYear": "Abrissjahr",
       "add": "Klicken Sie auf die Stelle in Karte, an der Sie ein Objekt hinzufügen möchten.",
@@ -164,6 +164,490 @@
     "saved": "Speichern erfolgreich"
   },
   "fr": {
+    "title": "Titel",
+    "subtitle": "Untertitel",
+    "text":"Text",
+    "moreinfo":"Bemerkungen",
+    "categoryLabel": "Catégorie",
+    "stateLabel": "Status",
+    "emailhintEnd": "schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
+    "savedEnd": "Klicken Sie zur Freischaltung den Link in der Email an.",
+    "files":"Images",
+    "filesHint":"Utilisez la touche CTRL/CMD pour sélectionner plusieurs images.",
+    "comment": {
+      "title": "@:title",
+      "text":"@:text",
+      "add": "Klicken Sie auf die Stelle in Karte, an der Sie einen Kommentar hinzufügen möchten.",
+      "new": "Neuer Kommentar",
+      "emailhint": "Um Ihren Kommentar freizuschalten, @:emailhintEnd",
+      "saved": "Ihr Kommentar wurde gespeichert. @:savedEnd"
+    },
+    "polygon": {
+      "title": "@:title",
+      "text":"Beschrieb",
+      "add": "Klicken Sie auf die Stelle in Karte, an der die erste Ecke der hinzuzufügenden Fläche sein soll.",
+      "editing": {
+        "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
+        "unfinished": "Klicken Sie erneut auf den Startpunkt, um die Fläche abzuschliessen",
+        "closable": "Klicken Sie hier, um die Fläche abzuschliessen."
+      },
+      "new": "Neue Fläche",
+      "emailhint": "Um Ihre Fläche freizuschalten, @:emailhintEnd",
+      "saved": "Ihre Fläche wurde gespeichert. @:savedEnd"
+    },
+    "object": {
+      "title": "Rue / No.",
+      "subtitle": "NPA Lieu",
+      "text":"Architecture",
+      "moreinfo":"Cause de la démolition",
+      "comment":"Histoires et souvenirs",
+      "constructionYear": "Année de construction ca.",
+      "demolitionYear": "Année de démolition",
+      "add": "Cliquez sur l'endroit de la carte où vous souhaitez ajouter un objet.",
+      "new": "Nouvel objet",
+      "emailhint": "Pour débloquer votre objet, @:emailhintEnd",
+      "saved": "Votre objet a été enregistré. @:savedEnd",
+      "constVal": {
+        "na":"inconnu",
+        "v1":"env. années 1940",
+        "v2":"env. années 1950",
+        "v3":"env. années 1960",
+        "v4":"env. années 1970",
+        "v5":"env. années 1980",
+        "v6":"env. années 1990",
+        "v7":"env. années 2000",
+        "v8":"env. années 2010",
+        "v9":"env. années 2020"
+      },
+      "demoVal": {
+        "na":"inconnu",
+        "v1":"2020",
+        "v2":"2021",
+        "v3":"2022",
+        "v4":"2023",
+        "v5":"2024",
+        "v6":"2025",
+        "v7":"2026",
+        "v8":"2027",
+        "v9":"2028",
+        "v10":"2029",
+        "v11":"2030",
+        "v12":"après 2030"
+      }
+    },
+    "PAR": {
+      "categoryLabel": "@:categoryLabel",
+      "stateLabel": "@:stateLabel",
+      "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
+        "add": "@:comment.add",
+        "new": "@:comment.new",
+        "emailhint": "@:comment.emailhint",
+        "saved": "@:comment.saved"
+      },
+      "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
+        "add": "@:polygon.add",
+        "editing": {
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
+        },
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
+      }
+    },
+
+    "MGT": {
+      "categoryLabel": "Status",
+      "stateLabel": "Gruppe",
+      "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
+        "add": "Klicken Sie auf die Stelle in Karte, an der Sie eine Notiz hinzufügen möchten.",
+        "new": "Neue Notiz",
+        "emailhint": "Um Ihre Notiz freizuschalten, @:emailhintEnd",
+        "saved": "Ihre Notiz wurde gespeichert. @:savedEnd"
+      },
+      "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
+        "add": "@:polygon.add",
+        "editing": {
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
+        },
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
+      }
+    },
+    "cancel": "annuler",
+    "next": "continuer",
+    "prev": "retour",
+    "save": "enregistrer",
+    "saveinfo": "Enregistrer les données",
+    "mandatory": "Champ obligatoire",
+    "email": "E-Mail",
+    "inv": "Ce n'est pas une adresse e-mail valide",
+    "notpublic":"Ces informations ne seront pas publiées ni transmises à des tiers.",
+    "failed": "Échec de l'enregistrement",
+    "failedText": "Veuillez vérifier vos saisies ou réessayer plus tard.",
+    "saved": "Sauvegarde réussie"
+  },
+  "en": {
+    "title": "Title",
+    "subtitle": "Subutitle",
+    "text":"Text",
+    "moreinfo":"Comments",
+    "categoryLabel": "Category",
+    "stateLabel": "Status",
+    "emailhintEnd": "we will send you an email with an activation link. Please enter your email address:",
+    "savedEnd": "Click the link in the email to activate.",
+    "files":"Images",
+    "filesHint":"Hold down the CTRL/CMD key to select multiple images.",
+    "comment": {
+      "title": "@:title",
+      "text":"@:text",
+      "add": "Klicken Sie auf die Stelle in Karte, an der Sie einen Kommentar hinzufügen möchten.",
+      "new": "Neuer Kommentar",
+      "emailhint": "Um Ihren Kommentar freizuschalten, @:emailhintEnd",
+      "saved": "Ihr Kommentar wurde gespeichert. @:savedEnd"
+    },
+    "polygon": {
+      "title": "@:title",
+      "text":"Beschrieb",
+      "add": "Klicken Sie auf die Stelle in Karte, an der die erste Ecke der hinzuzufügenden Fläche sein soll.",
+      "editing": {
+        "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
+        "unfinished": "Klicken Sie erneut auf den Startpunkt, um die Fläche abzuschliessen",
+        "closable": "Klicken Sie hier, um die Fläche abzuschliessen."
+      },
+      "new": "Neue Fläche",
+      "emailhint": "Um Ihre Fläche freizuschalten, @:emailhintEnd",
+      "saved": "Ihre Fläche wurde gespeichert. @:savedEnd"
+    },
+    "object": {
+      "title": "Street / No.",
+      "subtitle": "Zip code / City",
+      "text":"Architecture",
+      "moreinfo":"Reason for demolition",
+      "comment":"Stories and memories",
+      "constructionYear": "Year of construction ca.",
+      "demolitionYear": "Demolition year",
+      "add": "Click on the place in map where you want to add an object.",
+      "new": "New object",
+      "emailhint": "To publish your submission, @:emailhintEnd",
+      "saved": "Your submission was successfully saved. @:savedEnd",
+      "constVal": {
+        "na":"unbekannt",
+        "v1":"ca. 1940er",
+        "v2":"ca. 1950er",
+        "v3":"ca. 1960er",
+        "v4":"ca. 1970er",
+        "v5":"ca. 1980er",
+        "v6":"ca. 1990er",
+        "v7":"ca. 2000er",
+        "v8":"ca. 2010er",
+        "v9":"ca. 2020er"
+      },
+      "demoVal": {
+        "na":"unbekannt",
+        "v1":"2020",
+        "v2":"2021",
+        "v3":"2022",
+        "v4":"2023",
+        "v5":"2024",
+        "v6":"2025",
+        "v7":"2026",
+        "v8":"2027",
+        "v9":"2028",
+        "v10":"2029",
+        "v11":"2030",
+        "v12":"nach 2030"
+      }
+    },
+    "PAR": {
+      "categoryLabel": "@:categoryLabel",
+      "stateLabel": "@:stateLabel",
+      "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
+        "add": "@:comment.add",
+        "new": "@:comment.new",
+        "emailhint": "@:comment.emailhint",
+        "saved": "@:comment.saved"
+      },
+      "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
+        "add": "@:polygon.add",
+        "editing": {
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
+        },
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
+      }
+    },
+
+    "MGT": {
+      "categoryLabel": "Status",
+      "stateLabel": "Gruppe",
+      "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
+        "add": "Klicken Sie auf die Stelle in Karte, an der Sie eine Notiz hinzufügen möchten.",
+        "new": "Neue Notiz",
+        "emailhint": "Um Ihre Notiz freizuschalten, @:emailhintEnd",
+        "saved": "Ihre Notiz wurde gespeichert. @:savedEnd"
+      },
+      "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
+        "add": "@:polygon.add",
+        "editing": {
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
+        },
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
+      }
+    },
+    "cancel": "cancel",
+    "next": "continue",
+    "prev": "back",
+    "save": "save",
+    "saveinfo": "Save object",
+    "mandatory": "This is a required field",
+    "email": "E-Mail",
+    "inv": "This is not a valid email address",
+    "notpublic":"This information will not be published or shared with third parties",
+    "failed": "Save failed",
+    "failedText": "Please check your answers or try again later.",
+    "saved": "Save successful"
+  },
+  "it": {
+    "title": "Titolo",
+    "subtitle": "Sottotitolo",
+    "text":"Testo",
+    "moreinfo":"Commenti",
+    "categoryLabel": "Categoria",
+    "stateLabel": "Stato",
+    "emailhintEnd": "vi invieremo un'e-mail con un link di attivazione. Inserire l'indirizzo e-mail:",
+    "savedEnd": "Fare clic sul link contenuto nell'e-mail per attivarlo.",
+    "files":"Immagini",
+    "filesHint":"Tenere premuto il tasto CTRL/CMD per selezionare più immagini.",
+    "comment": {
+      "title": "@:title",
+      "text":"@:text",
+      "add": "Klicken Sie auf die Stelle in Karte, an der Sie einen Kommentar hinzufügen möchten.",
+      "new": "Neuer Kommentar",
+      "emailhint": "Um Ihren Kommentar freizuschalten, @:emailhintEnd",
+      "saved": "Ihr Kommentar wurde gespeichert. @:savedEnd"
+    },
+    "polygon": {
+      "title": "@:title",
+      "text":"Beschrieb",
+      "add": "Klicken Sie auf die Stelle in Karte, an der die erste Ecke der hinzuzufügenden Fläche sein soll.",
+      "editing": {
+        "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
+        "unfinished": "Klicken Sie erneut auf den Startpunkt, um die Fläche abzuschliessen",
+        "closable": "Klicken Sie hier, um die Fläche abzuschliessen."
+      },
+      "new": "Neue Fläche",
+      "emailhint": "Um Ihre Fläche freizuschalten, @:emailhintEnd",
+      "saved": "Ihre Fläche wurde gespeichert. @:savedEnd"
+    },
+    "object": {
+      "title": "Via / N.",
+      "subtitle": "Codice postale Città",
+      "text":"Architettura",
+      "moreinfo":"Motivo della demolizione",
+      "comment":"Storie e ricordi",
+      "constructionYear": "Anno di costruzione ca.",
+      "demolitionYear": "Anno di demolizione",
+      "add": "Fare clic sul punto della mappa in cui si desidera aggiungere un oggetto.",
+      "new": "Nuovo oggetto",
+      "emailhint": "Per sbloccare l'oggetto, @:emailhintEnd",
+      "saved": "L'oggetto è stato salvato. @:savedEnd",
+      "constVal": {
+        "na":"unbekannt",
+        "v1":"ca. 1940er",
+        "v2":"ca. 1950er",
+        "v3":"ca. 1960er",
+        "v4":"ca. 1970er",
+        "v5":"ca. 1980er",
+        "v6":"ca. 1990er",
+        "v7":"ca. 2000er",
+        "v8":"ca. 2010er",
+        "v9":"ca. 2020er"
+      },
+      "demoVal": {
+        "na":"unbekannt",
+        "v1":"2020",
+        "v2":"2021",
+        "v3":"2022",
+        "v4":"2023",
+        "v5":"2024",
+        "v6":"2025",
+        "v7":"2026",
+        "v8":"2027",
+        "v9":"2028",
+        "v10":"2029",
+        "v11":"2030",
+        "v12":"nach 2030"
+      }
+    },
+    "PAR": {
+      "categoryLabel": "@:categoryLabel",
+      "stateLabel": "@:stateLabel",
+      "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
+        "add": "@:comment.add",
+        "new": "@:comment.new",
+        "emailhint": "@:comment.emailhint",
+        "saved": "@:comment.saved"
+      },
+      "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
+        "add": "@:polygon.add",
+        "editing": {
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
+        },
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
+      }
+    },
+
+    "MGT": {
+      "categoryLabel": "Status",
+      "stateLabel": "Gruppe",
+      "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
+        "add": "Klicken Sie auf die Stelle in Karte, an der Sie eine Notiz hinzufügen möchten.",
+        "new": "Neue Notiz",
+        "emailhint": "Um Ihre Notiz freizuschalten, @:emailhintEnd",
+        "saved": "Ihre Notiz wurde gespeichert. @:savedEnd"
+      },
+      "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
+        "add": "@:polygon.add",
+        "editing": {
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
+        },
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
+      }
+    },
+    "cancel": "annullamento",
+    "next": "di più",
+    "prev": "indietro",
+    "save": "salvare",
+    "saveinfo": "Salva i dettagli",
+    "mandatory": "Campo obbligatorio",
+    "email": "E-Mail",
+    "inv": "Questo non è un indirizzo e-mail valido",
+    "notpublic":"Queste informazioni non saranno pubblicate o trasmesse a terzi.",
+    "failed": "Salvataggio fallito",
+    "failedText": "Si prega di controllare le iscrizioni o di riprovare più tardi.",
+    "saved": "Salva il successo"
   }
 }
 </i18n>
