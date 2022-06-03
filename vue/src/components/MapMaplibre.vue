@@ -53,6 +53,7 @@ export default {
       newMarkers: [],
       mapstyle: process.env.VUE_APP_MAPTILER_DEFAULT_STYLE,
       mapstyleToken: process.env.VUE_APP_MAPTILER_TOKEN,
+      geocoderToken: process.env.VUE_APP_GEOCODER_TOKEN,
       // eslint-disable-next-line global-require
       commentIconUrl: require('@/assets/images/icons/comment_36.svg'),
       // eslint-disable-next-line global-require
@@ -75,9 +76,20 @@ export default {
       type: Object,
       default() {
         return {
-          show: false,
-          position: 'top-right',
-          options: {}
+          show: true,
+          position: 'top-left',
+          options: {
+            showResultsMarker: true,
+            countries: 'ch',
+            trackProximity: true,
+            flyto: {
+              maxZoom: 17
+            },
+            zoom: 17,
+            minLength: 3,
+            limit: 10,
+            showResultsWhileTyping: true
+          }
         };
       }
     },
@@ -554,9 +566,6 @@ export default {
   },
 
   computed: {
-    geocoderToken() {
-      return '';
-    },
     mapOptions() {
       let center = [0, 0];
       let zoom = 7;
