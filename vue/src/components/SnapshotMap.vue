@@ -36,6 +36,7 @@
     "object": {
       "title": "Strasse / Nr.",
       "subtitle": "PLZ Ort",
+      "other": "Andere",
       "text":"Architektur",
       "moreinfo":"Abrissgrund",
       "comment":"Geschichten und Erinnerungen",
@@ -100,6 +101,7 @@
       "object": {
         "title": "@:object.title",
         "subtitle": "@:object.subtitle",
+        "other": "@:object.other",
         "text":"@:object.text",
         "moreinfo":"@:object.moreinfo",
         "comment":"@:object.comment",
@@ -156,6 +158,7 @@
     "save": "speichern",
     "saveinfo": "Speichere Angaben",
     "mandatory": "Dies ist ein Pflichtfeld",
+    "notAYear": "Keine Jahreszahl",
     "email": "E-Mail",
     "inv": "Dies ist keine gültige E-Mail Adresse",
     "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben",
@@ -198,6 +201,7 @@
     "object": {
       "title": "Rue / No.",
       "subtitle": "NPA Lieu",
+      "other": "Autres",
       "text":"Architecture",
       "moreinfo":"Cause de la démolition",
       "comment":"Histoires et souvenirs",
@@ -262,6 +266,7 @@
       "object": {
         "title": "@:object.title",
         "subtitle": "@:object.subtitle",
+        "other":"@:object.other",
         "text":"@:object.text",
         "moreinfo":"@:object.moreinfo",
         "comment":"@:object.comment",
@@ -318,6 +323,7 @@
     "save": "enregistrer",
     "saveinfo": "Enregistrer les données",
     "mandatory": "Champ obligatoire",
+    "notAYear": "Pas d'année",
     "email": "E-Mail",
     "inv": "Ce n'est pas une adresse e-mail valide",
     "notpublic":"Ces informations ne seront pas publiées ni transmises à des tiers.",
@@ -360,6 +366,7 @@
     "object": {
       "title": "Street / No.",
       "subtitle": "Zip code / City",
+      "other":"Other",
       "text":"Architecture",
       "moreinfo":"Reason for demolition",
       "comment":"Stories and memories",
@@ -463,6 +470,7 @@
       "object": {
         "title": "@:object.title",
         "subtitle": "@:object.subtitle",
+        "other":"@:object.other",
         "text":"@:object.text",
         "moreinfo":"@:object.moreinfo",
         "comment":"@:object.comment",
@@ -480,6 +488,7 @@
     "save": "save",
     "saveinfo": "Save object",
     "mandatory": "This is a required field",
+    "notAYear": "Not a year",
     "email": "E-Mail",
     "inv": "This is not a valid email address",
     "notpublic":"This information will not be published or shared with third parties",
@@ -522,6 +531,7 @@
     "object": {
       "title": "Via / N.",
       "subtitle": "Codice postale Città",
+      "other":"Altro",
       "text":"Architettura",
       "moreinfo":"Motivo della demolizione",
       "comment":"Storie e ricordi",
@@ -586,6 +596,7 @@
       "object": {
         "title": "@:object.title",
         "subtitle": "@:object.subtitle",
+        "other":"@:object.other",
         "text":"@:object.text",
         "moreinfo":"@:object.moreinfo",
         "comment":"@:object.comment",
@@ -642,6 +653,7 @@
     "save": "salvare",
     "saveinfo": "Salva i dettagli",
     "mandatory": "Campo obbligatorio",
+    "notAYear": "Nessun anno",
     "email": "E-Mail",
     "inv": "Questo non è un indirizzo e-mail valido",
     "notpublic":"Queste informazioni non saranno pubblicate o trasmesse a terzi.",
@@ -831,6 +843,14 @@
                       required
                     ></v-select>
                     <v-text-field
+                      v-if="newAnnotation.kind === 'OBJ'"
+                      v-model="newAnnotation.otherText"
+                      validate-on-blur
+                      :label="
+                        c$t(annotationKindKey[newAnnotation.kind] + '.other')
+                      "
+                    ></v-text-field>
+                    <v-text-field
                       v-model="newAnnotation.title"
                       :label="c$t(annotationKindKey[newAnnotation.kind] + '.title')"
                       :rules="[v => !!v || $t('mandatory')]"
@@ -849,13 +869,14 @@
                     >
                       <v-row>
                         <v-col>
-                          <v-select
-                            :items="constVals"
+                          <v-text-field
+                            type="number"
                             v-model="newAnnotation.constructionYear"
+                            validate-on-blur
                             :label="
                               c$t(annotationKindKey[newAnnotation.kind] + '.constructionYear')
                             "
-                          ></v-select>
+                          ></v-text-field>
                           <!-- v-text-field
                             type="number"
                             v-model="newAnnotation.constructionYear"
@@ -865,13 +886,14 @@
                           / -->
                         </v-col>
                         <v-col>
-                          <v-select
-                            :items="demoVals"
+                          <v-text-field
+                            type="number"
                             v-model="newAnnotation.demolitionYear"
+                            validate-on-blur
                             :label="
                               c$t(annotationKindKey[newAnnotation.kind] + '.demolitionYear')
                             "
-                          ></v-select>
+                          ></v-text-field>
                           <!-- v-text-field
                             type="number"
                             v-model="newAnnotation.demolitionYear"
@@ -1766,6 +1788,7 @@ export default {
       this.commentstepper = 1;
       this.newAnnotation = {
         kind: 'OBJ',
+        other: '',
         title: '',
         subtitle: '',
         constructionYear: '',
@@ -1882,6 +1905,7 @@ export default {
             properties: {
               fill: true,
               title: this.newAnnotation.title,
+              other: this.newAnnotation.other,
               subtitle: this.newAnnotation.subtitle,
               constructionYear: this.newAnnotation.constructionYear,
               demolitionYear: this.newAnnotation.demolitionYear,
