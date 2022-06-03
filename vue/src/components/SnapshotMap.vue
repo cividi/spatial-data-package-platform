@@ -703,6 +703,11 @@
           >
         </component>
       </v-container>
+      <a href="https://www.dfour.space" target="_blank" id="logo">
+        <img alt="dføur logo" height="22" id="legendLogo"
+          style="float:right; opacity:0.80;"
+          src="@/assets/images/dfour-logo.svg">
+      </a>
 
       <div v-html="filterCatStyle"></div>
       <div v-html="filterStatStyle"></div>
@@ -1415,6 +1420,12 @@ p.rating {
 
 .maplibregl-ctrl-geocoder .suggestions li {
   font-size: 1em !important;
+}
+
+#logo {
+  position: absolute;
+  bottom: 22px;
+  right: 8px;
 }
 </style>
 
