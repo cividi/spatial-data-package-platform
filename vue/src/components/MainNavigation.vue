@@ -16,7 +16,7 @@
   "en": {
     "mainnav.home": "Project",
     "mainnav.map": "Map",
-    "mainnav.gallery": "Galery",
+    "mainnav.gallery": "Gallery",
     "mainnav.add": "Submit"
   },
   "it": {
@@ -31,9 +31,9 @@
 
 <template>
   <div>
-    <v-app-bar app flat absolute id="topbar" style="pointer-events: none;">
+    <v-app-bar app prominent flat id="topbar" absolute style="pointer-events: none;">
       <v-row no-gutters>
-        <v-col cols="6" class="text-left">
+        <v-col cols="10" class="text-left">
           <nav class="d-none d-sm-block">
             <language-switch
               expanded="1" v-if="$route.name == 'home'"
@@ -44,7 +44,7 @@
         <div class="useractions d-none d-sm-block">
           <user-actions />
         </div>-->
-        <v-col cols="6" class="text-right">
+        <v-col cols="2" class="text-right">
           <v-app-bar-nav-icon
             @click="mobnav=!mobnav" class="d-sm-none"
             style="pointer-events: all;">
@@ -88,14 +88,18 @@
 
 <style>
 #mainnav a {
-  margin: 0 0.5em;
-  font-size: 1.6em;
+  margin: 0.25em 0 0.25em auto;
+  font-size: 2em;
+  width: fit-content;
   font-weight: bold;
   text-transform: uppercase;
+  display: block;
+  right: 0;
 }
 
 #topbar {
   background-color: transparent;
+  font-size: 1em !important;
 }
 
 .v-application .mobnav a {

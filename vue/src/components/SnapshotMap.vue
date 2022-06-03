@@ -692,7 +692,7 @@ body,
 
 #buttons {
   position: absolute;
-  top: 5.6em;
+  top: 13.5em;
   right: 1.6em;
   transition: top 0.3s;
   transition-timing-function: ease-in-out;

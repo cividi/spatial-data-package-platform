@@ -32,7 +32,7 @@
 <template>
 <div>
   <v-container my-12>
-    <v-col cols="8">
+    <v-col sm="12" lg="8">
       <div
         id="project"
         v-html="homepageSnippet">
@@ -56,7 +56,7 @@
 #project h3,
 #project h4 {
   text-transform: uppercase;
-  border-bottom: 6px solid black;
+  /* border-bottom: 6px solid black; */
   padding-bottom: 0;
   line-height: 1.2em;
   margin-bottom: 0.5em;
@@ -67,7 +67,7 @@
   font-weight: bolder;
 }
 #project a {
-  border-bottom: 6px solid black;
+  /* border-bottom: 6px solid black; */
   font-weight: bold;
 }
 #project ul {

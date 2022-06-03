@@ -78,43 +78,24 @@
       </v-toolbar>
     </v-navigation-drawer> -->
 
-    <snapshot-map ref="snapshot"
-      v-if="hash"
-      :hash="hash"
-      :wshash="wshash"
-      :snapshot="snapshot"
-      :annotations="annotations"
-      :entry-active="entryActive"
+    <snapshot-map ref="snapshot" v-if="hash"
+      :hash="hash" :wshash="wshash" :snapshot="snapshot"
+      :annotations="annotations" :entry-active="entryActive"
       :spatialDatasettes="spatialDatasettes"
-      :geoboundsIn="geobounds"
-    />
+      :geoboundsIn="geobounds" />
 
-    <annotations-list ref="snapshot"
-      v-if="annokind"
-      :annotations="annotations.items"
-      :kind="annokind"
-      :categories="annotations.categories"
-      :states="annotations.states"
-    />
+    <annotations-list ref="snapshot" v-if="annokind"
+      :annotations="annotations.items" :kind="annokind"
+      :categories="annotations.categories" :states="annotations.states" />
 
-    <v-overlay
-      absolute="absolute"
-      opacity="0.2"
-      z-index="1002"
-      :value="!!editing"
-      >
-      <snapshot-edit
-        v-if="editing"
-        :isNew="editing.isNew"
-        v-bind="editing.snapshot"
-        v-on:cancel="abortEdit"
-        v-on:saved="onSnapshotSaved"
-      />
-     </v-overlay>
+    <v-overlay absolute="absolute" opacity="0.2" z-index="1002"
+      :value="!!editing">
+      <snapshot-edit v-if="editing" :isNew="editing.isNew"
+        v-bind="editing.snapshot" v-on:cancel="abortEdit"
+        v-on:saved="onSnapshotSaved" />
+    </v-overlay>
 
-     <error-message
-      :settings="errorsettings"
-    />
+    <error-message :settings="errorsettings" />
 
   </div>
 </template>
@@ -145,6 +126,7 @@ h4 {
   opacity: 1;
   letter-spacing: 0;
 }
+
 .listlink span {
   justify-content: flex-start;
 }
@@ -455,7 +437,7 @@ export default {
         },
         fetchPolicy: 'no-cache'
       });
-        // abusing vue's watching of Array.prototype.splice because it just wouldn't react otherwise
+      // abusing vue's watching of Array.prototype.splice because it just wouldn't react otherwise
       this.snapshotsWorkspace.splice(
         0,
         this.snapshotsWorkspace.length,
