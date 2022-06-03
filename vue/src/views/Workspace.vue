@@ -18,7 +18,7 @@
 
 <template>
   <div id="snapshotview">
-    <v-navigation-drawer
+    <!-- <v-navigation-drawer
       v-if="$store.state.notIframe"
       id="snapshotnav"
       clipped="clipped"
@@ -76,42 +76,26 @@
         <v-spacer />
         <language-switch />
       </v-toolbar>
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
 
-    <snapshot-map ref="map"
-      v-if="hash"
-      :geojson="geojson"
-      :annotations="annotations"
+    <snapshot-map ref="snapshot" v-if="hash"
+      :hash="hash" :wshash="wshash" :snapshot="snapshot"
+      :annotations="annotations" :entry-active="entryActive"
       :spatialDatasettes="spatialDatasettes"
-      :geoboundsIn="geobounds"
-    />
+      :geoboundsIn="geobounds" />
 
-    <annotations-list ref="map"
-      v-if="annokind"
-      :annotations="annotations.items"
-      :kind="annokind"
-      :categories="annotations.categories"
-      :states="annotations.states"
-    />
+    <annotations-list ref="snapshot" v-if="annokind"
+      :annotations="annotations.items" :kind="annokind"
+      :categories="annotations.categories" :states="annotations.states" />
 
-    <v-overlay
-      absolute="absolute"
-      opacity="0.2"
-      z-index="1002"
-      :value="!!editing"
-      >
-      <snapshot-edit
-        v-if="editing"
-        :isNew="editing.isNew"
-        v-bind="editing.snapshot"
-        v-on:cancel="abortEdit"
-        v-on:saved="onSnapshotSaved"
-      />
-     </v-overlay>
+    <v-overlay absolute="absolute" opacity="0.2" z-index="1002"
+      :value="!!editing">
+      <snapshot-edit v-if="editing" :isNew="editing.isNew"
+        v-bind="editing.snapshot" v-on:cancel="abortEdit"
+        v-on:saved="onSnapshotSaved" />
+    </v-overlay>
 
-     <error-message
-      :settings="errorsettings"
-    />
+    <error-message :settings="errorsettings" />
 
   </div>
 </template>
@@ -142,6 +126,7 @@ h4 {
   opacity: 1;
   letter-spacing: 0;
 }
+
 .listlink span {
   justify-content: flex-start;
 }
@@ -166,11 +151,11 @@ Vue.component('error-message', ErrorMessage);
 export default {
   data() {
     return {
-      hash: this.$route.params.hash,
-      wshash: this.$route.params.wshash,
-      annokind: this.$route.params.annokind,
-      annoid: this.$route.params.annoid,
-      geojson: null,
+      hash: this.$route.params.hash || this.$attrs.hash,
+      wshash: this.$route.params.wshash || this.$attrs.wshash,
+      annokind: this.$route.params.annokind || this.$attrs.annokind || null,
+      annoid: this.$route.params.annoid || null,
+      snapshot: null,
       annotations: {
         items: [],
         categories: null,
@@ -202,19 +187,22 @@ export default {
     };
   },
 
+  props: {
+    entryActive: String
+  },
+
   async mounted() {
     await this.getWorkspaceInfo();
     if (this.hash) {
       await this.getWorkspaceData();
     }
-    if (this.geojson) {
-      this.$refs.map.setupMeta();
-      this.$refs.map.setupMapbox();
-      this.$refs.map.displayMapbox();
+    if (this.snapshot) {
+      this.$refs.snapshot.setupMeta();
+      this.$refs.snapshot.setupMap();
       document.title = `dføur – ${this.title}`;
       if (this.annoid) {
-        const index = this.annotations.items.findIndex(a => a.pk === parseInt(this.annoid, 10));
-        this.$refs.map.showPopup({ target: { feature: { kind: 'OBJ', index } } });
+        // const index = this.annotations.items.findIndex(a => a.pk === parseInt(this.annoid, 10));
+        // this.$refs.snapshot.showPopup({ target: { feature: { kind: 'OBJ', index } } });
       }
     }
   },
@@ -412,7 +400,7 @@ export default {
       });
       if (result) {
         if (result.data.hasOwnProperty('workspace') && result.data.workspace) {
-          this.geojson = result.data.snapshot.data;
+          this.snapshot = result.data.snapshot.data;
         } else {
           this.$router.push({ name: 'home' });
         }
@@ -424,7 +412,7 @@ export default {
     abortEdit() {
       this.editing = undefined;
     },
-    async onSnapshotSaved({ snapshot }) {
+    async onSnapshotSaved() {
       const { data } = await this.$apollo.query({
         query: gql`query getworkspace($wshash: ID!) {
             workspace(id: $wshash) {
@@ -449,7 +437,7 @@ export default {
         },
         fetchPolicy: 'no-cache'
       });
-        // abusing vue's watching of Array.prototype.splice because it just wouldn't react otherwise
+      // abusing vue's watching of Array.prototype.splice because it just wouldn't react otherwise
       this.snapshotsWorkspace.splice(
         0,
         this.snapshotsWorkspace.length,
@@ -457,19 +445,19 @@ export default {
       );
       this.editing = undefined;
 
-      if (this.$route.params.hash === snapshot.pk) {
-        // current snapshot was updated, reload window
-        this.$router.go();
-      } else {
-        // co to edited snapshot
-        this.$router.push(`/${
-          this.$route.params.lang
-        }/${
-          this.$route.params.wshash
-        }/${
-          snapshot.pk
-        }/`);
-      }
+      // if (this.$route.params.hash === snapshot.pk) {
+      //   // current snapshot was updated, reload window
+      //   this.$router.go();
+      // } else {
+      //   // co to edited snapshot
+      //   this.$router.push(`/${
+      //     this.$route.params.lang
+      //   }/${
+      //     this.$route.params.wshash
+      //   }/${
+      //     snapshot.pk
+      //   }/`);
+      // }
     },
     newSnapshot() {
       this.editing = { isNew: true, snapshot: {} };

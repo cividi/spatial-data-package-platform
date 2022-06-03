@@ -5,10 +5,10 @@ from django.contrib.auth import get_permission_codename
 from django.contrib.postgres import fields
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext as __
-from django_json_widget.widgets import JSONEditorWidget
 from django.utils.html import mark_safe
 from django.contrib import messages
 from django.forms.widgets import Textarea, TextInput
+from django.db.models import Count
 import requests
 from parler.admin import TranslatableAdmin
 from parler.forms import TranslatableModelForm
@@ -66,12 +66,6 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
         #     ('perimeter',),
         # }),
     )
-
-    formfield_overrides = {
-        fields.JSONField: {
-            'widget': JSONEditorWidget
-        },
-    }
 
     list_display = ('id', 'thumbnail_list_image', 'title', 'municipality',
                     'permission', 'is_showcase', 'created', 'modified', 'user', 'data_file')
@@ -215,13 +209,29 @@ class UsergroupGroupFilter(SimpleListFilter):
             return queryset.filter(usergroup__pk=self.value())
         return queryset
 
+class MissingAttachmentFilter(SimpleListFilter):
+    title = _('# of attachments')
+    parameter_name = 'attachment'
+
+    def lookups(self, request, model_admin):
+        return [('missing',_('Missing')),('one',_('One attachment')),('more',_('Two or more attachments'))]
+    
+    def queryset(self, request, queryset):
+        if self.value() == 'missing':
+            return queryset.annotate(attachment_count=Count('attachement')).filter(attachment_count=0)
+        if self.value() == 'one':
+            return queryset.annotate(attachment_count=Count('attachement')).filter(attachment_count=1)
+        if self.value() == 'more':
+            return queryset.annotate(attachment_count=Count('attachement')).filter(attachment_count__gt=1).order_by('-attachment_count')
+        return queryset
+
 class AnnotationAdmin(admin.ModelAdmin):
     readonly_fields = ('id','created', 'modified')
     fieldsets = (
         (_('Meta'), {
             'fields': (
                 'id',
-                ('created', 'modified'),
+                ('created', 'modified',),
             )
         }),
         (_('Main'), {
@@ -244,7 +254,7 @@ class AnnotationAdmin(admin.ModelAdmin):
         'workspace',
     )
     inlines = [ AttachementInline, ]
-    list_filter = (AnnotationWorkspaceFilter, CategoryGroupFilter, 'kind', UsergroupGroupFilter)
+    list_filter = (MissingAttachmentFilter, AnnotationWorkspaceFilter, CategoryGroupFilter, 'kind', UsergroupGroupFilter)
     search_fields = ('id', 'data')
     actions = ['make_published','make_unpublished','export_as_csv']
 

@@ -41,22 +41,6 @@ server {
         alias /var/services/django/media;
     }
 
-    location ~* "^/([0-9a-z]{6})/?$" {
-        set $lang_sup "de,fr,en";
-        set_by_lua_file $lang_accept /etc/nginx/conf.d/lang.lua $lang_sup;
-        rewrite_by_lua_block {
-            return ngx.redirect("/" .. ngx.var.lang_accept .. ngx.var.request_uri, 302)
-        }
-    }
-
-    location ~* "^/([0-9a-z]{5})/([0-9a-z]{6})/?$" {
-        set $lang_sup "de,fr,en";
-        set_by_lua_file $lang_accept /etc/nginx/conf.d/lang.lua $lang_sup;
-        rewrite_by_lua_block {
-            return ngx.redirect("/" .. ngx.var.lang_accept .. ngx.var.request_uri, 302)
-        }
-    }
-
     location ~ ^/downloads/snapshot-screenshots/(?<file_name>.*) {
         add_header Content-Disposition 'attachment; filename="$file_name"';
         root /var/services/django;
@@ -67,27 +51,7 @@ server {
         root /var/services/django;
     }
 
-    location ~ "^/(de|fr|it|en)/(?<hash>[0-9A-Z]{6})/?$" {
-        # dev proxy vue
-        include "/etc/nginx/conf.d/proxy_conf.inc";
-        include "/etc/nginx/conf.d/proxy_meta.inc";
-
-        # prod
-        #default_type "text/html; charset=utf-8";
-        #content_by_lua_file "/etc/nginx/conf.d/meta_dist.lua";
-    }
-
-    location ~ "^/(de|fr|it|en)/([0-9A-Z]{5})/(?<hash>[0-9A-Z]{6})/?$" {
-        # dev proxy vue
-        include "/etc/nginx/conf.d/proxy_conf.inc";
-        include "/etc/nginx/conf.d/proxy_meta.inc";
-
-        # prod
-        #default_type "text/html; charset=utf-8";
-        #content_by_lua_file "/etc/nginx/conf.d/meta_dist.lua";
-    }
-
-    location / {
+    location /.* {
         # try_files $uri $uri/ /app.html; # production build
         include "/etc/nginx/conf.d/proxy_conf.inc";
         if (!-f $request_filename) {

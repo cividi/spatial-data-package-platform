@@ -29,7 +29,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.contrib.sites.models import Site
 
-
+from django_jsonform.models.fields import JSONField
 from parler.models import TranslatableModel, TranslatedFields
 
 from django.contrib.auth.models import Group
@@ -534,6 +534,32 @@ class Workspace(TranslatableModel):
         return f'{self.id}'
 
 class Annotation(models.Model):
+    DATA_SCHEMA = {
+        'type': 'object',
+        'properties': {
+            'type': { 
+                'type': 'string', 
+                'readonly': True, 
+                'default': 'Feature'
+            },
+            'geometry': { 
+                'type': 'object',
+                'additionalProperties': True,
+                'properties': {
+                }
+            },
+            'properties': {
+                'type': 'object',
+                'properties': {
+                    'fill': { 'type': 'boolean', 'readonly': True, 'default': True },
+                    'title': { 'type': 'string' },
+                    'description': { 'type': 'string' },
+                },
+                'additionalProperties': True
+            }
+        },
+    }
+
     class Meta:
         ordering = ['-created']
         permissions = [
@@ -554,7 +580,7 @@ class Annotation(models.Model):
         ('OBJ', _('Object')),
     ]
     kind = models.CharField(_("kind"), max_length=3, choices=KIND_CHOICES)
-    data = models.JSONField(_("data"), default=dict)
+    data = JSONField(_("data"), schema=DATA_SCHEMA, default=dict)
     category = models.ForeignKey(
         Category, default=None, blank=True,
         null=True, on_delete=models.SET_NULL

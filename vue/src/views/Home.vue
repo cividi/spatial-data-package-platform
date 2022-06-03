@@ -5,19 +5,25 @@
     "img.1.alt":
       "dføur",
     "h2.2": "Beispiele",
-    "networkerror": "Die Gemeindesuche ist zur Zeit nicht verfügbar."
+    "networkerror": "Die Projekterfassung ist zur Zeit nicht verfügbar."
   },
   "fr": {
     "img.1.alt":
       "Le dføur",
     "h2.2": "Examples",
-   "networkerror": "La recherche de communauté n'est pas disponible actuellement."
+   "networkerror": "La recherche n'est pas disponible actuellement."
   },
   "en": {
     "img.1.alt":
       "dføur",
     "h2.2": "Examples",
-    "networkerror": "The municipality search is not available at the moment."
+    "networkerror": "The data is currently not available, please try again soon."
+  },
+  "it": {
+    "img.1.alt":
+      "dføur",
+    "h2.2": "Esempi",
+    "networkerror": "I dati non sono attualmente disponibili, riprovare al più presto."
   }
 }
 </i18n>
@@ -25,49 +31,13 @@
 
 <template>
 <div>
-  <v-container my-12 >
-      <div v-if="searchEnabled" class="gmdscn">
-          <img :alt="$t('img.1.alt')" class="" width="100%"
-            src="@/assets/images/gmdscn-ch-map.svg"/>
-          <search :autofocus="true" />
+  <v-container my-12>
+    <v-col sm="12" lg="8">
+      <div
+        id="project"
+        v-html="homepageSnippet">
       </div>
-      <v-row justify="center" >
-        <v-col class="introtxt text-center pt-12" v-html="homepageSnippet">
-        </v-col>
-      </v-row>
-  </v-container>
-
-  <v-container v-if="!networkError && exampleGalleryEnabled" class="center" fluid mb-12>
-      <v-row justify="center">
-        <v-col class="introtxt text-center">
-          <h2>{{ $t('h2.2') }}</h2>
-        </v-col>
-      </v-row>
-
-      <v-row justify="center">
-        <v-col cols="sm" sm="12" md="4" lg="3"
-        v-for="snapshot in snapshotsExamples" :key="snapshot.id">
-          <div>
-
-          <v-btn icon :to="'/' + $i18n.locale +'/'+ snapshot.pk + '/'" height="300">
-            <v-hover v-slot:default="{ hover }">
-              <v-avatar tile size="300">
-                <v-img :src="djangobaseurl + '/media/' + snapshot.thumbnail"></v-img>
-                <v-fade-transition>
-                  <v-overlay v-if="hover" color="primary" opacity="0.6" absolute
-                    style="text-transform: none; white-space: normal; hyphens: auto;">
-                    <h5 style="font-weight: bold; line-height: 1.2em; padding:0.3em;">
-                      {{snapshot.title}}
-                    </h5>
-                    <span style="">{{snapshot.topic}}<br>-<br>{{snapshot.municipality.name}}</span>
-                  </v-overlay>
-                </v-fade-transition>
-              </v-avatar>
-            </v-hover>
-          </v-btn>
-          </div>
-        </v-col>
-      </v-row>
+    </v-col>
   </v-container>
 
   <v-snackbar color="primary" v-model="snackbar" :timeout="9000">
@@ -81,25 +51,30 @@
 </template>
 
 <style>
-.gmdscn {
-  position: relative;
-  max-width: 720px;
-  margin: 0 auto;
+#project h1,
+#project h2,
+#project h3,
+#project h4 {
+  text-transform: uppercase;
+  /* border-bottom: 6px solid black; */
+  padding-bottom: 0;
+  line-height: 1.2em;
+  margin-bottom: 0.5em;
+  margin-top: 0.5em;
+  width: fit-content;
 }
-
-.gmdscn .gemeindesuche.v-select {
-  position: absolute;
-  top: calc(50% - 30px);
-  left: 50%;
-  transform: translateX(-50%);
+#project h2 {
+  font-weight: bolder;
 }
-
-.introtxt {
-  max-width: 660px;
+#project a {
+  /* border-bottom: 6px solid black; */
+  font-weight: bold;
 }
-
-.quotetxt {
-  font-style: italic;
+#project ul {
+  padding-bottom: 1em;
+}
+#project ul li {
+  margin-bottom: 0.3em;
 }
 </style>
 
@@ -168,7 +143,7 @@ export default {
         if (config) {
           this.searchEnabled = config.searchEnabled;
           this.exampleGalleryEnabled = config.exampleGalleryEnabled;
-          this.homepageSnippet = config.homepageSnippet;
+          this.homepageSnippet = this.md(config.homepageSnippet);
         }
       }
     },

@@ -1,6 +1,10 @@
 <template>
     <main>
-      <slot/>
+      <main-navigation />
+
+      <v-main class="pa-0">
+        <slot/>
+      </v-main>
     </main>
 </template>
 

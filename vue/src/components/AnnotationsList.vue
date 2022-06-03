@@ -15,95 +15,11 @@
 <!-- eslint-enable -->
 
 <template>
-  <v-main id="annotationsview" :class="{navopen : snapshotnav}">
-
-    <!--
-    <v-app-bar
-      color="transparent"
-      elevation="0"
-      fixed
-      class="filterbar"
-    >
-      <v-menu
-        offset-y
-        content-class="elevation-0"
-      >
-        <!- - open-on-hover - ->
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            v-bind="attrs"
-            v-on="on"
-            color="primary"
-            plain
-          >
-            <v-icon>
-              mdi-filter
-            </v-icon>
-            Kategorie
-          </v-btn>
-        </template>
-
-        <v-list
-        >
-        <!- - flat - ->
-          <v-list-item
-            v-for="(item, i) in categoryList"
-            :key="i"
-            @click="toggleCat(item.pk)"
-          >
-            <v-list-item-avatar>
-              <v-icon v-if="disabledCatPks.includes(item.pk)">mdi-eye-off</v-icon>
-              <v-icon v-else>mdi-eye</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.name }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-
-      <v-menu >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            v-bind="attrs"
-            v-on="on"
-          >
-            Status
-          </v-btn>
-        </template>
-
-        <v-list>
-          <v-list-item
-            v-for="(item, i) in states"
-            :key="i"
-          >
-            <v-list-item-title>{{ item.name }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-app-bar>
-    -->
-
-    <!-- pre>{{filteredAnnotationList}}</pre>
-    <pre>{{disabledCatPks}}</pre>
-    <pre>{{disabledStatePks}}</pre -->
-
-    <v-slide-x-reverse-transition>
-      <v-btn fab fixed small
-        style="top:13px; right:16px; z-index:6;"
-        color="primary"
-        v-if="!snapshotnav"
-        @click="snapshotnav=!snapshotnav;">
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
-    </v-slide-x-reverse-transition>
-
-    <!--
-      @beforeLeave="beforeLeave"
-    -->
+   <!-- :class="{navopen : snapshotnav}" -->
+  <div id="annotationsview">
     <transition-group
       name="list" tag="ul"
-      class="annotationslist pa-0 smaller"
+      class="annotationslist pa-0 pt-15 smaller"
       appear
       :after-appear="afterAppear"
     >
@@ -112,7 +28,7 @@
         :key="annotation.pk"
         class="pa-4"
         :class="stateClass(annotation)"
-        @click="$router.push({ name: 'annotationsListDetail', params: { annoid: annotation.pk } })">
+        @click="$router.push({ name: 'annotationsList', params: { annoid: annotation.pk } })">
         <v-img
           v-if="annotation.attachements.length > 0"
           contain
@@ -126,7 +42,7 @@
       </li>
     </transition-group>
 
-    <v-btn
+    <!-- <v-btn
       fab absolute small
       style="bottom:2.2em; right:1.3em;"
       :elevation="filterinfoopen ? 0 : 6"
@@ -191,14 +107,14 @@
           </v-list-item>
         </v-list>
       </div>
-    </v-card>
+    </v-card> -->
 
     <object-detail
       :object="currentObject"
       :enableLikes="false"
       v-on:close="$router.push({ name: 'annotationsList' })"
     />
-  </v-main>
+  </div>
 </template>
 
 <style >
@@ -390,6 +306,9 @@ export default {
             if (this.disabledStatePks.includes(a.state.pk)) {
               pass = false;
             }
+          }
+          if (a.attachements.length === 0) {
+            pass = false;
           }
           return pass;
         });

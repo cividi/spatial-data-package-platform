@@ -36,15 +36,346 @@
     "object": {
       "title": "Strasse / Nr.",
       "subtitle": "PLZ Ort",
+      "other": "Andere",
       "text":"Architektur",
       "moreinfo":"Abrissgrund",
-      "comment":"Kommentar",
+      "comment":"Geschichten und Erinnerungen",
       "constructionYear": "Baujahr",
       "demolitionYear": "Abrissjahr",
       "add": "Klicken Sie auf die Stelle in Karte, an der Sie ein Objekt hinzufügen möchten.",
       "new": "Neues Objekt",
       "emailhint": "Um Ihre Objekt freizuschalten, @:emailhintEnd",
       "saved": "Ihr Objekt wurde gespeichert. @:savedEnd",
+      "constVal": {
+        "na":"unbekannt",
+        "v1":"ca. 1940er",
+        "v2":"ca. 1950er",
+        "v3":"ca. 1960er",
+        "v4":"ca. 1970er",
+        "v5":"ca. 1980er",
+        "v6":"ca. 1990er",
+        "v7":"ca. 2000er",
+        "v8":"ca. 2010er",
+        "v9":"ca. 2020er"
+      },
+      "demoVal": {
+        "na":"unbekannt",
+        "v1":"2020",
+        "v2":"2021",
+        "v3":"2022",
+        "v4":"2023",
+        "v5":"2024",
+        "v6":"2025",
+        "v7":"2026",
+        "v8":"2027",
+        "v9":"2028",
+        "v10":"2029",
+        "v11":"2030",
+        "v12":"nach 2030"
+      }
+    },
+    "PAR": {
+      "categoryLabel": "@:categoryLabel",
+      "stateLabel": "@:stateLabel",
+      "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
+        "add": "@:comment.add",
+        "new": "@:comment.new",
+        "emailhint": "@:comment.emailhint",
+        "saved": "@:comment.saved"
+      },
+      "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
+        "add": "@:polygon.add",
+        "editing": {
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
+        },
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "other": "@:object.other",
+        "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
+      }
+    },
+
+    "MGT": {
+      "categoryLabel": "Status",
+      "stateLabel": "Gruppe",
+      "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
+        "add": "Klicken Sie auf die Stelle in Karte, an der Sie eine Notiz hinzufügen möchten.",
+        "new": "Neue Notiz",
+        "emailhint": "Um Ihre Notiz freizuschalten, @:emailhintEnd",
+        "saved": "Ihre Notiz wurde gespeichert. @:savedEnd"
+      },
+      "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
+        "add": "@:polygon.add",
+        "editing": {
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
+        },
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
+      }
+    },
+    "cancel": "abbrechen",
+    "next": "weiter",
+    "prev": "zurück",
+    "save": "speichern",
+    "saveinfo": "Speichere Angaben",
+    "mandatory": "Dies ist ein Pflichtfeld",
+    "notAYear": "Keine Jahreszahl",
+    "email": "E-Mail",
+    "inv": "Dies ist keine gültige E-Mail Adresse",
+    "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben",
+    "failed": "Speichern fehlgeschlagen",
+    "failedText": "Bitte prüfen Sie Ihre Eingaben oder versuchen Sie es später nochmals.",
+    "saved": "Speichern erfolgreich"
+  },
+  "fr": {
+    "title": "Titel",
+    "subtitle": "Untertitel",
+    "text":"Text",
+    "moreinfo":"Bemerkungen",
+    "categoryLabel": "Catégorie",
+    "stateLabel": "Status",
+    "emailhintEnd": "schicken wir Ihnen eine Email mit einem Aktivierungslink. Bitte geben Sie Ihre Email Adresse an:",
+    "savedEnd": "Klicken Sie zur Freischaltung den Link in der Email an.",
+    "files":"Images",
+    "filesHint":"Utilisez la touche CTRL/CMD pour sélectionner plusieurs images.",
+    "comment": {
+      "title": "@:title",
+      "text":"@:text",
+      "add": "Klicken Sie auf die Stelle in Karte, an der Sie einen Kommentar hinzufügen möchten.",
+      "new": "Neuer Kommentar",
+      "emailhint": "Um Ihren Kommentar freizuschalten, @:emailhintEnd",
+      "saved": "Ihr Kommentar wurde gespeichert. @:savedEnd"
+    },
+    "polygon": {
+      "title": "@:title",
+      "text":"Beschrieb",
+      "add": "Klicken Sie auf die Stelle in Karte, an der die erste Ecke der hinzuzufügenden Fläche sein soll.",
+      "editing": {
+        "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
+        "unfinished": "Klicken Sie erneut auf den Startpunkt, um die Fläche abzuschliessen",
+        "closable": "Klicken Sie hier, um die Fläche abzuschliessen."
+      },
+      "new": "Neue Fläche",
+      "emailhint": "Um Ihre Fläche freizuschalten, @:emailhintEnd",
+      "saved": "Ihre Fläche wurde gespeichert. @:savedEnd"
+    },
+    "object": {
+      "title": "Rue / No.",
+      "subtitle": "NPA Lieu",
+      "other": "Autres",
+      "text":"Architecture",
+      "moreinfo":"Cause de la démolition",
+      "comment":"Histoires et souvenirs",
+      "constructionYear": "Année de construction ca.",
+      "demolitionYear": "Année de démolition",
+      "add": "Cliquez sur l'endroit de la carte où vous souhaitez ajouter un objet.",
+      "new": "Nouvel objet",
+      "emailhint": "Pour débloquer votre objet, @:emailhintEnd",
+      "saved": "Votre objet a été enregistré. @:savedEnd",
+      "constVal": {
+        "na":"inconnu",
+        "v1":"env. années 1940",
+        "v2":"env. années 1950",
+        "v3":"env. années 1960",
+        "v4":"env. années 1970",
+        "v5":"env. années 1980",
+        "v6":"env. années 1990",
+        "v7":"env. années 2000",
+        "v8":"env. années 2010",
+        "v9":"env. années 2020"
+      },
+      "demoVal": {
+        "na":"inconnu",
+        "v1":"2020",
+        "v2":"2021",
+        "v3":"2022",
+        "v4":"2023",
+        "v5":"2024",
+        "v6":"2025",
+        "v7":"2026",
+        "v8":"2027",
+        "v9":"2028",
+        "v10":"2029",
+        "v11":"2030",
+        "v12":"après 2030"
+      }
+    },
+    "PAR": {
+      "categoryLabel": "@:categoryLabel",
+      "stateLabel": "@:stateLabel",
+      "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
+        "add": "@:comment.add",
+        "new": "@:comment.new",
+        "emailhint": "@:comment.emailhint",
+        "saved": "@:comment.saved"
+      },
+      "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
+        "add": "@:polygon.add",
+        "editing": {
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
+        },
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "other":"@:object.other",
+        "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
+      }
+    },
+
+    "MGT": {
+      "categoryLabel": "Status",
+      "stateLabel": "Gruppe",
+      "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
+        "add": "Klicken Sie auf die Stelle in Karte, an der Sie eine Notiz hinzufügen möchten.",
+        "new": "Neue Notiz",
+        "emailhint": "Um Ihre Notiz freizuschalten, @:emailhintEnd",
+        "saved": "Ihre Notiz wurde gespeichert. @:savedEnd"
+      },
+      "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
+        "add": "@:polygon.add",
+        "editing": {
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
+        },
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
+      }
+    },
+    "cancel": "annuler",
+    "next": "continuer",
+    "prev": "retour",
+    "save": "enregistrer",
+    "saveinfo": "Enregistrer les données",
+    "mandatory": "Champ obligatoire",
+    "notAYear": "Pas d'année",
+    "email": "E-Mail",
+    "inv": "Ce n'est pas une adresse e-mail valide",
+    "notpublic":"Ces informations ne seront pas publiées ni transmises à des tiers.",
+    "failed": "Échec de l'enregistrement",
+    "failedText": "Veuillez vérifier vos saisies ou réessayer plus tard.",
+    "saved": "Sauvegarde réussie"
+  },
+  "en": {
+    "title": "Title",
+    "subtitle": "Subutitle",
+    "text":"Text",
+    "moreinfo":"Comments",
+    "categoryLabel": "Category",
+    "stateLabel": "Status",
+    "emailhintEnd": "we will send you an email with an activation link. Please enter your email address:",
+    "savedEnd": "Click the link in the email to activate.",
+    "files":"Images",
+    "filesHint":"Hold down the CTRL/CMD key to select multiple images.",
+    "comment": {
+      "title": "@:title",
+      "text":"@:text",
+      "add": "Klicken Sie auf die Stelle in Karte, an der Sie einen Kommentar hinzufügen möchten.",
+      "new": "Neuer Kommentar",
+      "emailhint": "Um Ihren Kommentar freizuschalten, @:emailhintEnd",
+      "saved": "Ihr Kommentar wurde gespeichert. @:savedEnd"
+    },
+    "polygon": {
+      "title": "@:title",
+      "text":"Beschrieb",
+      "add": "Klicken Sie auf die Stelle in Karte, an der die erste Ecke der hinzuzufügenden Fläche sein soll.",
+      "editing": {
+        "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
+        "unfinished": "Klicken Sie erneut auf den Startpunkt, um die Fläche abzuschliessen",
+        "closable": "Klicken Sie hier, um die Fläche abzuschliessen."
+      },
+      "new": "Neue Fläche",
+      "emailhint": "Um Ihre Fläche freizuschalten, @:emailhintEnd",
+      "saved": "Ihre Fläche wurde gespeichert. @:savedEnd"
+    },
+    "object": {
+      "title": "Street / No.",
+      "subtitle": "Zip code / City",
+      "other":"Other",
+      "text":"Architecture",
+      "moreinfo":"Reason for demolition",
+      "comment":"Stories and memories",
+      "constructionYear": "Year of construction ca.",
+      "demolitionYear": "Demolition year",
+      "add": "Click on the place in map where you want to add an object.",
+      "new": "New object",
+      "emailhint": "To publish your submission, @:emailhintEnd",
+      "saved": "Your submission was successfully saved. @:savedEnd",
       "constVal": {
         "na":"unbekannt",
         "v1":"ca. 1940er",
@@ -139,6 +470,7 @@
       "object": {
         "title": "@:object.title",
         "subtitle": "@:object.subtitle",
+        "other":"@:object.other",
         "text":"@:object.text",
         "moreinfo":"@:object.moreinfo",
         "comment":"@:object.comment",
@@ -150,27 +482,191 @@
         "saved": "@:object.saved"
       }
     },
-    "cancel": "abbrechen",
-    "next": "weiter",
-    "prev": "zurück",
-    "save": "speichern",
-    "saveinfo": "Speichere Angaben",
-    "mandatory": "Dies ist ein Pflichtfeld",
+    "cancel": "cancel",
+    "next": "continue",
+    "prev": "back",
+    "save": "save",
+    "saveinfo": "Save object",
+    "mandatory": "This is a required field",
+    "notAYear": "Not a year",
     "email": "E-Mail",
-    "inv": "Dies ist keine gültige E-Mail Adresse",
-    "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben",
-    "failed": "Speichern fehlgeschlagen",
-    "failedText": "Bitte prüfen Sie Ihre Eingaben oder versuchen Sie es später nochmals.",
-    "saved": "Speichern erfolgreich"
+    "inv": "This is not a valid email address",
+    "notpublic":"This information will not be published or shared with third parties",
+    "failed": "Save failed",
+    "failedText": "Please check your answers or try again later.",
+    "saved": "Save successful"
   },
-  "fr": {
+  "it": {
+    "title": "Titolo",
+    "subtitle": "Sottotitolo",
+    "text":"Testo",
+    "moreinfo":"Commenti",
+    "categoryLabel": "Categoria",
+    "stateLabel": "Stato",
+    "emailhintEnd": "vi invieremo un'e-mail con un link di attivazione. Inserire l'indirizzo e-mail:",
+    "savedEnd": "Fare clic sul link contenuto nell'e-mail per attivarlo.",
+    "files":"Immagini",
+    "filesHint":"Tenere premuto il tasto CTRL/CMD per selezionare più immagini.",
+    "comment": {
+      "title": "@:title",
+      "text":"@:text",
+      "add": "Klicken Sie auf die Stelle in Karte, an der Sie einen Kommentar hinzufügen möchten.",
+      "new": "Neuer Kommentar",
+      "emailhint": "Um Ihren Kommentar freizuschalten, @:emailhintEnd",
+      "saved": "Ihr Kommentar wurde gespeichert. @:savedEnd"
+    },
+    "polygon": {
+      "title": "@:title",
+      "text":"Beschrieb",
+      "add": "Klicken Sie auf die Stelle in Karte, an der die erste Ecke der hinzuzufügenden Fläche sein soll.",
+      "editing": {
+        "invalid": "Ungültige Geometrie, hinzufügen dieses Punktes möglich.",
+        "unfinished": "Klicken Sie erneut auf den Startpunkt, um die Fläche abzuschliessen",
+        "closable": "Klicken Sie hier, um die Fläche abzuschliessen."
+      },
+      "new": "Neue Fläche",
+      "emailhint": "Um Ihre Fläche freizuschalten, @:emailhintEnd",
+      "saved": "Ihre Fläche wurde gespeichert. @:savedEnd"
+    },
+    "object": {
+      "title": "Via / N.",
+      "subtitle": "Codice postale Città",
+      "other":"Altro",
+      "text":"Architettura",
+      "moreinfo":"Motivo della demolizione",
+      "comment":"Storie e ricordi",
+      "constructionYear": "Anno di costruzione ca.",
+      "demolitionYear": "Anno di demolizione",
+      "add": "Fare clic sul punto della mappa in cui si desidera aggiungere un oggetto.",
+      "new": "Nuovo oggetto",
+      "emailhint": "Per sbloccare l'oggetto, @:emailhintEnd",
+      "saved": "L'oggetto è stato salvato. @:savedEnd",
+      "constVal": {
+        "na":"unbekannt",
+        "v1":"ca. 1940er",
+        "v2":"ca. 1950er",
+        "v3":"ca. 1960er",
+        "v4":"ca. 1970er",
+        "v5":"ca. 1980er",
+        "v6":"ca. 1990er",
+        "v7":"ca. 2000er",
+        "v8":"ca. 2010er",
+        "v9":"ca. 2020er"
+      },
+      "demoVal": {
+        "na":"unbekannt",
+        "v1":"2020",
+        "v2":"2021",
+        "v3":"2022",
+        "v4":"2023",
+        "v5":"2024",
+        "v6":"2025",
+        "v7":"2026",
+        "v8":"2027",
+        "v9":"2028",
+        "v10":"2029",
+        "v11":"2030",
+        "v12":"nach 2030"
+      }
+    },
+    "PAR": {
+      "categoryLabel": "@:categoryLabel",
+      "stateLabel": "@:stateLabel",
+      "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
+        "add": "@:comment.add",
+        "new": "@:comment.new",
+        "emailhint": "@:comment.emailhint",
+        "saved": "@:comment.saved"
+      },
+      "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
+        "add": "@:polygon.add",
+        "editing": {
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
+        },
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "other":"@:object.other",
+        "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
+      }
+    },
+
+    "MGT": {
+      "categoryLabel": "Status",
+      "stateLabel": "Gruppe",
+      "comment": {
+        "title": "@:comment.title",
+        "text":"@:comment.text",
+        "add": "Klicken Sie auf die Stelle in Karte, an der Sie eine Notiz hinzufügen möchten.",
+        "new": "Neue Notiz",
+        "emailhint": "Um Ihre Notiz freizuschalten, @:emailhintEnd",
+        "saved": "Ihre Notiz wurde gespeichert. @:savedEnd"
+      },
+      "polygon": {
+        "title": "@:polygon.title",
+        "text":"@:polygon.text",
+        "add": "@:polygon.add",
+        "editing": {
+          "invalid": "@:polygon.editing.invalid",
+          "unfinished": "@:polygon.editing.unfinished",
+          "closable": "@:polygon.editing.closable"
+        },
+        "new": "@:polygon.new",
+        "emailhint": "@:polygon.emailhint",
+        "saved": "@:polygon.saved"
+      },
+      "object": {
+        "title": "@:object.title",
+        "subtitle": "@:object.subtitle",
+        "text":"@:object.text",
+        "moreinfo":"@:object.moreinfo",
+        "comment":"@:object.comment",
+        "constructionYear": "@:object.constructionYear",
+        "demolitionYear": "@:object.demolitionYear",
+        "add": "@:object.add",
+        "new": "@:object.new",
+        "emailhint": "@:object.emailhint",
+        "saved": "@:object.saved"
+      }
+    },
+    "cancel": "annullamento",
+    "next": "di più",
+    "prev": "indietro",
+    "save": "salvare",
+    "saveinfo": "Salva i dettagli",
+    "mandatory": "Campo obbligatorio",
+    "notAYear": "Nessun anno",
+    "email": "E-Mail",
+    "inv": "Questo non è un indirizzo e-mail valido",
+    "notpublic":"Queste informazioni non saranno pubblicate o trasmesse a terzi.",
+    "failed": "Salvataggio fallito",
+    "failedText": "Si prega di controllare le iscrizioni o di riprovare più tardi.",
+    "saved": "Salva il successo"
   }
 }
 </i18n>
 <!-- eslint-enable -->
 
 <template>
-    <v-main :class="{navopen : snapshotnav}">
+  <div>
       <v-slide-x-reverse-transition>
         <v-btn fab absolute small
           style="top:13px; right:16px;"
@@ -181,14 +677,37 @@
         </v-btn>
       </v-slide-x-reverse-transition>
 
-      <v-container fluid class="pa-0" ref="mapbox" @mousemove="onMouseMove">
+      <v-container fluid class="pa-0" ref="mapbox">
         <span id="mapstatus" :class="{
           loaded: isMapLoaded,
           waiting: !isMapLoaded,
           addingAnnotation: addingAnnotation!==null
         }"></span>
+        <!-- @mousemove="$refs.map.onMouseMove" -->
         <div id="map" :class="filterClasses"></div>
+        <component
+          ref="map"
+          :is="mapType"
+          :snapshot="snapshot"
+          :annotations="annotations"
+          :addingAnnotation="addingAnnotation"
+          :newAnnotation="newAnnotation"
+          :hash="hash"
+          @new-comment="newComment"
+          @new-object="newObject"
+          @new-polygon="newPolygon"
+          @map-movestart="mapMovestart"
+          @map-zoomed="mapZoomed"
+          @map-moveend="mapMoveend"
+          @zoomstate-changed="setZoomStateModified"
+          >
+        </component>
       </v-container>
+      <a href="https://www.dfour.space" target="_blank" id="logo">
+        <img alt="dføur logo" height="22" id="legendLogo"
+          style="float:right; opacity:0.80;"
+          src="@/assets/images/dfour-logo.svg">
+      </a>
 
       <div v-html="filterCatStyle"></div>
       <div v-html="filterStatStyle"></div>
@@ -196,14 +715,14 @@
       <v-slide-y-transition>
         <p class="addHint elevation-6" v-if="addingAnnotation">
           <span v-if="addingAnnotation == 'COM'">
-             {{ c$t('comment.add') }}
+              {{ c$t('comment.add') }}
           </span>
           <template v-else-if="addingAnnotation == 'PLY'">
-            <span v-if="polygonEditingState.invalid">
+            <span v-if="$refs.map.polygonEditingState.invalid">
               {{ c$t('polygon.editing.invalid') }}</span>
-            <span v-else-if="polygonEditingState.closable">
+            <span v-else-if="$refs.map.polygonEditingState.closable">
               {{ c$t('polygon.editing.closable') }}</span>
-            <span v-else-if="polygonEditingState.active">
+            <span v-else-if="$refs.map.polygonEditingState.active">
               {{ c$t('polygon.editing.unfinished') }}</span>
             <span v-else>
               {{ c$t('polygon.add') }}</span>
@@ -214,7 +733,7 @@
         </p>
       </v-slide-y-transition>
 
-      <v-btn
+      <!-- <v-btn
         v-if="hash && !screenshotIsThumbnail"
         fab absolute small
         style="bottom:2.2em; right:1.3em;"
@@ -250,7 +769,7 @@
           v-on:toggleCat="(...args) => toggleCat(...args)"
           v-on:toggleState="(...args) => toggleState(...args)"
         />
-      </v-card>
+      </v-card> -->
 
       <div id="buttons" v-if="!screenshotMode">
 
@@ -259,47 +778,13 @@
           fab small
           id="myLocation"
           color="primary"
-          @click="myLocation">
+          >
+          <!-- TODO: reactivate location button
+          @click="$refs.map.myLocation" -->
           <v-icon>mdi-crosshairs-gps</v-icon>
         </v-btn>
 
         <template v-if="wshash">
-
-          <v-btn
-            fab small
-            id="addingAnnotationPt"
-            color="primary"
-            v-if="annotations.marker.open"
-            @click="addingAnnotation ? addingAnnotation=null : addingAnnotation='COM';">
-            <v-icon v-if="!addingAnnotation || addingAnnotation != 'COM'">
-              mdi-comment-plus-outline
-            </v-icon>
-            <v-icon v-if="addingAnnotation && addingAnnotation == 'COM'">mdi-close-thick</v-icon>
-          </v-btn>
-
-          <v-btn
-            fab small
-            id="addingAnnotationPly"
-            color="primary"
-            v-if="annotations.polygon.open"
-            @click="addingAnnotation ? addingAnnotation = null : addingAnnotation = 'PLY';">
-            <v-icon v-if="!addingAnnotation || addingAnnotation != 'PLY'">
-              mdi-shape-polygon-plus
-            </v-icon>
-            <v-icon v-if="addingAnnotation && addingAnnotation == 'PLY'">mdi-close-thick</v-icon>
-          </v-btn>
-
-          <v-btn
-            fab small
-            id="addingAnnotationObj"
-            color="primary"
-            v-if="annotations.object.open"
-            @click="addingAnnotation ? addingAnnotation = null : addingAnnotation = 'OBJ';">
-            <v-icon v-if="!addingAnnotation || addingAnnotation != 'OBJ'">
-              mdi-home-city-outline
-            </v-icon>
-            <v-icon v-if="addingAnnotation && addingAnnotation == 'OBJ'">mdi-close-thick</v-icon>
-          </v-btn>
 
           <v-btn
             fab small
@@ -363,6 +848,14 @@
                       required
                     ></v-select>
                     <v-text-field
+                      v-if="newAnnotation.kind === 'OBJ'"
+                      v-model="newAnnotation.otherText"
+                      validate-on-blur
+                      :label="
+                        c$t(annotationKindKey[newAnnotation.kind] + '.other')
+                      "
+                    ></v-text-field>
+                    <v-text-field
                       v-model="newAnnotation.title"
                       :label="c$t(annotationKindKey[newAnnotation.kind] + '.title')"
                       :rules="[v => !!v || $t('mandatory')]"
@@ -381,13 +874,14 @@
                     >
                       <v-row>
                         <v-col>
-                          <v-select
-                            :items="constVals"
+                          <v-text-field
+                            type="number"
                             v-model="newAnnotation.constructionYear"
+                            validate-on-blur
                             :label="
                               c$t(annotationKindKey[newAnnotation.kind] + '.constructionYear')
                             "
-                          ></v-select>
+                          ></v-text-field>
                           <!-- v-text-field
                             type="number"
                             v-model="newAnnotation.constructionYear"
@@ -397,13 +891,14 @@
                           / -->
                         </v-col>
                         <v-col>
-                          <v-select
-                            :items="demoVals"
+                          <v-text-field
+                            type="number"
                             v-model="newAnnotation.demolitionYear"
+                            validate-on-blur
                             :label="
                               c$t(annotationKindKey[newAnnotation.kind] + '.demolitionYear')
                             "
-                          ></v-select>
+                          ></v-text-field>
                           <!-- v-text-field
                             type="number"
                             v-model="newAnnotation.demolitionYear"
@@ -640,9 +1135,9 @@
       <object-detail
         :object="currentObject"
         :enableLikes="annotations.object.likes"
-        v-on:close="$router.push({ name: 'workspace' })"
+        v-on:close="$router.push({ replace: true, params: { annoid: null } })"
       />
-    </v-main>
+    </div>
 </template>
 
 <style>
@@ -708,7 +1203,7 @@ body,
 
 #buttons {
   position: absolute;
-  top: 5.6em;
+  top: 13.5em;
   right: 1.6em;
   transition: top 0.3s;
   transition-timing-function: ease-in-out;
@@ -922,48 +1417,42 @@ p.rating {
 .leaflet-interactive {
   transition: opacity 0.3s;
 }
+
+.maplibregl-ctrl-geocoder .suggestions li {
+  font-size: 1em !important;
+}
+
+#logo {
+  position: absolute;
+  bottom: 22px;
+  right: 8px;
+}
 </style>
 
 <script>
 import Vue from 'vue';
-import L from 'mapbox.js';
-import _ from 'lodash';
-import geoViewport from '@mapbox/geo-viewport';
 import SnapshotMeta from './SnapshotMeta.vue';
 import ObjectDetail from './ObjectDetail.vue';
+import MapLeaflet from './MapLeaflet.vue';
+import MapMaplibre from './MapMaplibre.vue';
 
 Vue.component('snapshot-meta', SnapshotMeta);
 Vue.component('object-detail', ObjectDetail);
-
-function geostring2array(s) {
-  const array = s.split(':')[1].split(',');
-  return array.map(x => parseFloat(x));
-}
+Vue.component('map-leaflet', MapLeaflet);
+Vue.component('map-maplibre', MapMaplibre);
 
 export default {
   data() {
     return {
-      hash: this.$route.params.hash,
-      wshash: this.$route.params.wshash,
       bfsNumber: this.$route.params.bfsNumber,
       djangobaseurl: process.env.VUE_APP_DJANGOBASEURL,
-      map: null,
-      layerContainer: null,
       mapinfoopen: true,
       addingAnnotation: null,
       newAnnotation: null,
-      polygonEditingState: {
-        active: false,
-        invalid: false,
-        closable: false
-      },
-      polygonString: [],
-      drawnItems: null,
       spatialData: {},
       statisticPanelOpen: false,
       tooltipContainer: null,
       timeout: null,
-      guides: null,
       commentstepper: 1,
       currentCommentIndex: null,
       currentObjectIndex: null,
@@ -976,24 +1465,9 @@ export default {
       legendCategories: [],
       legendStates: [],
       sources: [],
-      layers: [],
-      geobounds: [],
       screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
       screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail'),
       isMapLoaded: false,
-      // eslint-disable-next-line global-require
-      commentIconUrl: require('@/assets/images/icons/comment_36.svg'),
-      // eslint-disable-next-line global-require
-      commentLockedIconUrl: require('@/assets/images/icons/comment_locked_36.svg'),
-      // eslint-disable-next-line global-require
-      locationIconUrl: require('@/assets/images/icons/location.svg'),
-      // eslint-disable-next-line global-require
-      objectIconUrl: require('@/assets/images/icons/object.svg'),
-      // eslint-disable-next-line global-require
-      objectLockedIconUrl: require('@/assets/images/icons/object_locked.svg'),
-      setMapMyLocation: false,
-      locationWatcher: null,
-      myLocationMarker: null,
       escListener: null,
       commentoUrl: process.env.VUE_APP_COMMENTO_URL || null,
       zoomIsUserModified: false,
@@ -1038,16 +1512,16 @@ export default {
   },
 
   props: {
+    hash: String,
+    wshash: String,
     snapshot: Object,
-    geojson: Object,
     annotations: Object,
     spatialDatasettes: Array,
-    geoboundsIn: Array,
-    predecessor: Object
+    predecessor: Object,
+    entryActive: String
   },
 
   created() {
-    this.geobounds = this.geoboundsIn;
     this.escListener = document.addEventListener('keyup', (e) => {
       if (e.key === 'Escape') {
         this.cancelAnnotation();
@@ -1055,16 +1529,21 @@ export default {
     });
   },
 
+  mounted() {
+    if (this.entryActive) {
+      this.addingAnnotation = this.entryActive;
+    }
+  },
+
   destroy() {
-    this.destroyMap();
     document.removeEventListener(this.escListener);
   },
 
-  updated() {
-    if (!this.currentObject) {
-      this.$router.push({ name: 'workspace' });
-    }
-  },
+  // updated() {
+  //   if (!this.currentObject) {
+  //     this.$router.push({ name: 'workspace' });
+  //   }
+  // },
 
   computed: {
     legendWidth() {
@@ -1183,6 +1662,18 @@ export default {
         styles += `.hide-s${a.pk} .s${a.pk}{ opacity: 0; pointer-events: none; }`;
       });
       return `<style>${styles}</style>`;
+    },
+    mapType() {
+      if (this.snapshot && this.snapshot.views.length) {
+        switch (this.snapshot.views[0].specType) {
+          case 'gemeindescanSnapshot':
+            return 'map-leaflet';
+          case 'vega-lite':
+          default:
+            return 'map-maplibre';
+        }
+      }
+      return 'map-maplibre';
     }
   },
 
@@ -1203,163 +1694,13 @@ export default {
         this.disabledStatePks.push(pk);
       }
     },
-    createFeatureLayer(geojson, attribution, points = true) {
-      let features;
-      if (points) {
-        features = L.geoJson(geojson, {
-          attribution,
-          pointToLayer: (feature, latlng) => {
-            feature.properties.interactive = false;
-
-            if (feature.properties.title || feature.properties.description) {
-              feature.properties.icon.className += ' popup-title-description';
-              feature.properties.interactive = true;
-            }
-            if (feature.category) {
-              feature.properties.icon.className += ` c${feature.category.id}`;
-            }
-            let curfeature;
-            if (feature.properties.radius) {
-              // properties need to match https://leafletjs.com/reference-1.6.0.html#circle
-              curfeature = new L.Circle(latlng, feature.properties);
-            } else {
-              const options = {};
-              if (feature.properties.icon) {
-                options.icon = new L.Icon(feature.properties.icon);
-              }
-              curfeature = new L.Marker(latlng, options);
-            }
-            if (feature.properties.interactive) {
-              // curfeature.bindPopup(() => {
-              //   let content = feature.properties.description;
-              //   if (feature.properties.title) {
-              //     content = `<b>${feature.properties.title}</b><br />${content}`;
-              //   }
-              //   return content;
-              // },
-              // { maxWidth: 450, maxHeight: 600 });
-              curfeature.on('click', this.showPopup);
-              if ('openOnLoad' in feature.properties && feature.properties.openOnLoad) {
-                window.setTimeout(() => { curfeature.fire('click'); }, 500);
-              }
-            }
-            return curfeature;
-          }
-        });
-      } else {
-        features = L.featureGroup(
-          geojson.map((polygon) => {
-            const poly = new L.Polygon(
-              polygon.geometry.coordinates[0].map(
-                c => [c[1], c[0]]
-              ),
-              {
-                ...polygon.properties
-              }
-            );
-            poly.feature = polygon;
-            if (polygon.properties.title || polygon.properties.description) {
-              poly.on('click', this.showPopup);
-            }
-            return poly;
-          })
-        );
-      }
-      return features;
-    },
-
-    showPopup(e) {
-      let content;
-      let latlng;
-      if (e.target.feature.kind === 'COM') {
-        this.currentCommentIndex = e.target.feature.index;
-        content = document.getElementById('currentComment');
-        latlng = e.target._latlng; // eslint-disable-line no-underscore-dangle
-      } else if (e.target.feature.kind === 'OBJ') {
-        const annoid = this.annotations.items[e.target.feature.index].pk;
-        this.$router.push({ name: 'annotationDetail', params: { annoid } });
-        return true;
-      } else if (e.target.feature.kind === 'PLY') {
-        this.currentCommentIndex = e.target.feature.index;
-        content = document.getElementById('currentComment');
-        latlng = e.target.getCenter(); // eslint-disable-line no-underscore-dangle
-        // content = e.target.feature.properties.description;
-        // if (e.target.feature.properties.title) {
-        //   content = `<b>${e.target.feature.properties.title}</b><br />${content}`;
-        // }
-      } else {
-        content = e.target.feature.properties.description;
-        if (e.target.feature.properties.title) {
-          content = `<b>${e.target.feature.properties.title}</b><br />${content}`;
-        }
-        latlng = e.target._latlng; // eslint-disable-line no-underscore-dangle
-      }
-      const myPopup = new L.Popup({ maxWidth: 450, maxHeight: 600 })
-        .setLatLng(latlng)
-        .setContent(content);
-
-      myPopup.on('remove', (e) => {
-        // console.log('remove'); // eslint-disable-line no-console
-        document.head.getElementsByTagName('script').forEach((el) => {
-          if (el.hasAttribute('data-page-id')) {
-            document.head.removeChild(el);
-          }
-        });
-        document.getElementById('commentholder').append(e.target.getContent());
-        this.statisticPanelOpen = false;
-        this.resetSpatialData();
-      });
-      this.mapinfoopen = false;
-      window.setTimeout(() => {
-        myPopup.openOn(this.map);
-        if (this.commentoUrl !== null && this.currentComment.category.commentsEnabled) {
-          console.log(window); // eslint-disable-line no-console
-          console.log(window.commento); // eslint-disable-line no-console
-          console.log(window.commento.main); // eslint-disable-line no-console
-          if (typeof window !== 'undefined' && window.commento.main === undefined) {
-            const commentoScript = document.createElement('script');
-            commentoScript.setAttribute('src', `${this.commentoUrl}/js/commento.js`);
-            commentoScript.setAttribute('data-auto-init', false);
-            commentoScript.setAttribute('data-page-id', `${this.currentComment.pk}-${this.currentComment.id}`);
-            commentoScript.setAttribute('defer', true);
-            document.head.appendChild(commentoScript);
-            window.setTimeout(() => {
-              window.commento.main();
-            }, 100);
-          } else if (typeof window !== 'undefined' && window.commento) {
-            window.commento.reInit({
-              pageId: `${this.currentComment.pk}-${this.currentComment.id}`
-            });
-          }
-        }
-      }, 100);
-
-      if (this.spatialDatasettes.length > 0 && e.target.feature.kind === 'PLY') {
-        this.statisticPanelOpen = true;
-        const coordinates = this.currentComment.data.geometry.coordinates[0].map(i => `${i[0]} ${i[1]}`).join(', ');
-        const wkt = `Polygon ((${coordinates}))`;
-        this.queries.forEach((q) => {
-          this.fetchPolygonStats(
-            this.spatialDatasettes[0], q,
-            wkt, '', 'all'
-          );
-          this.fetchPolygonStats(
-            this.spatialDatasettes[0], q,
-            wkt, '', 'polygon'
-          );
-        });
-      }
-      return true;
-    },
-
-    setupEmpty() {
-      this.geobounds = this.geoboundsIn;
-    },
 
     setupMeta() {
-      this.title = this.geojson.views[0].spec.title;
-      this.description = this.geojson.views[0].spec.description;
-      this.legend = this.geojson.views[0].spec.legend;
+      this.title = this.snapshot.views[0].spec.title;
+      this.description = this.snapshot.views[0].spec.description;
+      this.legend = this.snapshot.views[0].spec.legend;
+
+      console.info('setting up meta', this.geojson); // eslint-disable-line no-console
 
       if (this.annotations.categories) {
         const extraItems = this.annotations.categories
@@ -1412,467 +1753,103 @@ export default {
           });
         this.legendStates = [...extraItems];
       }
-      this.sources = this.geojson.sources;
+      this.sources = this.snapshot.sources;
     },
 
-    setupMapbox() {
-      try {
-        this.geobounds = [
-          geostring2array(this.geojson.views[0].spec.bounds[0]),
-          geostring2array(this.geojson.views[0].spec.bounds[1])
-        ];
-
-        const lookupResources = {}; // name -> index
-        this.geojson.resources.forEach((resource, index) => {
-          lookupResources[resource.name] = index;
-        });
-
-        this.geojson.views[0].resources.forEach((resourceName) => {
-          this.layers.push(
-            this.geojson.resources[lookupResources[resourceName]]
-          );
-        });
-      } catch (error) {
-        console.log(error); // eslint-disable-line no-console
-        this.isMapLoaded = true;
+    cancelAnnotation() {
+      if (this.newAnnotation && this.newAnnotation.marker) {
+        // TODO: move to map plugin
+        // this.newAnnotation.marker.removeFrom(this.$refs.map.map);
+        this.$refs.map.cancelAddAnnotation();
+        this.newAnnotation = null;
       }
+      this.$refs.map.polygonString = [];
+      this.addingAnnotation = null;
+      this.uploadFiles = null;
+      if (this.entryActive) {
+        this.$router.push({ name: 'workspace' });
+      }
+      // this.$refs.map.cancelAnnotation();
     },
 
-    displayMapbox() {
-      try {
-        L.mapbox.accessToken = process.env.VUE_APP_MAPBOX_ACCESSTOKEN
-          || process.env.VUE_APP_MAPBOX_ACCESSTOKEN_DEV;
-        let bounds = null;
-        if (this.$store.state.mapCenter !== null) {
-          // setup bounds from store
-          bounds = {
-            center: this.$store.state.mapCenter,
-            zoom: this.$store.state.mapZoomLevel
-          };
-          this.zoomStateModified = true;
-        } else {
-          const boxSize = 800;
-          bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
-        }
-        this.map = L.mapbox.map('map').setView(bounds.center, bounds.zoom);
-        this.layerContainer = new L.LayerGroup();
-        // default test layer // this.layerContainer.addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/light-v10'));
-        if (this.hash) { // full snapshot with hash
-          this.layers.forEach((layer) => {
-            if (layer.mediatype === 'application/vnd.mapbox-vector-tile') {
-              const tileLayer = L.mapbox.styleLayer(layer.path);
-              tileLayer.on('load', () => { this.isMapLoaded = true; });
-              this.layerContainer.addLayer(tileLayer);
-            } else if (layer.mediatype === 'application/geo+json') {
-              this.layerContainer.addLayer(L.mapbox.featureLayer(layer.data, {
-                attribution: this.geojson.views[0].spec.attribution
-              }));
-            } else if (layer.mediatype === 'application/vnd.simplestyle-extended') {
-              this.layerContainer.addLayer(this.createFeatureLayer(
-                layer.data.features, this.geojson.views[0].spec.attribution
-              ));
-            } else if (layer.mediatype === 'application/vnd.wms') {
-              const tileLayer = L.tileLayer.wms(layer.path, layer.parameters);
-              this.layerContainer.addLayer(tileLayer);
-            }
-          });
-        } else if (this.bfsNumber) { // empty municipality
-          this.geojson.coordinates.forEach((polygon) => {
-            this.layerContainer.addLayer(L.polygon(polygon, { color: '#543076' }));
-          });
-          const DEFAULT_STYLES = process.env.VUE_APP_MAPBOX_DEFAULT_STYLES
-            || process.env.VUE_APP_MAPBOX_DEFAULT_STYLES_DEV;
-          if (DEFAULT_STYLES) {
-            this.layerContainer.addLayer(L.mapbox.styleLayer(DEFAULT_STYLES));
-          }
-        }
-        if (this.annotations.items) {
-          if ('transform' in this.geojson.views[0].spec) {
-            this.geojson.views[0].spec.transform.forEach((t) => {
-              if ('filter' in t && 'oneOf' in t.filter && t.filter.from === 'annotations') {
-                this.annotations.items = this.annotations.items.filter(i => t.filter.oneOf.includes(
-                  _.get(i, t.filter.key, '')
-                ));
-              }
-            });
-          }
-          this.annotations.items = this.annotations.items
-            .map((a, i) => {
-              a.data.kind = a.kind;
-              a.data.index = i;
-              if (a.category) {
-                a.data.properties.icon = { iconUrl: `${this.djangobaseurl}/media/${a.category.icon}`, iconSize: [36, 36], popupAnchor: [0, -16] };
-                a.data.properties.icon.className = ` c${a.category.pk}`;
-                if (a.state) {
-                  a.data.properties.icon.className += ` s${a.state.pk}`;
-                  if (a.state.decoration) {
-                    a.data.properties.icon.className += ` state-${a.state.decoration.toLowerCase()}`;
-                  }
-                }
-
-                if (a.kind === 'PLY') {
-                  const area = this.geodesicArea(
-                    a.data.geometry.coordinates[0].map(
-                      c => L.latLng([c[1], c[0]])
-                    )
-                  );
-                  a.data.properties = {
-                    ...a.data.properties,
-                    color: a.category.color,
-                    opacity: 0.9,
-                    weight: 3,
-                    dashArray: '8 6',
-                    dashOffset: '8',
-                    fillColor: a.category.color,
-                    fillOpacity: 0.4,
-                    area
-                  };
-                }
-              }
-              return a;
-            });
-          const annotationsdata = this.annotations.items.map(a => a.data);
-          this.layerContainer.addLayer(this.createFeatureLayer(
-            annotationsdata.filter(a => a.kind === 'COM'), ''
-          ));
-          this.layerContainer.addLayer(this.createFeatureLayer(
-            annotationsdata.filter(a => a.kind === 'OBJ'), ''
-          ));
-          this.layerContainer.addLayer(this.createFeatureLayer(
-            annotationsdata.filter(a => a.kind === 'PLY'), '', false
-          ));
-        }
-        this.layerContainer.addTo(this.map);
-
-        this.drawnItems = new L.FeatureGroup();
-        this.drawnItems.addTo(this.map);
-
-        this.map.on('movestart', () => {
-          this.zoomIsUserModified = true;
-        });
-
-        this.map.on('zoomend', (event) => {
-          if (this.zoomIsUserModified) {
-            this.$store.commit('setMapZoomLevel', event.target.getZoom());
-            this.$store.commit('setMapCenter', Object.values(event.target.getCenter()));
-            this.zoomStateModified = true;
-          }
-        });
-
-        this.map.on('moveend', (event) => {
-          if (this.zoomIsUserModified) {
-            this.$store.commit('setMapCenter', Object.values(event.target.getCenter()));
-            this.$store.commit('setMapZoomLevel', event.target.getZoom());
-            this.zoomStateModified = true;
-          }
-        });
-
-        this.map.on('click', (event) => {
-          if (this.addingAnnotation !== null) {
-            switch (this.addingAnnotation) {
-              case 'COM': {
-                const newMarker = L.marker(event.latlng, {
-                  icon: new L.Icon({
-                    iconUrl: this.commentIconUrl,
-                    iconSize: [36, 36]
-                  }),
-                  draggable: false
-                });
-                newMarker.on('click', this.newComment);
-                newMarker.addTo(this.map);
-                this.map.setView(event.latlng);
-                window.setTimeout(() => { newMarker.fire('click'); }, 500);
-                this.addingAnnotation = null;
-                break;
-              }
-              case 'OBJ': {
-                const newMarker = L.marker(event.latlng, {
-                  icon: new L.Icon({
-                    iconUrl: this.objectIconUrl,
-                    iconSize: [36, 36]
-                  }),
-                  draggable: false
-                });
-                newMarker.on('click', this.newObject);
-                newMarker.addTo(this.map);
-                this.map.setView(event.latlng);
-                window.setTimeout(() => { newMarker.fire('click'); }, 500);
-                this.addingAnnotation = null;
-                break;
-              }
-              case 'PLY': {
-                this.polygonEditingState.active = true;
-                // 1.
-                // On each click while in Polygon mode
-                // record click series
-                const newMarker = event.latlng;
-                this.polygonString = [...this.polygonString, [newMarker.lat, newMarker.lng]];
-
-                // 2.
-                // Update Marker / Polygon rendering
-                // from curent list of points
-                if (this.polygonString.length === 1) {
-                  L.polyline(
-                    this.polygonString,
-                    {
-                      stroke: true,
-                      color: '#543076',
-                      weight: 3,
-                      opacity: 0.9,
-                      lineCap: 'round',
-                      lineJoin: 'round',
-                      dashArray: '8 6',
-                      dashOffset: '8',
-                      fill: true,
-                      fillColor: '#543076',
-                      fillOpacity: 0.4
-                    }
-                  ).addTo(this.drawnItems);
-                } else if (this.polygonString.length >= 2) {
-                  // calculate distance to starting point
-                  const distanceToStart = this.map.latLngToLayerPoint(
-                    event.latlng
-                  ).distanceTo(
-                    this.map.latLngToLayerPoint(this.polygonString[0])
-                  );
-
-                  // check if point is close to starting point
-                  if (Math.abs(distanceToStart) < 9 * (window.devicePixelRatio || 1)) {
-                    // set new point exactly to starting point
-                    this.polygonString[this.polygonString.length - 1] = this.polygonString[0];
-                    // add new marker
-                    const newMarker = L.polyline(
-                      this.polygonString,
-                      {
-                        stroke: true,
-                        color: '#543076',
-                        weight: 3,
-                        opacity: 0.9,
-                        lineCap: 'round',
-                        lineJoin: 'round',
-                        dashArray: '8 6',
-                        dashOffset: '8',
-                        fill: true,
-                        fillColor: '#543076',
-                        fillOpacity: 0.4
-                      }
-                    );
-                    newMarker.on('click', this.newPolygon);
-                    newMarker.addTo(this.map);
-                    // this.map.setView(event.latlng);
-                    window.setTimeout(() => { newMarker.fire('click'); }, 500);
-                    this.cancelAnnotation();
-                    this.polygonEditingState.active = false;
-                  } else {
-                    const drawingLayer = this.drawnItems.getLayers();
-                    const layer = drawingLayer[0];
-                    layer.addLatLng(
-                      this.polygonString[this.polygonString.length - 1]
-                    );
-                    layer.redraw();
-                  }
-                }
-
-                // todo: implement invisible marker to avoid collisions
-
-                break;
-              }
-              default: {
-                this.addingAnnotation = null;
-                console.log('Error - Annotation type not supported'); // eslint-disable-line no-console
-              }
-            }
-          }
-        });
-
-        L.control.scale({
-          metric: true,
-          imperial: false
-        }).addTo(this.map);
-
-        if (this.screenshotMode) {
-          // no zoom controls in screenshot mode
-          document.querySelector('.leaflet-control-zoom').style.display = 'none';
-          document.querySelector('.leaflet-control-attribution').style.display = 'none';
-        } else if (this.hash) {
-          // no attribution in normal mode
-          document.querySelector('.leaflet-control-attribution').style.background = 'none';
-        }
-        if (this.screenshotIsThumbnail) {
-          document.querySelector('#mapinfo').style.visibility = 'hidden';
-        }
-      } catch (error) {
-        console.log(error); // eslint-disable-line no-console
-        this.isMapLoaded = true;
-      }
-      // L.control.zoom({ position: 'bottomleft' }).addTo(this.map);
-      // this.map.addLayer(L.rectangle(this.geobounds, { color: 'red', weight: 1 }));
-    },
-
-    resetZoom() {
-      this.geobounds = [
-        geostring2array(this.geojson.views[0].spec.bounds[0]),
-        geostring2array(this.geojson.views[0].spec.bounds[1])
-      ];
-      const boxSize = 800;
-      const bounds = geoViewport.viewport(this.geobounds.flat(), [boxSize, boxSize]);
-      this.map.flyTo(
-        bounds.center,
-        bounds.zoom,
-        {
-          noMoveStart: true,
-          duration: 0.1
-        }
-      );
-      this.zoomIsUserModified = false;
-      this.$store.commit('setMapZoomLevel', null);
-      this.$store.commit('setMapCenter', null);
-      this.zoomStateModified = false;
-    },
-
-    geodesicArea(latLngs) {
-      // ported from https://github.com/Leaflet/Leaflet.draw/blob/develop/src/ext/GeometryUtil.js
-
-      const pointsCount = latLngs.length;
-      const d2r = Math.PI / 180;
-      let p1 = [];
-      let p2 = [];
-      let area = 0.0;
-
-      if (pointsCount > 2) {
-        for (let i = 0; i < pointsCount; i += 1) {
-          p1 = latLngs[i];
-          p2 = latLngs[(i + 1) % pointsCount];
-          area += ((p2.lng - p1.lng) * d2r)
-            * (2 + Math.sin(p1.lat * d2r) + Math.sin(p2.lat * d2r));
-        }
-        area = area * 6378137.0 * 6378137.0 / 2.0;
-      }
-
-      area = Math.round(Math.abs(area));
-      let areaStr = '';
-
-      if (area >= 1000000) {
-        areaStr = `${area * 0.000001} km²`;
-      } else {
-        areaStr = `${area} m²`;
-      }
-
-      return areaStr;
-    },
-
-    onMouseMove(e) {
-      if (this.addingAnnotation) {
-        const newPos = this.map.mouseEventToLayerPoint(e);
-        const latlng = this.map.layerPointToLatLng(newPos);
-        const pos = this.map.latLngToLayerPoint(latlng);
-
-        if (this.polygonString.length > 0) {
-          const distanceToStart = pos.distanceTo(
-            this.map.latLngToLayerPoint({
-              lat: this.polygonString[0][0],
-              lng: this.polygonString[0][1]
-            })
-          );
-          const withinReach = Math.abs(distanceToStart) < 9 * (window.devicePixelRatio || 1);
-
-          this.polygonEditingState.closable = this.polygonString.length > 1 ? withinReach : false;
-
-          // todo: detect invalid, e.g. self-intersecting geomtries and set flag
-
-          // this.updateTooltip(pos, `
-          //   Position: ${latlng} / ${pos}<br>
-          //   Distance: ${distanceToStart}<br>Within reach: ${withinReach}
-          // `);
-          this.updateGuideline(latlng);
-        }
-      }
-    },
-
-    updateGuideline(pos) {
-      if (this.timeout) clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.drawGuideline(pos);
-      }, 5);
-    },
-
-    updateTooltip(pos, text) {
-      if (this.tooltipContainer === null) {
-        this.tooltipContainer = L.DomUtil.create(
-          // eslint-disable-next-line no-underscore-dangle
-          'div', 'leaflet-draw-tooltip', this.map._panes.popupPane
-        );
-      }
-
-      if (pos) {
-        const tooltipContainer = this.tooltipContainer;
-        L.DomUtil.setPosition(tooltipContainer, pos);
-      }
-
-      this.tooltipContainer.innerHTML = text;
-    },
-
-    drawGuideline(latlng) {
-      if (this.polygonString.length >= 1 && this.addingAnnotation) {
-        const endPoint = latlng;
-
-        const drawingLayer = this.drawnItems.getLayers();
-        const layer = drawingLayer[0];
-
-        let currentPolylineString = [];
-        if (!layer.isEmpty()) {
-          currentPolylineString = layer.getLatLngs();
-        } else {
-          currentPolylineString = this.polygonString;
-        }
-
-        if (currentPolylineString.length > this.polygonString.length) {
-          // update
-          currentPolylineString[currentPolylineString.length - 1] = endPoint;
-          layer.setLatLngs(
-            currentPolylineString
-          );
-        } else {
-          // add
-          layer.addLatLng(endPoint);
-        }
-        layer.redraw();
-      }
-      // console.log(e); // eslint-disable-line no-console
+    setupMap() {
+      this.$refs.map.mapInit();
     },
 
     newComment(e) {
+      this.addingAnnotation = null;
       this.commentstepper = 1;
       this.newAnnotation = {
         kind: 'COM',
         title: '',
         text: '',
-        marker: e.target
+        marker: e
       };
     },
 
     newPolygon(e) {
+      this.addingAnnotation = null;
       this.commentstepper = 1;
       this.newAnnotation = {
         kind: 'PLY',
         title: '',
         text: '',
-        marker: e.target
+        marker: e
       };
     },
 
     newObject(e) {
+      this.addingAnnotation = null;
       this.commentstepper = 1;
       this.newAnnotation = {
         kind: 'OBJ',
+        other: '',
         title: '',
         subtitle: '',
         constructionYear: '',
         demolitionYear: '',
         text: '',
         text2: '',
-        marker: e.target
+        marker: e
       };
+    },
+
+    mapMovestart() {
+      this.zoomIsUserModified = true;
+    },
+
+    mapZoomed(event) {
+      if (this.zoomIsUserModified && event.target) {
+        this.$store.commit('setMapZoomLevel', event.target.getZoom());
+        this.$store.commit('setMapCenter', Object.values(event.target.getCenter()));
+        this.zoomStateModified = true;
+      }
+    },
+
+    mapMoveend(event) {
+      if (this.zoomIsUserModified && event.target) {
+        let newCenter = Object.values(event.target.getCenter());
+        let newZoom = event.target.getZoom();
+        if (this.mapType === 'map-maplibre') {
+          newCenter = [newCenter[1], newCenter[0]];
+          newZoom = newZoom < 20 ? newZoom + 1 : newZoom;
+        }
+        this.$store.commit('setMapCenter', newCenter);
+        this.$store.commit('setMapZoomLevel', newZoom);
+        this.zoomStateModified = true;
+      }
+    },
+
+    setZoomStateModified(newState) {
+      this.zoomStateModified = newState;
+    },
+
+    resetZoom() {
+      this.$refs.map.resetZoom();
+      this.zoomIsUserModified = false;
+      this.$store.commit('setMapZoomLevel', null);
+      this.$store.commit('setMapCenter', null);
+      this.zoomStateModified = false;
     },
 
     validateStepOne() {
@@ -1892,17 +1869,6 @@ export default {
       }
     },
 
-    cancelAnnotation() {
-      if (this.newAnnotation && this.newAnnotation.marker) {
-        this.newAnnotation.marker.removeFrom(this.map);
-        this.newAnnotation = null;
-      }
-      this.polygonString = [];
-      this.drawnItems.clearLayers();
-      this.addingAnnotation = null;
-      this.uploadFiles = null;
-    },
-
     async saveAnnotation() {
       const myform = this.$refs.commentform;
       if (!myform.validate()) {
@@ -1917,7 +1883,12 @@ export default {
 
       switch (this.newAnnotation.kind) {
         case 'COM': {
-          const latlng = this.newAnnotation.marker.getLatLng();
+          let latlng = { lng: 0, lat: 0 };
+          if (this.mapType === 'map-maplibre') {
+            latlng = this.newAnnotation.marker.getLngLat();
+          } else {
+            latlng = this.newAnnotation.marker.getLatLng();
+          }
           data = {
             type: 'Feature',
             geometry: {
@@ -1934,7 +1905,12 @@ export default {
           break;
         }
         case 'OBJ': {
-          const latlng = this.newAnnotation.marker.getLatLng();
+          let latlng = { lng: 0, lat: 0 };
+          if (this.mapType === 'map-maplibre') {
+            latlng = this.newAnnotation.marker.getLngLat();
+          } else {
+            latlng = this.newAnnotation.marker.getLatLng();
+          }
           data = {
             type: 'Feature',
             geometry: {
@@ -1944,6 +1920,7 @@ export default {
             properties: {
               fill: true,
               title: this.newAnnotation.title,
+              other: this.newAnnotation.other,
               subtitle: this.newAnnotation.subtitle,
               constructionYear: this.newAnnotation.constructionYear,
               demolitionYear: this.newAnnotation.demolitionYear,
@@ -1997,43 +1974,26 @@ export default {
           }
         });
         if (response.status === 201) {
-          const marker = this.newAnnotation.marker;
-          let labelPath = '';
-          if (this.newAnnotation.kind === 'COM') {
-            marker.setIcon(
-              new L.Icon({
-                iconUrl: this.commentLockedIconUrl,
-                iconSize: [36, 36],
-                popupAnchor: [0, -16]
-              })
-            );
-            labelPath = 'comment';
-          } else if (this.newAnnotation.kind === 'PLY') {
-            marker.setStyle({
-              opacity: 0.6,
-              fillOpacity: 0.2
-            });
-            labelPath = 'polygon';
-          } else if (this.newAnnotation.kind === 'OBJ') {
-            marker.setIcon(
-              new L.Icon({
-                iconUrl: this.objectLockedIconUrl,
-                iconSize: [36, 36],
-                popupAnchor: [0, -16]
-              })
-            );
-            labelPath = 'object';
-          }
-
-
+          this.$refs.map.lockAnnotation();
           if (this.uploadFiles && this.uploadFiles.length > 0) {
             // a file is selected an actual file, upload it
             // this.status = this.$t('status.sendingFile');
             await this.httpUpload(this.uploadFiles, response.data.id);
           }
 
+          const marker = this.newAnnotation.marker;
           marker.off();
-          marker.bindPopup(this.$t('saved'));
+          this.$refs.map.markSaved(this.$t('saved'));
+
+          let labelPath = '';
+          if (this.newAnnotation.kind === 'COM') {
+            labelPath = 'comment';
+          } else if (this.newAnnotation.kind === 'PLY') {
+            labelPath = 'polygon';
+          } else if (this.newAnnotation.kind === 'OBJ') {
+            labelPath = 'object';
+          }
+
           this.newAnnotation = null;
 
           this.dialogcontent = {
@@ -2049,6 +2009,7 @@ export default {
         // }
       } catch (error) {
         console.log(error); // eslint-disable-line no-console
+        this.newAnnotation = null;
         this.dialogcontent = {
           title: this.$t('failed'),
           text: this.$t('failedText')
@@ -2082,51 +2043,6 @@ export default {
         this.$refs.rateupBtn.$el.blur();
         window.setTimeout(() => { this.ratingpause = false; }, 1800);
       }
-    },
-
-    myLocation() {
-      this.setMapMyLocation = true;
-      if (this.locationWatcher === null) {
-        this.myLocationMarker = L.marker([0, 0], {
-          icon: new L.Icon({
-            iconUrl: this.locationIconUrl,
-            iconSize: [24, 24]
-          }),
-          interactive: false
-        });
-        this.myLocationMarker.addTo(this.map);
-        this.locationWatcher = navigator.geolocation.watchPosition((position) => {
-          const myLatlng = L.latLng(position.coords.latitude, position.coords.longitude);
-          if (this.setMapMyLocation) {
-            this.map.setView(myLatlng);
-            this.setMapMyLocation = false;
-          }
-          this.myLocationMarker.setLatLng(myLatlng);
-        });
-      }
-    },
-    async destroyMap() {
-      this.layerContainer.clearLayers();
-      this.map.eachLayer((layer) => {
-        this.map.removeLayer(layer);
-      });
-      try {
-        await this.map.remove();
-      } catch (err) {
-        // catch remove erros
-      }
-      this.hash = this.$route.params.hash;
-      this.bfsNumber = this.$route.params.bfsNumber;
-      this.layerContainer = null;
-      this.mapinfoopen = true;
-      this.title = '';
-      this.description = '';
-      this.legend = [];
-      this.sources = [];
-      this.layers = [];
-      this.geobounds = [];
-      this.map = null;
-      this.isMapLoaded = false;
     },
 
     fetchPolygonStats(db, query, polygon, neighbourhood, scope) {

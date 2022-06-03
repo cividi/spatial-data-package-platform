@@ -4,6 +4,8 @@ const messages = {
   fr: {
   },
   en: {
+  },
+  it: {
   }
 };
 

@@ -285,7 +285,10 @@ export default {
 
   computed: {
     hasSecondaryLegend() {
-      return this.legend.some(item => item.primary === false);
+      if (this.legend) {
+        return this.legend.some(item => item.primary === false);
+      }
+      return [];
     },
 
     djangobaseurlDisplay() {
