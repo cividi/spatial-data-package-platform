@@ -33,7 +33,7 @@
   <div>
     <v-app-bar app prominent flat id="topbar" absolute style="pointer-events: none;">
       <v-row no-gutters>
-        <v-col cols="10" class="text-left">
+        <v-col cols="7" class="text-left">
           <nav class="d-none d-sm-block">
             <language-switch
               expanded="1" v-if="$route.name == 'home'"
@@ -44,7 +44,7 @@
         <div class="useractions d-none d-sm-block">
           <user-actions />
         </div>-->
-        <v-col cols="2" class="text-right">
+        <v-col cols="5" class="text-right">
           <v-app-bar-nav-icon
             @click="mobnav=!mobnav" class="d-sm-none"
             style="pointer-events: all;">
