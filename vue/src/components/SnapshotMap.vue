@@ -693,6 +693,7 @@
           :addingAnnotation="addingAnnotation"
           :newAnnotation="newAnnotation"
           :hash="hash"
+          :search-control="searchControl"
           @new-comment="newComment"
           @new-object="newObject"
           @new-polygon="newPolygon"
@@ -1422,6 +1423,33 @@ p.rating {
   font-size: 1em !important;
 }
 
+.maplibregl-ctrl-geocoder--icon-search {
+    left: 7px;
+    width: 20px;
+    height: 20px;
+}
+
+.maplibregl-ctrl-geocoder--input {
+    height: 36px;
+    padding: 6px 35px;
+}
+
+.maplibregl-ctrl-geocoder--icon {
+    top: 8px;
+}
+
+.maplibregl-ctrl-geocoder {
+    width: 33.3333%;
+    font-size: 15px;
+    line-height: 20px;
+    max-width: 360px;
+}
+
+.maplibregl-ctrl-geocoder.maplibregl-ctrl-geocoder--collapsed {
+    width: 36px;
+    min-width: 36px;
+}
+
 #logo {
   position: absolute;
   bottom: 22px;
@@ -1674,6 +1702,30 @@ export default {
         }
       }
       return 'map-maplibre';
+    },
+
+    // TODO: make collapsed flag reactive to current breakpoint state
+    searchControl() {
+      if (this.mapType === 'map-maplibre') {
+        return {
+          show: true,
+          position: 'top-left',
+          options: {
+            showResultsMarker: true,
+            countries: 'ch',
+            collapsed: this.$vuetify.breakpoint.smAndDown,
+            trackProximity: true,
+            flyto: {
+              maxZoom: 17
+            },
+            zoom: 17,
+            minLength: 3,
+            limit: 10,
+            showResultsWhileTyping: true
+          }
+        };
+      }
+      return {};
     }
   },
 

@@ -186,7 +186,7 @@ export default {
         document.head.appendChild(commentoScript);
         window.setTimeout(() => {
           window.commento.main();
-        }, 100);
+        }, 700);
       } else if (typeof window !== 'undefined' && window.commento) {
         window.commento.reInit({
           pageId: `/${this.$route.params.wshash}/${this.curObj.pk}/`
