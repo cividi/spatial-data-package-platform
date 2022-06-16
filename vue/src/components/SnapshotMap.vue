@@ -160,6 +160,7 @@
     "mandatory": "Dies ist ein Pflichtfeld",
     "notAYear": "Keine Jahreszahl",
     "email": "E-Mail",
+    "author": "Name",
     "inv": "Dies ist keine gültige E-Mail Adresse",
     "notpublic":"Diese Informationen werden nicht veröffentlicht oder an Dritte weitergegeben",
     "failed": "Speichern fehlgeschlagen",
@@ -325,6 +326,7 @@
     "mandatory": "Champ obligatoire",
     "notAYear": "Pas d'année",
     "email": "E-Mail",
+    "author": "Nom",
     "inv": "Ce n'est pas une adresse e-mail valide",
     "notpublic":"Ces informations ne seront pas publiées ni transmises à des tiers.",
     "failed": "Échec de l'enregistrement",
@@ -490,6 +492,7 @@
     "mandatory": "This is a required field",
     "notAYear": "Not a year",
     "email": "E-Mail",
+    "author": "Name",
     "inv": "This is not a valid email address",
     "notpublic":"This information will not be published or shared with third parties",
     "failed": "Save failed",
@@ -655,6 +658,7 @@
     "mandatory": "Campo obbligatorio",
     "notAYear": "Nessun anno",
     "email": "E-Mail",
+    "author": "Nome",
     "inv": "Questo non è un indirizzo e-mail valido",
     "notpublic":"Queste informazioni non saranno pubblicate o trasmesse a terzi.",
     "failed": "Salvataggio fallito",
@@ -940,13 +944,6 @@
                       v-model="newAnnotation.moreinfo"
                       :label="c$t(annotationKindKey[newAnnotation.kind] + '.moreinfo')"
                     />
-                    <v-textarea
-                      v-if="newAnnotation.kind === 'OBJ'"
-                      outlined
-                      rows="4"
-                      v-model="newAnnotation.comment"
-                      :label="c$t(annotationKindKey[newAnnotation.kind] + '.comment')"
-                    />
 
                     <div class="d-flex justify-space-between">
                       <v-btn
@@ -964,6 +961,17 @@
                   <v-stepper-content
                     step="2"
                     class="pa-0">
+                    <v-text-field
+                      v-model="newAnnotation.author"
+                      :label="$t('author')"
+                    />
+                    <v-textarea
+                      v-if="newAnnotation.kind === 'OBJ'"
+                      outlined
+                      rows="4"
+                      v-model="newAnnotation.comment"
+                      :label="c$t(annotationKindKey[newAnnotation.kind] + '.comment')"
+                    />
                     <p>{{ c$t(annotationKindKey[newAnnotation.kind] +'.emailhint') }}</p>
                     <v-text-field
                       v-model="newAnnotation.email"
@@ -1357,6 +1365,8 @@ p.rating {
 }
 
 .smalltitle {
+  font-family: "Helvetica Neue LT W05 75 Bold";
+  text-transform: uppercase;
   font-size: 16px !important;
 }
 
@@ -1871,6 +1881,7 @@ export default {
         demolitionYear: '',
         text: '',
         text2: '',
+        author: '',
         marker: e
       };
     },
@@ -1987,7 +1998,8 @@ export default {
               demolitionYear: this.newAnnotation.demolitionYear,
               description: this.newAnnotation.text,
               moreinfo: this.newAnnotation.moreinfo,
-              comment: this.newAnnotation.comment
+              comment: this.newAnnotation.comment,
+              commentAuthor: this.newAnnotation.author
             }
           };
           break;
