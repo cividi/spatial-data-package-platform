@@ -411,7 +411,7 @@ export default {
           },
           layout: {
             'text-field': '{point_count_abbreviated}',
-            'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+            'text-font': ['Queue Bold', 'Arial Unicode MS Bold'],
             'text-size': 14
           }
         });
