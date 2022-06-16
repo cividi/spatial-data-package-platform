@@ -812,7 +812,7 @@
             id="commentedit"
             light width="400" class="pt-2 elevation-6"
           >
-            <h3 class="py-2 px-4">
+            <h3 class="py-2 px-4 text-uppercase">
               <span>{{ c$t(annotationKindKey[newAnnotation.kind]+'.new') }}</span>
             </h3>
             <v-form
@@ -842,6 +842,14 @@
                         /><p>{{data.item.name}}</p>
                       </template>
                     </v-select>
+                     <v-text-field
+                      v-if="newAnnotation.kind === 'OBJ' && newAnnotation.category === 3"
+                      v-model="newAnnotation.otherText"
+                      validate-on-blur
+                      :label="
+                        c$t(annotationKindKey[newAnnotation.kind] + '.other')
+                      "
+                    ></v-text-field>
                     <v-select
                       v-if="statesList.length > 0"
                       :items="statesList"
@@ -852,14 +860,6 @@
                       :rules="[v => !!v || $t('mandatory')]"
                       required
                     ></v-select>
-                    <v-text-field
-                      v-if="newAnnotation.kind === 'OBJ'"
-                      v-model="newAnnotation.otherText"
-                      validate-on-blur
-                      :label="
-                        c$t(annotationKindKey[newAnnotation.kind] + '.other')
-                      "
-                    ></v-text-field>
                     <v-text-field
                       v-model="newAnnotation.title"
                       :label="c$t(annotationKindKey[newAnnotation.kind] + '.title')"
@@ -1554,7 +1554,8 @@ export default {
         this.$t('object.demoVal.v12')
       ],
       disabledCatPks: [],
-      disabledStatePks: []
+      disabledStatePks: [],
+      geocoderToken: process.env.VUE_APP_GEOCODER_TOKEN
     };
   },
 
@@ -1869,14 +1870,17 @@ export default {
       };
     },
 
-    newObject(e) {
+    async newObject(e) {
       this.addingAnnotation = null;
       this.commentstepper = 1;
+      const addressData = await this.getAddress(
+        e._lngLat.lat, e._lngLat.lng // eslint-disable-line no-underscore-dangle
+      );
       this.newAnnotation = {
         kind: 'OBJ',
         other: '',
-        title: '',
-        subtitle: '',
+        title: `${addressData.streetNumber}`,
+        subtitle: `${addressData.cityZip}`,
         constructionYear: '',
         demolitionYear: '',
         text: '',
@@ -1884,6 +1888,27 @@ export default {
         author: '',
         marker: e
       };
+    },
+
+    async getAddress(lat, lng) {
+      console.log(lat, lng) // eslint-disable-line
+      const request = `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&lang=${this.$route.params.lang}&format=json&apiKey=${this.geocoderToken}`;
+      return fetch(request)
+        .then(res => res.json())
+        .then((json) => {
+          console.log(json); // eslint-disable-line no-console
+          if (json.results[0]) {
+            const address = json.results[0];
+            return {
+              streetNumber: `${address.address_line1}`,
+              cityZip: `${address.postcode}, ${address.city}`
+            };
+          }
+          return {
+            streetNumber: '',
+            cityZip: ''
+          };
+        });
     },
 
     mapMovestart() {
