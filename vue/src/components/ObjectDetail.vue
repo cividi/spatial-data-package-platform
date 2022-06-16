@@ -129,7 +129,11 @@
           <div v-if="curObj.category.commentsEnabled">
             <h3>{{ $t('comment') }}</h3>
             <div v-if="curObj.data.properties.comment">
-              <p>{{ curObj.data.properties.comment }}</p>
+              <p>
+                <span v-if="curObj.data.properties.commentAuthor">
+                  {{ curObj.data.properties.commentAuthor }}: </span>
+                {{ curObj.data.properties.comment }}
+              </p>
             </div>
             <div id="commento"></div>
           </div>
