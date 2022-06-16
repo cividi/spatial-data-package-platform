@@ -23,7 +23,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
 from django.utils.html import escape, format_html
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
@@ -667,8 +667,8 @@ class Attachement(models.Model):
 def send_new_annotation_email(sender, instance, created, **kwargs):
     if created and instance.author_email:
         recipient = instance.author_email
-        subject = _('Beitrag freischalten')
-        message = _('Besten Dank für Ihren Beitrag!\n')
+        subject = 'Beitrag freischalten / Publish contribution / Activer la contribution / Sblocca post'
+        message = ''
 
         base = get_backend()
         frontend = get_website(Site.objects.first())
@@ -681,18 +681,54 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
             publishKeyHex = hashlib.md5(uniquestr.encode()).hexdigest()
             publish_url = reverse('annotation-publish', args=[idstr, publishKeyHex])
 
-            message += _('Sie können ihn unter folgender URL freischalten:\n')
-            message += _(f'{base["base"]}{publish_url}\n')
-            message += '--' * 30
-        else:
-            message += _("Leider ist die Beteiligung nun abgeschlossen.\n")
-            message += _(f"Zur Karte mit allen öffentlichen Beiträgen: {frontend['base']}/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/\n")
-            message += '--' * 30
+            message += 'Note: Englisch below / En français ci-dessous / Italiano di seguito\n'
+            message += '\n'
 
-        send_mail(
+            message += 'Besten Dank für Ihren Beitrag!\n'
+            message += 'Sie können ihren unter folgender URL freischalten:\n'
+            message += '--' * 30 + '\n'
+
+            message += 'Thank you very much for your contribution!\n'
+            message += 'You can publish your submission at the following link:\n'
+            message += '--' * 30 + '\n'
+
+            message += 'Merci beaucoup pour votre contribution!\n'
+            message += 'Vous pouvez activer votre contribution en cliquant sur le lien suivant:\n'
+            message += '--' * 30 + '\n'
+
+            message += 'Grazie mille per il vostro contributo!\n'
+            message += 'Potete attivare il vostro contributo al seguente link:\n'
+            message += '\n\n'
+            
+            message += f'{base["base"]}{publish_url}\n'
+            
+        else:
+            message += 'Note: Englisch below / En français ci-dessous / Italiano di seguito\n'
+            message += '\n\n'
+
+            message += "Leider ist die Beteiligung nun abgeschlossen.\n"
+            message += f"Zur Karte mit allen öffentlichen Beiträgen:/\n"
+            message += '--' * 30 + '\n\n'
+
+            message += "Unfortunately, the participation is now closed.\n"
+            message += f"To the map with all public contributions:/\n"
+            message += '--' * 30 + '\n\n'
+
+            message += "Malheureusement, la participation est maintenant terminée.\n"
+            message += f"Vers la carte avec toutes les contributions publiques:/\n"
+            message += '--' * 30 + '\n\n'
+
+            message += "Purtroppo, la partecipazione è ora chiusa.\n"
+            message += f"Alla mappa con tutti i contributi pubblici:\n"
+            message += '--' * 30 + '\n\n'
+
+            message += f"{frontend['base']}/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/"
+        
+        email = EmailMessage(
             subject,
             message,
             None,
             [ recipient ],
-            fail_silently=False,
+            reply_to=["support@dfour.io"]
         )
+        email.send(fail_silently=False,)
