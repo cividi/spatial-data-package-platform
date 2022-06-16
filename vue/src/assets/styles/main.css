@@ -31,6 +31,14 @@ body {
 .v-application {
   font-family: "Queue", sans-serif;
 }
+.v-label--active {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+  text-transform: uppercase;
+}
+
+.v-btn {
+font-family: 'Helvetica Neue LT W05 75 Bold';
+}
 
 
 textarea,
