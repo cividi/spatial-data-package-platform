@@ -87,14 +87,20 @@
 </template>
 
 <style>
+#mainnav {
+  margin-top: 3.5em;
+}
 #mainnav a {
-  margin: 0.25em 0 0.25em auto;
-  font-size: 2em;
-  width: fit-content;
-  font-weight: bold;
-  text-transform: uppercase;
   display: block;
-  right: 0;
+  width: fit-content;
+  margin: auto 0 12px auto;
+  font-family: 'Helvetica Neue LT W05 75 Bold', 'Arial', sans-serif;
+  font-size: 2.2em;
+  font-weight: bold;
+  letter-spacing: 0.06em; /* 60% / 1000 + em */
+  line-height: 1em;
+  text-transform: uppercase;
+  border-bottom: 8px solid #000;
 }
 
 #topbar {

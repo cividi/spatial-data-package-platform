@@ -59,8 +59,8 @@
   /* border-bottom: 6px solid black; */
   padding-bottom: 0;
   line-height: 1.2em;
-  margin-bottom: 0.5em;
-  margin-top: 0.5em;
+  margin-bottom: 0.1em;
+  margin-top: 1.5em;
   width: fit-content;
 }
 #project h2 {

@@ -1204,7 +1204,7 @@ body,
 
 #buttons {
   position: absolute;
-  top: 13.5em;
+  top: 20em;
   right: 1.6em;
   transition: top 0.3s;
   transition-timing-function: ease-in-out;
@@ -1418,36 +1418,45 @@ p.rating {
 .leaflet-interactive {
   transition: opacity 0.3s;
 }
+.mapboxgl-map, .maplibregl-map {
+  font-family: "Queue", sans-serif;
+}
 
 .maplibregl-ctrl-geocoder .suggestions li {
   font-size: 1em !important;
 }
 
 .maplibregl-ctrl-geocoder--icon-search {
-    left: 7px;
-    width: 20px;
-    height: 20px;
+  left: 7px;
+  width: 20px;
+  height: 20px;
 }
 
 .maplibregl-ctrl-geocoder--input {
-    height: 36px;
-    padding: 6px 35px;
+  height: 36px;
+  padding: 6px 35px;
 }
 
 .maplibregl-ctrl-geocoder--icon {
-    top: 8px;
+  top: 8px;
 }
 
 .maplibregl-ctrl-geocoder {
-    width: 33.3333%;
-    font-size: 15px;
-    line-height: 20px;
-    max-width: 360px;
+  font-family: "Queue", sans-serif;
+  width: 33.3333%;
+  font-size: 15px;
+  line-height: 20px;
+  max-width: 360px;
 }
 
 .maplibregl-ctrl-geocoder.maplibregl-ctrl-geocoder--collapsed {
-    width: 36px;
-    min-width: 36px;
+  width: 36px;
+  min-width: 36px;
+}
+
+.mapboxgl-ctrl-geocoder--result-title .maplibregl-ctrl-geocoder--result-title {
+  font-family: "Helvetica Neue LT W05 75 Bold", "Arial", sans-serif;
+  font-weight: bold;
 }
 
 #logo {
