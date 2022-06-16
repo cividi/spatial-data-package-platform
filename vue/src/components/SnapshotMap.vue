@@ -1031,7 +1031,7 @@
             <v-btn
               color="primary"
               text
-              @click="dialog = false"
+              @click="dialog = false; $router.push({ name: 'workspace' });"
             >
               OK
             </v-btn>
@@ -1234,8 +1234,9 @@ span.statusLabel {
 }
 
 .addHint {
+  font-family: 'Helvetica Neue LT W05 75 Bold', sans-serif;
   position: absolute;
-  top: -4px;
+  bottom: 50px;
   left: 50%;
   width: 680px;
   margin-left: -340px;
