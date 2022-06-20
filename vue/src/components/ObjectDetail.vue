@@ -139,7 +139,7 @@
   overflow: auto;
 }
 
-h3, h4 {
+.topContainer h3, h4 {
   font-size: 3.5em;
   width: fit-content;
   line-height: 1em;
