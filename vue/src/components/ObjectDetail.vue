@@ -78,32 +78,32 @@
           </div>
 
           <v-container class="body-1 mainDetails">
-            <v-row class="objectData">
+            <v-row class="objectData" v-if="curObj.category.name">
               <v-col class="px-0 py-0">
                 <span>{{ $t('category') }}</span> {{ curObj.category.name }}
               </v-col>
             </v-row>
-            <v-row class="objectData">
+            <v-row class="objectData" v-if="curObj.data.properties.constructionYear">
               <v-col class="px-0 py-1">
                 <span>{{ $t('constructed') }}</span> {{ curObj.data.properties.constructionYear }}
               </v-col>
             </v-row>
-            <v-row class="objectData">
+            <v-row class="objectData" v-if="curObj.data.properties.demolitionYear">
               <v-col class="px-0 py-1">
                 <span>{{ $t('demolished') }}</span> {{ curObj.data.properties.demolitionYear }}
               </v-col>
             </v-row>
-            <v-row class="objectData">
+            <v-row class="objectData" v-if="curObj.data.properties.description">
               <v-col class="px-0 py-1">
                 <span>{{ $t('description') }}</span> {{ curObj.data.properties.description }}
               </v-col>
             </v-row>
-            <v-row class="objectData">
+            <v-row class="objectData" v-if="curObj.data.properties.moreinfo">
               <v-col class="px-0 py-1">
                 <span>{{ $t('moreinfo') }}</span> {{ curObj.data.properties.moreinfo }}
               </v-col>
             </v-row>
-            <v-row  v-if="curObj.category.commentsEnabled">
+            <v-row v-if="curObj.category.commentsEnabled || curObj.data.properties.comment">
               <v-col class="px-0 py-0">
                 <span>{{ $t('comment') }}</span>
               </v-col>
@@ -115,7 +115,7 @@
                 </span> {{ curObj.data.properties.comment }}
               </v-col>
             </v-row>
-            <v-row>
+            <v-row v-if="curObj.category.commentsEnabled">
               <v-col class="px-0 py-0">
                 <div id="commento"></div>
               </v-col>
