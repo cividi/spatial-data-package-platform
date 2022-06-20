@@ -118,6 +118,7 @@
 }
 .v-image__image {
   background-color: rgba(0, 0, 0, 0.1);
+  border: 1px red solid;
 }
 .requestable.v-list-item {
   border: 1px dashed #9b9b9b73;

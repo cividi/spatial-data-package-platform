@@ -32,12 +32,12 @@ body {
   font-family: "Queue", sans-serif;
 }
 .v-label--active {
-  font-family: 'Helvetica Neue LT W05 75 Bold';
+  font-family: 'Helvetica Neue LT W05 75 Bold', sans-serif;
   text-transform: uppercase;
 }
 
 .v-btn {
-font-family: 'Helvetica Neue LT W05 75 Bold';
+  font-family: 'Helvetica Neue LT W05 75 Bold', sans-serif;
 }
 
 
