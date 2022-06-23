@@ -19,23 +19,24 @@
   <div id="annotationsview">
     <transition-group
       name="list" tag="ul"
-      class="annotationslist pa-0 pt-15 smaller"
+      class="annotationslist px-5 pt-15 smaller"
       appear
       :after-appear="afterAppear"
     >
       <li
         v-for="annotation in filteredAnnotationList"
         :key="annotation.pk"
-        class="pa-4"
+        class="px-2"
         :class="stateClass(annotation)"
         @click="$router.push({ name: 'annotationsList', params: { annoid: annotation.pk } })">
         <v-img
           v-if="annotation.attachements.length > 0"
           contain
           aspect-ratio="1"
+          position="center bottom"
           :src="djangobaseurl + '/media/' + annotation.attachements[0].document"
         />
-        <header>
+        <header class="pt-2">
           <h3>{{annotation.data.properties.title}}</h3>
           <h4>{{annotation.data.properties.subtitle}}</h4>
         </header>
@@ -123,11 +124,19 @@
 }
 .annotationslist {
   list-style: none;
-  display: grid;
+  /* display: grid;
   grid-template-columns: repeat(auto-fill, 25vw);
-  grid-template-rows: auto;
+  grid-template-rows: auto; */
+  display: flex;
+  justify-content: space-between;
+  flex-flow: row wrap;
   position: relative;
 }
+.annotationslist::after {
+  content: "";
+  flex: auto;
+}
+
 @media (max-width: 500px) {
   .annotationslist {
     grid-template-columns: repeat(auto-fill, 50vw);
@@ -141,9 +150,24 @@
 .annotationslist li {
   font-size: inherit;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  /* display: flex; */
+  /* flex-direction: column;
+  justify-content: flex-end; */
+  width: 250px;
+  height: 320px;
+}
+
+.annotationslist header h3, .annotationslist header h4 {
+  font-family: "Queue", sans-serif;
+  font-size: 16px;
+  text-align: left;
+  line-height: 1.2em;
+  text-transform: none;
+  border-bottom: none;
+}
+
+.annotationslist header {
+  height: 70px;
 }
 
 .annotationslist .v-image__image {
@@ -158,12 +182,12 @@
   transition: all 1s ease;
 }
 
-.list-enter-active {
+/* .list-enter-active {
   animation: scaleIn 1s;
 }
 .list-leave-active {
   animation: scaleIn 1s reverse;
-}
+} */
 
 @keyframes scaleIn {
   from {
