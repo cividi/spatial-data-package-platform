@@ -79,15 +79,6 @@ export default {
           show: true,
           position: 'top-left',
           options: {
-            showResultsMarker: true,
-            countries: 'ch',
-            trackProximity: true,
-            flyto: {
-              maxZoom: 17
-            },
-            zoom: 17,
-            minLength: 3,
-            limit: 10,
             showResultsWhileTyping: true
           }
         };
@@ -152,6 +143,7 @@ export default {
   // },
 
   methods: {
+
     mapInit() {
       if (!Object.prototype.hasOwnProperty.call(this.mapOptions, 'container')) {
         this.mapOptions.container = 'map';
@@ -419,7 +411,7 @@ export default {
           },
           layout: {
             'text-field': '{point_count_abbreviated}',
-            'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+            'text-font': ['Queue Bold', 'Arial Unicode MS Bold'],
             'text-size': 14
           }
         });
@@ -566,6 +558,9 @@ export default {
   },
 
   computed: {
+    breakpoints() {
+      return this.$vuetify.breakpoint;
+    },
     mapOptions() {
       let center = [0, 0];
       let zoom = 7;

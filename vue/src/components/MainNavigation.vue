@@ -31,7 +31,7 @@
 
 <template>
   <div>
-    <v-app-bar app prominent flat id="topbar" absolute style="pointer-events: none;">
+    <v-app-bar app prominent flat id="topbar" absolute>
       <v-row no-gutters>
         <v-col cols="7" class="text-left">
           <nav class="d-none d-sm-block">
@@ -49,7 +49,7 @@
             @click="mobnav=!mobnav" class="d-sm-none"
             style="pointer-events: all;">
           </v-app-bar-nav-icon>
-          <nav id="mainnav" class="d-none d-sm-block" style="pointer-events: all;">
+          <nav id="mainnav" class="d-none d-sm-block">
             <router-link
               v-for="item in mainnav"
               :key="item.textKey"
@@ -87,19 +87,27 @@
 </template>
 
 <style>
+#mainnav {
+  margin-top: 3.5em;
+}
 #mainnav a {
-  margin: 0.25em 0 0.25em auto;
-  font-size: 2em;
-  width: fit-content;
-  font-weight: bold;
-  text-transform: uppercase;
+  pointer-events: all;
   display: block;
-  right: 0;
+  width: fit-content;
+  margin: auto 0 12px auto;
+  font-family: 'Helvetica Neue LT W05 75 Bold', 'Arial', sans-serif;
+  font-size: 2.2em;
+  font-weight: bold;
+  letter-spacing: 0.06em; /* 60% / 1000 + em */
+  line-height: 1em;
+  text-transform: uppercase;
+  border-bottom: 8px solid #000;
 }
 
 #topbar {
   background-color: transparent;
   font-size: 1em !important;
+  pointer-events: none;
 }
 
 .v-application .mobnav a {
