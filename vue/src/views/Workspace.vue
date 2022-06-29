@@ -259,29 +259,6 @@ export default {
                   fullname
                 }
               }
-              annotations {
-                id
-                pk
-                kind
-                rating
-                data
-                category {
-                  pk
-                  name(languageCode: $lang)
-                  icon
-                  color
-                  commentsEnabled
-                }
-                state {
-                  pk
-                  name(languageCode: $lang)
-                  decoration
-                }
-                attachements {
-                  document
-                  myOrder
-                }
-              }
               categories {
                 pk
                 color
@@ -353,6 +330,17 @@ export default {
         this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);
         this.$store.commit('setBfsname', snapshot.municipality.fullname);
       }
+
+      const annotationsProxy = `/annotations/${this.$route.params.lang}/${this.wshash}/`;
+      const res = await fetch(annotationsProxy, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!res.ok) {
+        throw new Error(`${res.status}: ${res.statusText}`);
+      }
+      const json = await res.json();
+      workspace.annotations = json.workspace.annotations;
 
       this.snapshotsWorkspace = workspace.snapshots;
       this.annotations.items = workspace.annotations;
