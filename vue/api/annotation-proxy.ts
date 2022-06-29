@@ -63,7 +63,7 @@ async function graphQLFetch<T extends GraphQlData>(
 export default async (req) => {
   console.log(JSON.stringify(req));
 
-  const url = "";
+  const url = process.env.VUE_APP_GRAPHQL_URI;
   const query = `query getworkspace($wshash: ID!, $lang: LanguageCodeEnum!) {
     workspace(id: $wshash) {
       annotations {
