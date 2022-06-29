@@ -36,9 +36,6 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   if(url && wshash && lang) {
     const wshash_base64 = Buffer.from(wshash).toString('base64');
 
-    console.log(req.query);
-    console.log(url, wshash, wshash_base64);
-
     const query = `query getworkspace($wshash: ID!, $lang: LanguageCodeEnum!) {
       workspace(id: $wshash) {
         annotations {
@@ -76,8 +73,8 @@ export default async (req: VercelRequest, res: VercelResponse) => {
       query,
       variables
     );
-
+    
+    res.setHeader('Cache-Control', 'max-age=0, s-maxage=900, stale-while-revalidate');
     return res.status(200).json({ workspace });
-    // new Response(JSON.stringify(workspace));
   }
 }
