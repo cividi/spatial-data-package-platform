@@ -1,42 +1,11 @@
-export const config = {
-  runtime: 'experimental-edge',
-};
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import fetch from 'node-fetch';
 
 type GraphQlData = { [key: string]: any, [index: number]: never };
 
 interface GraphQlResponse<T extends GraphQlData> {
   data: T;
   errors?: Array<{ message: string }>;
-}
-
-interface Category {
-  pk: Number;
-  name: String;
-  icon: String;
-  color: String;
-  commentsEnabled: Boolean;
-}
-
-interface State {
-  pk: Number;
-  name: String;
-  decoration: String;
-}
-
-interface Attachement {
-  document: String;
-  myOrder: Number;
-}
-
-interface Annotations {
-  id: String;
-  pk: Number;
-  kind: String;
-  rating: Number;
-  data: Object;
-  category: Category;
-  state: State;
-  attachements: Attachement[];
 }
 
 async function graphQLFetch<T extends GraphQlData>(
@@ -52,55 +21,63 @@ async function graphQLFetch<T extends GraphQlData>(
   if (!res.ok) {
     throw new Error(`${res.status}: ${res.statusText}`);
   }
-
-  const graphQlRes: GraphQlResponse<T> = await res.json();
+  const graphQlRes: GraphQlResponse<T> = (await res.json() as GraphQlResponse<T>);
   if (graphQlRes.errors) {
     throw new Error(graphQlRes.errors.map((err) => err.message).join("\n"));
   }
-  return graphQlRes.data.workspace;
+  return graphQlRes.data;
 }
 
-export default async (req) => {
-  console.log(JSON.stringify(req));
+export default async (req: VercelRequest, res: VercelResponse) => {
+  const url = `${process.env.VUE_APP_GRAPHQL_URI}`;
+  const wshash = `WorkspaceNode:${req.query.workspace}` || null;
+  const lang = req.query.lang || 'de';
 
-  const url = process.env.VUE_APP_GRAPHQL_URI;
-  const query = `query getworkspace($wshash: ID!, $lang: LanguageCodeEnum!) {
-    workspace(id: $wshash) {
-      annotations {
-        id
-        pk
-        kind
-        rating
-        data
-        category {
+  if(url && wshash && lang) {
+    const wshash_base64 = Buffer.from(wshash).toString('base64');
+
+    console.log(req.query);
+    console.log(url, wshash, wshash_base64);
+
+    const query = `query getworkspace($wshash: ID!, $lang: LanguageCodeEnum!) {
+      workspace(id: $wshash) {
+        annotations {
+          id
           pk
-          name(languageCode: $lang)
-          icon
-          color
-          commentsEnabled
-        }
-        state {
-          pk
-          name(languageCode: $lang)
-          decoration
-        }
-        attachements {
-          document
-          myOrder
+          kind
+          rating
+          data
+          category {
+            pk
+            name(languageCode: $lang)
+            icon
+            color
+            commentsEnabled
+          }
+          state {
+            pk
+            name(languageCode: $lang)
+            decoration
+          }
+          attachements {
+            document
+            myOrder
+          }
         }
       }
+    }`;
+    const variables = {
+        wshash: wshash_base64,
+        lang
     }
-  }`;
-  const variables = {
-      wshash: "V29ya3NwYWNlTm9kZTpZRjA2Wg==",
-      lang: "de"
+
+    const { workspace } = await graphQLFetch<{ workspace: Object }>(
+      url,
+      query,
+      variables
+    );
+
+    return res.status(200).json({ workspace });
+    // new Response(JSON.stringify(workspace));
   }
-
-  const { workspace } = await graphQLFetch<{ workspace: { annotations: Annotations[] } }>(
-    url,
-    query,
-    variables
-  );
-
-  new Response(JSON.stringify(workspace));
 }
