@@ -147,6 +147,7 @@
     }
   ],
   "rewrites": [
+    { "source": "/annotations/:lang/:workspace/", "destination": "/api/annotation-proxy" },
     {
       "source": "/(de|fr|it|en)/",
       "destination": "/app.html"
