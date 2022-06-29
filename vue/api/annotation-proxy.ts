@@ -74,7 +74,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
       variables
     );
     
-    res.setHeader('Cache-Control', 'max-age=0, s-maxage=900, stale-while-revalidate');
+    res.setHeader('Cache-Control', 'max-age=0, s-maxage=300, stale-while-revalidate');
     return res.status(200).json({ workspace });
   }
 }
