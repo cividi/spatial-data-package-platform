@@ -1,0 +1,1 @@
+Thank you for your request! We are tracking your request as ticket %{ISSUE_PATH}, and will respond as soon as we can.
