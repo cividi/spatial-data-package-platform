@@ -1,1 +1,1 @@
-/label ~Team::Service Desk
+/label ~"Team::Service Desk"
