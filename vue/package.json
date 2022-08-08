@@ -36,7 +36,7 @@
     "lodash": "^4.17.20",
     "mapbox.js": "^3.2.1",
     "normalize-url": "^4.5.1",
-    "postcss": "^7.0.36",
+    "postcss": "^8.4.16",
     "ssri": "^7.1.1",
     "vh-check": "^2.0.5",
     "vue": "^2.6.10",
