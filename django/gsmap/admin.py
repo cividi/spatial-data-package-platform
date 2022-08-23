@@ -1,3 +1,4 @@
+import json
 from django.contrib.gis import admin
 from django.contrib.admin import SimpleListFilter
 from django.contrib import admin as admin_
@@ -299,7 +300,7 @@ class AnnotationAdmin(admin.ModelAdmin):
         response = HttpResponse(content_type="text/csv")
         response['Content-Disposition'] = 'attachment; filename="export.csv"'
         writer = csv.writer(response)
-        writer.writerow(['no', 'created (UTC)', 'title', 'description', 'usergroup_type', 'usergroup', 'category_type', 'category', 'rating', 'workspace', 'public', 'email_hash', 'email_domain', 'geojson'])
+        writer.writerow(['no', 'created (UTC)', 'title', 'description', 'usergroup_type', 'usergroup', 'category_type', 'category', 'rating', 'workspace', 'public', 'email_hash', 'email', 'geojson'])
 
         for i, r in enumerate(queryset.all()):
             w = r.workspace
@@ -324,8 +325,8 @@ class AnnotationAdmin(admin.ModelAdmin):
                 w.title,
                 r.public,
                 r.email_hash_short,
-                r.email_domain,
-                r.data
+                r.email,
+                json.dumps(r.data)
             ])
         return response
     export_as_csv.short_description = _("Export selected annotations")

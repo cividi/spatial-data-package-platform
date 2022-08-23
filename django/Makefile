@@ -15,10 +15,10 @@ build_docker_gh:
 	DOCKER_BUILDKIT=1 \
 	docker buildx build \
 		-t registry.gitlab.com/cividi/dfour/dfour-hub:latest \
-		-t registry.gitlab.com/cividi/dfour/dfour-hub:$(DJANGO_VERSION_PREV) \
+		-t registry.gitlab.com/cividi/dfour/dfour-hub:$(DJANGO_VERSION) \
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
 		--platform linux/amd64 \
-		--cache-from ghcr.io/cividi/dfour-hub:$(DJANGO_VERSION) \
+		--cache-from registry.gitlab.com/cividi/dfour/dfour-hub:$(DJANGO_VERSION_PREV) \
 		--push \
 		.
 
