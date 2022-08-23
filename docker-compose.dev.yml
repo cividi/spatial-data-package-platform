@@ -112,8 +112,9 @@ services:
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
       - START_CELERY_WORKER=YES
+      - AUTORELOAD_CELERY_WORKER=YES
       - DJANGO_SECRET_KEY=${DJANGO_SECRET}
-      - SECRET_KEY=${DJANGO_SECRET}
+      # - SECRET_KEY=${DJANGO_SECRET}
       - DJANGO_SETTINGS_MODULE=main.settings
     working_dir: /opt/app
     volumes:

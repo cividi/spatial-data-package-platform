@@ -3,7 +3,7 @@ import json
 import base64
 from celery import shared_task
 import requests
-from main.settings import API_CACHE_ROOT
+from main.settings import API_CACHE_ROOT, INTERNAL_HOST
 
 
 @shared_task
@@ -89,7 +89,7 @@ def update_cache(ws_hash, lang):
     wshash_base64 = base64.urlsafe_b64encode(f"WorkspaceNode:{ws_hash}".encode("utf-8"))
 
     r = requests.post(
-        f"http://django:8081/graphql/",
+        f"{INTERNAL_HOST}/graphql/",
         json = {
             'query': query,
             'variables': {

@@ -1,5 +1,5 @@
-DJANGO_VERSION=3.2.0
-DJANGO_VERSION_PREV=3.1.12b
+DJANGO_VERSION=1.0.0-beta.2
+DJANGO_VERSION_PREV=1.0.0-beta.1
 NOTTY=$(shell command [ "$$DOCKER_NOTTY" = YES ] && echo "-T")
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec $(NOTTY) django")
 SHELL := /bin/bash
@@ -14,9 +14,10 @@ enter:
 build_docker_gh:
 	DOCKER_BUILDKIT=1 \
 	docker buildx build \
-		-t ghcr.io/cividi/dfour-hub:dev \
+		-t registry.gitlab.com/cividi/dfour/dfour-hub:latest \
+		-t registry.gitlab.com/cividi/dfour/dfour-hub:$(DJANGO_VERSION_PREV) \
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
-		--platform linux/amd64,linux/arm64 \
+		--platform linux/amd64 \
 		--cache-from ghcr.io/cividi/dfour-hub:$(DJANGO_VERSION) \
 		--push \
 		.

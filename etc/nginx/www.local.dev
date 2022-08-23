@@ -38,6 +38,15 @@ server {
     }
 
     location /workspaces {
+        if ($request_method = OPTIONS ) {
+            add_header "Access-Control-Allow-Origin" *;
+            add_header "Access-Control-Allow-Methods" "GET, OPTIONS";
+            add_header "Access-Control-Allow-Headers" "Authorization, Origin, X-Requested-With, Content-Type, Accept";
+            add_header Content-Length 0;
+            add_header Content-Type text/plain;
+            return 200;
+        }
+        add_header "Access-Control-Allow-Origin" *;
         alias /var/services/django/cache;
     }
 
