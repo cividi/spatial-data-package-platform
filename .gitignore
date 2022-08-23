@@ -9,3 +9,4 @@ __pycache__/
 docker-compose.yml
 etc/nginx/*.conf
 www
+celerybeat-schedule

@@ -270,12 +270,28 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'WARNING',
+        'level': 'INFO',
     },
     'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
+        },
         'mozilla_django_oidc': {
             'handlers': ['console'],
             'level': 'DEBUG'
         },
     }
 }
+
+# Celery Configuration Options
+CELERY_TIMEZONE = "Europe/Zurich"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 10 * 60
+
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER', 'redis://redis:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_BACKEND', 'redis://redis:6379/0')
+
+API_CACHE_ROOT = '/var/services/django/cache'

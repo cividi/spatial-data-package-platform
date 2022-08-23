@@ -31,3 +31,6 @@ gunicorn \
 --access-logfile /var/services/django/log/gunicorn.access.log \
 -k uvicorn.workers.UvicornWorker \
 main.asgi:application
+
+# populate workspace cache
+python3 manage.py populate-cache

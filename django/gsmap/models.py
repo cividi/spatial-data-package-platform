@@ -35,7 +35,9 @@ from parler.models import TranslatableModel, TranslatedFields
 from django.contrib.auth.models import Group
 from gsuser.models import User
 from main.utils import get_website, get_backend
+from main.settings import LANGUAGES, API_CACHE_ROOT
 
+from .tasks import update_cache
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
 
@@ -663,8 +665,14 @@ class Attachement(models.Model):
     #kind = models.CharField(max_length=4)
     my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
 
+
 @receiver(post_save, sender=Annotation)
 def send_new_annotation_email(sender, instance, created, **kwargs):
+    
+    # Update workspace annotations cache
+    for lang in LANGUAGES:
+        update_cache.delay(instance.workspace.pk, lang[0])
+    
     if created and instance.author_email:
         recipient = instance.author_email
         subject = 'Beitrag freischalten / Publish contribution / Activer la contribution / Sblocca post'

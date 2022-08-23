@@ -37,6 +37,10 @@ server {
         alias /var/services/django/media/cache;
     }
 
+    location /workspaces {
+        alias /var/services/django/cache;
+    }
+
     location /media {
         alias /var/services/django/media;
     }
