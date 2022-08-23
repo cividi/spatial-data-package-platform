@@ -19,6 +19,7 @@ class AnnotationSerializer(serializers.ModelSerializer):
             'category',
             'state',
             'author_email',
+            'author_email_shared',
             'usergroup',
             'workspace',
         )

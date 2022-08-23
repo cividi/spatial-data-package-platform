@@ -248,14 +248,15 @@ class AnnotationAdmin(admin.ModelAdmin):
         'usergroup',
         'category',
         'state',
-        'email_domain',
+        'author_email_shared',
+        'email',
         'email_hash_short',
         'kind',
         'workspace',
     )
     inlines = [ AttachementInline, ]
     list_filter = (MissingAttachmentFilter, AnnotationWorkspaceFilter, CategoryGroupFilter, 'kind', UsergroupGroupFilter)
-    search_fields = ('id', 'data')
+    search_fields = ('id', 'data', 'attachement__document')
     actions = ['make_published','make_unpublished','export_as_csv']
 
     def get_queryset(self, request): 

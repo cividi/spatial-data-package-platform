@@ -596,6 +596,7 @@ class Annotation(models.Model):
         null=True, on_delete=models.SET_NULL
     )
     author_email = models.EmailField(_("author email"), max_length=254)
+    author_email_shared = models.BooleanField(_("author email shared"), default=False)
     rating = models.DecimalField(_("rating"), default=0, decimal_places=2, max_digits=6)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
 
@@ -620,9 +621,11 @@ class Annotation(models.Model):
             return None
 
     @property
-    def email_domain(self):
-        if self.author_email:
-            return self.author_email.split("@")[1]
+    def email(self):
+        if self.author_email and not self.author_email_shared:
+            return f"***@{self.author_email.split('@')[1]}"
+        elif self.author_email and self.author_email_shared:
+            return self.author_email
         return None
 
     @property
