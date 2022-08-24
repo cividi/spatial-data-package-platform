@@ -297,10 +297,25 @@ class AnnotationAdmin(admin.ModelAdmin):
         return request.user.has_perm('%s.%s' % (opts.app_label, codename))
 
     def export_as_csv(self, request, queryset):
+        extrafields = [
+            ("other",8,'category_other'),
+            ("subtitle",4,'zip_city'),
+            ("text",5,'architecture'),
+            ("moreinfo",6,'reason_for_demolition'),
+            ("comment",-1,'comment'),
+            ("commentAuthor",-1,'comment_author'),
+            ("constructionYear",7,'construction_year'),
+            ("demolitionYear",8,'demolition_year'),
+        ]
+
         response = HttpResponse(content_type="text/csv")
         response['Content-Disposition'] = 'attachment; filename="export.csv"'
         writer = csv.writer(response)
-        writer.writerow(['no', 'created (UTC)', 'title', 'description', 'usergroup_type', 'usergroup', 'category_type', 'category', 'rating', 'workspace', 'public', 'email_hash', 'email', 'geojson'])
+        
+        header = ['no', 'created (UTC)', 'title', 'description', 'usergroup_type', 'usergroup', 'category_type', 'category', 'state_type', 'state', 'rating', 'workspace', 'public', 'email_hash', 'email', 'geojson']
+        for extra in extrafields:
+            header.insert(extra[1], extra[2])
+        writer.writerow(header)
 
         for i, r in enumerate(queryset.all()):
             w = r.workspace
@@ -308,11 +323,15 @@ class AnnotationAdmin(admin.ModelAdmin):
             ug = u.group if u else None
             c = r.category
             cg = c.group if c else None
+            s = r.state
+            sg = s.group if s else None
             u_name = u.name if u else None
             u_group = ug.name if ug else None
             c_name = c.name if c else None
-            c_group = ug.name if ug else None
-            writer.writerow([
+            c_group = cg.name if cg else None
+            s_name = s.name if s else None
+            s_group = sg.name if sg else None
+            row = [
                 i + 1, 
                 r.created.strftime("%Y-%m-%d %H:%M:%S"),
                 r.title,
@@ -321,13 +340,19 @@ class AnnotationAdmin(admin.ModelAdmin):
                 u_name,
                 c_group,
                 c_name,
+                s_group,
+                s_name,
                 r.rating,
                 w.title,
                 r.public,
                 r.email_hash_short,
                 r.email,
                 json.dumps(r.data)
-            ])
+            ]
+            for extra in extrafields:
+                extra_data = r.data["properties"][extra[0]] if r.data and extra[0] in r.data["properties"].keys() else None
+                row.insert(extra[1], extra_data)
+            writer.writerow(row)
         return response
     export_as_csv.short_description = _("Export selected annotations")
     export_as_csv.allowed_permissions = ('export',)
