@@ -20,6 +20,7 @@ urlpatterns = [
     path('annotation/publish/<int:pk>/<str:publishKeyHex>',
          AnnotationPublishView.as_view(),
          name='annotation-publish'),
+    path('markdownx/', include('markdownx.urls')), 
     path('account/login/',
          CustomLoginView.as_view(template_name='registration/login.html'),
          name='login'),

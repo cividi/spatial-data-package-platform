@@ -1,5 +1,6 @@
 import os
 import os.path
+import graphene
 
 from django.utils.translation import gettext_lazy as _
 
@@ -71,6 +72,7 @@ INSTALLED_APPS = [
     'django_apscheduler',
     'solo',
     'parler',
+    'markdownx',
 
     # own
     'gsuser',
@@ -296,3 +298,8 @@ CELERY_BROKER_URL = os.getenv('CELERY_BROKER', 'redis://redis:6379/0')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_BACKEND', 'redis://redis:6379/0')
 
 API_CACHE_ROOT = '/var/services/django/cache'
+
+Q_LANGUAGE = graphene.Enum(
+    "LanguageCodeEnum",
+    [(lang[0], lang[1]) for lang in LANGUAGES],
+)

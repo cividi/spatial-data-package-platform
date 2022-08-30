@@ -14,6 +14,7 @@ from graphene_django.converter import convert_django_field
 from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, WorkspacePermission, Annotation, Category, State, SpatialDatasette, Usergroup, Attachement
 from graphene_django.rest_framework.mutation import SerializerMutation
 import graphene_django_optimizer as gql_optimizer
+from main.settings import Q_LANGUAGE
 
 
 class GeoJSON(graphene.Scalar):
@@ -33,10 +34,6 @@ def convert_field_to_geojson(field, registry=None):
 Q_SNAPSHOT_ONLY_PUBLIC = Q(permission__exact=SnapshotPermission.PUBLIC)
 Q_SNAPSHOT_WITH_NOT_LISTED = Q(permission__lte=SnapshotPermission.NOT_LISTED)
 Q_WORKSPACE_ONLY_PUBLIC = Q(permission__exact=WorkspacePermission.PUBLIC)
-Q_LANGUAGE = graphene.Enum(
-    "LanguageCodeEnum",
-    [(lang[0], lang[1]) for lang in settings.LANGUAGES],
-)
 
 class SnapshotOnlyPublicFilter(FilterSet):
     class Meta:
