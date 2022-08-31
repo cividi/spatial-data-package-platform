@@ -10,19 +10,19 @@ services:
     hostname: vue
 
   django:
-    image: ghcr.io/cividi/dfour-hub:dev
+    image: registry.gitlab.com/cividi/dfour/dfour-hub:latest
     hostname: django
   
   celery_worker:
-    image: ghcr.io/cividi/dfour-hub:dev
+    image: registry.gitlab.com/cividi/dfour/dfour-hub:latest
     hostname: celery_worker
   
   celery_beat:
-    image: ghcr.io/cividi/dfour-hub:dev
+    image: registry.gitlab.com/cividi/dfour/dfour-hub:latest
     hostname: celery_beat
 
   flower:
-    image: ghcr.io/cividi/dfour-hub:dev
+    image: registry.gitlab.com/cividi/dfour/dfour-hub:latest
     hostname: flower
 
   www:
