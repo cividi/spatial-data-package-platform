@@ -1,0 +1,8 @@
+before_script:
+  - docker info
+
+docker:build:
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  script:
+    - docker build -t registry.gitlab.com/cividi/dfour/dfour-hub:$CI_COMMIT_REF_SLUG django
