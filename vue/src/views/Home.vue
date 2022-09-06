@@ -3,15 +3,27 @@
 {
   "de": {
     "img.1.alt":
-      "Gemeindescan Schweiz",
+      "dføur",
     "h2.2": "Beispiele",
-    "networkerror": "Die Gemeindesuche ist zur Zeit nicht verfügbar."
+    "networkerror": "Die Projekterfassung ist zur Zeit nicht verfügbar."
   },
   "fr": {
     "img.1.alt":
-      "Le Gemeindescan Suisse",
+      "Le dføur",
     "h2.2": "Examples",
-   "networkerror": "La recherche de communauté n'est pas disponible actuellement."
+   "networkerror": "La recherche n'est pas disponible actuellement."
+  },
+  "en": {
+    "img.1.alt":
+      "dføur",
+    "h2.2": "Examples",
+    "networkerror": "The data is currently not available, please try again soon."
+  },
+  "it": {
+    "img.1.alt":
+      "dføur",
+    "h2.2": "Esempi",
+    "networkerror": "I dati non sono attualmente disponibili, riprovare al più presto."
   }
 }
 </i18n>
@@ -19,50 +31,80 @@
 
 <template>
 <div>
-  <v-container my-12 >
-      <div v-if="searchEnabled" class="gmdscn">
-          <img :alt="$t('img.1.alt')" class="" width="100%"
-            src="@/assets/images/gmdscn-ch-map.svg"/>
-          <search :autofocus=true />
+  <v-container my-12>
+    <v-col sm="12" lg="8">
+      <div
+        id="project"
+        v-html="homepageSnippet">
       </div>
-      <v-row justify="center" >
-        <v-col class="introtxt text-center pt-12" v-html=homepageSnippet>
-        </v-col>
-      </v-row>
+    </v-col>
   </v-container>
 
-  <v-container v-if="!networkError && exampleGalleryEnabled" class="center" fluid mb-12>
-      <v-row justify="center">
-        <v-col class="introtxt text-center">
-          <h2>{{ $t('h2.2') }}</h2>
-        </v-col>
-      </v-row>
-
-      <v-row justify="center">
-        <v-col cols="sm" sm="12" md="4" lg="3"
-        v-for="snapshot in snapshotsExamples" :key="snapshot.id">
-          <div>
-
-          <v-btn icon :to="'/' + $i18n.locale +'/'+ snapshot.pk + '/'" height="300">
-            <v-hover v-slot:default="{ hover }">
-              <v-avatar tile size="300">
-                <v-img :src="djangobaseurl + '/media/' + snapshot.thumbnail"></v-img>
-                <v-fade-transition>
-                  <v-overlay v-if="hover" color="primary" opacity="0.6" absolute
-                    style="text-transform: none; white-space: normal; hyphens: auto;">
-                    <h5 style="font-weight: bold; line-height: 1.2em; padding:0.3em;">
-                      {{snapshot.title}}
-                    </h5>
-                    <span style="">{{snapshot.topic}}<br>-<br>{{snapshot.municipality.name}}</span>
-                  </v-overlay>
-                </v-fade-transition>
-              </v-avatar>
-            </v-hover>
-          </v-btn>
-          </div>
-        </v-col>
-      </v-row>
-  </v-container>
+  <div id="teaser">
+    <h1 id="abriss-atlas-schweiz">Abriss-Atlas Schweiz</h1>
+    <p>In der Schweiz werden über 500kg pro Sekunde abgerissen. Woher kommt diese Masse?
+      Was für Gebäude werden abgerissen?
+      Diesen Fragen möchte der Abriss-Atlas Schweiz nachgehen.</p>
+    <h2 id="testphase">Testphase</h2>
+    <p>Diese Website ist im Aufbau. Wir arbeiten partizipatorisch und verbessern im Prozess.
+      Die Einträge im Atlas bilden unter Anderem die Grundlage für die Ausstellung
+      “Die Schweiz: Ein Abriss” im Herbst 2022 im Schweizerischen Architekturmuseum S AM.
+      Um möglichst lange über die Mauern des Museums zu wirken, wird diese Website und ihre
+      Einträge so früh wie möglich der Öffentlichkeit zugänglich gemacht.</p>
+    <h2 id="wer-kann-gebäude-registrieren">Wer kann Gebäude registrieren?</h2>
+    <p>Jede und jeder kann über das Formular einfach Gebäude erfassen, Kommentare und
+      Geschichten zu den Häusern schreiben.</p>
+    <h2 id="wie-finde-ich-heraus-wo-gebäude-abgerissen-werden">Wie finde ich heraus, wo
+      Gebäude abgerissen werden?</h2>
+    <p>Geh mit wachen Augen durch dein Quartier und melde, wenn du einen Abbruch entdeckst! </p>
+    <p>Wenn du gezielter vorgehen willst, sind geplante Abbrüche in Bauanzeigen oder Publikationen
+      online in den Amtsblättern der Gemeinden zu finden. Je nach Gemeinde sind die Begriffe
+      etwas anders, bekannte Suchmaschinen sind hier eine Hilfe.
+      Einige Beispiele:</p>
+    <ul>
+      <li>
+        <a href="https://www.bern.ch/themen/planen-und-bauen/baupublikationen">
+          Stadt Bern
+        </a>
+      </li>
+      <li><a href="https://info.engadin.online/stmoritz">St. Moritz</a></li>
+      <li><a href="https://www.koeniz.ch/aktuell/amtliche-publikationen.page/8">Köniz</a></li>
+    </ul>
+    <h2 id="fehlermeldungen">Fehlermeldungen</h2>
+    <p>Hast Du einen Fehler entdeckt:</p>
+    <ul>
+      <li>Fehler in der Programmierung, Homepage o.ä.: bitte inkl. Link &amp; Screenshot melden an:
+        <a href="mailto:support@dfour.io">support@dfour.io</a>
+      </li>
+      <li>Fehler in den Daten oder Rückmeldungen zum Projekt:
+        <a href="mailto:atlas@countdown2030.ch">atlas@countdown2030.ch</a>
+      </li>
+    </ul>
+    <h2 id="impressum">Impressum</h2>
+    <h3 id="lancierung">Lancierung</h3>
+    <ul>
+      <li><a href="https://www.countdown2030.ch">Countdown 2030</a>, Verein für zukunftsfähige Baukultur</li>
+      <li>Grafik: <a href="https://www.nerak.ch">Karen Trachsel</a></li>
+      <li>Programmierung: <a href="https://dfour.space">dfour</a></li>
+    </ul>
+    <h3 id="partner">Partner</h3>
+    <ul>
+      <li><a href="https://www.sam-basel.org">S AM Schweizerisches Architekturmuseum</a></li>
+      <li><a href="https://www.ita.arch.ethz.ch">Professur für Konstruktionserbe und Denkmalpflege, ETH Zürich, Prof.
+          Silke Langenberg</a></li>
+      <li><a href="https://www.heimatschutz.ch">Schweizer Heimatschutz</a></li>
+    </ul>
+    <h3 id="medienpartner">Medienpartner</h3>
+    <ul>
+      <li><a href="https://www.hochparterre.ch">Hochparterre</a></li>
+      <li><a href="https://www.espazium.ch">espazium</a></li>
+      <li><a href="https://www.espazium.ch/de/tec21">Tec21</a></li>
+      <li><a href="https://www.espazium.ch/it/archi">Archi</a></li>
+      <li><a href="https://www.espazium.ch/fr/revue-traces">Tracé</a></li>
+      <li><a href="https://bajour.ch/">Bajour</a></li>
+      <li><a href="https://tsri.ch/">Tsüri</a></li>
+    </ul>
+  </div>
 
   <v-snackbar color="primary" v-model="snackbar" :timeout="9000">
     {{ $t('networkerror') }}
@@ -75,25 +117,33 @@
 </template>
 
 <style>
-.gmdscn {
-  position: relative;
-  max-width: 720px;
-  margin: 0 auto;
+#teaser {
+  display: none;
 }
-
-.gmdscn .gemeindesuche.v-select {
-  position: absolute;
-  top: calc(50% - 30px);
-  left: 50%;
-  transform: translateX(-50%);
+#project h1,
+#project h2,
+#project h3,
+#project h4 {
+  text-transform: uppercase;
+  /* border-bottom: 6px solid black; */
+  padding-bottom: 0;
+  line-height: 1.2em;
+  margin-bottom: 0.1em;
+  margin-top: 1.5em;
+  width: fit-content;
 }
-
-.introtxt {
-  max-width: 660px;
+#project h2 {
+  font-weight: bolder;
 }
-
-.quotetxt {
-  font-style: italic;
+#project a {
+  /* border-bottom: 6px solid black; */
+  font-weight: bold;
+}
+#project ul {
+  padding-bottom: 1em;
+}
+#project ul li {
+  margin-bottom: 0.3em;
 }
 </style>
 
@@ -162,7 +212,7 @@ export default {
         if (config) {
           this.searchEnabled = config.searchEnabled;
           this.exampleGalleryEnabled = config.exampleGalleryEnabled;
-          this.homepageSnippet = config.homepageSnippet;
+          this.homepageSnippet = this.md(config.homepageSnippet);
         }
       }
     },

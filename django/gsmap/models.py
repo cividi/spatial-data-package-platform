@@ -1,28 +1,45 @@
 import json
 import os
-import requests
 import secrets
 import string
+import hashlib
+import requests
 from enum import IntFlag
+import bleach
+import hashlib
 
 from sortedm2m.fields import SortedManyToManyField
 from sorl.thumbnail import ImageField, get_thumbnail
 
 from django.db import transaction, DatabaseError
+from django.utils.translation import gettext as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.gis.db import models
 from django.contrib.postgres import fields as pg_fields
-from django.contrib.sites.models import Site
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
 from django.utils.html import escape, format_html
+from django.core.mail import EmailMessage
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.urls import reverse
+from django.contrib.sites.models import Site
 
+from django_jsonform.models.fields import JSONField
+from parler.models import TranslatableModel, TranslatedFields
+
+from django.contrib.auth.models import Group
 from gsuser.models import User
+from main.utils import get_website, get_backend
+from main.settings import LANGUAGES, API_CACHE_ROOT
 
+from .tasks import update_cache
+
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or os.getenv('DJANGO_SECRET_KEY_DEV')
 
 class OverwriteStorage(FileSystemStorage):
     def get_available_name(self, name, max_length=None):
@@ -34,8 +51,9 @@ class OverwriteStorage(FileSystemStorage):
 
 class Municipality(models.Model):
     class Meta:
-        verbose_name_plural = 'municipalities'
+        verbose_name_plural = _('municipalities')
         ordering = ['name']
+        verbose_name = _("municipality")
 
     CANTONS_CHOICES = [
         ('GR', 'Graubünden'),
@@ -98,10 +116,17 @@ class SnapshotPermission(IntFlag):
     PUBLIC = 0
     NOT_LISTED = 10
 
+class WorkspacePermission(IntFlag):
+    PUBLIC = 0
+    NOT_LISTED = 10
+    PRIVATE = 20
+
 
 class Snapshot(models.Model):
     class Meta:
         ordering = ['-created']
+        verbose_name = _("snapshot")
+        verbose_name_plural = _("snapshots")
 
     id = models.CharField(
         max_length=8, unique=True,
@@ -120,7 +145,7 @@ class Snapshot(models.Model):
 
     title = models.CharField(max_length=150, default='')
     topic = models.CharField(max_length=100, default='')
-    data = pg_fields.JSONField(default=dict)
+    data = models.JSONField(default=dict)
     data_file = models.FileField(upload_to='data-files', null=True, blank=True)
     screenshot_generated = ImageField(upload_to='snapshot-screenshots', null=True, blank=True)
     thumbnail_generated = ImageField(upload_to='snapshot-thumbnails', null=True, blank=True)
@@ -196,16 +221,16 @@ class Snapshot(models.Model):
     def description_data(self):
         try:
             data = self.data_file_json
-            return data['views'][0]['spec']['description']
+            data = data['views'][0]['spec']['description']
+            return (data[:75] + '…') if len(data) > 75 else data
         except KeyError:
             return ''
 
     def get_absolute_link(self):
-        domain = Site.objects.get_current().domain
-        proto = 'https' if settings.USE_HTTPS else 'http'
+        website = get_website(Site.objects.get_current())
         return format_html(
-            f'<a href="{proto}://{domain}{self.get_absolute_url()}" target="_blank">'
-            f'{domain}{self.get_absolute_url()}</a>'
+            f'<a href="{website["proto"]}://{website["domain"]}{self.get_absolute_url()}" target="_blank">'
+            f'{website["domain"]}{self.get_absolute_url()}</a>'
         )
     get_absolute_link.short_description = "Snapshot Url"
 
@@ -286,15 +311,14 @@ class Snapshot(models.Model):
         return screenshot_file
 
     def create_meta(self, storage):
-        domain = Site.objects.get_current().domain
-        proto = 'https' if settings.USE_HTTPS else 'http'
+        website = get_website(Site.objects.get_current())
         meta = f'''
 <meta property="og:title" content="{ escape(self.title_data) }">
 <meta property="og:description" content="{ escape(self.description_data) }">
 <meta property="og:type" content="website">
-<meta property="og:url" content="{ proto }://{ domain }{ self.get_absolute_url() }">
-<meta property="og:image" content="{ proto }://{ domain }/{ self.image_facebook() }">
-<meta name="twitter:image" content="{ proto }://{ domain }/{ self.image_twitter() }">
+<meta property="og:url" content="{ website["proto"] }://{ website["domain"] }{ self.get_absolute_url() }">
+<meta property="og:image" content="{ website["proto"] }://{ website["domain"] }/{ self.image_facebook() }">
+<meta name="twitter:image" content="{ website["proto"] }://{ website["domain"] }/{ self.image_twitter() }">
 '''
         storage.save(f'snapshot-meta/{self.id}.html', ContentFile(meta))
 
@@ -308,10 +332,125 @@ def resave(sender, instance, created, **kwargs):
     if created:
         transaction.on_commit(lambda: instance.save())
 
+class Category(TranslatableModel):
+    class Meta:
+        verbose_name_plural = _('categories')
+        verbose_name = _("category")
 
-class Workspace(models.Model):
+    created = models.DateTimeField(_("created"), auto_now_add=True)
+    modified = models.DateTimeField(_("modified"), auto_now=True)
+    deleted = models.BooleanField(_("deleted"), default=False)
+
+    # my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
+    hide_in_list = models.BooleanField(_("hide in list"), default=False)
+    hide_in_legend = models.BooleanField(_("hide in legend"), default=False)
+
+    icon = models.FileField(_("icon"), upload_to='category-icons', null=True, blank=True)
+    color = models.CharField(_("color"), max_length=7, default='#cccccc')
+
+    comments_enabled = models.BooleanField(_("comments"), default=False)
+
+    group = models.ForeignKey(
+        Group, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+
+    translations = TranslatedFields(
+        name=models.CharField(_("name"), max_length=255),
+    )
+    # workspace =  models.ForeignKey(Workspace, on_delete=models.CASCADE)
+
+    def __str__(self):
+        if self.group:
+            return f'{self.group.name}/{self.name}'
+        return f'{self.name}'
+
+class State(TranslatableModel):
+    class Meta:
+        verbose_name_plural = _('States')
+        verbose_name = _("State")
+
+    created = models.DateTimeField(_("created"), auto_now_add=True)
+    modified = models.DateTimeField(_("modified"), auto_now=True)
+    deleted = models.BooleanField(_("deleted"), default=False)
+
+    # my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
+    hide_in_list = models.BooleanField(_("hide in list"), default=False)
+    hide_in_legend = models.BooleanField(_("hide in legend"), default=False)
+
+    DECORATION_CHOICES = [
+        ('', _('None')),
+        ('GRAY', _('Grayscale')),
+        # ('TRSP', _('Semi-Transparent')),
+        # ('LG', _('Bigger')),
+        # ('SM', _('Smaller')),
+    ]
+    decoration = models.CharField(_("decoration"), max_length=5, choices=DECORATION_CHOICES, default="", blank=True, null=True)
+
+    group = models.ForeignKey(
+        Group, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+
+    translations = TranslatedFields(
+        name=models.CharField(_("name"), max_length=255),
+    )
+
+    def __str__(self):
+        if self.group:
+            return f'{self.group.name}/{self.name}'
+        return f'{self.name}'
+
+class Usergroup(TranslatableModel):
+    class Meta:
+        verbose_name_plural = _('usergroups')
+        verbose_name = _("usergroup")
+        # ordering = ['name']
+
+    created = models.DateTimeField(_("created"), auto_now_add=True)
+    modified = models.DateTimeField(_("modified"), auto_now=True)
+    deleted = models.BooleanField(_("deleted"), default=False)
+
+    key = models.CharField(
+        max_length=50, unique=True,
+        primary_key=True
+    )
+
+    group = models.ForeignKey(
+        Group, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+
+    translations = TranslatedFields(
+        name=models.CharField(_("name"), max_length=255),
+    )
+
+    def __str__(self):
+        if self.group:
+            return f'{self.group.name}/{self.name}'
+        return f'{self.name}'
+
+class SpatialDatasette(models.Model):
+    class Meta:
+        verbose_name = _("Spatial Datasette")
+        verbose_name_plural = _("Spatial Datasettes")
+
+    id = models.CharField(
+        max_length=8, unique=True,
+        primary_key=True, default=create_slug_hash_5
+    )
+    name = models.CharField(max_length=100, default='')
+    base_url = models.CharField("Datasette URL", help_text="Base URL of spatial Datasette including database name slug", max_length=255, default='')
+    queries = models.JSONField(help_text="List of canned queries objects to fetch from datasette in JSON format, e.g. [{name:'zonal_stats_bmz',summary_stat:'avg',title:'Baumassenziffer',description:'Durchschnittliche Baumassenziffer gemäss amtlicher Statistik.'}]", default=list)
+
+    def __str__(self):
+        return f'{self.name}'
+
+class Workspace(TranslatableModel):
     class Meta:
         ordering = ['-created']
+        verbose_name = _("workspace")
+        verbose_name_plural = _("workspaces")
 
     id = models.CharField(
         max_length=8, unique=True,
@@ -320,18 +459,58 @@ class Workspace(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
-    title = models.CharField(max_length=150, default='')
-    description = models.TextField(default='')
+    permission = models.IntegerField(
+        choices=[(perm.value, perm.name)
+                 for perm in WorkspacePermission],
+        default=WorkspacePermission.PRIVATE
+    )
 
     snapshots = SortedManyToManyField(Snapshot)
 
+    categories = SortedManyToManyField(Category, blank=True)
+    states = SortedManyToManyField(State, blank=True)
+    usergroups = SortedManyToManyField(Usergroup, blank=True)
+
+    MODE_CHOICES = [
+        ("", _("Default")),
+        ("MGT", _("Portfolio-/Flächenmanagement")),
+        ("PAR", _("Beteiligung")),
+    ]
+    mode = models.CharField(max_length=3, choices=MODE_CHOICES, default="", blank=True, null=True, verbose_name="Context")
+
+    group = models.ForeignKey(
+        Group, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+
+    annotations_open = models.BooleanField(default=False, help_text="Enable marker annotations", verbose_name="Marker Annotations enabled")
+    annotations_likes_enabled = models.BooleanField(default=True, help_text="Enable like buttons on marker annotations", verbose_name="Marker Likes enabled")
+
+    polygon_open = models.BooleanField(default=False, help_text="Enable polygon annotation", verbose_name="Polygon annotations enabled")
+    polygon_likes_enabled = models.BooleanField(default=False, help_text="Enable like buttons on polygon annotations", verbose_name="Polygon Likes enabled")
+
+    object_open = models.BooleanField(default=False, help_text="Enable Object annotation", verbose_name="Object annotations enabled")
+    object_likes_enabled = models.BooleanField(default=False, help_text="Enable like buttons on Object annotations", verbose_name="Object Likes enabled")
+    objects_page_link = models.BooleanField(default=False, help_text="Show a Link to the Objects List/Grid Page in Sidebar", verbose_name="Show Objectslist Link")
+
+    annotations_contact_name = models.CharField(max_length=100, default='', verbose_name="Contact first & lastname")
+    annotations_contact_email = models.EmailField(default='', verbose_name='Contact email address')
+
+    findme_enabled = models.BooleanField(default=False, help_text="Enable 'Find Me'", verbose_name="Find me enabled")
+
+    spatial_datasettes = SortedManyToManyField(SpatialDatasette, blank=True)
+
+    translations = TranslatedFields(
+        title = models.CharField(max_length=150, default=''),
+        description = models.TextField(default=''),
+    )
+
     def get_absolute_link(self):
-        proto = 'https' if settings.USE_HTTPS else 'http'
-        domain = Site.objects.get_current().domain
+        website = get_website(Site.objects.get_current())
         return format_html(
-            f'<a href="{proto}://{domain}{self.get_absolute_url()}" target="_blank">'
-            f'{domain}{self.get_absolute_url()}</a>'
-        )
+            f'<a href="{website["proto"]}://{website["domain"]}{self.get_absolute_url()}" target="_blank">'
+            f'{website["domain"]}{self.get_absolute_url()}</a>')
+
     get_absolute_link.short_description = "Workspace Url"
 
     def get_absolute_url(self):
@@ -354,4 +533,213 @@ class Workspace(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.id} {self.title}'
+        return f'{self.id}'
+
+class Annotation(models.Model):
+    DATA_SCHEMA = {
+        'type': 'object',
+        'properties': {
+            'type': { 
+                'type': 'string', 
+                'readonly': True, 
+                'default': 'Feature'
+            },
+            'geometry': { 
+                'type': 'object',
+                'additionalProperties': True,
+                'properties': {
+                }
+            },
+            'properties': {
+                'type': 'object',
+                'properties': {
+                    'fill': { 'type': 'boolean', 'readonly': True, 'default': True },
+                    'title': { 'type': 'string' },
+                    'description': { 'type': 'string' },
+                },
+                'additionalProperties': True
+            }
+        },
+    }
+
+    class Meta:
+        ordering = ['-created']
+        permissions = [
+            ('publish_annotation', _('Can publish annotations')),
+            ('export_annotation', _('Can export annotations')),
+        ]
+        verbose_name = _("annotation")
+        verbose_name_plural = _("annotations")
+
+    created = models.DateTimeField(_("created"), auto_now_add=True)
+    modified = models.DateTimeField(_("modified"), auto_now=True)
+    deleted = models.BooleanField(_("deleted"), default=False)
+    public = models.BooleanField(_("public"), default=False)
+
+    KIND_CHOICES = [
+        ('COM', _('Comment')),
+        ('PLY', _('Polygon')),
+        ('OBJ', _('Object')),
+    ]
+    kind = models.CharField(_("kind"), max_length=3, choices=KIND_CHOICES)
+    data = JSONField(_("data"), schema=DATA_SCHEMA, default=dict)
+    category = models.ForeignKey(
+        Category, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+    state = models.ForeignKey(
+        State, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+    usergroup = models.ForeignKey(
+        Usergroup, default=None, blank=True,
+        null=True, on_delete=models.SET_NULL
+    )
+    author_email = models.EmailField(_("author email"), max_length=254)
+    author_email_shared = models.BooleanField(_("author email shared"), default=False)
+    rating = models.DecimalField(_("rating"), default=0, decimal_places=2, max_digits=6)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        if self.data['properties']['description']:
+            self.data['properties']['description'] = bleach.clean(self.data['properties']['description'])
+
+        if self.data['properties']['title']:
+            self.data['properties']['title'] = bleach.clean(self.data['properties']['title'])
+        
+        super().save(*args, **kwargs)
+
+    @property
+    def fullname(self):
+        return f'{self.workspace} {self.id} {self.data["properties"]["title"]}'
+    
+    @property
+    def title(self):
+        if "properties" in self.data.keys() and "title" in self.data["properties"].keys():
+            return f'{self.data["properties"]["title"]}'
+        else:
+            return None
+
+    @property
+    def email(self):
+        if self.author_email and not self.author_email_shared:
+            return f"***@{self.author_email.split('@')[1]}"
+        elif self.author_email and self.author_email_shared:
+            return self.author_email
+        return None
+
+    @property
+    def email_hash(self):
+        if self.author_email:
+            m = hashlib.sha512()
+            m.update(SECRET_KEY.encode('ascii'))
+            m.update(self.author_email.encode('ascii'))
+            return m.hexdigest()
+        return None
+
+    @property
+    def email_hash_short(self):
+        if self.author_email:
+            return self.email_hash[:12]
+        return None
+    
+    @property
+    def description(self):
+        if "properties" in self.data.keys() and "description" in self.data["properties"].keys():
+            return f'{self.data["properties"]["description"]}'
+        else:
+            return None
+    
+    def __str__(self):
+        return self.fullname
+
+class Attachement(models.Model):
+    class Meta:
+        ordering = ['my_order']
+        verbose_name = _("attachment")
+        verbose_name_plural = _("attachments")
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
+
+    annotation =  models.ForeignKey(Annotation, on_delete=models.CASCADE)
+    document = models.FileField(upload_to='annotation-attachements', null=True, blank=True)
+    #kind = models.CharField(max_length=4)
+    my_order = models.PositiveIntegerField(default=0, blank=False, null=False)
+
+
+@receiver(post_save, sender=Annotation)
+def send_new_annotation_email(sender, instance, created, **kwargs):
+    
+    # Update workspace annotations cache
+    for lang in LANGUAGES:
+        update_cache.delay(instance.workspace.pk, lang[0])
+    
+    if created and instance.author_email:
+        recipient = instance.author_email
+        subject = 'Beitrag freischalten / Publish contribution / Activer la contribution / Sblocca post'
+        message = ''
+
+        base = get_backend()
+        frontend = get_website(Site.objects.first())
+
+        # todo: check with instance KIND and related workspace permission
+        if instance.workspace.annotations_open or instance.workspace.polygon_open or instance.workspace.object_open:
+            idstr = str(instance.id)
+
+            uniquestr = recipient + idstr + SECRET_KEY
+            publishKeyHex = hashlib.md5(uniquestr.encode()).hexdigest()
+            publish_url = reverse('annotation-publish', args=[idstr, publishKeyHex])
+
+            message += 'Note: Englisch below / En français ci-dessous / Italiano di seguito\n'
+            message += '\n'
+
+            message += 'Besten Dank für Ihren Beitrag!\n'
+            message += 'Sie können ihren unter folgender URL freischalten:\n'
+            message += '--' * 30 + '\n'
+
+            message += 'Thank you very much for your contribution!\n'
+            message += 'You can publish your submission at the following link:\n'
+            message += '--' * 30 + '\n'
+
+            message += 'Merci beaucoup pour votre contribution!\n'
+            message += 'Vous pouvez activer votre contribution en cliquant sur le lien suivant:\n'
+            message += '--' * 30 + '\n'
+
+            message += 'Grazie mille per il vostro contributo!\n'
+            message += 'Potete attivare il vostro contributo al seguente link:\n'
+            message += '\n\n'
+            
+            message += f'{base["base"]}{publish_url}\n'
+            
+        else:
+            message += 'Note: Englisch below / En français ci-dessous / Italiano di seguito\n'
+            message += '\n\n'
+
+            message += "Leider ist die Beteiligung nun abgeschlossen.\n"
+            message += f"Zur Karte mit allen öffentlichen Beiträgen:/\n"
+            message += '--' * 30 + '\n\n'
+
+            message += "Unfortunately, the participation is now closed.\n"
+            message += f"To the map with all public contributions:/\n"
+            message += '--' * 30 + '\n\n'
+
+            message += "Malheureusement, la participation est maintenant terminée.\n"
+            message += f"Vers la carte avec toutes les contributions publiques:/\n"
+            message += '--' * 30 + '\n\n'
+
+            message += "Purtroppo, la partecipazione è ora chiusa.\n"
+            message += f"Alla mappa con tutti i contributi pubblici:\n"
+            message += '--' * 30 + '\n\n'
+
+            message += f"{frontend['base']}/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/"
+        
+        email = EmailMessage(
+            subject,
+            message,
+            None,
+            [ recipient ],
+            reply_to=["support@dfour.io"]
+        )
+        email.send(fail_silently=False,)

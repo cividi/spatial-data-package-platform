@@ -10,6 +10,11 @@
     "title": "Paquets utilisés et leurs licences",
     "pythontitle": "Paquets Python",
     "jstitle": "Paquets JavaScript"
+  },
+  "en": {
+    "title": "Packages used and their licences",
+    "pythontitle": "Python packages",
+    "jstitle": "JavaScript packages"
   }
 }
 </i18n>
@@ -12140,6 +12145,6 @@ table td {
   white-space: nowrap;
 }
 table tr:hover {
-  background: #EEE;
+  background: #eee;
 }
 </style>

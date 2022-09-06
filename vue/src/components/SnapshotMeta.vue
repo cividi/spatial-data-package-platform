@@ -5,13 +5,24 @@
     "sources": "Quellenangaben",
     "expandlegend": "mehr",
     "collapslegend": "weniger",
-    "predecessor": "Vorgänerversion"
+    "predecessor": "Vorgängerversion",
+    "comments": "Kommentare",
+    "categories": "Kategorien",
+    "states": "Stati"
   },
   "fr": {
     "sources": "Source",
     "expandlegend": "plus",
     "collapslegend": "moin",
-    "predecessor": "version prédécesseuse"
+    "predecessor": "version prédécesseuse",
+    "comments": "Commentaires"
+  },
+  "en": {
+    "sources": "Sources",
+    "expandlegend": "more",
+    "collapslegend": "less",
+    "predecessor": "Previous version",
+    "comments": "Comments"
   }
 }
 </i18n>
@@ -21,10 +32,10 @@
   <div>
     <div class="smaller">
       <h3 class="mr-4">{{ title }}</h3>
-      <p >
-        <a class="legend--hash" :href="djangobaseurl + '/' + hash + '/'" target="_blank">
+      <p>
+        <!-- <a class="legend--hash" :href="djangobaseurl + '/' + hash + '/'" target="_blank">
         {{ djangobaseurlDisplay }}/{{ hash }}/
-        </a>
+        </a> -->
       </p>
       <p>
         {{ description }}
@@ -46,7 +57,14 @@
         :class="{isPrimary: item.primary}"
         >
         <v-list-item-icon class="my-0 mr-2">
-          <legend-icon :shape="item.shape" :isPrimary="item.primary" :attr="item" />
+          <img
+            width="20" height="20"
+            v-if="item.svg"
+            :src="item.svg">
+          <legend-icon v-else
+            :shape="item.shape"
+            :isPrimary="item.primary"
+            :attr="item" />
         </v-list-item-icon>
         <v-list-item-content class="py-0">
           <v-list-item-title>
@@ -71,6 +89,68 @@
           {{ $t('expandlegend') }}
         </template>
     </v-btn>
+    <div class="smaller" v-if="legendCategories.length > 0">
+      <h5 class="mr-4">{{ $t('categories') }}</h5>
+    </div>
+    <v-list
+      dense class="legend pt-0"
+      v-if="legendCategories.length > 0"
+      >
+      <v-list-item
+        v-for="(item, i) in legendCategories"
+        :key="i"
+        class="pa-0 isPrimary"
+        @click="$emit('toggleCat', item.pk);item.hidden=!item.hidden;"
+        >
+        <v-list-item-icon class="ma-0">
+          <img
+            width="20" height="20"
+            v-if="item.svg"
+            :src="item.svg">
+          <legend-icon v-else
+            :shape="item.shape"
+            :isPrimary="item.primary"
+            :attr="item" />
+        </v-list-item-icon>
+        <v-list-item-content class="py-0" :class="{'grey--text': item.hidden}">
+          <v-list-item-title>
+            {{ item.label }}
+          </v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-btn icon>
+            <v-icon v-if="item.hidden" color="grey lighten-1">mdi-eye-off</v-icon>
+            <v-icon v-else color="grey lighten-1">mdi-eye</v-icon>
+          </v-btn>
+        </v-list-item-action>
+      </v-list-item>
+    </v-list>
+    <div class="smaller" v-if="legendStates.length > 0">
+      <h5 class="mr-4">{{ $t('states') }}</h5>
+    </div>
+    <v-list
+      dense class="legend pt-0"
+      v-if="legendStates.length > 0"
+      >
+      <v-list-item
+        v-for="(item, i) in legendStates"
+        :key="i"
+        class="pa-0 isPrimary"
+        @click="$emit('toggleState', item.pk);item.hidden=!item.hidden;"
+        >
+        <v-list-item-content class="py-0" :class="{'grey--text': item.hidden}">
+          <v-list-item-title>
+            {{ item.label }}
+          </v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-btn icon>
+            <v-icon v-if="item.hidden" color="grey lighten-1">mdi-eye-off</v-icon>
+            <v-icon v-else color="grey lighten-1">mdi-eye</v-icon>
+          </v-btn>
+        </v-list-item-action>
+      </v-list-item>
+    </v-list>
     <div class="smaller"
       style="margin: 5px 0 -10px 2px;">
       <v-expand-transition>
@@ -98,13 +178,21 @@
         <v-icon small color="primary">mdi-chevron-right</v-icon>
         {{ $t('sources') }}
     </v-btn>
-    <a href="https://gemeindescan.ch" target="_blank"><img alt="gemeindescan logo" height="35"
-      style="float:right; opacity:0.55;"
-      src="@/assets/images/gemeindescan-logo.svg"></a>
+    <a href="https://dfour.space" target="_blank">
+      <img alt="dføur logo" height="18" id="legendLogo"
+        style="float:right; opacity:0.55;"
+        src="@/assets/images/dfour-logo.svg">
+      </a>
   </div>
 </template>
 
 <style>
+#legendLogo {
+  float: right;
+  margin-right: -5px;
+  margin-top: 5px;
+  opacity: 0.45;
+}
 .legend.v-list--dense .v-list-item {
   min-height: 0;
   height: 0;
@@ -120,7 +208,7 @@
   margin-top: 4px;
 }
 
-.v-list-item__icon {
+.legend .v-list-item__icon {
   min-width: auto;
 }
 
@@ -190,12 +278,17 @@ export default {
     description: String,
     predecessor: Object,
     legend: Array,
+    legendCategories: Array,
+    legendStates: Array,
     sources: Array
   },
 
   computed: {
     hasSecondaryLegend() {
-      return this.legend.some(item => item.primary === false);
+      if (this.legend) {
+        return this.legend.some(item => item.primary === false);
+      }
+      return [];
     },
 
     djangobaseurlDisplay() {

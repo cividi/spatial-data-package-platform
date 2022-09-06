@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv sh
+
+cd /opt/app
+
+set -o errexit
+set -o nounset
+
+if [ "$AUTORELOAD_CELERY_WORKER" = "YES" ]; then
+    python3 manage.py celery-worker
+else
+    celery -A main worker -l INFO --logfile=/var/log/celery.log
+fi

@@ -12,8 +12,8 @@
     "noSnapshot.p2": "Erkunden Sie unsere Fallbeispiele um ein besseres Bild der Möglichkeiten für Ihre Gemeinde zu erhalten.",
     "noSnapshot.p3.1": "Gerne beraten wir Sie telefonisch unter",
     "noSnapshot.p3.2": " oder per email",
-    "contactEmail": "info@gemeindescan.ch",
-    "contactEmailSubject": "Anfrage Gemeindescan",
+    "contactEmail": "support@dfour.space",
+    "contactEmailSubject": "Anfrage dføur",
     "contactPhone": "+41 43 543 44 48",
     "listtitle": "Fallbeispiele",
     "listtitleMore": "Weitere Fallbeispiele"
@@ -29,11 +29,28 @@
     "noSnapshot.p2": "Prenez compte de nos études pour une meilleure vue d’ensemble des possibilitiées qui s’offrent à votre commune.",
     "noSnapshot.p3.1": "Nous vous conseillons volontiers par téléphone au",
     "noSnapshot.p3.2": "ou par courriel",
-    "contactEmail": "info@gemeindescan.ch",
-    "contactEmailSubject": "Offre pour Gemeindescan",
+    "contactEmail": "support@dfour.space",
+    "contactEmailSubject": "Offre pour dføur",
     "contactPhone": "+41 43 543 44 48",
     "listtitle": "Examples",
     "listtitleMore": "D'autres examples"
+  },
+  "en": {
+    "calltoactionText": "Get a quote for your community",
+    "hasSnapshot.title": "Data availability",
+    "hasSnapshot.p1": "Initial analyses are available for {municipalityText}.",
+    "hasSnapshot.p2": "Explore our other case studies to get a better picture of the possibilities for your community.",
+    "noSnapshot.title": "Data availability",
+    "noSnapshot.municipalityText": "this municipality",
+    "noSnapshot.p1": "There are currently no analyses available for {municipalityText}.",
+    "noSnapshot.p2": "Explore our case studies to get a better picture of the possibilities for your community.",
+    "noSnapshot.p3.1": "We will be happy to advise you by telephone at",
+    "noSnapshot.p3.2": " or by email",
+    "contactEmail": "support@dfour.space",
+    "contactEmailSubject": "dføur request",
+    "contactPhone": "+41 43 543 44 48",
+    "listtitle": "Case studies",
+    "listtitleMore": "Other case studies"
   }
 }
 </i18n>
@@ -48,9 +65,11 @@
       app
       width="320"
       v-model="snapshotnav">
-      <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
-        <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
-      </router-link>
+      <!-- <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block"> -->
+      <a id="logo" class="px-4 py-4 d-block" href="https://xmas.dfour.io" target="_top">
+        <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
+      </a>
+      <!-- </router-link> -->
 
       <v-divider />
 
@@ -108,10 +127,10 @@
         absolute
         bottom>
         <div class="useractions">
-          <user-actions noRequest="1" />
+          <user-actions noLogin="1" />
         </div>
         <v-spacer/>
-        <language-switch/>
+        <language-switch />
       </v-toolbar>
     </v-navigation-drawer>
 
@@ -119,6 +138,7 @@
       :geojson="geojson"
       :geoboundsIn="geobounds"
       :predecessor="predecessor"
+      :annotations="annotations"
     />
 
     <!-- <snapshot-change ref="change"
@@ -174,7 +194,10 @@ export default {
       predecessor: null,
       screenshotMode: this.$route.query.hasOwnProperty('screenshot'),
       screenshotIsThumbnail: this.$route.query.hasOwnProperty('thumbnail'),
-      errorsettings: {}
+      errorsettings: {},
+      annotations: {
+        items: null, categories: null, annotations: null, states: null, open: false, likes: false
+      }
     };
   },
 

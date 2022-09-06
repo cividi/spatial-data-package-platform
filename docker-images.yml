@@ -2,7 +2,7 @@ version: "2"
 
 services:
   pdb:
-    image: postgis/postgis:11-2.5-alpine
+    image: postgis/postgis:12-2.5-alpine
     hostname: pdb
 
   vue:
@@ -10,8 +10,20 @@ services:
     hostname: vue
 
   django:
-    image: smartuse/gemeindescan-webui-django:3.1.12a
+    image: registry.gitlab.com/cividi/dfour/dfour-hub:latest
     hostname: django
+  
+  celery_worker:
+    image: registry.gitlab.com/cividi/dfour/dfour-hub:latest
+    hostname: celery_worker
+  
+  celery_beat:
+    image: registry.gitlab.com/cividi/dfour/dfour-hub:latest
+    hostname: celery_beat
+
+  flower:
+    image: registry.gitlab.com/cividi/dfour/dfour-hub:latest
+    hostname: flower
 
   www:
     image: openresty/openresty:1.19.3.1-alpine-fat

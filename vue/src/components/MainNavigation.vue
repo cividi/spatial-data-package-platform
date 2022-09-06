@@ -2,12 +2,28 @@
 <i18n>
 {
   "de": {
-    "mainnav.imprint": "Impressum",
-    "mainnav.contact": "Kontakt"
-},
+    "mainnav.home": "Projekt",
+    "mainnav.map": "Karte",
+    "mainnav.gallery": "Galerie",
+    "mainnav.add": "Eintragen"
+  },
   "fr": {
-    "mainnav.imprint": "Impressum",
-    "mainnav.contact": "Contact"
+    "mainnav.home": "Projet",
+    "mainnav.map": "Carte",
+    "mainnav.gallery": "Galerie",
+    "mainnav.add": "Soumettre un objet"
+  },
+  "en": {
+    "mainnav.home": "Project",
+    "mainnav.map": "Map",
+    "mainnav.gallery": "Gallery",
+    "mainnav.add": "Submit"
+  },
+  "it": {
+    "mainnav.home": "Progetto",
+    "mainnav.map": "Mappa",
+    "mainnav.gallery": "Galleria",
+    "mainnav.add": "Inserisci"
   }
 }
 </i18n>
@@ -15,27 +31,38 @@
 
 <template>
   <div>
-    <v-app-bar app flat id="topbar">
-      <router-link id="logo" :to="'/' + $i18n.locale + '/'">
-        <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
-      </router-link>
-      <v-spacer></v-spacer>
-      <nav id="mainnav" class="d-none d-md-block">
-        <router-link
-          v-for="item in mainnav"
-          :key="item.textKey"
-          :to="'/' + $i18n.locale + item.route + '/'">{{ $t(item.textKey) }}</router-link>
-      </nav>
-      <v-spacer></v-spacer>
-      <div class="d-none d-md-block"><language-switch/></div>
-      <div class="useractions d-none d-sm-block">
-        <user-actions />
-      </div>
-      <v-app-bar-nav-icon @click="mobnav=!mobnav" class="d-md-none"></v-app-bar-nav-icon>
+    <v-app-bar app prominent flat id="topbar" absolute>
+      <v-row no-gutters>
+        <v-col cols="7" class="text-left">
+          <nav class="d-none d-sm-block">
+            <language-switch
+              expanded="1" v-if="$route.name == 'home'"
+              style="pointer-events: all;" />
+          </nav>
+        </v-col>
+        <!-- <div class="d-none d-md-block"><language-switch/></div>
+        <div class="useractions d-none d-sm-block">
+          <user-actions />
+        </div>-->
+        <v-col cols="5" class="text-right">
+          <v-app-bar-nav-icon
+            @click="mobnav=!mobnav" class="d-sm-none"
+            style="pointer-events: all;">
+          </v-app-bar-nav-icon>
+          <nav id="mainnav" class="d-none d-sm-block">
+            <router-link
+              v-for="item in mainnav"
+              :key="item.textKey"
+              :to="'/' + $i18n.locale + item.route + '/'">{{ $t(item.textKey) }}</router-link>
+          </nav>
+        </v-col>
+      </v-row>
     </v-app-bar>
 
     <v-navigation-drawer
-      right app dark color="primary" class="mobnav" v-model="mobnav" disable-resize-watcher>
+      left app dark color="primary"
+      class="mobnav" v-model="mobnav"
+      disable-resize-watcher width="320px">
       <v-toolbar flat color="primary" class="mx-2">
         <v-spacer></v-spacer>
         <v-btn icon large @click="mobnav=!mobnav">
@@ -54,17 +81,33 @@
       </v-list>
       <v-flex class="useractions d-sm-none center">
         <v-divider></v-divider>
-        <user-actions vertical="1" />
       </v-flex>
     </v-navigation-drawer>
   </div>
 </template>
 
 <style>
+#mainnav {
+  margin-top: 3.5em;
+}
 #mainnav a {
-  color: #000;
-  margin: 0 0.5em;
-  font-size: 1.6em;
+  pointer-events: all;
+  display: block;
+  width: fit-content;
+  margin: auto 0 12px auto;
+  font-family: 'Helvetica Neue LT W05 75 Bold', 'Arial', sans-serif;
+  font-size: 2.2em;
+  font-weight: bold;
+  letter-spacing: 0.06em; /* 60% / 1000 + em */
+  line-height: 1em;
+  text-transform: uppercase;
+  border-bottom: 8px solid #000;
+}
+
+#topbar {
+  background-color: transparent;
+  font-size: 1em !important;
+  pointer-events: none;
 }
 
 .v-application .mobnav a {
@@ -79,8 +122,10 @@ export default {
     return {
       mobnav: false,
       mainnav: [
-        { route: '/imprint', textKey: 'mainnav.imprint' },
-        { route: '/contact', textKey: 'mainnav.contact' }
+        { route: '/map', textKey: 'mainnav.map' },
+        { route: '/gallery', textKey: 'mainnav.gallery' },
+        { route: '/add', textKey: 'mainnav.add' },
+        { route: '/', textKey: 'mainnav.home' }
       ]
     };
   }

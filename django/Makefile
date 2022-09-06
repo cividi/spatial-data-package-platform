@@ -1,5 +1,5 @@
-DJANGO_VERSION=3.1.12a
-DJANGO_VERSION_PREV=3.1.12
+DJANGO_VERSION=1.0.0-rc.3
+DJANGO_VERSION_PREV=1.0.0-rc.2
 NOTTY=$(shell command [ "$$DOCKER_NOTTY" = YES ] && echo "-T")
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec $(NOTTY) django")
 SHELL := /bin/bash
@@ -11,14 +11,35 @@ default: dev
 enter:
 	$(DOCKER_EXEC) ash
 
+build_docker_gh:
+	DOCKER_BUILDKIT=1 \
+	docker buildx build \
+		-t registry.gitlab.com/cividi/dfour/dfour-hub:latest \
+		-t registry.gitlab.com/cividi/dfour/dfour-hub:$(DJANGO_VERSION) \
+		--build-arg BUILDKIT_INLINE_CACHE=1 \
+		--platform linux/amd64 \
+		--cache-from registry.gitlab.com/cividi/dfour/dfour-hub:$(DJANGO_VERSION_PREV) \
+		--push \
+		.
+
 build_docker:
-	cd docker && DOCKER_BUILDKIT=1 \
-	docker build django \
-		--cache-from smartuse/gemeindescan-webui-django:$(DJANGO_VERSION_PREV) \
-		--build-arg BUILDKIT_INLINE_CACHE=1 -t smartuse/gemeindescan-webui-django:$(DJANGO_VERSION)
+	DOCKER_BUILDKIT=1 \
+	docker buildx build \
+		--build-arg BUILDKIT_INLINE_CACHE=1 \
+		--cache-from registry.gitlab.com/cividi/dfour/dfour-hub:$(DJANGO_VERSION_PREV) \
+		-t registry.gitlab.com/cividi/dfour/dfour-hub:latest \
+		--load \
+		.
 
 push:
-	docker push smartuse/gemeindescan-webui-django:$(DJANGO_VERSION)
+	cd docker && DOCKER_BUILDKIT=1 \
+	docker buildx build \
+		--build-arg BUILDKIT_INLINE_CACHE=1 \
+		--cache-from smartuse/gemeindescan-webui-django:$(DJANGO_VERSION_PREV) \
+		-t smartuse/gemeindescan-webui-django:$(DJANGO_VERSION) \
+		--platform linux/amd64,linux/arm64 \
+		--push \
+		django
 
 dev:
 	$(DOCKER_EXEC) uvicorn main.asgi:application --port 8081 --host 0.0.0.0 --reload
@@ -41,6 +62,12 @@ symlinks:
 migrate:
 	$(DOCKER_EXEC) python3 manage.py migrate
 	make collectstatic
+
+makemessages:
+	$(DOCKER_EXEC) python3 manage.py makemessages --all
+
+compilemessages:
+	$(DOCKER_EXEC) python3 manage.py compilemessages
 
 createcachetable:
 	$(DOCKER_EXEC) python3 manage.py createcachetable

@@ -1,0 +1,106 @@
+version: "2"
+
+volumes:
+  vscode-remote-django:
+  vscode-remote-vue:
+  var-gemeindescan-webui:
+
+services:
+  pdb:
+    extends:
+      file: docker-images.yml
+      service: pdb
+    environment:
+      - PGDATA=/var/services/postgres/data
+      - POSTGRES_USER=webui
+      - POSTGRES_PASSWORD=pgpass
+      - POSTGRES_DB=webui
+    volumes:
+      - var-gemeindescan-webui:/var/services
+    ports:
+       - "5434:5432"
+
+  vue:
+    extends:
+      file: docker-images.yml
+      service: vue
+    environment:
+      - TERM=xterm-256color
+      - START_SCREENSHOTSERVICE=NO
+      - VUE_APP_MAPBOX_ACCESSTOKEN=${MAPBOX_TOKEN}
+      - VUE_APP_MAPBOX_ACCESSTOKEN_DEV=pk.eyJ1IjoiZ2VtZWluZGVzY2FuIiwiYSI6ImNrNXdrOXV2ZjEwdXcza28wcXNoYXE1ZGMifQ.P-nCvxNRK4AOs7YdRbHCLg
+      - VUE_APP_MAPBOX_DEFAULT_STYLES=${MAPBOX_STYLE}
+      - VUE_APP_MAPBOX_DEFAULT_STYLES_DEV=mapbox://styles/gemeindescan/ck6rp249516tg1iqkmt48o4pz
+      - VUE_APP_FATHOM_SITEID=${FATHOM_SITEID}
+      - VUE_APP_FATHOM_URL=${FATHOM_URL}
+      - VUE_APP_SNAPSHOTSTOREURL=https://gemeindescan.eu-central-1.linodeobjects.com/public/
+      - VUE_APP_SPATIALDATASETTE_TOKEN=${SPATIALDATASETTE_TOKEN}
+      - VUE_APP_COMMENTO_URL=${COMMENTO_URL}
+      - VUE_APP_GRAPHQL_URI=https://www:8443/graphql/
+      - VUE_APP_DJANGOBASEURL=https://www:8443
+      - PUBLIC_URL=https://www:8443
+    working_dir: /opt/vue
+    volumes:
+      - ./vue:/opt/vue:Z
+      - var-gemeindescan-webui:/var/services/
+      - vscode-remote-vue:/root/.vscode-server
+    ports:
+      - "9222:9222" # debug chrome
+      - "8079:8079" # snapshost service
+      - "10001:10001" # vscode
+
+  django:
+    extends:
+      file: docker-images.yml
+      service: django
+    environment:
+      - TERM=linux
+      - START_DJANGO=NO
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET}
+      - DJANGO_SECRET_KEY_DEV=adddxxccxx4rt0ioywg3yf5kjq64-t5
+      - DJANGO_DB_NAME=webui
+      - DJANGO_DB_USER=webui
+      - DJANGO_DB_PASSWORD=pgpass
+      - DJANGO_DB_HOST=pdb
+      - DJANGO_DEBUG=True
+      - DJANGO_HTTPS=False
+      - DJANGO_EMAIL_HOST=maildev
+      - DJANGO_EMAIL_PORT=25
+      - DJANGO_EMAIL_HOST_USER=
+      - DJANGO_EMAIL_HOST_PASSWORD=
+      - DJANGO_ALLOWED_HOSTS=www,www.local,localhost,django
+      - DJANGO_ADMIN_NAME=gemeindescan DEV
+      - DJANGO_ADMIN_HEADER_COLOR=#ff0000
+      - DJANGO_SCREENSHOT_SCHEDULER_CRON_MINUTES=* # * every minute, */5 every 5 minutes
+      - START_APSCHEDULER=YES
+    working_dir: /opt/app
+    volumes:
+      - ./django:/opt/app:Z
+      - var-gemeindescan-webui:/var/services
+      - vscode-remote-django:/root/.vscode-server
+    ports:
+      - "10002:10002" # vscode
+    # entrypoint: tail
+    # command: -f /dev/null
+
+  www:
+    extends:
+      file: docker-images.yml
+      service: www
+    volumes:
+      - ./etc/nginx:/etc/nginx/conf.d:Z
+      - var-gemeindescan-webui:/var/services
+    ports:
+      - 8000:8000
+      - 8443:8443
+    command: >
+      sh -c '[ ! -e /etc/nginx/conf.d/www.local.conf ] && ln -s /etc/nginx/conf.d/www.local.dev /etc/nginx/conf.d/www.local.conf;
+      /usr/local/openresty/bin/openresty -g "daemon off;"'
+    # command: tail -f /dev/null
+
+  # dev email server accessible via http://localhost:1080
+  maildev:
+    image: yvess/alpine-maildev
+    hostname: maildev
+    ports:
+      - "1080:80"

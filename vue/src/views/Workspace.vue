@@ -2,6 +2,13 @@
 <i18n>
 {
   "de": {
+    "objectslink": "Alle Objekte",
+    "PAR": {
+      "objectslink": "@:objectslink"
+    },
+    "MGT": {
+      "objectslink": "@:objectslink"
+    }
   },
   "fr": {
   }
@@ -11,15 +18,15 @@
 
 <template>
   <div id="snapshotview">
-    <v-navigation-drawer
+    <!-- <v-navigation-drawer
       v-if="$store.state.notIframe"
       id="snapshotnav"
       clipped="clipped"
       app
       width="320"
       v-model="snapshotnav">
-      <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-1 d-block">
-        <img alt="gemeindescan logo" height="50" src="@/assets/images/gemeindescan-logo.svg">
+      <router-link id="logo" :to="'/' + $i18n.locale + '/'" class="px-4 py-4 d-block">
+        <img alt="dføur logo" height="36" src="@/assets/images/logo.svg">
       </router-link>
 
       <v-divider />
@@ -30,6 +37,17 @@
           <div class="smaller hint">
             <h4>{{ title }}</h4>
             <p class="show-linebreaks">{{ description }}</p>
+            <v-btn
+              v-if="annotations.object.showlink"
+              :to="'/' + $i18n.locale + '/' + wshash + '/annotations/OBJ/'"
+              class="listlink elevation-0"
+              block
+            >
+              <v-icon left>
+                mdi-view-grid
+              </v-icon>
+              {{ $t('objectslink') }}
+            </v-btn>
           </div>
         </div>
 
@@ -53,35 +71,31 @@
         absolute
         bottom>
         <div class="useractions">
-          <user-actions noRequest="1" />
+          <user-actions noLogin="1" />
         </div>
-        <v-spacer/>
-        <language-switch/>
+        <v-spacer />
+        <language-switch />
       </v-toolbar>
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
 
-    <snapshot-map ref="map"
-      :geojson="geojson"
-      :geoboundsIn="geobounds"
-    />
-    <v-overlay
-      absolute="absolute"
-      opacity="0.2"
-      z-index="1002"
-      :value="!!editing"
-      >
-      <snapshot-edit
-        v-if="editing"
-        :isNew="editing.isNew"
-        v-bind="editing.snapshot"
-        v-on:cancel="abortEdit"
-        v-on:saved="onSnapshotSaved"
-      />
-     </v-overlay>
+    <snapshot-map ref="snapshot" v-if="hash"
+      :hash="hash" :wshash="wshash" :snapshot="snapshot"
+      :annotations="annotations" :entry-active="entryActive"
+      :spatialDatasettes="spatialDatasettes"
+      :geoboundsIn="geobounds" />
 
-     <error-message
-      :settings="errorsettings"
-    />
+    <annotations-list ref="snapshot" v-if="annokind"
+      :annotations="annotations.items" :kind="annokind"
+      :categories="annotations.categories" :states="annotations.states" />
+
+    <v-overlay absolute="absolute" opacity="0.2" z-index="1002"
+      :value="!!editing">
+      <snapshot-edit v-if="editing" :isNew="editing.isNew"
+        v-bind="editing.snapshot" v-on:cancel="abortEdit"
+        v-on:saved="onSnapshotSaved" />
+    </v-overlay>
+
+    <error-message :settings="errorsettings" />
 
   </div>
 </template>
@@ -104,16 +118,31 @@
 h4 {
   margin-bottom: 0.8em;
 }
+
+.listlink {
+  text-transform: initial;
+  font-weight: 700;
+  font-size: 13px;
+  opacity: 1;
+  letter-spacing: 0;
+}
+
+.listlink span {
+  justify-content: flex-start;
+}
 </style>
 
 <script>
 import Vue from 'vue';
 import gql from 'graphql-tag';
+import AnnotationsList from '../components/AnnotationsList.vue';
 import SnapshotList from '../components/SnapshotList.vue';
 import SnapshotMap from '../components/SnapshotMap.vue';
 import SnapshotEdit from '../components/SnapshotEdit.vue';
 import ErrorMessage from '../components/ErrorMessage.vue';
 
+
+Vue.component('annotations-list', AnnotationsList);
 Vue.component('snapshot-list', SnapshotList);
 Vue.component('snapshot-map', SnapshotMap);
 Vue.component('snapshot-edit', SnapshotEdit);
@@ -122,9 +151,32 @@ Vue.component('error-message', ErrorMessage);
 export default {
   data() {
     return {
-      hash: this.$route.params.hash,
-      wshash: this.$route.params.wshash,
-      geojson: null,
+      hash: this.$route.params.hash || this.$attrs.hash,
+      wshash: this.$route.params.wshash || this.$attrs.wshash,
+      annokind: this.$route.params.annokind || this.$attrs.annokind || null,
+      annoid: this.$route.params.annoid || null,
+      snapshot: null,
+      annotations: {
+        items: [],
+        categories: null,
+        states: null,
+        usergroups: null,
+        mode: '',
+        findme: false,
+        marker: {
+          open: false,
+          likes: false
+        },
+        polygon: {
+          open: false,
+          likes: false
+        },
+        object: {
+          open: false,
+          likes: false
+        }
+      },
+      spatialDatasettes: null,
       geobounds: [],
       municipalityName: '',
       snapshotsWorkspace: [],
@@ -135,13 +187,23 @@ export default {
     };
   },
 
+  props: {
+    entryActive: String
+  },
+
   async mounted() {
     await this.getWorkspaceInfo();
-    await this.getWorkspaceData();
-    if (this.geojson) {
-      this.$refs.map.setupMeta();
-      this.$refs.map.setupMapbox();
-      this.$refs.map.displayMapbox();
+    if (this.hash) {
+      await this.getWorkspaceData();
+    }
+    if (this.snapshot) {
+      this.$refs.snapshot.setupMeta();
+      this.$refs.snapshot.setupMap();
+      document.title = `dføur – ${this.title}`;
+      if (this.annoid) {
+        // const index = this.annotations.items.findIndex(a => a.pk === parseInt(this.annoid, 10));
+        // this.$refs.snapshot.showPopup({ target: { feature: { kind: 'OBJ', index } } });
+      }
     }
   },
 
@@ -169,12 +231,21 @@ export default {
 
       if (!workspaceInfo) {
         const result = await this.$apollo.query({
-          query: gql`query getworkspace($wshash: ID!, $hash: ID!) {
+          query: gql`query getworkspace($wshash: ID!, $hash: ID!, $lang: LanguageCodeEnum!) {
             workspace(id: $wshash) {
               id
               pk
               title
               description
+              mode
+              findmeEnabled
+              annotationsOpen
+              annotationsLikesEnabled
+              polygonOpen
+              polygonLikesEnabled
+              objectOpen
+              objectLikesEnabled
+              objectsPageLink
               snapshots {
                 id
                 pk
@@ -188,8 +259,31 @@ export default {
                   fullname
                 }
               }
+              categories {
+                pk
+                color
+                name(languageCode: $lang)
+                hideInList
+                hideInLegend
+                icon
+              }
+              states {
+                pk
+                name(languageCode: $lang)
+                decoration
+                hideInList
+                hideInLegend
+              }
+              spatialDatasettes {
+                name
+                baseUrl
+                queries
+              }
+              usergroups {
+                key
+                name(languageCode: $lang)
+              }
             }
-
             snapshot(id: $hash) {
               id
               pk
@@ -210,7 +304,8 @@ export default {
           }`,
           variables: {
             wshash: btoa(`WorkspaceNode:${this.wshash}`),
-            hash: btoa(`SnapshotNode:${this.hash}`)
+            hash: btoa(`SnapshotNode:${this.hash}`),
+            lang: this.$route.params.lang
           }
         }).catch((error) => {
           this.errorsettings = { type: 'netwokerror', open: true, error };
@@ -224,17 +319,47 @@ export default {
           }
         }
       }
+
       const workspace = workspaceInfo.workspace;
-      const snapshot = workspaceInfo.snapshot;
-      if (!workspace.snapshots.map(s => s.pk).includes(snapshot.pk)) {
-        this.$router.push({ name: 'home' });
+      if (workspaceInfo.snapshot) {
+        const snapshot = workspaceInfo.snapshot;
+        if (!workspace.snapshots.map(s => s.pk).includes(snapshot.pk)) {
+          this.$router.push({ name: 'home' });
+        }
+        this.municipalityName = snapshot.municipality.fullname;
+        this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);
+        this.$store.commit('setBfsname', snapshot.municipality.fullname);
       }
-      this.municipalityName = snapshot.municipality.fullname;
+
+      const annotationsProxy = `/annotations/${this.$route.params.lang}/${this.wshash}/`;
+      const res = await fetch(annotationsProxy, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!res.ok) {
+        throw new Error(`${res.status}: ${res.statusText}`);
+      }
+      const json = await res.json();
+      workspace.annotations = json.workspace.annotations;
+
       this.snapshotsWorkspace = workspace.snapshots;
+      this.annotations.items = workspace.annotations;
+      this.annotations.categories = workspace.categories;
+      this.annotations.states = workspace.states;
+      this.annotations.usergroups = workspace.usergroups;
+      this.annotations.mode = workspace.mode;
+      this.annotations.findme = workspace.findmeEnabled;
+      this.annotations.marker.open = workspace.annotationsOpen;
+      this.annotations.marker.likes = workspace.annotationsLikesEnabled;
+      this.annotations.polygon.open = workspace.polygonOpen;
+      this.annotations.polygon.likes = workspace.polygonLikesEnabled;
+      this.annotations.object.open = workspace.objectOpen;
+      this.annotations.object.likes = workspace.objectLikesEnabled;
+      this.annotations.object.showlink = workspace.objectsPageLink;
+
+      this.spatialDatasettes = workspace.spatialDatasettes;
       this.title = workspace.title;
       this.description = workspace.description;
-      this.$store.commit('setBfsnumber', snapshot.municipality.bfsNumber);
-      this.$store.commit('setBfsname', snapshot.municipality.fullname);
     },
 
     async getWorkspaceData() {
@@ -263,7 +388,7 @@ export default {
       });
       if (result) {
         if (result.data.hasOwnProperty('workspace') && result.data.workspace) {
-          this.geojson = result.data.snapshot.data;
+          this.snapshot = result.data.snapshot.data;
         } else {
           this.$router.push({ name: 'home' });
         }
@@ -275,7 +400,7 @@ export default {
     abortEdit() {
       this.editing = undefined;
     },
-    async onSnapshotSaved({ snapshot }) {
+    async onSnapshotSaved() {
       const { data } = await this.$apollo.query({
         query: gql`query getworkspace($wshash: ID!) {
             workspace(id: $wshash) {
@@ -300,7 +425,7 @@ export default {
         },
         fetchPolicy: 'no-cache'
       });
-        // abusing vue's watching of Array.prototype.splice because it just wouldn't react otherwise
+      // abusing vue's watching of Array.prototype.splice because it just wouldn't react otherwise
       this.snapshotsWorkspace.splice(
         0,
         this.snapshotsWorkspace.length,
@@ -308,19 +433,19 @@ export default {
       );
       this.editing = undefined;
 
-      if (this.$route.params.hash === snapshot.pk) {
-        // current snapshot was updated, reload window
-        this.$router.go();
-      } else {
-        // co to edited snapshot
-        this.$router.push(`/${
-          this.$route.params.lang
-        }/${
-          this.$route.params.wshash
-        }/${
-          snapshot.pk
-        }/`);
-      }
+      // if (this.$route.params.hash === snapshot.pk) {
+      //   // current snapshot was updated, reload window
+      //   this.$router.go();
+      // } else {
+      //   // co to edited snapshot
+      //   this.$router.push(`/${
+      //     this.$route.params.lang
+      //   }/${
+      //     this.$route.params.wshash
+      //   }/${
+      //     snapshot.pk
+      //   }/`);
+      // }
     },
     newSnapshot() {
       this.editing = { isNew: true, snapshot: {} };

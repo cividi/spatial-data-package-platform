@@ -4,13 +4,17 @@ import graphene
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models import Q
 from django_filters import FilterSet
+from django.utils import translation
+from django.conf import settings
 from graphql_relay import from_global_id
 from graphene.types import generic
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.converter import convert_django_field
-from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace
+from gsmap.models import Municipality, Snapshot, SnapshotPermission, Workspace, WorkspacePermission, Annotation, Category, State, SpatialDatasette, Usergroup, Attachement
 from graphene_django.rest_framework.mutation import SerializerMutation
+import graphene_django_optimizer as gql_optimizer
+from main.settings import Q_LANGUAGE
 
 
 class GeoJSON(graphene.Scalar):
@@ -27,10 +31,9 @@ def convert_field_to_geojson(field, registry=None):
         required=not field.null
     )
 
-
 Q_SNAPSHOT_ONLY_PUBLIC = Q(permission__exact=SnapshotPermission.PUBLIC)
 Q_SNAPSHOT_WITH_NOT_LISTED = Q(permission__lte=SnapshotPermission.NOT_LISTED)
-
+Q_WORKSPACE_ONLY_PUBLIC = Q(permission__exact=WorkspacePermission.PUBLIC)
 
 class SnapshotOnlyPublicFilter(FilterSet):
     class Meta:
@@ -40,7 +43,6 @@ class SnapshotOnlyPublicFilter(FilterSet):
     @property
     def qs(self):
         return super().qs.filter(Q_SNAPSHOT_ONLY_PUBLIC)
-
 
 class SnapshotNode(DjangoObjectType):
     class Meta:
@@ -108,19 +110,177 @@ class MunicipalityNode(DjangoObjectType):
     def resolve_perimeter_bounds(self, info):
         return self.perimeter.extent
 
+class CategoryNode(DjangoObjectType):
+    class Meta:
+        model = Category
+        fields = ['name', 'icon', 'color', 'hide_in_list', 'hide_in_legend', 'comments_enabled']
+        filter_fields = {
+            'hide_in_list': ['exact'],
+            'hide_in_legend': ['exact'],
+        }
+        interfaces = [graphene.relay.Node]
 
-class WorkspaceNode(DjangoObjectType):
+    name = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
+    pk = graphene.Int(source='id')
+
+    def resolve_name(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("name", language_code=lang)
+
+class StateNode(DjangoObjectType):
+    class Meta:
+        model = State
+        fields = ['name', 'decoration', 'hide_in_list', 'hide_in_legend']
+        filter_fields = {
+            'hide_in_list': ['exact'],
+            'hide_in_legend': ['exact'],
+        }
+        interfaces = [graphene.relay.Node]
+
+    name = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
+    pk = graphene.Int(source='id')
+
+
+
+    def resolve_name(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("name", language_code=lang)
+
+class UsergroupNode(DjangoObjectType):
+    class Meta:
+        model = Usergroup
+        fields = ['key', 'name']
+        filter_fields = {
+            'key': ['exact'],
+            'name': ['exact', 'icontains', 'istartswith'],
+        }
+        interfaces = [graphene.relay.Node]
+
+    name = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
+    key = graphene.String(source='key')
+
+    def resolve_name(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("name", language_code=lang)
+
+class AttachementNode(DjangoObjectType):
+    class Meta:
+        model = Attachement
+        fields = [ 'document','my_order']
+        interfaces = [graphene.relay.Node]
+
+class AnnotationNode(gql_optimizer.OptimizedDjangoObjectType):
+    class Meta:
+        model = Annotation
+        fields = ['kind', 'data', 'rating']
+        interfaces = [graphene.relay.Node]
+    
+    category = graphene.Field(CategoryNode)
+    state = graphene.Field(StateNode)
+    attachements = graphene.List(AttachementNode)
+    data = generic.GenericScalar(source='data')
+    pk = graphene.Int(source='id')
+
+    def resolve_attachements(self, info):
+        return gql_optimizer.query(Attachement.objects.filter(Q(deleted=0) & Q(annotation=self.id)), info)
+
+class SpatialDatasetteNode(DjangoObjectType):
+    class Meta:
+        model = SpatialDatasette
+        fields = ['id', 'name', 'base_url', 'queries']
+        interfaces = [graphene.relay.Node]
+    
+    queries = generic.GenericScalar(source='queries')
+
+class WorkspaceOnlyPublicFilter(FilterSet):
+    class Meta:
+        model = Snapshot
+        fields = []
+
+    @property
+    def qs(self):
+        return super().qs.filter(Q_WORKSPACE_ONLY_PUBLIC)
+
+class WorkspaceNode(gql_optimizer.OptimizedDjangoObjectType):
     class Meta:
         model = Workspace
-        fields = ['title', 'description']
+        fields = [
+            'title', 'description',
+            'mode', 'findme_enabled',
+            'annotations_open', 'annotations_likes_enabled',
+            'polygon_open', 'polygon_likes_enabled',
+            'object_open', 'object_likes_enabled', 'objects_page_link',
+            'annotations_contact_name', 'annotations_contact_email',
+            'spatial_datasettes',
+        ]
         interfaces = [graphene.relay.Node]
 
     pk = graphene.String(source='id')
+    title = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
+
+    description = graphene.String(
+        language_code=graphene.Argument(Q_LANGUAGE, default_value=Q_LANGUAGE[settings.PARLER_DEFAULT_LANGUAGE_CODE]),
+    )
     snapshots = graphene.List(SnapshotNode)
 
-    def resolve_snapshots(self, info):
-        return self.snapshots.all()
+    spatial_datasettes = graphene.List(SpatialDatasetteNode)
 
+    annotations = graphene.List(AnnotationNode)
+
+    categories = graphene.List(
+        CategoryNode,
+        show_all=graphene.Argument(graphene.Boolean, default_value=False),
+    )
+    states = graphene.List(
+        StateNode,
+        show_all=graphene.Argument(graphene.Boolean, default_value=False),
+    )
+    
+    usergroups = graphene.List(UsergroupNode)
+
+    @classmethod
+    def get_queryset(cls, queryset, info):
+        return queryset.filter(Q_WORKSPACE_ONLY_PUBLIC)
+    
+    def resolve_title(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("title", language_code=lang)
+
+    def resolve_description(self, info, language_code=None):
+        lang = Q_LANGUAGE.get(language_code).name
+        return self.safe_translation_getter("description", language_code=lang)
+
+    def resolve_snapshots(self, info):
+        return gql_optimizer.query(self.snapshots.all(), info)
+
+    def resolve_spatial_datasettes(self, info):
+        return gql_optimizer.query(self.spatial_datasettes.all(), info)
+
+    def resolve_annotations(self, info):
+        return gql_optimizer.query(Annotation.objects.filter(Q(public=1) & Q(workspace=self.pk)), info)
+    
+    def resolve_categories(self, info, show_all):
+        if show_all:
+            return gql_optimizer.query(self.categories.all(),info)
+        else:
+            return gql_optimizer.query(self.categories.filter(Q(hide_in_list=0)),info)
+    
+    def resolve_states(self, info, show_all):
+        if show_all:
+            return gql_optimizer.query(self.states.all(),info)
+        else:
+            return gql_optimizer.query(self.states.filter(Q(hide_in_list=0)),info)
+
+    def resolve_usergroups(self, info):
+        return gql_optimizer.query(self.usergroups.all(), info)
 
 class SnapshotMutation(graphene.relay.ClientIDMutation):
     class Input:
@@ -161,7 +321,10 @@ class Query(object):
         SnapshotNode, filterset_class=SnapshotOnlyPublicFilter)
 
     workspace = graphene.relay.Node.Field(WorkspaceNode)
+    workspaces = DjangoFilterConnectionField(
+        WorkspaceNode, filterset_class=WorkspaceOnlyPublicFilter)
 
 
 class Mutation(graphene.ObjectType):
     snapshotmutation = SnapshotMutation.Field()
+

@@ -32,7 +32,7 @@ export default new Vuetify({
   theme: {
     themes: {
       light: {
-        primary: '#543076',
+        primary: '#000000',
         secondary: '#61BEBF'
         // accent: '#8c9eff',
         // error: '#b71c1c'

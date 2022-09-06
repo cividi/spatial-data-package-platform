@@ -16,7 +16,7 @@ services:
       - POSTGRES_PASSWORD=pgpass
       - POSTGRES_DB=webui
     volumes:
-      - var-gemeindescan-webui:/var/services
+      - var-gemeindescan-webui:/var/services:z
     ports:
        - "5434:5432"
 
@@ -36,11 +36,13 @@ services:
       - VUE_APP_FATHOM_SITEID=${FATHOM_SITEID}
       - VUE_APP_FATHOM_URL=${FATHOM_URL}
       - VUE_APP_SNAPSHOTSTOREURL=https://gemeindescan.eu-central-1.linodeobjects.com/public/
+      - VUE_APP_SPATIALDATASETTE_TOKEN=${SPATIALDATASETTE_TOKEN}
+      - VUE_APP_COMMENTO_URL=${COMMENTO_URL}
       - PUBLIC_URL=http://www:8000
     working_dir: /opt/vue
     volumes:
       - ./vue:/opt/vue:Z
-      - var-gemeindescan-webui:/var/services/
+      - var-gemeindescan-webui:/var/services:z
       - vscode-remote-vue:/root/.vscode-server
     ports:
       - "9222:9222" # debug chrome
@@ -63,6 +65,9 @@ services:
       - DJANGO_DEBUG=True
       - DJANGO_HTTPS=False
       - DJANGO_EMAIL_HOST=maildev
+      - DJANGO_EMAIL_PORT=25
+      - DJANGO_EMAIL_HOST_USER=
+      - DJANGO_EMAIL_HOST_PASSWORD=
       - DJANGO_ALLOWED_HOSTS=www,www.local,localhost,django
       - DJANGO_ADMIN_NAME=gemeindescan DEV
       - DJANGO_ADMIN_HEADER_COLOR=#ff0000
@@ -71,7 +76,7 @@ services:
     working_dir: /opt/app
     volumes:
       - ./django:/opt/app:Z
-      - var-gemeindescan-webui:/var/services
+      - var-gemeindescan-webui:/var/services:z
       - vscode-remote-django:/root/.vscode-server
     ports:
       - "10002:10002" # vscode
@@ -84,10 +89,72 @@ services:
       service: www
     volumes:
       - ./etc/nginx:/etc/nginx/conf.d:Z
-      - var-gemeindescan-webui:/var/services
+      - var-gemeindescan-webui:/var/services:z
     ports:
       - 8000:8000
+      - 8443:8443
     command: >
       sh -c '[ ! -e /etc/nginx/conf.d/www.local.conf ] && ln -s /etc/nginx/conf.d/www.local.dev /etc/nginx/conf.d/www.local.conf;
       /usr/local/openresty/bin/openresty -g "daemon off;"'
     # command: tail -f /dev/null
+
+  redis:
+    image: redis:6-alpine
+    hostname: redis
+    ports:
+      - "6379:6379"
+
+  celery_worker:
+    extends:
+      file: docker-images.yml
+      service: celery_worker
+    environment:
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+      - START_CELERY_WORKER=YES
+      - AUTORELOAD_CELERY_WORKER=YES
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET}
+      # - SECRET_KEY=${DJANGO_SECRET}
+      - DJANGO_SETTINGS_MODULE=main.settings
+    working_dir: /opt/app
+    volumes:
+      - ./django:/opt/app:Z
+      - var-gemeindescan-webui:/var/services:z
+  
+  celery_beat:
+    extends:
+      file: docker-images.yml
+      service: celery_beat
+    environment:
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+      - START_CELERY_BEAT=YES
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET}
+      - DJANGO_SETTINGS_MODULE=main.settings
+    working_dir: /opt/app
+    volumes:
+      - ./django:/opt/app:Z
+      - var-gemeindescan-webui:/var/services:z
+
+  flower:
+    extends:
+      file: docker-images.yml
+      service: flower
+    volumes:
+      - ./django:/opt/app:Z
+      - var-gemeindescan-webui:/var/services:z
+    environment:
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+      - START_FLOWER=YES
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET}
+      - DJANGO_SETTINGS_MODULE=main.settings
+    ports:
+      - 5557:5555
+
+  # dev email server accessible via http://localhost:1080
+  maildev:
+    image: yvess/alpine-maildev
+    hostname: maildev
+    ports:
+      - "1080:80"

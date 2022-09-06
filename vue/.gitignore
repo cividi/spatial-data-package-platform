@@ -20,4 +20,5 @@ yarn-error.log*
 *.sln
 *.sw?
 
-VERSION
+# VERSION
+.vercel

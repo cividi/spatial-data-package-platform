@@ -3,6 +3,30 @@
 ## Releases
 
 
+### 0.7.4 beta 2
+[Released *2022-03-01*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.4-b2)
+
+### improved
+- admin translations
+- data migration from previous versions
+- forced csv file download
+
+### 0.7.4 beta 1
+[Released *2022-02-24*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.4-b1)
+
+#### new
+- `PLY` annotation: option to draw and save a polygon
+- `mode`: Participation, Area Management or Off
+- Bulk publish or unpublish annotations (requires `publish_annotation` permissions)
+- CSV Export (requires `export_annotation` permission)
+- User definable `Usergroups`
+- `Workspace` and `Category` are now translatable (`django-parler`)
+- `Workspaces`, `Categories` and `Usergroups` are linked to a group, enabling finer read access control (only users in assigned group can view items)
+
+#### changed
+- Default groups created: `core/participation` and `core/areamanagement`
+- `django` bumped to 3.1.14
+
 ### 0.7.3
 [Released *2021-07-18*](https://github.com/cividi/spatial-data-package-platform/releases/tag/0.7.3)
 

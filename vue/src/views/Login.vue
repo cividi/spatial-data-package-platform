@@ -9,7 +9,7 @@
     "error.noemail": "Bitte eine E-Mail eingeben.",
     "error.invalidemail": "Bitte eine gültige E-Mail eingeben.",
     "error.nopassword": "Bitte ein Passwort eingeben."
-},
+  },
   "fr": {
     "form.email": "E-Mail",
     "form.password": "Mot de passe",
@@ -18,6 +18,15 @@
     "error.noemail": "Veuillez saisir un e-mail.",
     "error.invalidemail": "Veuillez entrer une adresse électronique valide.",
     "error.nopassword": "Veuillez entrer un mot de passe."
+  },
+  "en": {
+    "form.email": "E-mail address",
+    "form.password": "Password",
+    "form.submit": "Sign up",
+    "error.nonexistent": "The user does not exist.<br>Please enter a valid user.",
+    "error.noemail": "Please enter an e-mail.",
+    "error.invalidemail": "Please enter a valid e-mail.",
+    "error.nopassword": "Please enter a password."
   }
 }
 </i18n>

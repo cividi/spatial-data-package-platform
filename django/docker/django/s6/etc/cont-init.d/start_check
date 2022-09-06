@@ -12,3 +12,20 @@ if [ "$START_APSCHEDULER" = "YES" ]; then
     rm /etc/services.d/apscheduler/down
 fi
 
+START_CELERY_BEAT=${START_CELERY_BEAT:-NO}
+
+if [ "$START_CELERY_BEAT" = "YES" ]; then
+    rm /etc/services.d/celery_beat/down
+fi
+
+START_CELERY_WORKER=${START_CELERY_WORKER:-NO}
+
+if [ "$START_CELERY_WORKER" = "YES" ]; then
+    rm /etc/services.d/celery_worker/down
+fi
+
+START_FLOWER=${START_FLOWER:-NO}
+
+if [ "$START_FLOWER" = "YES" ]; then
+    rm /etc/services.d/flower/down
+fi

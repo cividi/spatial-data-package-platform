@@ -1,0 +1,176 @@
+{
+  "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/map/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "(?<lang>(de|fr|it|en)),?.*"
+        }
+      ],
+      "destination": "/:lang/map/",
+      "permanent": false
+    },
+    {
+      "source": "/map/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "[a-z]{2},?.*"
+        }
+      ],
+      "destination": "/en/map/",
+      "permanent": false
+    },
+    {
+      "source": "/map/:annoid([0-9]+)/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "(?<lang>(de|fr|it|en)),?.*"
+        }
+      ],
+      "destination": "/:lang/map/:annoid/",
+      "permanent": false
+    },
+    {
+      "source": "/map/:annoid([0-9]+)/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "[a-z]{2},?.*"
+        }
+      ],
+      "destination": "/en/map/:annoid/",
+      "permanent": false
+    },
+    {
+      "source": "/gallery/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "(?<lang>(de|fr|it|en)),?.*"
+        }
+      ],
+      "destination": "/:lang/gallery/",
+      "permanent": false
+    },
+    {
+      "source": "/gallery/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "[a-z]{2},?.*"
+        }
+      ],
+      "destination": "/en/map/",
+      "permanent": false
+    },
+    {
+      "source": "/gallery/:annoid([0-9]+)/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "(?<lang>(de|fr|it|en)),?.*"
+        }
+      ],
+      "destination": "/:lang/gallery/:annoid/",
+      "permanent": false
+    },
+    {
+      "source": "/gallery/:annoid([0-9]+)/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "[a-z]{2},?.*"
+        }
+      ],
+      "destination": "/en/gallery/:annoid/",
+      "permanent": false
+    },
+    {
+      "source": "/add/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "(?<lang>(de|fr|it|en)),?.*"
+        }
+      ],
+      "destination": "/:lang/add/",
+      "permanent": false
+    },
+    {
+      "source": "/add/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "[a-z]{2},?.*"
+        }
+      ],
+      "destination": "/en/add/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "(?<lang>(de|fr|it|en)),?.*"
+        }
+      ],
+      "destination": "/:lang",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "[a-z]{2},?.*"
+        }
+      ],
+      "destination": "/en",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    { "source": "/annotations/:lang/:workspace/", "destination": "/api/annotation-proxy" },
+    {
+      "source": "/(de|fr|it|en)/",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/(de|fr|it|en)/map/",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/(de|fr|it|en)/map/([0-9]+)/",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/(de|fr|it|en)/gallery/",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/(de|fr|it|en)/gallery/([0-9]+)/",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/(de|fr|it|en)/add/",
+      "destination": "/app.html"
+    }
+  ]
+}

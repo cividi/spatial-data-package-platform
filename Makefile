@@ -26,6 +26,9 @@ build_docker:
 	cd django && make build_docker
 	cd vue && make build_docker
 
+build_docker_gh:
+	cd django && make build_docker_gh
+
 build: build_docker
 
 push:
@@ -63,8 +66,8 @@ deploy_local:
 	DOCKER_NOTTY=YES make -f vue/Makefile build
 	docker-compose exec -T vue rsync -av --delete dist/ /var/services/django/static/dist/
 	docker-compose exec -T django make migrate
-	docker-compose exec -T django killall -TERM gunicorn
 	docker-compose exec -T vue killall -TERM node
+	# docker-compose exec -T django killall -TERM gunicorn
 
 slack-push:
 	source env.hosts.prod && test -v SLACK_APP_HOOK && curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"$$SLACK_APP_TEXT\"}" "https://hooks.slack.com/services/$$SLACK_APP_HOOK"
@@ -90,6 +93,6 @@ tests:
 
 deploy_version:
 	bash -c 'printf "%s\t%s" "$$(git describe --abbrev=0 --tags)" "$$(git rev-parse --short HEAD)" > django/VERSION'
-	cp django/VERSION vue/VERSION
+	bash -c 'printf "%s" "$$(git describe --abbrev=0 --tags)" > vue/VERSION'
 
 -include deploy_version
