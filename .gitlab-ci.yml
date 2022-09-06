@@ -5,8 +5,9 @@ docker:build:
     entrypoint: [""]
   rules:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
   script:
     - /kaniko/executor
-      --context "${CI_PROJECT_DIR}"
+      --context "${CI_PROJECT_DIR}/django"
       --dockerfile "${CI_PROJECT_DIR}/django/Dockerfile"
       --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}"
