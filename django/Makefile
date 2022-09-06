@@ -1,5 +1,5 @@
-DJANGO_VERSION=1.0.0-rc.1
-DJANGO_VERSION_PREV=1.0.0-beta.4
+DJANGO_VERSION=1.0.0-rc.3
+DJANGO_VERSION_PREV=1.0.0-rc.2
 NOTTY=$(shell command [ "$$DOCKER_NOTTY" = YES ] && echo "-T")
 DOCKER_EXEC=$(shell command -v docker > /dev/null && echo "docker-compose exec $(NOTTY) django")
 SHELL := /bin/bash
@@ -23,13 +23,13 @@ build_docker_gh:
 		.
 
 build_docker:
-	cd docker && DOCKER_BUILDKIT=1 \
+	DOCKER_BUILDKIT=1 \
 	docker buildx build \
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
-		--cache-from smartuse/gemeindescan-webui-django:$(DJANGO_VERSION_PREV) \
-		-t smartuse/gemeindescan-webui-django:$(DJANGO_VERSION) \
+		--cache-from registry.gitlab.com/cividi/dfour/dfour-hub:$(DJANGO_VERSION_PREV) \
+		-t registry.gitlab.com/cividi/dfour/dfour-hub:latest \
 		--load \
-		django
+		.
 
 push:
 	cd docker && DOCKER_BUILDKIT=1 \

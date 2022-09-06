@@ -2,16 +2,29 @@ import graphene
 import gsmap.schema
 from django.contrib.gis.db.models import Q
 from bs4 import BeautifulSoup
+from django_filters import FilterSet, OrderingFilter
 from django.conf import settings
 from graphene_django.types import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
 from main.models import ContentSection, SiteConfiguration
 import graphene_django_optimizer as gql_optimizer
 from main.settings import Q_LANGUAGE
 
+class ContentSectionFilter(FilterSet):
+    class Meta:
+        model = ContentSection
+        fields = ['id', 'is_hero']
+    
+    order_by = OrderingFilter(
+        fields=(
+            ('id', 'is_hero')
+        )
+    )
+
 class ContentSectionNode(DjangoObjectType):
     class Meta:
         model = ContentSection
-        fields = [ 'content', 'is_hero', 'image' ]
+        fields = [ 'id', 'content', 'is_hero', 'image' ]
         interfaces = [graphene.relay.Node]
 
     content = graphene.String(
@@ -37,7 +50,7 @@ class SiteConfigurationNode(gql_optimizer.OptimizedDjangoObjectType):
             'homepage_snippet',
         ]
     
-    content_sections = graphene.List(ContentSectionNode)
+    content_sections = DjangoFilterConnectionField(ContentSectionNode, filterset_class=ContentSectionFilter)
 
     def resolve_homepage_snippet(self, info):
         language = self.language
@@ -48,8 +61,8 @@ class SiteConfigurationNode(gql_optimizer.OptimizedDjangoObjectType):
                 return found
         return soup.div
     
-    def resolve_content_sections(self, info):
-        return gql_optimizer.query(ContentSection.objects.filter(Q(siteConfiguration_id=self.id)), info)
+    def resolve_content_sections(self, info, **kwargs):
+        return gql_optimizer.query(ContentSectionFilter(kwargs).qs.filter(Q(siteConfiguration_id=self.id)), info)
 
 class Query(gsmap.schema.Query, graphene.ObjectType):
     config = graphene.Field(SiteConfigurationNode, language=graphene.String())
