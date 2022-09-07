@@ -1,27 +1,27 @@
-docker:build-amd64:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:v1.9.0-debug
-    entrypoint: [""]
+image: docker
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay2
+  BUILDX_VERSION: "v0.9.1"
+  BUILDX_ARCH: "linux-amd64"
+
+docker:build:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY --username
+      $CI_REGISTRY_USER --password-stdin
+    - wget -O /usr/bin/docker-buildx
+      https://github.com/docker/buildx/releases/download/${BUILDX_VERSION}/buildx-${BUILDX_VERSION}.${BUILDX_ARCH}
+    - chmod +x /usr/bin/docker-buildx
   script:
-    - /kaniko/executor
-      --context "${CI_PROJECT_DIR}/django"
-      --dockerfile "${CI_PROJECT_DIR}/django/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}"
-
-docker:build-arm64:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:v1.9.0-debug
-    entrypoint: [""]
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-  script:
-    - /kaniko/executor
-      --context "${CI_PROJECT_DIR}/django"
-      --dockerfile "${CI_PROJECT_DIR}/django/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}"
-      --customPlatform=linux/arm64
-
+    - cd django
+    - docker-buildx create --use
+    - docker-buildx build
+      --platform linux/amd64,linux/arm64
+      --tag ${CI_ REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG}
+      --push
+      .
