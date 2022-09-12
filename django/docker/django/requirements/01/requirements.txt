@@ -7,7 +7,7 @@ attrs==20.3.0
 beautifulsoup4==4.9.3
 blessings==1.7
 bpython==0.20.1
-certifi==2021.5.30
+certifi==2022.6.15.1
 chardet==4.0.0
 click==8.0.1
 curtsies==0.3.4
