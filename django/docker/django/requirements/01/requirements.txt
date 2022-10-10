@@ -10,7 +10,7 @@ bpython==0.20.1
 certifi==2021.5.30
 chardet==4.0.0
 click==8.0.1
-curtsies==0.3.4
+curtsies==0.4.1
 Django==3.1.12
 django-apscheduler==0.5.1
 django-cors-headers==3.7.0
