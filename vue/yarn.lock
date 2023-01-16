@@ -10385,10 +10385,10 @@ vuetify-loader@^1.3.0:
     file-loader "^6.2.0"
     loader-utils "^2.0.0"
 
-vuetify@^2.1.0:
-  version "2.4.5"
-  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.4.5.tgz#86de190720d25511df9be37ff3c16a568972fc2d"
-  integrity sha512-P4bN9xwyU91Iq1iW/XBCzgVMQ9fHG0HgJeiPDRoHzC0fX6ZPYBZIN6xPCuoG7zLyGSSoc6JnQqnO7H5mPEsVuA==
+vuetify@^2.6.14:
+  version "2.6.14"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.6.14.tgz#a5bf662de938efe0450ac59776b04f760f5407d2"
+  integrity sha512-nr6wU3uTzhhEPssH23cW0Ee/hCrayp7cjl3nNjM2OmNwiJlV91tZiL1VO3597SqZyjh1xIa+m9J2rpKTSdIlrA==
 
 vuex@^3.1.2:
   version "3.6.2"
