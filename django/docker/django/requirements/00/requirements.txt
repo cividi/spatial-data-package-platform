@@ -2,7 +2,7 @@ aniso8601==7.0.0
 appdirs==1.4.4
 APScheduler==3.6.3
 asgiref==3.4.1
-astroid==2.6.2
+astroid==2.8.0
 attrs==20.3.0
 backports.zoneinfo==0.2.1
 beautifulsoup4==4.9.3
@@ -12,7 +12,7 @@ bpython==0.20.1
 certifi==2021.5.30
 celery==5.2.7
 chardet==4.0.0
-click==8.0.1
+click==8.0.3
 curtsies==0.3.4
 Django==3.1.14
 django-apscheduler==0.5.1
@@ -59,7 +59,7 @@ pylint-plugin-utils==0.6
 pyparsing==2.4.7
 pytest==6.2.1
 pytest-django==4.1.0
-pytz==2021.1
+pytz==2021.3
 redis==4.3.4
 requests==2.25.1
 Rx==1.6.1

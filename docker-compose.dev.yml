@@ -18,7 +18,7 @@ services:
     volumes:
       - var-gemeindescan-webui:/var/services:z
     ports:
-       - "5434:5432"
+      - "5434:5432"
 
   vue:
     extends:
@@ -120,7 +120,7 @@ services:
     volumes:
       - ./django:/opt/app:Z
       - var-gemeindescan-webui:/var/services:z
-  
+
   celery_beat:
     extends:
       file: docker-images.yml
