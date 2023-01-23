@@ -20,7 +20,7 @@ from django.contrib.gis.db import models
 from django.contrib.postgres import fields as pg_fields
 from django.conf import settings
 from django.core.files.base import ContentFile
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import FileSystemStorage, default_storage
 from django.utils import timezone
 from django.utils.html import escape, format_html
 from django.core.mail import EmailMessage
@@ -200,9 +200,7 @@ class Snapshot(models.Model):
     @property
     def data_file_dict(self):
         if self.data_file:
-            self.data_file.open()
-            data = self.data_file.read()
-            return data
+            return default_storage.open(f"{self.data_file}").read()
         return str(dict())
 
     @property
@@ -539,12 +537,12 @@ class Annotation(models.Model):
     DATA_SCHEMA = {
         'type': 'object',
         'properties': {
-            'type': { 
-                'type': 'string', 
-                'readonly': True, 
+            'type': {
+                'type': 'string',
+                'readonly': True,
                 'default': 'Feature'
             },
-            'geometry': { 
+            'geometry': {
                 'type': 'object',
                 'additionalProperties': True,
                 'properties': {
@@ -606,13 +604,13 @@ class Annotation(models.Model):
 
         if self.data['properties']['title']:
             self.data['properties']['title'] = bleach.clean(self.data['properties']['title'])
-        
+
         super().save(*args, **kwargs)
 
     @property
     def fullname(self):
         return f'{self.workspace} {self.id} {self.data["properties"]["title"]}'
-    
+
     @property
     def title(self):
         if "properties" in self.data.keys() and "title" in self.data["properties"].keys():
@@ -642,14 +640,14 @@ class Annotation(models.Model):
         if self.author_email:
             return self.email_hash[:12]
         return None
-    
+
     @property
     def description(self):
         if "properties" in self.data.keys() and "description" in self.data["properties"].keys():
             return f'{self.data["properties"]["description"]}'
         else:
             return None
-    
+
     def __str__(self):
         return self.fullname
 
@@ -671,11 +669,11 @@ class Attachement(models.Model):
 
 @receiver(post_save, sender=Annotation)
 def send_new_annotation_email(sender, instance, created, **kwargs):
-    
+
     # Update workspace annotations cache
     for lang in LANGUAGES:
         update_cache.delay(instance.workspace.pk, lang[0])
-    
+
     if created and instance.author_email:
         recipient = instance.author_email
         subject = 'Beitrag freischalten / Publish contribution / Activer la contribution / Sblocca post'
@@ -710,9 +708,9 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
             message += 'Grazie mille per il vostro contributo!\n'
             message += 'Potete attivare il vostro contributo al seguente link:\n'
             message += '\n\n'
-            
+
             message += f'{base["base"]}{publish_url}\n'
-            
+
         else:
             message += 'Note: Englisch below / En français ci-dessous / Italiano di seguito\n'
             message += '\n\n'
@@ -734,7 +732,7 @@ def send_new_annotation_email(sender, instance, created, **kwargs):
             message += '--' * 30 + '\n\n'
 
             message += f"{frontend['base']}/{instance.workspace.pk}/{instance.workspace.snapshots.first().pk}/"
-        
+
         email = EmailMessage(
             subject,
             message,

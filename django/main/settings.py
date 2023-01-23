@@ -11,6 +11,7 @@ DEBUG = os.getenv('DJANGO_DEBUG') == 'true'
 USE_HTTPS = os.getenv('DJANGO_HTTPS') == 'true'
 DB_SEARCH_PATH = os.getenv('DJANGO_DB_SEARCH_PATH', 'public')
 OIDC_ACTIVE = os.getenv('DJANGO_OIDC_LOGIN', False) == 'true'
+USE_S3 = os.getenv('USE_S3') == 'true'
 
 
 if USE_HTTPS:
@@ -71,6 +72,7 @@ INSTALLED_APPS = [
     'django_apscheduler',
     'solo',
     'parler',
+    'storages',
 
     # own
     'gsuser',
@@ -217,12 +219,30 @@ PARLER_DEFAULT_LANGUAGE_CODE = 'de'
 
 FORMAT_MODULE_PATH = 'main.formats'
 
-STATIC_ROOT = os.environ.get('DJANGO_STATIC_DIR',
-                             '/var/services/django/static')
-STATIC_URL = '/static/'
+if USE_S3:
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}'
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 
-MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_DIR', '/var/services/django/media')
-MEDIA_URL = '/media/'
+    MEDIA_LOCATION = 'media'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'main.storage_backends.PublicMediaStorage'
+
+    STATIC_LOCATION = 'static'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+    STATICFILES_STORAGE = 'main.storage_backends.StaticStorage'
+else:
+    MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_DIR', '/var/services/django/media')
+    MEDIA_URL = '/media/'
+
+    STATIC_ROOT = os.environ.get('DJANGO_STATIC_DIR',
+                             '/var/services/django/static')
+    STATIC_URL = '/static/'
+
 DATA_UPLOAD_MAX_MEMORY_SIZE = 15728640
 FILE_UPLOAD_MAX_MEMORY_SIZE = int(15 * 1024 * 1024)  # 15 MB
 
@@ -256,6 +276,7 @@ CACHES = {
     }
 }
 SESSION_COOKIE_HTTPONLY = False
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 THUMBNAIL_BACKEND = 'main.utils.PermalinkThumbnailBackend'
 THUMBNAIL_PREFIX = 'cache/'

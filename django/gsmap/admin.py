@@ -122,7 +122,6 @@ class SnapshotAdmin(admin.OSMGeoAdmin):
                 f"Couldn't create the screenshots, screenshot server problem. (Other Error) {repr(e)}"
             )
 
-
 class WorkspaceAdmin(TranslatableAdmin):
     readonly_fields = ('id', 'created', 'modified', 'get_absolute_link')
     fieldsets = (
@@ -152,7 +151,7 @@ class WorkspaceAdmin(TranslatableAdmin):
         if db_field.name in ['snapshots', 'categories', 'states', 'usergroups', 'spatial_datasettes']:
             kwargs['widget'] = SortedFilteredSelectMultiple()
         return super().formfield_for_manytomany(db_field, request, **kwargs)
-    
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if not request.user.is_superuser:
@@ -168,7 +167,7 @@ class AnnotationWorkspaceFilter(SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return [(x.id, x.title) for x in Workspace.objects.all() if request.user.is_superuser or x.group in request.user.groups.all()]
-    
+
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(workspace__id=self.value())
@@ -180,7 +179,7 @@ class CategoryGroupFilter(SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return [(x.id, f'{x.group.name}/{x.name}') for x in Category.objects.all() if request.user.is_superuser or x.group in request.user.groups.all()]
-    
+
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(category__id=self.value())
@@ -192,7 +191,7 @@ class StateGroupFilter(SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return [(x.id, f'{x.group.name}/{x.name}') for x in State.objects.all() if request.user.is_superuser or x.group in request.user.groups.all()]
-    
+
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(state__id=self.value())
@@ -204,7 +203,7 @@ class UsergroupGroupFilter(SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return [(x.pk, f'{x.group.name}/{x.name}') for x in Usergroup.objects.all() if request.user.is_superuser or x.group in request.user.groups.all()]
-    
+
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(usergroup__pk=self.value())
@@ -216,7 +215,7 @@ class MissingAttachmentFilter(SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return [('missing',_('Missing')),('one',_('One attachment')),('more',_('Two or more attachments'))]
-    
+
     def queryset(self, request, queryset):
         if self.value() == 'missing':
             return queryset.annotate(attachment_count=Count('attachement')).filter(attachment_count=0)
@@ -260,12 +259,12 @@ class AnnotationAdmin(admin.ModelAdmin):
     search_fields = ('id', 'data', 'attachement__document')
     actions = ['make_published','make_unpublished','export_as_csv']
 
-    def get_queryset(self, request): 
+    def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if not request.user.is_superuser:
             return queryset.select_related('workspace__group').filter(workspace__group__in=request.user.groups.all())
         return queryset
-    
+
     # @admin_.action(description='Publish selected annotations')
     def make_published(self, request, queryset):
         updated = queryset.update(public=True)
@@ -313,7 +312,7 @@ class AnnotationAdmin(admin.ModelAdmin):
             c_name = c.name if c else None
             c_group = ug.name if ug else None
             writer.writerow([
-                i + 1, 
+                i + 1,
                 r.created.strftime("%Y-%m-%d %H:%M:%S"),
                 r.title,
                 r.description,
@@ -351,7 +350,7 @@ class CategoryAdminForm(TranslatableModelForm):
     #         'slug': ('name',)
     #     }
 
-class CategoryAdmin(TranslatableAdmin): # admin.OSMGeoAdmin, 
+class CategoryAdmin(TranslatableAdmin): # admin.OSMGeoAdmin,
     form = CategoryAdminForm
 
     readonly_fields = ('id', 'created', 'modified')
@@ -410,7 +409,7 @@ class StateAdmin(TranslatableAdmin):
             return qs.select_related('group').filter(group__in=request.user.groups.all())
         return qs
 
-class UsergroupAdmin(TranslatableAdmin): # admin.OSMGeoAdmin, 
+class UsergroupAdmin(TranslatableAdmin): # admin.OSMGeoAdmin,
     readonly_fields = ('created', 'modified')
     fieldsets = (
         (_('Meta'), {

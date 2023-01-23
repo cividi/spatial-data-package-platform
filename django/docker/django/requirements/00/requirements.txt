@@ -9,6 +9,7 @@ beautifulsoup4==4.9.3
 bleach==4.1.0
 blessings==1.7
 bpython==0.20.1
+boto3==1.26.54
 certifi==2021.5.30
 celery==5.2.7
 chardet==4.0.0
@@ -22,6 +23,7 @@ django-filter==2.4.0
 django-parler==2.3
 django-solo==1.1.5
 django-sortedm2m==3.0.2
+django-storages==1.12.3
 -e git+https://github.com/svleeuwen/sortedm2m-filter-horizontal-widget.git@4ce03f6b7e6022014838afb4a8aa4691fceb9e94#egg=django_sortedm2m_filter_horizontal_widget
 djangorestframework==3.12.2
 mozilla-django-oidc~=2.0
